@@ -9,4 +9,5 @@
 # Generated handouts and archives
 **/outputs/
 **/生成讲义结果/
+dist/
 *.tmp
