@@ -332,6 +332,55 @@ class BlockImporterTests(unittest.TestCase):
         validation = validate_package(output)
         self.assertTrue(validation["valid"], validation)
 
+    def test_imported_duplicate_drawing_ids_allocate_above_destination_and_source_ids(self):
+        image_path = os.path.join(self.tmp.name, "pixel.png")
+        with open(image_path, "wb") as image:
+            image.write(PNG)
+        source = Document()
+        for ident in ("8", "10", "10"):
+            run = source.add_paragraph().add_run()
+            run.add_picture(image_path)
+            drawing = run._r.find(".//" + WP + "docPr")
+            picture = run._r.find(".//" + PIC + "cNvPr")
+            drawing.set("id", ident)
+            picture.set("id", ident)
+        destination = Document()
+        for _ in range(7):
+            destination.add_paragraph().add_run().add_picture(image_path)
+
+        copied, report = BlockImporter(source, destination).import_blocks(body_blocks(source))
+        append_blocks(destination, copied)
+        output = self.save_output(destination)
+
+        self.assertEqual([], report["unsupported"])
+        validation = validate_package(output)
+        self.assertTrue(validation["valid"], validation)
+        for tag in (WP + "docPr", PIC + "cNvPr"):
+            all_ids = [element.get("id") for element in destination.element.body.iter(tag)]
+            imported_ids = [element.get("id") for root in copied for element in root.iter(tag)]
+            self.assertEqual(len(all_ids), len(set(all_ids)))
+            self.assertEqual({"8", "10", "11"}, set(imported_ids))
+
+    def test_orphan_bookmarks_are_removed_without_dropping_text(self):
+        source = Document()
+        paragraph = source.add_paragraph("keep this content")
+        start = etree.SubElement(paragraph._p, W + "bookmarkStart")
+        start.set(W + "id", "0")
+        start.set(W + "name", "orphan_anchor")
+        hyperlink = etree.SubElement(paragraph._p, W + "hyperlink")
+        hyperlink.set(W + "anchor", "orphan_anchor")
+        etree.SubElement(hyperlink, W + "r")
+        destination = Document()
+
+        copied, report = BlockImporter(source, destination).import_blocks(body_blocks(source))
+
+        self.assertEqual([], report["unsupported"])
+        self.assertEqual(1, report["stats"].get("unmatched_bookmark_starts_dropped"))
+        self.assertEqual(1, report["stats"].get("orphan_bookmark_anchors_removed"))
+        self.assertEqual([], list(copied[0].iter(W + "bookmarkStart")))
+        self.assertIsNone(copied[0].find(".//" + W + "hyperlink").get(W + "anchor"))
+        self.assertIn("keep this content", paragraph_text(copied[0]))
+
     def test_custom_xml_data_binding_is_reported_as_unsupported(self):
         source = Document()
         paragraph = source.add_paragraph("Bound content")

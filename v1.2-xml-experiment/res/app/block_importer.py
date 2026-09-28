@@ -385,6 +385,8 @@ class BlockImporter:
         next_id = max((int(value) for value in used_ids if (value or "").isdigit()), default=0) + 1
         starts = set()
         ends = set()
+        start_elements = {}
+        start_names = {}
         for root in elements:
             for bookmark in root.iter(W + "bookmarkStart"):
                 old = bookmark.get(W + "id")
@@ -392,6 +394,9 @@ class BlockImporter:
                     self._unsupported("bookmark_without_id")
                     continue
                 starts.add(old)
+                start_elements.setdefault(old, []).append(bookmark)
+                if bookmark.get(W + "name"):
+                    start_names.setdefault(old, set()).add(bookmark.get(W + "name"))
                 new = self._bookmark_map.get(old)
                 if new is None:
                     new = old if old not in used_ids else str(next_id)
@@ -420,13 +425,33 @@ class BlockImporter:
                     ends.add(old)
                 if old in self._bookmark_map:
                     bookmark_end.set(W + "id", self._bookmark_map[old])
-        # A partial bookmark range cannot be made valid by changing only this
-        # selected body interval.  Report it explicitly instead of shipping a
-        # silently broken bookmark.
-        for old in sorted(starts - ends):
-            self._unsupported("unmatched_bookmark_start", bookmark_id=old)
-        for old in sorted(ends - starts):
-            self._unsupported("unmatched_bookmark_end", bookmark_id=old)
+        # Orphaned bookmarks are optional navigation metadata. Drop the
+        # malformed range markers and clear anchors that point to them while
+        # retaining all surrounding text; report the repair in migration stats.
+        unmatched_starts = starts - ends
+        unmatched_ends = ends - starts
+        orphan_names = set().union(*(start_names.get(old, set())
+                                     for old in unmatched_starts)) if unmatched_starts else set()
+        reverse_map = {new: old for old, new in self._bookmark_map.items()}
+        for root in elements:
+            for bookmark in list(root.iter(W + "bookmarkStart")):
+                old = reverse_map.get(bookmark.get(W + "id"), bookmark.get(W + "id"))
+                if old in unmatched_starts:
+                    parent = bookmark.getparent()
+                    if parent is not None:
+                        parent.remove(bookmark)
+                        self.stats["unmatched_bookmark_starts_dropped"] += 1
+            for bookmark_end in list(root.iter(W + "bookmarkEnd")):
+                old = reverse_map.get(bookmark_end.get(W + "id"), bookmark_end.get(W + "id"))
+                if old in unmatched_ends:
+                    parent = bookmark_end.getparent()
+                    if parent is not None:
+                        parent.remove(bookmark_end)
+                        self.stats["unmatched_bookmark_ends_dropped"] += 1
+            for hyperlink in root.iter(W + "hyperlink"):
+                if hyperlink.get(W + "anchor") in orphan_names:
+                    del hyperlink.attrib[W + "anchor"]
+                    self.stats["orphan_bookmark_anchors_removed"] += 1
         for root in elements:
             for hyperlink in root.iter(W + "hyperlink"):
                 anchor = hyperlink.get(W + "anchor")
@@ -435,7 +460,9 @@ class BlockImporter:
 
     def _remap_numeric_xml_id(self, elements, tag, stat_key):
         used = {el.get("id") for el in self._destination_package_elements(tag)}
-        next_id = max((int(value) for value in used if (value or "").isdigit()), default=0) + 1
+        source_ids = {el.get("id") for root in elements for el in root.iter(tag)}
+        next_id = max((int(value) for value in used | source_ids
+                       if (value or "").isdigit()), default=0) + 1
         for root in elements:
             for el in root.iter(tag):
                 old = el.get("id")
