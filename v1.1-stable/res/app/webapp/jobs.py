@@ -93,6 +93,11 @@ def classify_docx(names_sizes):
     return teacher, student
 
 
+def _select_template(template_type):
+    """Return the configured template for the selected generation mode."""
+    return handout.CLASS_TEMPLATE if template_type == "class" else handout.DEFAULT_TEMPLATE
+
+
 def topic_from_name(zip_name, docx_name):
     """授课主题提取：去修饰词只留核心主题，委托引擎层实现。"""
     fallback = os.path.splitext(os.path.basename(zip_name))[0] if zip_name else ""
@@ -229,7 +234,7 @@ def process_job(job_id, inputs, cfg, subject="数学", grade="", handout_type=""
         api_key = cfg["api_key"]
         os.environ["DEEPSEEK_API_KEY"] = api_key  # 传给 llm_split
     produced = []
-    template = handout.CLASS_TEMPLATE if template_type == "class" else handout.DEFAULT_TEMPLATE
+    template = _select_template(template_type)
 
     try:
         for ii, item in enumerate(inputs):

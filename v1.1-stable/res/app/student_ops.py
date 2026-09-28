@@ -24,32 +24,77 @@ import logger
 log = logger.get_logger("student_ops")
 
 
+def _iter_document_paragraphs(doc):
+    """Yield body and table paragraphs, including paragraphs in nested tables."""
+    seen_paragraphs = set()
+    seen_cells = set()
+
+    def _yield_paragraph(paragraph):
+        # Merged cells can be exposed more than once by python-docx.  Process
+        # each backing XML paragraph once so clearing a run stays idempotent.
+        key = paragraph._p
+        if key not in seen_paragraphs:
+            seen_paragraphs.add(key)
+            yield paragraph
+
+    def _walk_table(table):
+        for row in table.rows:
+            for cell in row.cells:
+                cell_key = cell._tc
+                if cell_key in seen_cells:
+                    continue
+                seen_cells.add(cell_key)
+                for paragraph in cell.paragraphs:
+                    yield from _yield_paragraph(paragraph)
+                for nested_table in cell.tables:
+                    yield from _walk_table(nested_table)
+
+    for paragraph in doc.paragraphs:
+        yield from _yield_paragraph(paragraph)
+    for table in doc.tables:
+        yield from _walk_table(table)
+
+
 def strip_red(src_path: str, out_path: str) -> int:
     """
     清除红色答案文字（保留段落结构与公式/OLE对象）。
-    用 python-docx 仅清空红色 run 的文本，不复制段落，故公式不受损。
+    仅清空红色 run 的文本 XML 节点，不复制段落或删除 run，故公式/OLE 不受损。
     返回清除的 run 数。
     """
     from docx import Document
     NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
     doc = Document(src_path)
     n = 0
-    for para in doc.paragraphs:
+    processed_runs = set()
+
+    def _clear_text_nodes(r_elem):
+        """Clear text only, leaving drawings, OLE objects, and run XML intact."""
+        cleared = False
+        for text_elem in r_elem.findall(f".//{NS}t"):
+            if text_elem.text:
+                text_elem.text = ""
+                cleared = True
+        return cleared
+
+    paragraphs = list(_iter_document_paragraphs(doc))
+    for para in paragraphs:
         for run in para.runs:
             col = run.font.color
             if col is not None and col.rgb is not None and _is_red_hex(str(col.rgb).upper()):
-                run.text = ""
-                n += 1
-    # XML 层兜底（python-docx runs 可能漏掉嵌套结构）
-    for para in doc.paragraphs:
+                processed_runs.add(run._element)
+                if _clear_text_nodes(run._element):
+                    n += 1
+    # XML 层兜底（python-docx runs 可能漏掉嵌套结构），同样遍历表格。
+    for para in paragraphs:
         for r_elem in para._element.findall(f".//{NS}r"):
+            if r_elem in processed_runs:
+                continue
             for ce in r_elem.findall(f".//{NS}color"):
                 val = ce.get(f"{NS}val", "")
                 if val and _is_red_hex(val.upper()):
-                    for te in r_elem.findall(f".//{NS}t"):
-                        if te.text:
-                            te.text = ""
-                            n += 1
+                    if _clear_text_nodes(r_elem):
+                        n += 1
+                    break
     doc.save(out_path)
     return n
 

@@ -20,7 +20,7 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))          # res/app
 CONFIG_PATH = os.path.join(APP_DIR, "webapp", "config.json")   # 运行配置
 
 DEFAULT_TEMPLATE = os.path.join(APP_DIR, "2025+1v1讲义模板(2).docx")  # 1v1 模板
-CLASS_TEMPLATE = os.path.join(APP_DIR, "2025班课模板.doc")            # 班课模板
+CLASS_TEMPLATE = os.path.join(APP_DIR, "2025班课模板.docx")          # 班课模板
 
 PS_FILL_1V1 = os.path.join(APP_DIR, "_fill_com.ps1")            # 1v1 模板填充
 PS_FILL_CLASS = os.path.join(APP_DIR, "_fill_class.ps1")        # 班课模板填充

@@ -1,7 +1,7 @@
 ﻿# _fill_class.ps1  ——  Word COM 班课模板填充执行器（由 handout.py 调用）
 # 参数：-ParamsJson 指向一份 JSON，结构见 handout.py
-# 职责：把源文档指定段落范围，原样复制进班课模板(.doc)对应锚点；可选自动套格式。
-# 班课模板为 .doc 老格式，65段纯文本表头 + 6模块锚点。
+# 职责：把源文档指定段落范围，原样复制进班课模板(.docx)对应锚点；可选自动套格式。
+# 班课模板为 .docx 格式，65段纯文本表头 + 6模块锚点。
 param([string]$ParamsJson)
 
 $ErrorActionPreference = "Stop"
@@ -160,7 +160,7 @@ try {
         }
     }
 
-    # 班课模板是 .doc → 另存为 .docx
+    # 班课模板另存为 .docx
     $tplDoc.SaveAs([ref]$p.output_doc, [ref]16)
     $sq = 0
     foreach ($sh in $tplDoc.InlineShapes) { if ($sh.Width -lt 1 -or $sh.Height -lt 1) { $sq++ } }
