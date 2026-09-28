@@ -71,6 +71,51 @@ class XmlEngineBuildTests(unittest.TestCase):
                 ["fixture dangling relationship"],
             )
 
+    def test_build_fails_closed_when_split_returns_none_or_empty_blocks(self):
+        for split_result in (None, [], [("知识精讲", 1)]):
+            with self.subTest(split_result=split_result), tempfile.TemporaryDirectory() as directory:
+                source, template, output = self._documents(directory)
+                with mock.patch.object(xml_engine, "split_ideal", return_value=split_result), \
+                        mock.patch.object(xml_engine, "validate_package") as validate:
+                    with self.assertRaises(xml_engine.XMLGenerationError) as error:
+                        xml_engine.build(source, template, output)
+
+                self.assertEqual("split_failed", error.exception.report["code"])
+                self.assertFalse(os.path.exists(output))
+                validate.assert_not_called()
+
+    def test_build_fails_closed_when_template_anchor_is_missing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source, template, output = self._documents(directory)
+            blocks = [("缺失锚点", 1, 2)]
+            with mock.patch.object(xml_engine, "split_ideal", return_value=blocks), \
+                    mock.patch.object(xml_engine, "validate_package") as validate:
+                with self.assertRaises(xml_engine.XMLGenerationError) as error:
+                    xml_engine.build(source, template, output)
+
+            self.assertEqual("missing_template_anchor", error.exception.report["code"])
+            self.assertEqual("缺失锚点", error.exception.report["marker"])
+            self.assertFalse(os.path.exists(output))
+            validate.assert_not_called()
+
+    def test_build_fails_closed_when_block_range_exceeds_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source, template, output = self._documents(directory)
+            blocks = [("知识精讲", 1, 99)]
+            with mock.patch.object(xml_engine, "split_ideal", return_value=blocks), \
+                    mock.patch.object(xml_engine, "validate_package") as validate:
+                with self.assertRaises(xml_engine.XMLGenerationError) as error:
+                    xml_engine.build(source, template, output)
+
+            self.assertEqual("invalid_block_range", error.exception.report["code"])
+            self.assertEqual({
+                "marker": "知识精讲", "start": 1, "end": 99,
+                "available_paragraph_count": 2,
+            }, {key: error.exception.report[key] for key in (
+                "marker", "start", "end", "available_paragraph_count")})
+            self.assertFalse(os.path.exists(output))
+            validate.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -274,6 +274,43 @@ class BlockImporterTests(unittest.TestCase):
                             for s in destination.part._styles_part.element.findall(W + "style")))
         self.assertEqual(1, report["stats"].get("style_id_collisions_remapped"))
 
+    def test_reused_style_collision_mapping_is_returned_for_siblings(self):
+        source = Document()
+        source_base = source.styles.add_style("SharedBase", WD_STYLE_TYPE.PARAGRAPH)
+        source_base.font.italic = True
+        style_a = source.styles.add_style("StyleA", WD_STYLE_TYPE.PARAGRAPH)
+        style_a.base_style = source_base
+        style_b = source.styles.add_style("StyleB", WD_STYLE_TYPE.PARAGRAPH)
+        style_b.base_style = source_base
+        source.add_paragraph("A", style="StyleA")
+        source.add_paragraph("B", style="StyleB")
+
+        destination = Document()
+        destination_base = destination.styles.add_style(
+            "SharedBase", WD_STYLE_TYPE.PARAGRAPH)
+        destination_base.font.bold = True
+
+        copied, report = BlockImporter(source, destination).import_blocks(body_blocks(source))
+
+        self.assertEqual([], report["unsupported"])
+        expected_base_id = "SharedBase_imported1"
+        for copied_paragraph in copied:
+            style_id = copied_paragraph.find(".//" + W + "pStyle").get(W + "val")
+            imported_style = next(
+                style for style in destination.part._styles_part.element.findall(W + "style")
+                if style.get(W + "styleId") == style_id)
+            self.assertEqual(expected_base_id,
+                             imported_style.find(W + "basedOn").get(W + "val"))
+
+        template_base = next(
+            style for style in destination.part._styles_part.element.findall(W + "style")
+            if style.get(W + "styleId") == "SharedBase")
+        self.assertIsNotNone(template_base.find(".//" + W + "b"))
+        imported_base = next(
+            style for style in destination.part._styles_part.element.findall(W + "style")
+            if style.get(W + "styleId") == expected_base_id)
+        self.assertIsNotNone(imported_base.find(".//" + W + "i"))
+
     def test_template_story_drawing_id_collisions_are_normalized(self):
         image_path = os.path.join(self.tmp.name, "pixel.png")
         with open(image_path, "wb") as image:

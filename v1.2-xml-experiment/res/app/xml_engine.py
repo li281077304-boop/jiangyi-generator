@@ -209,14 +209,53 @@ def build(src_path, tpl_path, out_path, meta=None, block_size=10, markers=None):
     t_all = time.perf_counter()
     paras, children = scan(src_path)
     blocks = split_ideal(paras, block_size=block_size)
+    if not isinstance(blocks, (list, tuple)) or not blocks:
+        reason = "split_ideal returned None" if blocks is None else "split_ideal returned no blocks"
+        raise XMLGenerationError(
+            "Unable to split source document",
+            report={"code": "split_failed", "reason": reason})
+    validated_blocks = []
+    for index, block in enumerate(blocks):
+        if (not isinstance(block, (list, tuple)) or len(block) != 3 or
+                not isinstance(block[0], str) or not block[0].strip()):
+            raise XMLGenerationError(
+                "Split returned an invalid block",
+                report={"code": "split_failed", "block_index": index,
+                        "block": repr(block)})
+        validated_blocks.append(tuple(block))
+    blocks = validated_blocks
+    available_paragraph_count = len(paras)
+    for marker, start, end in blocks:
+        if (not isinstance(start, int) or isinstance(start, bool) or
+                not isinstance(end, int) or isinstance(end, bool) or
+                start < 1 or end < start or end > available_paragraph_count):
+            raise XMLGenerationError(
+                "Split returned an invalid block range",
+                report={"code": "invalid_block_range", "marker": marker,
+                        "start": start, "end": end,
+                        "available_paragraph_count": available_paragraph_count})
     blocks = image_attach_fix(blocks, paras)
 
     p_ci = [i for i, el in enumerate(children) if el.tag == P_TAG]
+    available_paragraph_count = len(p_ci)
+    for marker, start, end in blocks:
+        if start < 1 or end < start or end > available_paragraph_count:
+            raise XMLGenerationError(
+                "Image boundary adjustment produced an invalid block range",
+                report={"code": "invalid_block_range", "marker": marker,
+                        "start": start, "end": end,
+                        "available_paragraph_count": available_paragraph_count})
 
     src_doc = Document(src_path)
     tpl = Document(tpl_path)
 
     anchors = find_anchors(tpl, markers)
+    for marker, start, end in blocks:
+        if marker not in anchors:
+            raise XMLGenerationError(
+                "Template anchor is missing for split block",
+                report={"code": "missing_template_anchor", "marker": marker,
+                        "start": start, "end": end})
     if "知识精讲" in anchors:
         set_page_break_before(anchors["知识精讲"])
     fill_cover(tpl, meta)
@@ -225,8 +264,6 @@ def build(src_path, tpl_path, out_path, meta=None, block_size=10, markers=None):
     importer = BlockImporter(src_doc, tpl)
     for marker, s, e in blocks:
         anchor = anchors.get(marker)
-        if anchor is None or s < 1 or e < s or e > len(p_ci):
-            continue
         ci_lo, ci_hi = p_ci[s - 1], p_ci[e - 1]
         cur = anchor
         imported, import_report = importer.import_blocks(children[ci_lo:ci_hi + 1])

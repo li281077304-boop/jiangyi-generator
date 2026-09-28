@@ -228,7 +228,7 @@ class BlockImporter:
 
     def _copy_style(self, style_id):
         if style_id in self._style_map:
-            return
+            return self._style_map[style_id]
         src_style = self._find_style(self.source_doc.part._styles_part.element, style_id)
         if src_style is None:
             self._unsupported("missing_source_style", style_id=style_id)
