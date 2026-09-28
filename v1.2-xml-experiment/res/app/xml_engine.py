@@ -76,6 +76,8 @@ def split_ideal(paras, block_size=10):
         return [("知识精讲", 1, first_type - 1),
                 ("即时训练", first_type, sect_pos - 1),
                 ("六、巩固练习", sect_pos, last)]
+    if not qnums:
+        return None
     cut = qnums[min(block_size, len(qnums)) - 1]
     return [("知识精讲", 1, first_type - 1),
             ("即时训练", first_type, cut),

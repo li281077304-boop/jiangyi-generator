@@ -84,6 +84,35 @@ class XmlEngineBuildTests(unittest.TestCase):
                 self.assertFalse(os.path.exists(output))
                 validate.assert_not_called()
 
+    def test_split_ideal_returns_failure_when_questions_have_no_recognized_numbers(self):
+        paragraphs = [
+            ("知识内容", None),
+            ("【题型1】题型标题", None),
+            ("未按编号格式标记的题目", None),
+        ]
+
+        self.assertIsNone(xml_engine.split_ideal(paragraphs))
+
+        with tempfile.TemporaryDirectory() as directory:
+            source = os.path.join(directory, "source.docx")
+            template = os.path.join(directory, "template.docx")
+            output = os.path.join(directory, "output.docx")
+            source_doc = Document()
+            for text, _ in paragraphs:
+                source_doc.add_paragraph(text)
+            source_doc.save(source)
+            template_doc = Document()
+            template_doc.add_paragraph("知识精讲")
+            template_doc.save(template)
+
+            with mock.patch.object(xml_engine, "validate_package") as validate:
+                with self.assertRaises(xml_engine.XMLGenerationError) as error:
+                    xml_engine.build(source, template, output)
+
+            self.assertEqual("split_failed", error.exception.report["code"])
+            self.assertFalse(os.path.exists(output))
+            validate.assert_not_called()
+
     def test_build_fails_closed_when_template_anchor_is_missing(self):
         with tempfile.TemporaryDirectory() as directory:
             source, template, output = self._documents(directory)
