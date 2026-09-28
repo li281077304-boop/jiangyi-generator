@@ -113,6 +113,28 @@ class XmlEngineBuildTests(unittest.TestCase):
             self.assertFalse(os.path.exists(output))
             validate.assert_not_called()
 
+    def test_split_ideal_preserves_unheaded_real_documents_as_one_practice_block(self):
+        paragraphs = [("Opening", None), ("Question without engine heading", None),
+                      ("Closing", None)]
+        self.assertEqual([("即时训练", 1, 3)], xml_engine.split_ideal(paragraphs))
+        self.assertIsNone(xml_engine.split_ideal([]))
+
+        with tempfile.TemporaryDirectory() as directory:
+            source, template, output = self._documents(directory)
+            template_doc = Document()
+            template_doc.add_paragraph("即时训练")
+            template_doc.save(template)
+            used, stats = xml_engine.build(source, template, output)
+            self.assertEqual([("即时训练", 1, 2)], used)
+            self.assertTrue(stats["package_validation"]["valid"])
+            generated = Document(output)
+            text = "".join(run.text for p in generated.paragraphs for run in p.runs)
+            self.assertIn("SOURCE FIRST", text)
+            self.assertIn("SOURCE LAST", text)
+            self.assertIn("SOURCE TABLE", "".join(
+                cell.text for table in generated.tables for row in table.rows
+                for cell in row.cells))
+
     def test_split_ideal_omits_empty_blocks_for_short_question_sets(self):
         for question_count in (1, 10, 11):
             with self.subTest(question_count=question_count):

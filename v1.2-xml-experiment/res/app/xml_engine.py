@@ -67,7 +67,11 @@ def split_ideal(paras, block_size=10):
         return None
     first_type = next((i for i, (t, _) in enumerate(paras, 1) if _TYPE.match(t)), None)
     if first_type is None:
-        return None
+        # Preserve a handout that does not use the experiment's optional
+        # 【题型】 headings. The practice anchor is the least assumptive
+        # destination for a whole-document fallback and keeps all source
+        # paragraphs and interleaved tables in the output.
+        return [("即时训练", 1, len(paras))] if paras else None
     qnums = [i for i, (t, _) in enumerate(paras, 1) if _QNUM.match(t)]
     sect_pos = next(
         (i for i, t in enumerate((t for t, _ in paras[first_type:]), first_type + 1)

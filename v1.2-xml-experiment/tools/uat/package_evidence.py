@@ -19,6 +19,7 @@ R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
 V_NS = "urn:schemas-microsoft-com:vml"
 O_NS = "urn:schemas-microsoft-com:office:office"
+M_NS = "http://schemas.openxmlformats.org/officeDocument/2006/math"
 PKG_REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
 
 W = "{%s}" % W_NS
@@ -26,6 +27,7 @@ R = "{%s}" % R_NS
 A = "{%s}" % A_NS
 V = "{%s}" % V_NS
 O = "{%s}" % O_NS
+M = "{%s}" % M_NS
 
 
 def _xml_root(zf, name):
@@ -72,6 +74,7 @@ def _element_counts(elements):
     """Return counts for content references in an iterable of XML roots."""
     paragraphs = tables = image_references = vml_image_references = 0
     ole_references = ole_preview_image_references = 0
+    omml_math_elements = omml_paragraphs = 0
     for element in elements:
         paragraphs += sum(1 for _ in element.iter(W + "p"))
         tables += sum(1 for _ in element.iter(W + "tbl"))
@@ -82,6 +85,8 @@ def _element_counts(elements):
             vml_image_references += int(bool(image_data.get(R + "id")))
             vml_image_references += int(bool(image_data.get(R + "link")))
         ole_references += sum(1 for _ in element.iter(O + "OLEObject"))
+        omml_math_elements += sum(1 for _ in element.iter(M + "oMath"))
+        omml_paragraphs += sum(1 for _ in element.iter(M + "oMathPara"))
         for obj in element.iter(W + "object"):
             ole_preview_image_references += sum(
                 1 for image_data in obj.iter(V + "imagedata")
@@ -93,6 +98,8 @@ def _element_counts(elements):
         "vml_image_references": vml_image_references,
         "ole_references": ole_references,
         "ole_preview_image_references": ole_preview_image_references,
+        "omml_math_elements": omml_math_elements,
+        "omml_paragraphs": omml_paragraphs,
     }
 
 

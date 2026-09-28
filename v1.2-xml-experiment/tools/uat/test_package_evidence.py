@@ -23,7 +23,7 @@ APP = os.path.normpath(os.path.join(HERE, "..", "..", "res", "app"))
 sys.path.insert(0, HERE)
 sys.path.insert(0, APP)
 
-from package_evidence import (A_NS, O_NS, R_NS, V_NS, W_NS,
+from package_evidence import (A_NS, M_NS, O_NS, R_NS, V_NS, W_NS,
                               collect_package_evidence,
                               collect_selected_block_evidence)
 
@@ -32,6 +32,7 @@ W = "{%s}" % W_NS
 R = "{%s}" % R_NS
 V = "{%s}" % V_NS
 OLE_REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject"
+M = "{%s}" % M_NS
 CUSTOM_REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml"
 PNG = (
     b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
@@ -66,6 +67,10 @@ class PackageEvidenceTests(unittest.TestCase):
         document = Document()
         document.styles.add_style("EvidenceParagraph", WD_STYLE_TYPE.PARAGRAPH)
         paragraph = document.add_paragraph("selected text", style="EvidenceParagraph")
+        math_para = etree.SubElement(paragraph._p, M + "oMathPara")
+        math = etree.SubElement(math_para, M + "oMath")
+        math_run = etree.SubElement(math, M + "r")
+        etree.SubElement(math_run, M + "t").text = "x"
         num_id = document.part.numbering_part.element.findall(W + "num")[0].get(W + "numId")
         p_pr = paragraph._p.get_or_add_pPr()
         num_pr = etree.SubElement(p_pr, W + "numPr")
@@ -118,6 +123,8 @@ class PackageEvidenceTests(unittest.TestCase):
         self.assertEqual(2, evidence["vml_image_references"])
         self.assertEqual(1, evidence["ole_references"])
         self.assertEqual(1, evidence["ole_preview_image_references"])
+        self.assertEqual(1, evidence["omml_math_elements"])
+        self.assertEqual(1, evidence["omml_paragraphs"])
         self.assertGreater(evidence["relationship_count"], 0)
         self.assertIn("EvidenceParagraph", evidence["style_references"])
         self.assertIn(num_id, evidence["numbering_references"])
@@ -141,6 +148,8 @@ class PackageEvidenceTests(unittest.TestCase):
         self.assertEqual(2, evidence["vml_image_references"])
         self.assertEqual(1, evidence["ole_references"])
         self.assertEqual(1, evidence["ole_preview_image_references"])
+        self.assertEqual(1, evidence["omml_math_elements"])
+        self.assertEqual(1, evidence["omml_paragraphs"])
         self.assertIn("EvidenceParagraph", evidence["style_references"])
         self.assertIn(num_id, evidence["numbering_references"])
         self.assertEqual([{"partname": "/word/embeddings/evidence1.bin",
