@@ -15,16 +15,15 @@ xml_engine.py —— Flash 1.2 不启动 Word 的纯 XML 讲义生成引擎
 """
 import os
 import re
-import copy
 import time
 from docx import Document
-from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+
+from block_importer import BlockImporter
+from package_validator import validate_package
 
 # 命名空间常量
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
-R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 P_TAG = "{%s}p" % W_NS
 TBL_TAG = "{%s}tbl" % W_NS
 T_TAG = "{%s}t" % W_NS
@@ -114,30 +113,6 @@ def image_attach_fix(blocks, paras):
     return [tuple(b) for b in blocks]
 
 
-# ===================== 通用关系迁移 =====================
-
-def migrate_rels(new_el, src_part, tpl_part):
-    """
-    遍历元素中的 r:embed / r:id / r:link（a:blip、v:imagedata、o:OLEObject、hyperlink），
-    把对应关系（图片/oleObject/超链接）注册到模板并改写 rId。
-    数学文档有 1116 个 OLE 对象，不迁移 OLE 关系会导致 Word 显示乱码/挤一坨。
-    """
-    migrated = 0
-    for el in new_el.iter():
-        for attr in ("{%s}embed" % R_NS, "{%s}id" % R_NS, "{%s}link" % R_NS):
-            rid = el.get(attr)
-            if not rid or rid not in src_part.rels:
-                continue
-            rel = src_part.rels[rid]
-            target = rel.target_part
-            if target is None:
-                continue
-            new_rid = tpl_part.relate_to(target, rel.reltype)
-            el.set(attr, new_rid)
-            migrated += 1
-    return migrated
-
-
 # ===================== 锚点定位 =====================
 
 def find_anchors(tpl, markers):
@@ -207,6 +182,18 @@ def set_page_break_before(p_el):
 
 # ===================== 主流程 =====================
 
+class XMLGenerationError(RuntimeError):
+    """Fail closed and preserve the structured import/validation report."""
+
+    def __init__(self, message, report=None):
+        super().__init__(message)
+        self.report = report or {}
+
+
+class PackageValidationError(XMLGenerationError):
+    """Raised when a saved DOCX package fails structural validation."""
+
+
 def build(src_path, tpl_path, out_path, meta=None, block_size=10, markers=None):
     """
     一站式生成讲义 XML 成品：
@@ -234,24 +221,40 @@ def build(src_path, tpl_path, out_path, meta=None, block_size=10, markers=None):
         set_page_break_before(anchors["知识精讲"])
     fill_cover(tpl, meta)
 
-    copied = migrated = 0
+    copied = 0
+    importer = BlockImporter(src_doc, tpl)
     for marker, s, e in blocks:
         anchor = anchors.get(marker)
-        if anchor is None:
+        if anchor is None or s < 1 or e < s or e > len(p_ci):
             continue
         ci_lo, ci_hi = p_ci[s - 1], p_ci[e - 1]
         cur = anchor
-        for el in children[ci_lo:ci_hi + 1]:
-            new_el = copy.deepcopy(el)
-            migrated += migrate_rels(new_el, src_doc.part, tpl.part)
+        imported, import_report = importer.import_blocks(children[ci_lo:ci_hi + 1])
+        if import_report["unsupported"]:
+            raise XMLGenerationError(
+                "Block import encountered unsupported dependencies",
+                report={"migration": import_report})
+        for new_el in imported:
             cur.addnext(new_el)
             cur = new_el
             copied += 1
 
     tpl.save(out_path)
+    validation = validate_package(out_path)
+    if not validation["valid"]:
+        try:
+            os.remove(out_path)
+        except OSError:
+            pass
+        report = {"migration": importer.report(), "package_validation": validation}
+        raise PackageValidationError(
+            "Generated DOCX failed package validation: %s" %
+            "; ".join(validation["errors"][:5]), report=report)
     elapsed = time.perf_counter() - t_all
-    return blocks, {"copied": copied, "migrated": migrated, "elapsed_s": elapsed,
-                    "out_size_kb": os.path.getsize(out_path) / 1024}
+    stats = {"copied": copied, "migration": importer.report(),
+             "package_validation": validation, "elapsed_s": elapsed,
+             "out_size_kb": os.path.getsize(out_path) / 1024}
+    return blocks, stats
 
 
 # ===================== CLI =====================
