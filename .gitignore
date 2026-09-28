@@ -1,0 +1,12 @@
+# Local Python runtime and generated state
+**/res/python/
+**/__pycache__/
+**/logs/
+**/config.json
+**/.venv/
+*.py[cod]
+
+# Generated handouts and archives
+**/outputs/
+**/生成讲义结果/
+*.tmp
