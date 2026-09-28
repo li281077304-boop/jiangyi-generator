@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "samples": [
+    {
+      "id": "example-1v1",
+      "source": "relative/path/to/teacher-handout.docx",
+      "template": "v1.1-stable/res/app/2025+1v1讲义模板(2).docx",
+      "meta": {
+        "subject": "数学",
+        "grade": "请按样本填写",
+        "topic": "请按样本填写",
+        "handout_type": "请按样本填写",
+        "objectives": "请按样本填写",
+        "difficulties": "请按样本填写"
+      }
+    }
+  ]
+}

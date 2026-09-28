@@ -63,6 +63,8 @@ def split_ideal(paras, block_size=10):
       即时训练 = 题型1 .. 提升专练/真题感知 标题前（无分区则到第 N 题）
       巩固练习 = 提升专练/真题感知 .. 文末
     """
+    if not isinstance(block_size, int) or isinstance(block_size, bool) or block_size < 1:
+        return None
     first_type = next((i for i, (t, _) in enumerate(paras, 1) if _TYPE.match(t)), None)
     if first_type is None:
         return None
@@ -73,15 +75,32 @@ def split_ideal(paras, block_size=10):
         None)
     last = len(paras)
     if sect_pos:
-        return [("知识精讲", 1, first_type - 1),
-                ("即时训练", first_type, sect_pos - 1),
-                ("六、巩固练习", sect_pos, last)]
+        blocks = []
+        if first_type > 1:
+            blocks.append(("知识精讲", 1, first_type - 1))
+        if first_type < sect_pos:
+            blocks.append(("即时训练", first_type, sect_pos - 1))
+        if sect_pos <= last:
+            blocks.append(("六、巩固练习", sect_pos, last))
+        return blocks or None
     if not qnums:
         return None
+    if len(qnums) <= block_size:
+        blocks = []
+        if first_type > 1:
+            blocks.append(("知识精讲", 1, first_type - 1))
+        if first_type <= last:
+            blocks.append(("即时训练", first_type, last))
+        return blocks or None
     cut = qnums[min(block_size, len(qnums)) - 1]
-    return [("知识精讲", 1, first_type - 1),
-            ("即时训练", first_type, cut),
-            ("六、巩固练习", cut + 1, last)]
+    blocks = []
+    if first_type > 1:
+        blocks.append(("知识精讲", 1, first_type - 1))
+    if first_type <= cut:
+        blocks.append(("即时训练", first_type, cut))
+    if cut < last:
+        blocks.append(("六、巩固练习", cut + 1, last))
+    return blocks or None
 
 
 # ===================== 图片归属修正 =====================

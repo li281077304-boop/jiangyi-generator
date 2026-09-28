@@ -113,6 +113,32 @@ class XmlEngineBuildTests(unittest.TestCase):
             self.assertFalse(os.path.exists(output))
             validate.assert_not_called()
 
+    def test_split_ideal_omits_empty_blocks_for_short_question_sets(self):
+        for question_count in (1, 10, 11):
+            with self.subTest(question_count=question_count):
+                paragraphs = [("知识内容", None), ("【题型1】练习", None)]
+                paragraphs.extend(
+                    ("%s.（2024）题目%s" % (index, index), None)
+                    for index in range(1, question_count + 1)
+                )
+                blocks = xml_engine.split_ideal(paragraphs, block_size=10)
+
+                self.assertTrue(blocks)
+                self.assertTrue(all(1 <= start <= end <= len(paragraphs)
+                                    for _, start, end in blocks))
+                if question_count <= 10:
+                    self.assertEqual(["知识精讲", "即时训练"],
+                                     [marker for marker, _, _ in blocks])
+                    self.assertEqual(len(paragraphs), blocks[-1][2])
+                else:
+                    self.assertEqual(["知识精讲", "即时训练", "六、巩固练习"],
+                                     [marker for marker, _, _ in blocks])
+
+        heading_first = [("【题型1】练习", None), ("1.（2024）题目", None)]
+        first_blocks = xml_engine.split_ideal(heading_first)
+        self.assertEqual([("即时训练", 1, 2)], first_blocks)
+        self.assertIsNone(xml_engine.split_ideal(heading_first, block_size=0))
+
     def test_build_fails_closed_when_template_anchor_is_missing(self):
         with tempfile.TemporaryDirectory() as directory:
             source, template, output = self._documents(directory)
