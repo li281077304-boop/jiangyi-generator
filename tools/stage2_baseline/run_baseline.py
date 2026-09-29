@@ -35,8 +35,9 @@ BLOCK_ROLES = [
     (re.compile(r"^(参考答案|答案与解析|答案解析|答案与点拨|答案详解|试题解析|解析与答案|"
                 r"【答案】|【解析】|【思路】|解析：)"), "answer"),
 ]
-RE_MATERIAL_HEAD = re.compile(r"^(范文|例文|参考范文|Passage\s*\d|阅读(材料|短文|理解)|"
-                              r"材料\s*\d|语篇\s*\d|【材料】|示例)")
+RE_READING_MATERIAL_HEAD = re.compile(r"^(?:Passage\s*\d+|阅读(?:材料|短文)|材料\s*\d+|语篇\s*\d+|【材料】)", re.I)
+RE_SOURCE_CITATION = re.compile(r"^\s*[（(]\s*(?:19|20)\d{2}\s*[·•.．]")
+RE_NUMERIC_SECTION = re.compile(r"^\s*\d{1,2}\s*$")
 RE_TYPE_HEAD = re.compile(r"^[【\[（(]?(题型|类型|角度|考点|考向|专题)\s*\d+")
 RE_TOC_LINE = re.compile(r"(\.{5,}|·{5,}|．{5,})")
 RE_TOC_ENTRY = re.compile(r"(\.{3,}|·{3,}|．{3,})\s*\d{1,4}\s*$")
@@ -70,7 +71,7 @@ EXERCISE_LABELS = ("即时训练", "基础巩固", "基础速刷", "能力提升
                    "当堂检测", "达标检测", "实战演练", "写作训练", "强化训练", "课后作业",
                    "随堂练习", "变式训练", "考点突破", "专项训练")
 MERGE_ROLES = {"answer", "analysis", "knowledge", "body"}
-BASELINE_ID = "question-boundary-rules-v2"
+BASELINE_ID = "reading-material-binding-v3"
 
 
 def _heading_text(text):
@@ -114,7 +115,7 @@ def _reading_material_gap_start(index, left_order, right_order):
     return None
 
 
-def detect_question_runs(index, zones, section_orders):
+def detect_question_runs(index, zones, section_orders, material_orders):
     """Identify actual prompt starts instead of one candidate per numbered run.
 
     Number-only lines are suppressed in knowledge/answer regions and in
@@ -149,24 +150,30 @@ def detect_question_runs(index, zones, section_orders):
         is_reading = bool(RE_READING_QUESTION.match(t))
         crossed_section = previous_item_order is not None and any(
             previous_item_order < p <= i for p in section_orders)
+        crossed_material = previous_item_order is not None and any(
+            previous_item_order < p <= i for p in material_orders)
+        latest_material = max((p for p in material_orders if p <= i), default=None)
+        latest_section = max((p for p in section_orders if p <= i), default=None)
+        material_context = (latest_material is not None
+                            and (latest_section is None or latest_material > latest_section))
         material_gap_start = None
-        same_sequence = (
-            is_reading and reading_group and number == (previous_number or 0) + 1
-            and previous_item_order is not None and not crossed_section
-        )
+        same_sequence = (reading_group and previous_item_order is not None
+                         and not crossed_section and not crossed_material
+                         and ((material_context) or
+                              (is_reading and number == (previous_number or 0) + 1)))
         if same_sequence:
             material_gap_start = _reading_material_gap_start(index, previous_item_order, i)
         same_reading_group = same_sequence and material_gap_start is None
         if material_gap_start is not None:
-            out.append({"node": index.nodes[material_gap_start].id, "role": "body", "conf": "medium",
-                        "evidence": "连续阅读题组之间的独立长文区域"})
+            out.append({"node": index.nodes[material_gap_start].id, "role": "shared_material", "conf": "medium",
+                        "evidence": "连续阅读题之间出现独立长文材料"})
         if not same_reading_group:
             out.append({"node": node.id, "role": "question_group", "conf": "high",
                         "evidence": "题号 + 题干特征" if RE_QUESTION_CUE.search(t)
                         else "练习区连续题号"})
         previous_number = number
         previous_item_order = i
-        reading_group = is_reading
+        reading_group = is_reading or material_context
     return out
 
 
@@ -178,10 +185,13 @@ def detect(index, doc):
     cands, toc_nodes = [], []
     zone_markers = {}
     active_zone = "body"
+    material_orders = set()
     for i, n in enumerate(index.nodes):
         t = _norm(n.text)
         if not t:
             continue
+        next_nonempty = next((candidate for candidate in index.nodes[i + 1:]
+                              if _norm(candidate.text)), None)
         if RE_TOC_LINE.search(t) or RE_TOC_WORD.match(t):
             continue
         title = _heading_text(t)
@@ -189,6 +199,13 @@ def detect(index, doc):
         zone = None
         if RE_TYPE_HEAD.match(title) or RE_ANGLE_SECTION.match(title):
             hit, zone = ("section", "栏目/题型标题"), "exercise"
+        elif (RE_NUMERIC_SECTION.match(t) and next_nonempty is not None
+              and RE_SOURCE_CITATION.match(_norm(next_nonempty.text))):
+            hit, zone = ("section", "材料前的独立序号"), "body"
+        elif (RE_READING_MATERIAL_HEAD.match(t) or RE_READING_MATERIAL_HEAD.match(title)
+              or RE_SOURCE_CITATION.match(t)):
+            hit = ("shared_material", "阅读材料标题/来源标记")
+            material_orders.add(i)
         elif any(title.startswith(label) for label in EXERCISE_LABELS):
             hit, zone = ("section", "训练栏目标题"), "exercise"
         elif (RE_ORDERED_SECTION.match(t) and len(t) <= 80
@@ -263,7 +280,9 @@ def detect(index, doc):
         zones.append(current_zone)
     section_orders = [i for i, c in enumerate(index.nodes)
                       if any(u["node"] == c.id and u["role"] == "section" for u in cands)]
-    cands.extend(detect_question_runs(index, zones, section_orders))
+    material_orders.update(i for i, c in enumerate(index.nodes)
+                           if any(u["node"] == c.id and u["role"] == "shared_material" for u in cands))
+    cands.extend(detect_question_runs(index, zones, section_orders, material_orders))
     toc_containers = [c["toc_container"] for c in cands if c.get("toc_container")]
     if toc_containers:
         cands = [c for c in cands if not (c["node"] in index.by_id and
@@ -487,10 +506,10 @@ def run(manifest_path, corpus_root, out_dir):
 
 def render_summary(summary):
     qg = summary["role_totals"]["question_group"]
-    lines = ["# Splitter V2 Stage2 题目边界基线", "",
-             "本轮对 `_research/gen_gold_draft.py` 候选规则做了有范围的 Stage2-1 边界调整："
-             "显式栏目标题成为 section，题目起点单独识别；未修改 Gold，未实现 shared_material、"
-             "answer 或 analysis 的新识别。`gold_compare.py` 是正式对照器。",
+    lines = ["# Splitter V2 Stage2 题目边界与共享材料基线", "",
+             "本轮在 Stage2-1 题目边界规则上增加了通用阅读材料识别：显式材料标题或来源年份标记"
+             "起始 shared_material，材料前独立序号作为 section，题干中的连续阅读题组成 question_group"
+             "并绑定到最近材料。未修改 Gold，也未扩展 answer 或 analysis。`gold_compare.py` 是正式对照器。",
              "正确=Gold 单元与预测单元节点集合完全相同且角色相同；漏识别=未精确匹配的 Gold 单元；"
              "错误识别=未精确匹配的预测单元；边界错误=有同角色预测与 Gold 节点相交但范围不一致。",
              "漏识别/错误识别统计单位为单元，可与边界错误重叠。程序额外输出 body/knowledge 等角色，"
@@ -524,7 +543,7 @@ def render_summary(summary):
               "", "## 边界结果解读", "",
               "四份正式 Gold 中 question_group 精确命中 %d/%d；GoldCompare 的 MERGE 共 %d。"
               "具体按样本及角色列于上表。" % (qg["correct"], qg["gold"], merge_total),
-              "S04 的 shared_material 未作为本轮识别目标；其关联/边界差异仍留在错误清单中，不作为已支持能力。", "",
+              "材料边界由文本标题/来源标记及题目起点共同确定；遇到下一材料时，上一题组在新材料前结束。", "",
               "## 可重复性", "", "同一 runner、相同 source SHA256、相同 Gold 文件与 StructDoc 代码会生成相同预测单元和对照统计；"
               "报告不含运行耗时等非确定性字段。", ""]
     return "\n".join(lines)

@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.abspath(BASELINE_DIR))
 
 from run_baseline import predict  # noqa: E402
 from struct_doc import Block, StructDoc  # noqa: E402
+from gold_compare import compare  # noqa: E402
 
 
 def _fixture(texts):
@@ -90,6 +91,50 @@ def test_toc_detection_remains_intact():
     _, units = predict(doc)
     assert any(u["role"] == "toc" for u in units)
     assert any(u["role"] == "question_group" for u in units)
+
+
+def test_cited_reading_materials_bind_only_to_their_question_groups():
+    doc = _fixture(["阅读理解", "01", "（2024·省级模拟）First article paragraph.",
+                    "More article text.", "1. What is the first question?", "A. Answer one.",
+                    "2. Which statement is correct?", "B. Answer two.", "02",
+                    "（2023·校级模拟）Second article paragraph.",
+                    "3. Who is mentioned in the text?", "A. A student."])
+    index, units = predict(doc)
+    materials = [u for u in units if u["role"] == "shared_material"]
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(materials) == 2
+    assert len(groups) == 2
+    assert groups[0]["bind_to"] == materials[0]["id"]
+    assert groups[1]["bind_to"] == materials[1]["id"]
+    second_material_start = index.order_of(materials[1]["spans"][0][0])
+    first_group_end = index.order_of(groups[0]["spans"][0][1])
+    assert first_group_end < second_material_start
+    gold = {"units": [
+        {"id": "m1", "role": "shared_material", "start": 2, "end": 3},
+        {"id": "q1", "role": "question_group", "start": 4, "end": 7, "bind_to": "m1"},
+        {"id": "m2", "role": "shared_material", "start": 9, "end": 9},
+        {"id": "q2", "role": "question_group", "start": 10, "end": 11, "bind_to": "m2"},
+    ]}
+    comparison = compare(doc, gold, units)
+    assert not any(issue.code in ("UNBOUND", "GROUP_SPLIT", "DUPLICATION")
+                   for issue in comparison.issues)
+
+
+def test_cited_chinese_reading_questions_share_one_group():
+    doc = _fixture(["阅读理解", "01", "（2024·省级模拟）中文阅读材料。",
+                    "1. 下列哪项正确？", "A. 第一项。", "2. 哪项符合文意？", "B. 第二项。"])
+    _, units = predict(doc)
+    assert len([u for u in units if u["role"] == "shared_material"]) == 1
+    assert len([u for u in units if u["role"] == "question_group"]) == 1
+
+
+def test_explicit_reading_material_heading_starts_material():
+    doc = _fixture(["阅读理解", "【材料】一段阅读文字。", "1. Which choice is right?"])
+    _, units = predict(doc)
+    materials = [u for u in units if u["role"] == "shared_material"]
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(materials) == len(groups) == 1
+    assert groups[0]["bind_to"] == materials[0]["id"]
 
 
 def test_real_corpus_manifest_has_exact_gold_set():
