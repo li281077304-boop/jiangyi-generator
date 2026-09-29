@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+<title>讲义生成器 · DTB</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f0f2f5;color:#1d1d1f;font-size:14px}
+.wrap{max-width:680px;margin:0 auto;padding:30px 20px 60px}
+header{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:16px;padding:18px 24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo .icon{width:38px;height:38px;border-radius:10px;background:#0071e3;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+h1{font-size:17px;font-weight:600}.sub{font-size:12px;color:#86868b;font-weight:400;margin-left:4px}
+.gear{width:34px;height:34px;border-radius:50%;border:none;background:#f5f5f7;font-size:17px;cursor:pointer;flex-shrink:0}.gear:hover{background:#e8e8ed}
+.card{background:#fff;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:12px;font-weight:600;color:#86868b;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px}
+.subjects{display:flex;flex-wrap:wrap;gap:8px}
+.subj{width:70px;border:1.5px solid #e8e8ed;border-radius:10px;padding:12px 4px;text-align:center;cursor:pointer;background:#fafafa;font-size:11px;flex-shrink:0}
+.subj:hover{border-color:#0071e3}.subj.active{border-color:#0071e3;background:#eef4ff}
+.subj .ico{font-size:20px}.subj .name{font-size:11px;font-weight:500;margin-top:4px}
+.meta-row{display:flex;gap:1%;margin-top:16px}
+.meta-col{flex:1;min-width:0}
+.meta-col .mlbl{font-size:11px;color:#86868b;margin-bottom:4px}
+.meta-col select{width:100%;padding:10px 12px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;background:#fff}
+.meta-col select:focus{outline:none;border-color:#0071e3}
+.preview-box{margin-top:14px;padding:10px 14px;background:#f5f5f7;border-radius:10px;font-size:12px;color:#86868b}
+.preview-box .fn{font-family:Consolas,monospace;font-size:12px;color:#1d1d1f}
+.drop{border:2px dashed #d0d0d5;border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;background:#fafafa;transition:border-color .2s,background .2s}
+.drop:hover{border-color:#0071e3;background:#f5f9ff}
+.drop.over{border-color:#0071e3;background:#eef4ff}
+.filelist{margin-top:10px}
+.fileitem{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f5f5f7;border-radius:8px;margin-bottom:4px;font-size:12px}
+.fileitem span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fileitem .rm{color:#ff3b30;cursor:pointer;border:none;background:none;font-size:16px;flex-shrink:0;margin-left:8px}
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:14px;background:#0071e3;color:#fff;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,113,227,.2)}
+.btn:hover{background:#0077ed}.btn:active{background:#0062cc}
+.btn:disabled{background:#d0d0d5;color:#a1a1a6;cursor:not-allowed;box-shadow:none}
+.dlbtn{background:#30d158}.dlbtn:hover{background:#28c84e}
+.progress-wrap{display:none}
+.bar{height:8px;background:#e8e8ed;border-radius:4px;margin:14px 0;overflow:hidden}
+.bar>div{height:100%;background:linear-gradient(90deg,#0071e3,#30d158);border-radius:4px;width:0;transition:width .4s}
+.ptext{font-size:14px;font-weight:500}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid #eee}th{color:#86868b;font-weight:500;font-size:10px}
+.ok{color:#30d158;font-weight:600}.fail{color:#ff3b30}.wait{color:#ff9f0a}
+.warnbox{margin-top:12px;font-size:11px;color:#ff9f0a;background:#fffbf0;border:1px solid #ffd4a8;border-radius:10px;padding:10px 14px;display:none}
+.modal{visibility:hidden;opacity:0;pointer-events:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:100;transition:opacity .15s}
+.modal.show{visibility:visible;opacity:1;pointer-events:auto}
+.modal .box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:16px;padding:28px;width:90%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:14px}
+.modal input{width:100%;padding:10px 12px;border:1.5px solid #e8e8ed;border-radius:10px;font-size:13px;margin-bottom:6px}
+.modal input:focus{outline:none;border-color:#0071e3}
+.modal .desc{font-size:11px;color:#86868b;margin-bottom:14px}
+.modal .row{display:flex;gap:12px}
+.modal .row button{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:13px;white-space:nowrap}
+.modal .save{background:#0071e3;color:#fff}.modal .cancel{background:#f5f5f7;color:#1d1d1f}
+.keystatus{font-size:12px;color:#86868b;margin-top:6px}
+@media (max-width:640px){.meta-row{flex-wrap:wrap;gap:8px}.meta-col{flex:1 1 48%;margin-bottom:8px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="logo"><div class="icon" style="font-weight:800;font-size:15px;letter-spacing:-0.5px">DTB</div><div><h1>讲义生成器<span class="sub"> · 上传素材，自动生成教师版+学生版</span></h1></div></div>
+<button class="gear" onclick="openSettings()" title="设置">⚙</button>
+</header>
+
+<div class="card"><div class="card-title">① 配置</div>
+<div class="subjects" id="subjectGrid"></div>
+<div class="meta-row">
+<div class="meta-col"><div class="mlbl">学段</div><select id="eduLevel"><option value="小学">小学</option><option value="初中">初中</option><option value="高中" selected>高中</option></select></div>
+<div class="meta-col"><div class="mlbl">年级</div><select id="gradeSelect"></select></div>
+<div class="meta-col"><div class="mlbl">课程类型</div><select id="handoutType"></select></div>
+<div class="meta-col"><div class="mlbl">模板</div><select id="templateType"><option value="1v1">1v1 讲义模板</option><option value="class">班课模板</option></select></div>
+</div>
+<div class="preview-box"><span class="fn" id="filenamePreview">2024-2025学年_高一_数学_专题名_复习讲义_教师版.docx</span></div>
+</div>
+
+<div class="card"><div class="card-title">② 上传素材</div>
+<div class="drop" id="drop">
+ <div style="font-size:42px;margin-bottom:6px">📋</div>
+ <div style="font-size:14px;font-weight:500;margin-bottom:4px">点击或拖拽上传</div>
+ <div style="color:#a1a1a6;font-size:11px">支持 .zip（含成对 docx）或 .docx（单个去答案 / 两个成对）</div>
+</div>
+<input type="file" id="fileInput" accept=".zip,.docx" multiple style="display:none">
+<div class="filelist" id="filelist"></div>
+</div>
+
+<button class="btn" id="startBtn" onclick="start()" disabled>③ 开始生成</button>
+
+<div class="card progress-wrap" id="progressWrap" style="margin-top:16px">
+<div class="card-title">处理进度</div>
+<div class="ptext" id="ptext">准备中...</div>
+<div class="bar"><div id="barfill"></div></div>
+<table id="itemtable"><thead><tr><th>专题</th><th>教师版</th><th>学生版</th></tr></thead><tbody></tbody></table>
+<div class="warnbox" id="warnbox"></div>
+<button class="btn dlbtn" id="dlBtn" style="display:none;margin-top:14px" onclick="downloadResult()">⬇ 下载讲义成品 (zip)</button>
+</div>
+</div>
+
+<div class="modal" id="settings"><div class="box">
+<h3>API Key（可选）</h3>
+<input type="password" id="apiKey" placeholder="sk-ant-...">
+<div class="desc">填写后 AI 生成教学目标。留空使用离线模板。Key 仅保存在本机。</div>
+<div class="keystatus" id="keystatus"></div>
+<div class="row"><button class="cancel" onclick="closeSettings()">取消</button><button class="save" onclick="saveKey()">保存</button></div>
+</div></div>
+
+<script>
+var ALL_SUBJECTS=[['📖','语文'],['📐','数学'],['🌎','英语'],['⚗️','物理'],['🧪','化学'],['🧬','生物'],['🏛️','历史'],['🌍','地理'],['⚖️','道德与法治']];
+var GRADE_MAP={'小学':['一年级','二年级','三年级','四年级','五年级','六年级'],'初中':['七年级','八年级','九年级'],'高中':['高一','高二','高三']};
+var HANDOUT_TYPES=['复习讲义','同步练习','专题训练','单元测试','期中复习','期末复习','中考复习','高考复习','学案','导学案'];
+var selectedSubject='数学',files=[],jobId=null,poll=null,failCount=0,dotTimer=null;
+function init(){
+ var g=document.getElementById('subjectGrid');
+ for(var i=0;i<ALL_SUBJECTS.length;i++){
+  (function(a){
+   var d=document.createElement('div');d.className='subj'+(a[1]===selectedSubject?' active':'');d.innerHTML='<div class="ico">'+a[0]+'</div><div class="name">'+a[1]+'</div>';
+   d.onclick=function(){var cards=g.querySelectorAll('.subj');for(var j=0;j<cards.length;j++)cards[j].className='subj';d.className='subj active';selectedSubject=a[1];updatePreview();};
+   g.appendChild(d);
+  })(ALL_SUBJECTS[i]);
+ }
+ onEduLevelChange(document.getElementById('eduLevel').value);
+ var ht=document.getElementById('handoutType');for(var i=0;i<HANDOUT_TYPES.length;i++){var o=document.createElement('option');o.value=HANDOUT_TYPES[i];o.textContent=HANDOUT_TYPES[i];if(HANDOUT_TYPES[i]==='复习讲义')o.selected=true;ht.appendChild(o);}
+ document.getElementById('eduLevel').onchange=function(){onEduLevelChange(document.getElementById('eduLevel').value);};
+ document.getElementById('gradeSelect').onchange=updatePreview;
+ document.getElementById('handoutType').onchange=updatePreview;
+ document.getElementById('templateType').onchange=updatePreview;
+ setupUpload('drop','fileInput',files); updatePreview();
+}
+function onEduLevelChange(v){var gs=document.getElementById('gradeSelect');gs.innerHTML='';(GRADE_MAP[v]||[]).forEach(function(g,i){var o=document.createElement('option');o.value=g;o.textContent=g;if(i===0)o.selected=true;gs.appendChild(o);});updatePreview();}
+function setupUpload(did,iid,arr){var d=document.getElementById(did),inp=document.getElementById(iid);d.onclick=function(){inp.click();};inp.onchange=function(e){if(e.target.files.length>0)addFiles(e.target.files,arr);};d.ondragover=function(e){e.preventDefault();d.className='drop over';};d.ondragleave=function(){d.className='drop';};d.ondrop=function(e){e.preventDefault();d.className='drop';addFiles(e.dataTransfer.files,arr);};}
+function addFiles(list,arr){for(var i=0;i<list.length;i++)arr.push(list[i]);renderFiles();}
+function renderFiles(){var arr=files;renderList(arr,'filelist');document.getElementById('startBtn').disabled=arr.length===0;}
+function renderList(arr,elId){var fl=document.getElementById(elId);fl.innerHTML='';arr.forEach(function(f,i){var isZip=f.name.toLowerCase().endsWith('.zip');var d=document.createElement('div');d.className='fileitem';d.innerHTML='<span>'+(isZip?'📦':'📄')+' '+f.name+' <span style="color:#a1a1a6">('+(f.size/1048576).toFixed(1)+'MB)</span></span><button class="rm" onclick="files.splice('+i+',1);renderFiles();">×</button>';fl.appendChild(d);});}
+function getAcademicYear(){var d=new Date(),y=d.getFullYear();return d.getMonth()>=8?(y+'-'+(y+1)+'学年'):((y-1)+'-'+y+'学年');}
+function updatePreview(){document.getElementById('filenamePreview').textContent=getAcademicYear()+'_'+(document.getElementById('gradeSelect').value||'高一')+'_'+selectedSubject+'_专题名_'+(document.getElementById('handoutType').value||'复习讲义')+'_教师版.docx';}
+function start(){
+ if(!files.length)return;
+ var btn=document.getElementById('startBtn');
+ if(btn.disabled)return;
+ btn.disabled=true; btn.textContent='生成中...';
+ document.getElementById('progressWrap').style.display='block';
+ document.getElementById('barfill').style.width='0%';
+ document.getElementById('warnbox').style.display='none';
+ document.getElementById('dlBtn').style.display='none';
+ document.getElementById('ptext').innerHTML='上传中...';
+ var fd=new FormData();files.forEach(function(f){fd.append('files',f);});
+ fd.append('subject',selectedSubject);fd.append('grade',document.getElementById('gradeSelect').value);fd.append('handout_type',document.getElementById('handoutType').value);fd.append('academic_year',getAcademicYear());fd.append('template_type',document.getElementById('templateType').value);
+ var xhr=new XMLHttpRequest();xhr.open('POST','/api/jobs');
+ xhr.onload=function(){var btn=document.getElementById('startBtn');if(xhr.status!==200){document.getElementById('ptext').innerHTML='<span style="color:#ff3b30">连接失败 ('+xhr.status+')</span>';btn.disabled=false;btn.textContent='③ 开始生成';return;}var data=JSON.parse(xhr.responseText);if(data.error){document.getElementById('ptext').innerHTML='<span style="color:#ff3b30">'+data.error+'</span>';btn.disabled=false;btn.textContent='③ 开始生成';return;}jobId=data.job_id;failCount=0;dotDance();poll=setInterval(checkStatus,1500);};
+ xhr.onerror=function(){document.getElementById('ptext').innerHTML='<span style="color:#ff3b30">⚠ 无法连接服务</span>';document.getElementById('startBtn').disabled=false;document.getElementById('startBtn').textContent='③ 开始生成';};xhr.send(fd);
+}
+function checkStatus(){
+ var xhr=new XMLHttpRequest();xhr.open('GET','/api/jobs/'+jobId);
+ xhr.onload=function(){if(xhr.status!==200)return;var j=JSON.parse(xhr.responseText);failCount=0;
+  var pct=j.total?Math.round(j.progress/j.total*100):0;
+  document.getElementById('barfill').style.width=pct+'%';
+  if(j.status==='running'){
+   var more=j.current?' · '+(j.current||''):'';
+   document.getElementById('ptext').innerHTML='<span style="font-size:20px;font-weight:700;color:#0071e3">'+pct+'%</span><span style="color:#86868b;font-size:12px;margin-left:6px">'+more+'</span>';
+  }
+  else if(j.status==='done'){killDots();document.getElementById('ptext').innerHTML='<span style="color:#30d158;font-size:16px">✅ 全部完成！共生成 '+j.produced+' 份讲义</span>';document.getElementById('barfill').style.width='100%';}
+  else if(j.status==='error'){killDots();document.getElementById('ptext').innerHTML='<span style="color:#ff3b30">❌ '+(j.error||'未知错误')+'</span>';}
+  var tb=document.querySelector('#itemtable tbody');tb.innerHTML='';
+  (j.items||[]).forEach(function(it){var tr=document.createElement('tr');tr.innerHTML='<td>'+it.topic+'</td><td>'+cell(it.teacher)+'</td><td>'+cell(it.student)+'</td>';tb.appendChild(tr);});
+  if(j.warnings&&j.warnings.length){var w=document.getElementById('warnbox');w.style.display='block';w.innerHTML='⚠ '+j.warnings.join('<br>⚠ ');}
+  if(j.status==='done'||j.status==='error'){clearInterval(poll);if(j.has_result)document.getElementById('dlBtn').style.display='block';var btn=document.getElementById('startBtn');btn.disabled=false;btn.textContent='③ 开始生成';files=[];renderFiles();document.getElementById('fileInput').value='';}
+ };
+ xhr.onerror=function(){failCount++;if(failCount>=3){clearInterval(poll);killDots();document.getElementById('ptext').innerHTML='<span style="color:#ff3b30">⚠ 连接中断</span>';document.getElementById('startBtn').disabled=false;document.getElementById('startBtn').textContent='③ 开始生成';}};xhr.send();
+}
+function cell(v){if(v==='完成')return'<span class="ok">✓ 完成</span>';if(v==='处理中')return'<span class="wait">处理中…</span>';if(v==='—'||!v)return'<span class="wait">—</span>';if(v.indexOf('失败')===0)return'<span class="fail">✗ '+v+'</span>';return v;}
+function downloadResult(){window.location='/api/download/'+jobId;}
+function dotDance(){
+ if(dotTimer)return;
+ var el=document.getElementById('ptext'),n=0;
+ dotTimer=setInterval(function(){
+  n=(n%3)+1;
+  var dots='.'.repeat(n);
+  el.innerHTML=el.innerHTML.replace(/(处理中|上传中)(\s*)(\.*)/,function(_,pre,sp){return pre+sp+dots;});
+ },600);
+}
+function killDots(){if(dotTimer){clearInterval(dotTimer);dotTimer=null;}}
+function openSettings(){
+ var s=document.getElementById('settings');
+ s.className='modal show';
+ var xhr=new XMLHttpRequest();xhr.open('GET','/api/config');
+ xhr.onload=function(){var c=JSON.parse(xhr.responseText);document.getElementById('keystatus').textContent=c.has_key?'当前：已配置 Key':'当前：未配置（使用离线模板）';};
+ xhr.send();
+}
+function closeSettings(){document.getElementById('settings').className='modal';}
+function saveKey(){var k=document.getElementById('apiKey').value;var xhr=new XMLHttpRequest();xhr.open('POST','/api/config');xhr.setRequestHeader('Content-Type','application/json');xhr.send(JSON.stringify({api_key:k}));closeSettings();}
+init();
+</script>
+</body>
+</html>
