@@ -15,7 +15,8 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "app")))
+sys.path.insert(0, os.path.abspath(os.path.join(
+    HERE, "..", "v1.2-xml-experiment", "res", "app")))
 sys.path.insert(0, HERE)
 
 from gold_compare import compare  # noqa: E402
