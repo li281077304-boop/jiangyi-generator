@@ -1,0 +1,69 @@
+{
+  "doc": "话题七 文学与艺术类（真题专项精练）解析版  ——  章宇琪资料.zip 内成员",
+  "notes": [
+    "示例 Gold（人工标准答案）。本文档包含结构要素：section ×1、shared_material ×2、question_group ×2、answer ×2。",
+    "本题材不含 目录(toc) 与 unknown 单元；这两类角色由 tests/test_gold_compare.py 的 fixture 覆盖。",
+    "锚点按文档顺序解析：同名锚点（Passage1 / Passage2 各出现两次：一次是材料标题、一次是答案区小标题）自动取「下一次出现」，",
+    "因此 a1 的 anchor=Passage1 会落在答案区小标题(#21)，g1 的 end_anchor=Passage1 也停在它之前的 #20。",
+    "块序号(seq)来自 StructDoc，为稠密块下标，可用 app/struct_dump.py 查看。"
+  ],
+  "units": [
+    {
+      "id": "s1",
+      "role": "section",
+      "level": 1,
+      "anchor": "话题7",
+      "end_anchor": "Passage1（2020",
+      "note": "专题标题 + 文体信息行（#0-#1）。整篇的唯一一级章节。"
+    },
+    {
+      "id": "m1",
+      "role": "shared_material",
+      "anchor": "Passage1（2020",
+      "end_anchor": "1. What made",
+      "parent": "s1",
+      "note": "Passage1 阅读材料（#2-#7），4 段英文原文 + 空段。与 g1 题目强绑定。"
+    },
+    {
+      "id": "g1",
+      "role": "question_group",
+      "anchor": "1. What made",
+      "end_anchor": "Passage1",
+      "parent": "s1",
+      "bind_to": "m1",
+      "note": "Passage1 的 4 道选择题（#8-#20，题干 + 选项）。是完整题组，不可拆。"
+    },
+    {
+      "id": "a1",
+      "role": "answer",
+      "anchor": "Passage1",
+      "end_anchor": "体裁：说明文 题材：文学艺术",
+      "parent": "s1",
+      "note": "Passage1 答案区（#21-#36）：答案区小标题 + 【答案】+ 逐题【思路】【解析】。"
+    },
+    {
+      "id": "m2",
+      "role": "shared_material",
+      "anchor": "体裁：说明文 题材：文学艺术",
+      "end_anchor": "1．Which of the following",
+      "parent": "s1",
+      "note": "Passage2 的体裁信息行 + 阅读材料（#37-#43）。"
+    },
+    {
+      "id": "g2",
+      "role": "question_group",
+      "anchor": "1．Which of the following",
+      "end_anchor": "Passage2",
+      "parent": "s1",
+      "bind_to": "m2",
+      "note": "Passage2 的 4 道选择题（#44-#57）。"
+    },
+    {
+      "id": "a2",
+      "role": "answer",
+      "anchor": "Passage2",
+      "parent": "s1",
+      "note": "Passage2 答案区（#58-文末）：答案区小标题 + 【答案】+ 逐题【思路】【解析】。"
+    }
+  ]
+}

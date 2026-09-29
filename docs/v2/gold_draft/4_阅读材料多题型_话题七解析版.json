@@ -1,0 +1,140 @@
+{
+  "doc": "4_阅读材料多题型_话题七解析版  （话题七  文学与艺术类  (真题专项精练) -备战2022高考英语之十年真题专项精讲精练（解析版）.docx）",
+  "notes": [
+    "程序辅助生成的 Gold 初稿（未做语义理解，仅用排版/关键词特征）。",
+    "每个单元 note 字段含 [置信度] 与命中依据，供人工复核。",
+    "边界可用 node id（b12.r1c0.n3）、spans、anchor、scope 调整。"
+  ],
+  "units": [
+    {
+      "id": "u001",
+      "role": "section",
+      "level": 1,
+      "spans": [
+        [
+          "b0",
+          "b0"
+        ]
+      ],
+      "note": "[medium] 字号层 16pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u002",
+      "role": "section",
+      "level": 1,
+      "spans": [
+        [
+          "b1",
+          "b1"
+        ]
+      ],
+      "note": "[medium] 字号层 16pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u003",
+      "role": "shared_material",
+      "spans": [
+        [
+          "b2",
+          "b7"
+        ]
+      ],
+      "note": "[medium] 材料/范文标题"
+    },
+    {
+      "id": "u004",
+      "role": "question_group",
+      "parent": "u002",
+      "bind_to": "u003",
+      "spans": [
+        [
+          "b8",
+          "b20"
+        ]
+      ],
+      "note": "[medium] 题号连续段 13 段（无显式标记）；绑定材料 u003（相邻）"
+    },
+    {
+      "id": "u005",
+      "role": "shared_material",
+      "spans": [
+        [
+          "b21",
+          "b21"
+        ]
+      ],
+      "note": "[medium] 材料/范文标题"
+    },
+    {
+      "id": "u006",
+      "role": "answer",
+      "parent": "u002",
+      "spans": [
+        [
+          "b22",
+          "b36"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u007 + 合并 u008 + 合并 u009 + 合并 u010 + 合并 u011 + 合并 u012 + 合并 u013 + 合并 u014"
+    },
+    {
+      "id": "u007",
+      "role": "section",
+      "level": 1,
+      "spans": [
+        [
+          "b37",
+          "b37"
+        ]
+      ],
+      "note": "[medium] 字号层 16pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u008",
+      "role": "shared_material",
+      "spans": [
+        [
+          "b38",
+          "b43"
+        ]
+      ],
+      "note": "[medium] 材料/范文标题"
+    },
+    {
+      "id": "u009",
+      "role": "question_group",
+      "parent": "u007",
+      "bind_to": "u008",
+      "spans": [
+        [
+          "b44",
+          "b57"
+        ]
+      ],
+      "note": "[medium] 题号连续段 14 段（无显式标记）；绑定材料 u008（相邻）"
+    },
+    {
+      "id": "u010",
+      "role": "shared_material",
+      "spans": [
+        [
+          "b58",
+          "b58"
+        ]
+      ],
+      "note": "[medium] 材料/范文标题"
+    },
+    {
+      "id": "u011",
+      "role": "answer",
+      "parent": "u007",
+      "spans": [
+        [
+          "b59",
+          "b74"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u020 + 合并 u021 + 合并 u022 + 合并 u023 + 合并 u024 + 合并 u025 + 合并 u026 + 合并 u027"
+    }
+  ]
+}

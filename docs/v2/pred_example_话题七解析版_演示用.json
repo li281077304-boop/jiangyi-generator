@@ -1,0 +1,25 @@
+{
+  "doc": "【演示用·模拟程序结果】不是真实 Stage 2 输出，仅用于展示对照报告如何报错",
+  "notes": [
+    "本文件是人工构造的『程序结果』样本，故意包含 4 类典型缺陷，用来演示报告输出：",
+    "  1) OMISSION         ：P2 漏掉 #6（材料最后一段）",
+    "  2) GROUP_SPLIT      ：题组 g1 被 P3/P4 拆成两块",
+    "  3) UNBOUND          ：材料 P6 与题组 P7 分离且未声明绑定",
+    "  4) HIERARCHY        ：P5、P8 未声明 parent（父子关系丢失）",
+    "  另有 2 处结构降级（章节/答案被判为 body）→ MISSED_STRUCTURE(warn)",
+    "单元字段：id / role / level / parent / bind_to / start / end（节点序号闭区间，见 StructDoc.seq）；",
+    "也可用 anchor 定位、用 node 直接指向节点（含表格单元格 b12.r1c0.n3）、",
+    "或用 spans 表达重排后的多片段单元。",
+    "注意：start/end 用的是**稠密块序号**（本文件末块为 74），引用不存在的节点会被判为 PRED_ANCHOR 错误。"
+  ],
+  "units": [
+    {"id": "P1", "role": "body", "start": 0, "end": 1},
+    {"id": "P2", "role": "shared_material", "start": 2, "end": 5, "parent": "P1"},
+    {"id": "P3", "role": "question_group", "start": 8, "end": 14, "parent": "P1", "bind_to": "P2"},
+    {"id": "P4", "role": "question_group", "start": 15, "end": 20, "parent": "P1", "bind_to": "P2"},
+    {"id": "P5", "role": "answer", "start": 21, "end": 36},
+    {"id": "P6", "role": "shared_material", "start": 37, "end": 43, "parent": "P1"},
+    {"id": "P7", "role": "question_group", "start": 44, "end": 57, "parent": "P1"},
+    {"id": "P8", "role": "body", "start": 58, "end": 74}
+  ]
+}

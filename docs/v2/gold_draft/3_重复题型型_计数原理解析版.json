@@ -1,0 +1,628 @@
+{
+  "doc": "3_重复题型型_计数原理解析版  （专题02 计数原理与二项式定理（题型清单）（解析版）.docx）",
+  "notes": [
+    "程序辅助生成的 Gold 初稿（未做语义理解，仅用排版/关键词特征）。",
+    "每个单元 note 字段含 [置信度] 与命中依据，供人工复核。",
+    "边界可用 node id（b12.r1c0.n3）、spans、anchor、scope 调整。"
+  ],
+  "units": [
+    {
+      "id": "u001",
+      "role": "question_group",
+      "spans": [
+        [
+          "b0",
+          "b3"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u002",
+      "role": "question_group",
+      "spans": [
+        [
+          "b4",
+          "b6"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u003",
+      "role": "answer",
+      "spans": [
+        [
+          "b7",
+          "b12"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解"
+    },
+    {
+      "id": "u004",
+      "role": "question_group",
+      "spans": [
+        [
+          "b13",
+          "b15"
+        ]
+      ],
+      "note": "[medium] 题号连续段 10 段（无显式标记）"
+    },
+    {
+      "id": "u005",
+      "role": "answer",
+      "spans": [
+        [
+          "b16",
+          "b53"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u006 + 合并 u007 + 合并 u008"
+    },
+    {
+      "id": "u006",
+      "role": "question_group",
+      "spans": [
+        [
+          "b54",
+          "b55.r0c0.n0"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u007",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b55.r0c0.n1",
+          "b57"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u008",
+      "role": "answer",
+      "parent": "u007",
+      "spans": [
+        [
+          "b58",
+          "b108"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u012 + 合并 u013 + 合并 u014 + 合并 u015"
+    },
+    {
+      "id": "u009",
+      "role": "question_group",
+      "parent": "u007",
+      "spans": [
+        [
+          "b109",
+          "b113"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u010",
+      "role": "answer",
+      "parent": "u007",
+      "spans": [
+        [
+          "b114",
+          "b175"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u018 + 合并 u019 + 合并 u020 + 合并 u021 + 合并 u022"
+    },
+    {
+      "id": "u011",
+      "role": "question_group",
+      "parent": "u007",
+      "spans": [
+        [
+          "b176",
+          "b177.r0c0.n1"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u012",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b177.r0c0.n2",
+          "b178"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u013",
+      "role": "answer",
+      "parent": "u012",
+      "spans": [
+        [
+          "b179",
+          "b234"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u026 + 合并 u027 + 合并 u028 + 合并 u029 + 合并 u030"
+    },
+    {
+      "id": "u014",
+      "role": "question_group",
+      "parent": "u012",
+      "spans": [
+        [
+          "b235",
+          "b237"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u015",
+      "role": "answer",
+      "parent": "u012",
+      "spans": [
+        [
+          "b238",
+          "b258"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u033 + 合并 u034"
+    },
+    {
+      "id": "u016",
+      "role": "question_group",
+      "parent": "u012",
+      "spans": [
+        [
+          "b259",
+          "b262"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u017",
+      "role": "answer",
+      "parent": "u012",
+      "spans": [
+        [
+          "b263",
+          "b353"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u037 + 合并 u038 + 合并 u039 + 合并 u040 + 合并 u041 + 合并 u042 + 合并 u043 + 合并 u044"
+    },
+    {
+      "id": "u018",
+      "role": "question_group",
+      "parent": "u012",
+      "spans": [
+        [
+          "b354",
+          "b355.r0c0.n0"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u019",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b355.r0c0.n1",
+          "b355.r0c0.n1"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u020",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b355.r0c0.n2",
+          "b357"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u021",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b358",
+          "b391"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u049 + 合并 u050"
+    },
+    {
+      "id": "u022",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b392",
+          "b395"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u023",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b396",
+          "b443"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u053 + 合并 u054 + 合并 u055 + 合并 u056 + 合并 u057"
+    },
+    {
+      "id": "u024",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b444",
+          "b448"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u025",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b449",
+          "b506"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u060 + 合并 u061 + 合并 u062 + 合并 u063 + 合并 u064 + 合并 u065"
+    },
+    {
+      "id": "u026",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b507",
+          "b510"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u027",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b511",
+          "b591"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u068 + 合并 u069 + 合并 u070 + 合并 u071 + 合并 u072 + 合并 u073 + 合并 u074 + 合并 u075 + 合并 u076"
+    },
+    {
+      "id": "u028",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b592",
+          "b596"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u029",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b597",
+          "b635"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u079 + 合并 u080 + 合并 u081"
+    },
+    {
+      "id": "u030",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b636",
+          "b640"
+        ]
+      ],
+      "note": "[medium] 题号连续段 5 段（无显式标记）"
+    },
+    {
+      "id": "u031",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b641",
+          "b666"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u084"
+    },
+    {
+      "id": "u032",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b667",
+          "b671"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u033",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b672",
+          "b723"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u087 + 合并 u088 + 合并 u089 + 合并 u090 + 合并 u091"
+    },
+    {
+      "id": "u034",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b724",
+          "b727"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u035",
+      "role": "answer",
+      "parent": "u020",
+      "spans": [
+        [
+          "b728",
+          "b782"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u094 + 合并 u095 + 合并 u096 + 合并 u097 + 合并 u098"
+    },
+    {
+      "id": "u036",
+      "role": "question_group",
+      "parent": "u020",
+      "spans": [
+        [
+          "b783",
+          "b784.r0c0.n2"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u037",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b784.r0c0.n3",
+          "b784.r0c0.n3"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u038",
+      "role": "question_group",
+      "parent": "u037",
+      "spans": [
+        [
+          "b784.r0c0.n3",
+          "b786"
+        ]
+      ],
+      "note": "[medium] 题号连续段 4 段（无显式标记）"
+    },
+    {
+      "id": "u039",
+      "role": "answer",
+      "parent": "u037",
+      "spans": [
+        [
+          "b787",
+          "b853"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u103 + 合并 u104 + 合并 u105 + 合并 u106 + 合并 u107"
+    },
+    {
+      "id": "u040",
+      "role": "question_group",
+      "parent": "u037",
+      "spans": [
+        [
+          "b854",
+          "b855.r0c0.n0"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u041",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b855.r0c0.n1",
+          "b855.r0c0.n1"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u042",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b855.r0c0.n2",
+          "b855.r0c0.n2"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u043",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b855.r0c0.n3",
+          "b855.r0c0.n3"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u044",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b855.r0c0.n4",
+          "b855.r0c0.n4"
+        ]
+      ],
+      "note": "[medium] 字号层 12pt(正文10.5pt)"
+    },
+    {
+      "id": "u045",
+      "role": "question_group",
+      "parent": "u044",
+      "spans": [
+        [
+          "b855.r0c0.n4",
+          "b862"
+        ]
+      ],
+      "note": "[medium] 题号连续段 8 段（无显式标记）"
+    },
+    {
+      "id": "u046",
+      "role": "answer",
+      "parent": "u044",
+      "spans": [
+        [
+          "b863",
+          "b903"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解 + 合并 u115 + 合并 u116"
+    },
+    {
+      "id": "u047",
+      "role": "question_group",
+      "parent": "u044",
+      "spans": [
+        [
+          "b904",
+          "b909"
+        ]
+      ],
+      "note": "[medium] 题号连续段 5 段（无显式标记）"
+    },
+    {
+      "id": "u048",
+      "role": "answer",
+      "parent": "u044",
+      "spans": [
+        [
+          "b910",
+          "b919"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解"
+    },
+    {
+      "id": "u049",
+      "role": "question_group",
+      "parent": "u044",
+      "spans": [
+        [
+          "b920",
+          "b926"
+        ]
+      ],
+      "note": "[medium] 题号连续段 7 段（无显式标记）"
+    },
+    {
+      "id": "u050",
+      "role": "answer",
+      "parent": "u044",
+      "spans": [
+        [
+          "b927",
+          "b934"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解"
+    },
+    {
+      "id": "u051",
+      "role": "question_group",
+      "parent": "u044",
+      "spans": [
+        [
+          "b935",
+          "b942"
+        ]
+      ],
+      "note": "[medium] 题号连续段 6 段（无显式标记）"
+    },
+    {
+      "id": "u052",
+      "role": "answer",
+      "parent": "u044",
+      "spans": [
+        [
+          "b943",
+          "b951"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(参考答案|答案与解析|答案解析|答案与点拨|答案详解"
+    }
+  ]
+}

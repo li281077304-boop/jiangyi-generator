@@ -10,3 +10,8 @@
 **/outputs/
 **/生成讲义结果/
 *.tmp
+
+# Real handout structure dumps —— 含第三方讲义原文，且可随时重生成，不入库
+# 重新生成：python app/struct_dump.py <讲义.docx> -o <输出.txt>
+docs/v2/*.txt
+docs/v2/**/*.dump.txt

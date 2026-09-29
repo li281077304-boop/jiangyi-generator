@@ -1,0 +1,500 @@
+{
+  "doc": "2_全文一表型_速度讲义学生版  （2025-2026学年_高一_数学_第1 速度的测量_复习讲义_学生版.docx）",
+  "notes": [
+    "程序辅助生成的 Gold 初稿（未做语义理解，仅用排版/关键词特征）。",
+    "每个单元 note 字段含 [置信度] 与命中依据，供人工复核。",
+    "边界可用 node id（b12.r1c0.n3）、spans、anchor、scope 调整。"
+  ],
+  "units": [
+    {
+      "id": "u001",
+      "role": "section",
+      "level": 1,
+      "spans": [
+        [
+          "b0",
+          "b2.r4c0.n0"
+        ]
+      ],
+      "note": "[medium] 字号层 18pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u002",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b2.r5c0.n0",
+          "b2.r5c0.n2"
+        ]
+      ],
+      "note": "[medium] 字号层 14pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u003",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b2.r5c0.n3",
+          "b2.r5c0.n5"
+        ]
+      ],
+      "note": "[medium] 字号层 14pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u004",
+      "role": "knowledge",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n6",
+          "b2.r5c0.n7"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(知识精讲|例题讲解|知识讲解|知识回顾|课堂启动|知"
+    },
+    {
+      "id": "u005",
+      "role": "toc",
+      "spans": [
+        [
+          "b2.r5c0.n8.r0c0.n0",
+          "b2.r5c0.n8.r1c1.n7"
+        ]
+      ],
+      "note": "[medium] 目录标签所在容器（table）含 17 个条目，结构位于表格/嵌套表格内部"
+    },
+    {
+      "id": "u006",
+      "role": "body",
+      "spans": [
+        [
+          "b2.r5c0.n9",
+          "b2.r5c0.n9"
+        ]
+      ],
+      "note": "[low] 兜底：未被任何规则命中（1 个节点）"
+    },
+    {
+      "id": "u007",
+      "role": "knowledge",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n10.r0c0.n0",
+          "b2.r5c0.n10.r0c1.n0"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(知识精讲|例题讲解|知识讲解|知识回顾|课堂启动|知 + 合并 u007"
+    },
+    {
+      "id": "u008",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n10.r1c0.n0",
+          "b2.r5c0.n10.r1c1.n4"
+        ]
+      ],
+      "note": "[medium] 题号连续段 10 段（无显式标记）"
+    },
+    {
+      "id": "u009",
+      "role": "knowledge",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n11",
+          "b2.r5c0.n13"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(知识精讲|例题讲解|知识讲解|知识回顾|课堂启动|知"
+    },
+    {
+      "id": "u010",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n14",
+          "b2.r5c0.n23"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u011",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n24",
+          "b2.r5c0.n25"
+        ]
+      ],
+      "note": "[high] 策略关键词: ^(即时训练|基础巩固|基础速刷|能力提升|能力跃升|思"
+    },
+    {
+      "id": "u012",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n26",
+          "b2.r5c0.n41"
+        ]
+      ],
+      "note": "[medium] 题号连续段 11 段（无显式标记）"
+    },
+    {
+      "id": "u013",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n42",
+          "b2.r5c0.n42"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u014",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n43",
+          "b2.r5c0.n54"
+        ]
+      ],
+      "note": "[medium] 题号连续段 11 段（无显式标记）"
+    },
+    {
+      "id": "u015",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n55",
+          "b2.r5c0.n64"
+        ]
+      ],
+      "note": "[medium] 题号连续段 8 段（无显式标记）"
+    },
+    {
+      "id": "u016",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n65",
+          "b2.r5c0.n92"
+        ]
+      ],
+      "note": "[medium] 题号连续段 17 段（无显式标记）"
+    },
+    {
+      "id": "u017",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n93",
+          "b2.r5c0.n103"
+        ]
+      ],
+      "note": "[medium] 题号连续段 10 段（无显式标记）"
+    },
+    {
+      "id": "u018",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n104",
+          "b2.r5c0.n115"
+        ]
+      ],
+      "note": "[medium] 题号连续段 12 段（无显式标记）"
+    },
+    {
+      "id": "u019",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n116",
+          "b2.r5c0.n116"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u020",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n117",
+          "b2.r5c0.n127"
+        ]
+      ],
+      "note": "[medium] 题号连续段 4 段（无显式标记）"
+    },
+    {
+      "id": "u021",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n128",
+          "b2.r5c0.n128"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u022",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n129",
+          "b2.r5c0.n144"
+        ]
+      ],
+      "note": "[medium] 题号连续段 20 段（无显式标记）"
+    },
+    {
+      "id": "u023",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n145",
+          "b2.r5c0.n145"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u024",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n146",
+          "b2.r5c0.n163"
+        ]
+      ],
+      "note": "[medium] 题号连续段 10 段（无显式标记）"
+    },
+    {
+      "id": "u025",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n164",
+          "b2.r5c0.n164"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u026",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n165",
+          "b2.r5c0.n178"
+        ]
+      ],
+      "note": "[medium] 题号连续段 55 段（无显式标记）"
+    },
+    {
+      "id": "u027",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n179",
+          "b2.r5c0.n184"
+        ]
+      ],
+      "note": "[medium] 题号连续段 53 段（无显式标记）"
+    },
+    {
+      "id": "u028",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n185",
+          "b2.r5c0.n185"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u029",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n186",
+          "b2.r5c0.n202"
+        ]
+      ],
+      "note": "[medium] 题号连续段 24 段（无显式标记）"
+    },
+    {
+      "id": "u030",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n203",
+          "b2.r5c0.n203"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u031",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n204",
+          "b2.r5c0.n222"
+        ]
+      ],
+      "note": "[medium] 题号连续段 7 段（无显式标记）"
+    },
+    {
+      "id": "u032",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n223",
+          "b2.r5c0.n223"
+        ]
+      ],
+      "note": "[high] 题型/考点标题"
+    },
+    {
+      "id": "u033",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n224",
+          "b2.r5c0.n276.r2c0.n0"
+        ]
+      ],
+      "note": "[medium] 题号连续段 10 段（无显式标记）"
+    },
+    {
+      "id": "u034",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n276.r2c1.n0",
+          "b2.r5c0.n331"
+        ]
+      ],
+      "note": "[medium] 题号连续段 47 段（无显式标记）"
+    },
+    {
+      "id": "u035",
+      "role": "question_group",
+      "parent": "u003",
+      "spans": [
+        [
+          "b2.r5c0.n332",
+          "b2.r5c0.n334"
+        ]
+      ],
+      "note": "[medium] 题号连续段 21 段（无显式标记）"
+    },
+    {
+      "id": "u036",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b2.r5c0.n335",
+          "b2.r5c0.n337"
+        ]
+      ],
+      "note": "[medium] 字号层 14pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u037",
+      "role": "section",
+      "level": 3,
+      "spans": [
+        [
+          "b2.r5c0.n338",
+          "b2.r5c0.n343"
+        ]
+      ],
+      "note": "[medium] 字号层 14pt(正文10.5pt) 加粗"
+    },
+    {
+      "id": "u038",
+      "role": "question_group",
+      "parent": "u037",
+      "spans": [
+        [
+          "b2.r5c0.n344",
+          "b2.r5c0.n379"
+        ]
+      ],
+      "note": "[medium] 题号连续段 51 段（无显式标记）"
+    },
+    {
+      "id": "u039",
+      "role": "question_group",
+      "parent": "u037",
+      "spans": [
+        [
+          "b2.r5c0.n380",
+          "b2.r5c0.n400"
+        ]
+      ],
+      "note": "[medium] 题号连续段 4 段（无显式标记）"
+    },
+    {
+      "id": "u040",
+      "role": "question_group",
+      "parent": "u037",
+      "spans": [
+        [
+          "b2.r5c0.n401",
+          "b2.r5c0.n461"
+        ]
+      ],
+      "note": "[medium] 题号连续段 30 段（无显式标记）"
+    },
+    {
+      "id": "u041",
+      "role": "question_group",
+      "parent": "u037",
+      "spans": [
+        [
+          "b2.r5c0.n462",
+          "b3"
+        ]
+      ],
+      "note": "[medium] 题号连续段 28 段（无显式标记）"
+    }
+  ]
+}
