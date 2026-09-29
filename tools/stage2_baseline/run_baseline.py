@@ -76,12 +76,18 @@ RE_INSTRUCTION_LEAD = re.compile(
     r"实验操作|注意事项|数据分析|解题步骤|解题策略|方法|技巧|性质|公式|法则|定理|"
     r"首先|其次|最后|本题|句意|故选|答案|解析|规范)"
 )
+RE_CONCEPTUAL_INSTRUCTION = re.compile(
+    r"^(?:应用.{0,12}(?:时|中)|利用.{0,40}(?:概念|定理|公式)|"
+    r"作图.{0,60}(?:规范|步骤|实验|数据)|对比.{0,60}(?:归纳|总结)|"
+    r".{0,24}(?:解题|实验|数据).{0,16}(?:注意事项|误差|分析|图像|结论))"
+)
+RE_INLINE_OPTIONS = re.compile(r"(?:^|[\s|])A[.．、]\s*\S", re.I)
 RE_EXPLANATION_TEXT = re.compile(
     r"^(?:\d{1,3}\s*[．.、]\s*)?(?:句意|故选|因此|所以|符合题意|根据.{0,18}(?:可知|答语)|由此可知)"
 )
 RE_QUESTION_CUE = re.compile(
-    r"(?:[?？]|_{2,}|＿{2,}|（\s*[A-D]\s*[）)]|\([A-D]\)|\([.。?？]\)\s*$|"
-    r"（[.。?？]）\s*$|下列|以下|若|已知|求|计算|化简|比较|如图|试求|判断|填入|分别求|"
+    r"(?:[?？]|_{2,}|＿{2,}|\(\s*\)|（\s*）|（\s*[A-D]\s*[）)]|\([A-D]\)|\([.。?？]\)\s*$|"
+    r"（[.。?？]）\s*$|下列|以下|若|已知|求|计算|化简|比较|如图|试求|判断|填入|排序|分别求|"
     r"哪一|什么|为何|为什么|怎样|求出|解答|选择|写出)"
 )
 RE_READING_QUESTION = re.compile(
@@ -130,18 +136,26 @@ def _toc_end_before_next_section(index, cands, start_id):
 
 def _is_instruction_or_answer_text(text):
     t = _norm(text)
-    return bool(RE_INSTRUCTION_LEAD.match(t) or RE_EXPLANATION_TEXT.match(t))
+    stripped = re.sub(r"^\s*(?:(?:\d{1,3}|[一二三四五六七八九十]+)\s*[．.、]|"
+                       r"[（(]\s*\d{1,3}\s*[）)]\s*)", "", t)
+    return bool(RE_CONCEPTUAL_INSTRUCTION.match(stripped)
+                or RE_INSTRUCTION_LEAD.match(stripped)
+                or RE_EXPLANATION_TEXT.match(stripped))
 
 
 def _question_start_strength(text, mode, previous_number):
     """Accept prompt-like starts; use sequence only inside an exercise section."""
     t = _norm(text)
     match = RE_QNUM.match(t)
-    if not match or RE_PLAIN_CHOICE_ANSWER.match(t) or _is_instruction_or_answer_text(t):
+    if not match or RE_PLAIN_CHOICE_ANSWER.match(t):
         return None
     number = int(match.group().strip().rstrip("．.、 "))
     if RE_QUESTION_CUE.search(t):
         return number
+    if RE_INLINE_OPTIONS.search(t):
+        return number
+    if _is_instruction_or_answer_text(t):
+        return None
     if mode == "exercise" and previous_number is not None and number == previous_number + 1:
         return number
     return None
@@ -176,8 +190,11 @@ def detect_question_runs(index, zones, section_orders, material_orders):
     previous_number = None
     previous_item_order = None
     reading_group = False
-    section_orders = sorted(section_orders)
+    section_order_set = set(section_orders)
+    explicit_group_open = False
     for i, node in enumerate(index.nodes):
+        if i in section_order_set:
+            explicit_group_open = False
         t = _norm(node.text)
         if not t:
             continue
@@ -188,6 +205,7 @@ def detect_question_runs(index, zones, section_orders, material_orders):
             previous_number = None
             previous_item_order = i
             reading_group = False
+            explicit_group_open = True
             continue
         number = _question_start_strength(t, mode, previous_number)
         if number is None or mode in ("knowledge", "answer", "analysis"):
@@ -195,6 +213,12 @@ def detect_question_runs(index, zones, section_orders, material_orders):
                 previous_number = None
                 previous_item_order = None
                 reading_group = False
+            continue
+        if explicit_group_open:
+            # A numbered prompt immediately after an explicit example/variant
+            # heading is part of that group, not a new independent question.
+            previous_number = number
+            previous_item_order = i
             continue
         is_reading = bool(RE_READING_QUESTION.match(t))
         crossed_section = previous_item_order is not None and any(

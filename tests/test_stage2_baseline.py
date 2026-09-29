@@ -89,6 +89,51 @@ def test_subquestions_stay_inside_their_parent_question():
         {index.by_id[nid].text for nid in first_nodes})
 
 
+def test_empty_parentheses_mark_consecutive_choice_questions():
+    doc = _fixture(["一、选择正确图片/词句。",
+                    "1.He's going by bike. (    )", "A.B.",
+                    "2.I'm going to buy a dictionary. (    )", "A.B.",
+                    "3.My brother is going to fly a kite. (    )", "A.B."])
+    index, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 3
+    assert [index.text_of(u["spans"][0][0]) for u in groups] == [
+        "1.He's going by bike. (    )",
+        "2.I'm going to buy a dictionary. (    )",
+        "3.My brother is going to fly a kite. (    )",
+    ]
+
+
+def test_numbered_teaching_instructions_do_not_become_question_groups():
+    _, units = predict(_fixture([
+        "实验探究", "1.观察图像并归纳小车速度变化的规律。",
+        "2.作图，根据实验数据对比各组的变化，再总结实验结论。",
+        "3.根据图像求小车在 AB 段的平均速度？",
+    ]))
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 1
+    assert groups[0]["spans"][0][0]  # The explicit prompt remains detectable.
+
+
+def test_formula_question_is_not_suppressed_as_explanatory_prose():
+    index, units = predict(_fixture([
+        "提升专练", "1.利用平方差公式计算 x²-9，当 x=4 时结果是多少？",
+        "2.利用概念和公式展开解题时，先观察结构，再归纳方法。",
+    ]))
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 1
+    assert index.text_of(groups[0]["spans"][0][0]).startswith("1.")
+
+
+def test_numbered_subparts_after_explicit_example_heading_stay_in_group():
+    _, units = predict(_fixture([
+        "例题1 计算并说明理由", "1.先化简表达式。", "2.再求 x 的值。",
+        "变式1 求另一个方程的根？",
+    ]))
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 2
+
+
 def test_numbered_instruction_and_answer_lines_are_not_questions():
     doc = _fixture(["知识精讲", "1．首先观察等式两边的结构。", "2．方法：利用公式变形。",
                     "目标导航", "一、掌握平方差公式。", "方法指导", "一、首先提取公因式。",
