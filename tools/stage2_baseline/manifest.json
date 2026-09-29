@@ -1,0 +1,34 @@
+{
+  "baseline": "gold-draft-heuristics-v1",
+  "corpus_root_hint": "C:/Users/Administrator/Desktop/工作/讲义生成器",
+  "samples": [
+    {
+      "sample_id": "S01",
+      "source": "训练文件/学科网资料20211021035801(12份).zip",
+      "member": "【分层训练】人教PEP英语六年级上册基础巩固+能力提升+核心素养-Unit 3  My weekend plan Part A（含答案）.docx",
+      "sha256": "2a14b6bdd5e585b76efd9bb6cda07104e009a8263b9761950f185e3c7e1adb50",
+      "gold": "../../docs/v2/annotation_batch_01/gold/S01_gold.json"
+    },
+    {
+      "sample_id": "S11",
+      "source": "2025-2026学年_高一_数学_第1 速度的测量_复习讲义_学生版.docx",
+      "member": "",
+      "sha256": "ea6637bd3b40c28984b08f19ec2724f113f78d9e3f1969831a5062aad3a9eae9",
+      "gold": "../../docs/v2/annotation_batch_01/gold/S11_gold.json"
+    },
+    {
+      "sample_id": "S12",
+      "source": "_temp_xueke/topic1/专题01 实数（6重点+17种题型+复习提升）（原卷版） .docx",
+      "member": "",
+      "sha256": "7e8d729ee0cf45e47d63937fe34815c74ebe296b0ce9d4da3327a18a64098212",
+      "gold": "../../docs/v2/annotation_batch_01/gold/S12_gold.json"
+    },
+    {
+      "sample_id": "S04",
+      "source": "训练文件/学科网资料20211204053501(21份).zip",
+      "member": "第14斩 阅读理解精练精析20篇-2022年高考英语语法重难点复习百题斩.docx",
+      "sha256": "20ec28d4b55a1b0105148637ac7a50724a4f64692f131ee7e805cd06097ae3be",
+      "gold": "../../docs/v2/annotation_batch_01/gold/S04_gold.json"
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+{
+  "baseline": "gold-draft-heuristics-v1",
+  "rule_source": "_research/gen_gold_draft.py",
+  "gold_files": {
+    "S01": {
+      "path": "../../docs/v2/annotation_batch_01/gold/S01_gold.json",
+      "sha256": "a0ce87fa3d899ac67015175e6a1c254049d0d815989cc9d042a665fb91e519da"
+    },
+    "S11": {
+      "path": "../../docs/v2/annotation_batch_01/gold/S11_gold.json",
+      "sha256": "d55d3783b8cc5760f065d51cd6441f3907346db4748c3550e387d7d09b8102bf"
+    },
+    "S12": {
+      "path": "../../docs/v2/annotation_batch_01/gold/S12_gold.json",
+      "sha256": "fd50af5848cbaea9724fbaba2ef69d3b57e38a373a0fdc2138378a758f30f02b"
+    },
+    "S04": {
+      "path": "../../docs/v2/annotation_batch_01/gold/S04_gold.json",
+      "sha256": "ad0beddc54309fdc3bc59f20f56162301487275addae454da3af872d6a2ef10f"
+    }
+  },
+  "samples": [
+    {
+      "sample_id": "S01",
+      "name": "【分层训练】人教PEP英语六年级上册基础巩固+能力提升+核心素养-Unit 3  My weekend plan Part A（含答案）.docx",
+      "source_sha256": "2a14b6bdd5e585b76efd9bb6cda07104e009a8263b9761950f185e3c7e1adb50",
+      "node_count": 222,
+      "gold_unit_count": 85,
+      "prediction_count": 23,
+      "binding_errors": 0,
+      "gold_compare_verdict": "FAIL",
+      "errors": 42,
+      "warnings": 10,
+      "infos": 0,
+      "roles": {
+        "section": {
+          "gold": 17,
+          "predicted": 2,
+          "correct": 0,
+          "missed": 17,
+          "erroneous": 2,
+          "boundary_errors": 3,
+          "binding_errors": 0
+        },
+        "toc": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "question_group": {
+          "gold": 36,
+          "predicted": 12,
+          "correct": 0,
+          "missed": 36,
+          "erroneous": 12,
+          "boundary_errors": 36,
+          "binding_errors": 0
+        },
+        "shared_material": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "answer": {
+          "gold": 14,
+          "predicted": 9,
+          "correct": 1,
+          "missed": 13,
+          "erroneous": 8,
+          "boundary_errors": 1,
+          "binding_errors": 0
+        },
+        "analysis": {
+          "gold": 9,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 9,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "unknown": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        }
+      },
+      "issue_counts": {
+        "MERGE": 10,
+        "MISSED_STRUCTURE": 6,
+        "ROLE_MISMATCH": 36
+      },
+      "top_failure_codes": [
+        "ROLE_MISMATCH",
+        "MERGE",
+        "MISSED_STRUCTURE"
+      ]
+    },
+    {
+      "sample_id": "S11",
+      "name": "2025-2026学年_高一_数学_第1 速度的测量_复习讲义_学生版.docx",
+      "source_sha256": "ea6637bd3b40c28984b08f19ec2724f113f78d9e3f1969831a5062aad3a9eae9",
+      "node_count": 759,
+      "gold_unit_count": 102,
+      "prediction_count": 41,
+      "binding_errors": 0,
+      "gold_compare_verdict": "FAIL",
+      "errors": 29,
+      "warnings": 27,
+      "infos": 0,
+      "roles": {
+        "section": {
+          "gold": 23,
+          "predicted": 5,
+          "correct": 0,
+          "missed": 23,
+          "erroneous": 5,
+          "boundary_errors": 5,
+          "binding_errors": 0
+        },
+        "toc": {
+          "gold": 1,
+          "predicted": 1,
+          "correct": 1,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "question_group": {
+          "gold": 57,
+          "predicted": 31,
+          "correct": 4,
+          "missed": 53,
+          "erroneous": 27,
+          "boundary_errors": 53,
+          "binding_errors": 0
+        },
+        "shared_material": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "answer": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "analysis": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "unknown": {
+          "gold": 3,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 3,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        }
+      },
+      "issue_counts": {
+        "GROUP_SPLIT": 1,
+        "MERGE": 22,
+        "MISSED_STRUCTURE": 10,
+        "ROLE_MISMATCH": 23
+      },
+      "top_failure_codes": [
+        "ROLE_MISMATCH",
+        "MERGE",
+        "MISSED_STRUCTURE"
+      ]
+    },
+    {
+      "sample_id": "S12",
+      "name": "专题01 实数（6重点+17种题型+复习提升）（原卷版） .docx",
+      "source_sha256": "7e8d729ee0cf45e47d63937fe34815c74ebe296b0ce9d4da3327a18a64098212",
+      "node_count": 351,
+      "gold_unit_count": 124,
+      "prediction_count": 56,
+      "binding_errors": 0,
+      "gold_compare_verdict": "FAIL",
+      "errors": 12,
+      "warnings": 32,
+      "infos": 0,
+      "roles": {
+        "section": {
+          "gold": 27,
+          "predicted": 30,
+          "correct": 17,
+          "missed": 10,
+          "erroneous": 13,
+          "boundary_errors": 1,
+          "binding_errors": 0
+        },
+        "toc": {
+          "gold": 1,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 1,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "question_group": {
+          "gold": 78,
+          "predicted": 24,
+          "correct": 0,
+          "missed": 78,
+          "erroneous": 24,
+          "boundary_errors": 73,
+          "binding_errors": 0
+        },
+        "shared_material": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "answer": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "analysis": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "unknown": {
+          "gold": 1,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 1,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        }
+      },
+      "issue_counts": {
+        "MERGE": 26,
+        "MISSED_STRUCTURE": 6,
+        "ROLE_MISMATCH": 11,
+        "TOC_AS_BODY": 1
+      },
+      "top_failure_codes": [
+        "MERGE",
+        "ROLE_MISMATCH",
+        "MISSED_STRUCTURE"
+      ]
+    },
+    {
+      "sample_id": "S04",
+      "name": "第14斩 阅读理解精练精析20篇-2022年高考英语语法重难点复习百题斩.docx",
+      "source_sha256": "20ec28d4b55a1b0105148637ac7a50724a4f64692f131ee7e805cd06097ae3be",
+      "node_count": 703,
+      "gold_unit_count": 158,
+      "prediction_count": 40,
+      "binding_errors": 20,
+      "gold_compare_verdict": "FAIL",
+      "errors": 156,
+      "warnings": 37,
+      "infos": 0,
+      "roles": {
+        "section": {
+          "gold": 22,
+          "predicted": 1,
+          "correct": 0,
+          "missed": 22,
+          "erroneous": 1,
+          "boundary_errors": 2,
+          "binding_errors": 0
+        },
+        "toc": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "question_group": {
+          "gold": 20,
+          "predicted": 38,
+          "correct": 1,
+          "missed": 19,
+          "erroneous": 37,
+          "boundary_errors": 19,
+          "binding_errors": 20
+        },
+        "shared_material": {
+          "gold": 20,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 20,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 20
+        },
+        "answer": {
+          "gold": 76,
+          "predicted": 1,
+          "correct": 0,
+          "missed": 76,
+          "erroneous": 1,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "analysis": {
+          "gold": 20,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 20,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        },
+        "unknown": {
+          "gold": 0,
+          "predicted": 0,
+          "correct": 0,
+          "missed": 0,
+          "erroneous": 0,
+          "boundary_errors": 0,
+          "binding_errors": 0
+        }
+      },
+      "issue_counts": {
+        "MERGE": 37,
+        "ROLE_MISMATCH": 136,
+        "UNBOUND": 20
+      },
+      "top_failure_codes": [
+        "ROLE_MISMATCH",
+        "MERGE",
+        "UNBOUND"
+      ]
+    }
+  ],
+  "issue_counts": {
+    "GROUP_SPLIT": 1,
+    "MERGE": 95,
+    "MISSED_STRUCTURE": 22,
+    "ROLE_MISMATCH": 206,
+    "TOC_AS_BODY": 1,
+    "UNBOUND": 20
+  }
+}
