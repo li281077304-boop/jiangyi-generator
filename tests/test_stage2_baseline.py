@@ -35,11 +35,28 @@ def test_baseline_is_deterministic():
     assert [u["role"] for u in first] == ["section", "section", "question_group", "answer"]
 
 
-def test_baseline_keeps_original_coarse_roles():
+def test_answer_and_analysis_numbering_does_not_create_questions():
     _, units = predict(_fixture(["即时训练", "1．求 x？", "【答案】A"]))
-    # This boundary pass does not add analysis or unknown classification.
-    assert not any(u["role"] in ("analysis", "unknown") for u in units)
+    assert len([u for u in units if u["role"] == "question_group"]) == 1
     assert units[-1]["role"] == "answer"
+
+
+def test_answer_key_and_explanation_states_switch_without_number_leakage():
+    index, units = predict(_fixture([
+        "即时训练", "1．求 x？", "参考答案", "一、1.A  2.B  3.C",
+        "【解析】", "1．根据题意，第一题选A。", "【详解】", "第二题的条件说明选B。",
+        "二、1.D  2.C", "【分析】此题考查基础概念。", "2．解析中的编号不是题目。",
+    ]))
+    roles = [u["role"] for u in units]
+    assert roles.count("question_group") == 1
+    answer_units = [u for u in units if u["role"] == "answer"]
+    analysis_units = [u for u in units if u["role"] == "analysis"]
+    assert len(answer_units) == 2
+    assert len(analysis_units) == 2
+    assert index.text_of(analysis_units[0]["spans"][0][0]) == "【解析】"
+    assert index.text_of(analysis_units[0]["spans"][0][1]) == "第二题的条件说明选B。"
+    assert index.text_of(answer_units[1]["spans"][0][0]) == "二、1.D  2.C"
+    assert index.text_of(analysis_units[1]["spans"][0][0]).startswith("【分析】")
 
 
 def test_column_headings_are_sections_not_questions():

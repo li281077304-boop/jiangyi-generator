@@ -1,6 +1,6 @@
 # Stage2 question-boundary and shared-material baseline
 
-This runner adapts the prior candidate rules from `_research/gen_gold_draft.py` into a repeatable question-boundary pass. It maps explicit exercise/type headings to `section`, detects independent numbered question starts, and suppresses numbering in knowledge and answer contexts. Reading material starts at explicit passage headings or source-year citations; standalone sequence labels immediately before citations become sections. Consecutive reading questions stay together until the next material, and the group binds to that material. It does not add answer/analysis recognition or modify the four approved Gold files. `gold_compare.py` performs the formal comparison.
+This runner adapts the prior candidate rules from `_research/gen_gold_draft.py` into a repeatable structural pass. It maps explicit exercise/type headings to `section`, detects independent numbered question starts, suppresses numbering in knowledge and answer contexts, and binds consecutive reading questions to the preceding shared material. In answer areas, answer-key rows become separate `answer` units and explicit explanation markers start `analysis` units; numbering inside those units is suppressed as a question cue. It does not modify the four approved Gold files. `gold_compare.py` performs the formal comparison.
 
 ## Run
 
@@ -17,6 +17,6 @@ The `--out` directory receives per-sample predictions, full `gold_compare` Markd
 
 ## Scope and repeatability
 
-The report records predictions and `gold_compare` results for the four approved samples. Every question boundary is based on general text cues, numbering context, and explicit heading families; no sample IDs or sample-specific text are used by the recognition rules. The same source SHA256 values, Gold files, and code produce the same prediction units and comparison statistics.
+The report records predictions and `gold_compare` results for the four approved samples. Every boundary is based on general text cues, numbering context, answer-area state, and explicit heading families; no sample IDs or sample-specific text are used by the recognition rules. The same source SHA256 values, Gold files, and code produce the same prediction units and comparison statistics.
 
 The current checked-in report is `docs/v2/stage2_baseline/round3_report.md`. It omits long document excerpts; full evidence stays under the external `--out` path. Earlier round reports are retained as historical baselines.

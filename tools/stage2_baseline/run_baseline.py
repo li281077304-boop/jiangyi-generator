@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Repeatable Stage 2 question-boundary baseline, adapted from the Gold draft rules.
+"""Repeatable Stage 2 structural baseline, adapted from the Gold draft rules.
 
-The rule pass is intentionally scoped to question-group boundaries and their
-section anchors. It does not infer shared-material bindings or expand answer /
-analysis classification. Input and reporting remain deterministic.
+The deterministic pass recognizes question-group boundaries, shared-material
+bindings, and answer/analysis regions. It does not classify unknown content or
+change the approved Gold annotations.
 """
 import argparse
 import hashlib
@@ -32,9 +32,25 @@ BLOCK_ROLES = [
                 r"提升专练|真题感知|真题闯关|课堂检测|出门测试|当堂检测|达标检测|"
                 r"实战演练|写作训练|强化训练|课后作业|随堂练习|变式训练|考点突破|专项训练)"),
      "section"),
-    (re.compile(r"^(参考答案|答案与解析|答案解析|答案与点拨|答案详解|试题解析|解析与答案|"
-                r"【答案】|【解析】|【思路】|解析：)"), "answer"),
+    (re.compile(r"^(答案与点拨|答案详解|试题解析|解析与答案|【答案】)"), "answer"),
 ]
+RE_ANSWER_SECTION = re.compile(
+    r"^(?:参考答案|参考解答|答案|答案解析|答案与解析|答案及解析|解析与答案|答案详解|"
+    r"答案与点拨|试题解析)(?:\s*[:：]?)$"
+)
+RE_ANALYSIS_START = re.compile(
+    r"^(?:【\s*(?P<bracket>解析|分析|详解|解答说明)\s*】|"
+    r"(?P<plain>解析|分析|详解|解答说明)\s*[:：])"
+)
+RE_ANSWER_GROUP_START = re.compile(
+    r"^\s*[一二三四五六七八九十]+[、．.]\s*\d{1,3}\s*[．.、]"
+)
+RE_NUMBERED_ANSWER = re.compile(r"^\s*\d{1,3}\s*[．.、]\s*\S")
+RE_COMPACT_ANSWER_KEY = re.compile(
+    r"^\s*(?:[一二三四五六七八九十]+[、．.]\s*)?"
+    r"(?:\d{1,3}\s*[．.、]\s*[A-J](?:\s*[\d、，,；;．.]*\s*[A-J]){0,12}"
+    r"|\d{1,3}(?:\s+[A-J\d]){2,30})\s*$", re.I
+)
 RE_READING_MATERIAL_HEAD = re.compile(r"^(?:Passage\s*\d+|阅读(?:材料|短文)|材料\s*\d+|语篇\s*\d+|【材料】)", re.I)
 RE_SOURCE_CITATION = re.compile(r"^\s*[（(]\s*(?:19|20)\d{2}\s*[·•.．]")
 RE_NUMERIC_SECTION = re.compile(r"^\s*\d{1,2}\s*$")
@@ -70,8 +86,8 @@ EXERCISE_LABELS = ("即时训练", "基础巩固", "基础速刷", "能力提升
                    "巩固练习", "提升专练", "真题感知", "真题闯关", "课堂检测", "出门测试",
                    "当堂检测", "达标检测", "实战演练", "写作训练", "强化训练", "课后作业",
                    "随堂练习", "变式训练", "考点突破", "专项训练")
-MERGE_ROLES = {"answer", "analysis", "knowledge", "body"}
-BASELINE_ID = "reading-material-binding-v3"
+MERGE_ROLES = {"knowledge", "body"}
+BASELINE_ID = "reading-material-answer-analysis-v1"
 
 
 def _heading_text(text):
@@ -141,8 +157,8 @@ def detect_question_runs(index, zones, section_orders, material_orders):
             reading_group = False
             continue
         number = _question_start_strength(t, mode, previous_number)
-        if number is None or mode in ("knowledge", "answer"):
-            if mode in ("knowledge", "answer"):
+        if number is None or mode in ("knowledge", "answer", "analysis"):
+            if mode in ("knowledge", "answer", "analysis"):
                 previous_number = None
                 previous_item_order = None
                 reading_group = False
@@ -185,6 +201,7 @@ def detect(index, doc):
     cands, toc_nodes = [], []
     zone_markers = {}
     active_zone = "body"
+    answer_area_started = False
     material_orders = set()
     for i, n in enumerate(index.nodes):
         t = _norm(n.text)
@@ -197,7 +214,10 @@ def detect(index, doc):
         title = _heading_text(t)
         hit = None
         zone = None
-        if RE_TYPE_HEAD.match(title) or RE_ANGLE_SECTION.match(title):
+        if RE_ANSWER_SECTION.match(t):
+            hit, zone = ("section", "答案区标题"), "answer"
+            answer_area_started = True
+        elif RE_TYPE_HEAD.match(title) or RE_ANGLE_SECTION.match(title):
             hit, zone = ("section", "栏目/题型标题"), "exercise"
         elif (RE_NUMERIC_SECTION.match(t) and next_nonempty is not None
               and RE_SOURCE_CITATION.match(_norm(next_nonempty.text))):
@@ -209,7 +229,8 @@ def detect(index, doc):
         elif any(title.startswith(label) for label in EXERCISE_LABELS):
             hit, zone = ("section", "训练栏目标题"), "exercise"
         elif (RE_ORDERED_SECTION.match(t) and len(t) <= 80
-              and active_zone not in ("knowledge", "answer")):
+              and active_zone not in ("knowledge", "answer")
+              and not answer_area_started):
             hit = ("section", "中文序号栏目标题")
             zone = "exercise" if re.search(r"选择|排序|补全|填空|改写|计算|训练|练习|检测|题|阅读理解|写作|判断", t) else "body"
         else:
@@ -227,6 +248,8 @@ def detect(index, doc):
             zone = "body"
         if hit:
             role, ev = hit[0], hit[1]
+            if role == "answer":
+                answer_area_started = True
             lvl = hit[2] if len(hit) > 2 else None
             candidate = {"node": n.id, "role": role,
                           "conf": "high" if "关键词" in ev or "题型" in ev or "材料标题" in ev else "medium",
@@ -278,6 +301,64 @@ def detect(index, doc):
         if i in zone_markers:
             current_zone = zone_markers[i]
         zones.append(current_zone)
+    # Treat answer keys and explanations as a small stateful region. Explicit
+    # answer headings enter the region; answer rows and explanation labels then
+    # switch roles until the next row/label. This keeps explanation numbering
+    # out of question detection without relying on sample IDs or node numbers.
+    answer_area = False
+    analysis_mode = False
+    for i, node in enumerate(index.nodes):
+        t = _norm(node.text)
+        if not t:
+            if answer_area:
+                zones[i] = "analysis" if analysis_mode else "answer"
+            continue
+        existing = [c for c in cands if c["node"] == node.id]
+        existing_section = any(c["role"] == "section" for c in existing)
+        existing_answer = any(c["role"] == "answer" for c in existing)
+        if RE_ANSWER_SECTION.match(t):
+            answer_area = True
+            analysis_mode = False
+            zones[i] = "answer"
+            continue
+        if not answer_area and existing_answer:
+            answer_area = True
+            analysis_mode = False
+        if not answer_area:
+            continue
+        if existing_section:
+            # Subsection headings inside the key retain their existing role,
+            # but start the next answer group after any preceding explanation.
+            analysis_mode = False
+            zones[i] = "answer"
+            continue
+        analysis_match = RE_ANALYSIS_START.match(t)
+        if analysis_match:
+            label = analysis_match.group("bracket") or analysis_match.group("plain")
+            # 【详解】 commonly subdivides the explanation already opened by
+            # 【分析】; keep that material in one unit. A fresh 解析/分析 marker
+            # starts a new explanation block, including when it directly
+            # follows a prior block without an answer key between them.
+            if not analysis_mode or label != "详解":
+                cands.append({"node": node.id, "role": "analysis", "conf": "high",
+                              "evidence": "答案区解析/分析标记"})
+            analysis_mode = True
+            zones[i] = "analysis"
+            continue
+        if analysis_mode:
+            if RE_ANSWER_GROUP_START.match(t) or RE_COMPACT_ANSWER_KEY.match(t):
+                cands.append({"node": node.id, "role": "answer", "conf": "medium",
+                              "evidence": "解析后的新答案组/紧凑答案键"})
+                analysis_mode = False
+                zones[i] = "answer"
+            else:
+                zones[i] = "analysis"
+            continue
+        if RE_ANSWER_GROUP_START.match(t) or RE_COMPACT_ANSWER_KEY.match(t) \
+                or RE_NUMBERED_ANSWER.match(t):
+            cands.append({"node": node.id, "role": "answer", "conf": "medium",
+                          "evidence": "答案区编号答案行"})
+        zones[i] = "answer"
     section_orders = [i for i, c in enumerate(index.nodes)
                       if any(u["node"] == c.id and u["role"] == "section" for u in cands)]
     material_orders.update(i for i, c in enumerate(index.nodes)
@@ -509,7 +590,8 @@ def render_summary(summary):
     lines = ["# Splitter V2 Stage2 题目边界与共享材料基线", "",
              "本轮在 Stage2-1 题目边界规则上增加了通用阅读材料识别：显式材料标题或来源年份标记"
              "起始 shared_material，材料前独立序号作为 section，题干中的连续阅读题组成 question_group"
-             "并绑定到最近材料。未修改 Gold，也未扩展 answer 或 analysis。`gold_compare.py` 是正式对照器。",
+             "并绑定到最近材料；答案区按答案键行与解析标记切分 answer/analysis。"
+             "未修改 Gold，`gold_compare.py` 是正式对照器。",
              "正确=Gold 单元与预测单元节点集合完全相同且角色相同；漏识别=未精确匹配的 Gold 单元；"
              "错误识别=未精确匹配的预测单元；边界错误=有同角色预测与 Gold 节点相交但范围不一致。",
              "漏识别/错误识别统计单位为单元，可与边界错误重叠。程序额外输出 body/knowledge 等角色，"
