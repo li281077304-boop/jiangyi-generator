@@ -110,6 +110,39 @@ def test_toc_detection_remains_intact():
     assert any(u["role"] == "question_group" for u in units)
 
 
+def test_contents_navigation_runs_to_first_body_heading():
+    index, units = predict(_fixture([
+        "专题01 实数", "内容导航", "考点聚焦：核心考点+高考考点",
+        "重点速记：知识点和关键点梳理", "知识点 1 算术平方根",
+        "定义：", "正数 x 的平方等于 a。",
+    ]))
+    toc = [u for u in units if u["role"] == "toc"]
+    sections = [u for u in units if u["role"] == "section"]
+    assert len(toc) == 1
+    toc_nodes = sorted(index.interval(*toc[0]["spans"][0]), key=index.order_of)
+    assert [index.text_of(nid) for nid in toc_nodes] == [
+        "内容导航", "考点聚焦：核心考点+高考考点", "重点速记：知识点和关键点梳理"]
+    assert index.text_of(sections[1]["spans"][0][0]) == "知识点 1 算术平方根"
+    assert any(u["role"] == "knowledge" for u in units)
+
+
+def test_explicit_teaching_heading_family_is_section():
+    labels = ["教学内容", "知识精讲&例题讲解", "知识导图", "【深化点拨】",
+              "第1.4节 速度的测量", "速度测量的综合应用及解题步骤"]
+    _, units = predict(_fixture(labels))
+    sections = [u for u in units if u["role"] == "section"]
+    assert len(sections) == len(labels)
+
+
+def test_knowledge_tip_inside_exercise_does_not_end_question_sequence():
+    _, units = predict(_fixture([
+        "题型1 求平方根", "高妙技法", "注意不同数值的根式处理。",
+        "1．求 x 的平方根？", "2．计算下列式子。",
+    ]))
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 2
+
+
 def test_cited_reading_materials_bind_only_to_their_question_groups():
     doc = _fixture(["阅读理解", "01", "（2024·省级模拟）First article paragraph.",
                     "More article text.", "1. What is the first question?", "A. Answer one.",

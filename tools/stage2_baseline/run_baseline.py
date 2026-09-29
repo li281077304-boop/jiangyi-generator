@@ -25,7 +25,7 @@ from struct_nodes import NodeIndex, ROOT  # noqa: E402
 
 
 BLOCK_ROLES = [
-    (re.compile(r"^(知识精讲|例题讲解|知识讲解|知识回顾|课堂启动|知识点|归纳总结|课堂小结|"
+    (re.compile(r"^(知识精讲|例题讲解|知识讲解|知识回顾|课堂启动|知识点|归纳总结|课堂小结|高妙技法|"
                 r"方法指导|目标导航|知识导图|考点梳理|技法指导|技法点拨|题型解读|考点解读|"
                 r"典例剖析|典例精讲|例题精讲|思维导图|要点梳理)"), "knowledge"),
     (re.compile(r"^(即时训练|基础巩固|基础速刷|能力提升|能力跃升|思维挑战|巩固练习|"
@@ -45,6 +45,14 @@ RE_ANALYSIS_START = re.compile(
 RE_ANSWER_GROUP_START = re.compile(
     r"^\s*[一二三四五六七八九十]+[、．.]\s*\d{1,3}\s*[．.、]"
 )
+RE_SECTION_HEAD = re.compile(
+    r"^(?:知识点\s*\d+.*|知识篇\s*\d+.*|第\s*\d+(?:\.\d+)*\s*(?:节|章).*|"
+    r"教学内容|知识精讲.*|知识回顾.*|"
+    r"课堂启动.*|知识导图.*|深化点拨|速度.{0,30}综合应用.{0,30}|.*解题步骤)$"
+)
+RE_INLINE_KNOWLEDGE_LABEL = re.compile(
+    r"^(?:常见的|常用的|注意|说明|定义|性质|例子|举例|思考|提示).*[：:]$"
+)
 RE_NUMBERED_ANSWER = re.compile(r"^\s*\d{1,3}\s*[．.、]\s*\S")
 RE_COMPACT_ANSWER_KEY = re.compile(
     r"^\s*(?:[一二三四五六七八九十]+[、．.]\s*)?"
@@ -59,7 +67,7 @@ RE_TOC_LINE = re.compile(r"(\.{5,}|·{5,}|．{5,})")
 RE_TOC_ENTRY = re.compile(r"(\.{3,}|·{3,}|．{3,})\s*\d{1,4}\s*$")
 RE_OPTION = re.compile(r"^\s*[A-D][.．、]\s*\S")
 RE_QNUM = re.compile(r"^\s*\d{1,3}\s*[．.、]")
-RE_TOC_WORD = re.compile(r"^(目录|目　录|Contents)$")
+RE_TOC_WORD = re.compile(r"^(?:目\s*录|Contents|内容导航|目录导读|目录导航|本讲目录)$", re.I)
 RE_EXAMPLE_HEAD = re.compile(r"^[【\[（(]?(例题?|例|变式|练习)\s*\d+(?:[-－.．]\d+)?")
 RE_ORDERED_SECTION = re.compile(r"^[一二三四五六七八九十]+[、．.]\s*\S")
 RE_ANGLE_SECTION = re.compile(r"^角度\s*\d+")
@@ -85,7 +93,7 @@ RE_PLAIN_CHOICE_ANSWER = re.compile(r"^\s*\d{1,3}\s*[．.、]\s*[A-H](?:\s*[,，
 EXERCISE_LABELS = ("即时训练", "基础巩固", "基础速刷", "能力提升", "能力跃升", "思维挑战",
                    "巩固练习", "提升专练", "真题感知", "真题闯关", "课堂检测", "出门测试",
                    "当堂检测", "达标检测", "实战演练", "写作训练", "强化训练", "课后作业",
-                   "随堂练习", "变式训练", "考点突破", "专项训练")
+                   "随堂练习", "变式训练", "考点突破", "专项训练", "选择填空", "核心素养")
 MERGE_ROLES = {"knowledge", "body"}
 BASELINE_ID = "reading-material-answer-analysis-v1"
 
@@ -93,6 +101,31 @@ BASELINE_ID = "reading-material-answer-analysis-v1"
 def _heading_text(text):
     """Remove common decorative prefixes before matching section labels."""
     return _norm(text).lstrip("⚡🚀🔥⭐★◆●▪·【[（( ")
+
+
+def _toc_end_before_next_section(index, cands, start_id):
+    """Bound a standalone contents/navigation block at the next structure cue."""
+    start_order = index.order_of(start_id)
+    future = []
+    for candidate in cands:
+        if candidate["role"] not in ("section", "shared_material", "question_group"):
+            continue
+        node_id = candidate["node"]
+        order = index.order_of(node_id)
+        if order is None:
+            first = index.first_content(node_id)
+            order = index.order_of(first) if first else None
+        if order is not None and order > start_order:
+            future.append(order)
+    if future:
+        end_order = min(future)
+        if end_order > start_order:
+            return index.nodes[end_order - 1].id
+    # A title without a later structural cue is still bounded. The cap avoids
+    # swallowing the rest of a document when a purported contents page is
+    # malformed or its body headings are unrecognized.
+    end_order = min(len(index.nodes) - 1, start_order + 12)
+    return index.nodes[end_order].id if end_order >= start_order else start_id
 
 
 def _is_instruction_or_answer_text(text):
@@ -217,6 +250,9 @@ def detect(index, doc):
         if RE_ANSWER_SECTION.match(t):
             hit, zone = ("section", "答案区标题"), "answer"
             answer_area_started = True
+        elif RE_SECTION_HEAD.match(title.rstrip("】]）) ")):
+            hit, zone = ("section", "显式教学栏目/知识标题"), (
+                "body" if title.startswith("教学内容") else "knowledge")
         elif RE_TYPE_HEAD.match(title) or RE_ANGLE_SECTION.match(title):
             hit, zone = ("section", "栏目/题型标题"), "exercise"
         elif (RE_NUMERIC_SECTION.match(t) and next_nonempty is not None
@@ -228,6 +264,10 @@ def detect(index, doc):
             material_orders.add(i)
         elif any(title.startswith(label) for label in EXERCISE_LABELS):
             hit, zone = ("section", "训练栏目标题"), "exercise"
+        elif RE_INLINE_KNOWLEDGE_LABEL.match(title):
+            # This is an inline explanatory label, not a section boundary. Keep
+            # the caller's exercise/body state so later questions are retained.
+            hit = ("knowledge", "正文内定义/提示标签")
         elif (RE_ORDERED_SECTION.match(t) and len(t) <= 80
               and active_zone not in ("knowledge", "answer")
               and not answer_area_started):
@@ -257,6 +297,13 @@ def detect(index, doc):
             if role == "section":
                 candidate["isolated"] = True
             cands.append(candidate)
+            if zone:
+                # A knowledge/tip subheading inside an exercise section is
+                # local guidance, not the end of the exercise sequence.
+                # Preserve the exercise detection context until another
+                # section explicitly changes it.
+                if zone == "knowledge" and active_zone == "exercise":
+                    zone = None
             if zone:
                 zone_markers[i] = zone
                 active_zone = zone
@@ -294,7 +341,8 @@ def detect(index, doc):
                           "toc_container": best, "toc_end": best})
         else:
             cands.append({"node": n.id, "role": "toc", "conf": "low",
-                          "evidence": "疑似目录标题（单节点，需确认是否真目录区）", "toc_end": n.id})
+                          "evidence": "目录标题至首个正文结构标题之间的导航区",
+                          "toc_end": _toc_end_before_next_section(index, cands, n.id)})
     zones = []
     current_zone = "body"
     for i in range(len(index.nodes)):
