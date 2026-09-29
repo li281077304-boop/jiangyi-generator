@@ -380,6 +380,7 @@ def compare(doc, gold, pred_units=None):
         if u.resolve_error:
             cmp.add("GOLD_ANCHOR", "info", u.id or "(无id)", u.resolve_error)
     pred_list = resolve_units(pred_units, index, "pred") if pred_units else []
+    pred_order = {p.id: i for i, p in enumerate(pred_list)}
     for u in pred_list:
         if u.resolve_error:
             cmp.add("PRED_ANCHOR", "error", u.id or "(无id)",
@@ -441,7 +442,9 @@ def compare(doc, gold, pred_units=None):
         if not u.nodes:
             continue
         counts = {}
-        for nid in u.nodes & all_content:
+        # Node sets are intentionally unordered. Iterate in document order so
+        # equal-coverage ties below do not vary with the process hash seed.
+        for nid in sorted(u.nodes & all_content, key=lambda n: order[n]):
             p = _covering_unit(pred_list, nid)
             if p is not None:
                 counts[p.id] = counts.get(p.id, 0) + 1
@@ -449,7 +452,8 @@ def compare(doc, gold, pred_units=None):
             cmp.add("MISSED_STRUCTURE", "error", u.id,
                     "gold 单元 %s(%s) 完全没有被程序单元覆盖" % (u.id, u.role))
             continue
-        main_id = max(counts.items(), key=lambda kv: kv[1])[0]
+        # Ties go to the earliest predicted unit encountered in document order.
+        main_id = max(counts.items(), key=lambda kv: (kv[1], -pred_order[kv[0]]))[0]
         main = next(p for p in pred_list if p.id == main_id)
         gold_of_pred.setdefault(main_id, []).append(u)
 

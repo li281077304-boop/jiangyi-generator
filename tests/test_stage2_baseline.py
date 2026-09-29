@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Regression tests for the frozen Stage2 baseline adapter (no heuristic tuning)."""
+"""Regression tests for the question-boundary Stage2 baseline."""
 import json
 import os
 import sys
@@ -15,8 +15,7 @@ from run_baseline import predict  # noqa: E402
 from struct_doc import Block, StructDoc  # noqa: E402
 
 
-def _fixture():
-    texts = ["第一单元", "即时训练", "1．题干", "A. 选项", "B. 选项", "【答案】A"]
+def _fixture(texts):
     doc = StructDoc(name="baseline-fixture")
     doc.body_size = 21
     doc.blocks = [Block(seq=i, pno=i + 1, kind="paragraph", text=text,
@@ -26,30 +25,71 @@ def _fixture():
 
 
 def test_baseline_is_deterministic():
-    doc = _fixture()
+    doc = _fixture(["第一单元", "即时训练", "1．题干？", "A. 选项", "B. 选项", "【答案】A"])
     idx1, first = predict(doc)
     idx2, second = predict(doc)
     assert idx1.order_ids == idx2.order_ids
     assert json.dumps(first, ensure_ascii=False, sort_keys=True) == \
         json.dumps(second, ensure_ascii=False, sort_keys=True)
-    assert [u["role"] for u in first] == ["section", "question_group", "answer"]
+    assert [u["role"] for u in first] == ["section", "section", "question_group", "answer"]
 
 
 def test_baseline_keeps_original_coarse_roles():
-    _, units = predict(_fixture())
-    # Original draft rule classifies answer-key headings as answer and does not
-    # infer analysis or unknown as separate roles.
+    _, units = predict(_fixture(["即时训练", "1．求 x？", "【答案】A"]))
+    # This boundary pass does not add analysis or unknown classification.
     assert not any(u["role"] in ("analysis", "unknown") for u in units)
     assert units[-1]["role"] == "answer"
 
 
-def test_type_heading_rule_is_frozen_from_gold_draft_generator():
-    doc = StructDoc(name="type-heading-fixture")
-    doc.body_size = 21
-    doc.blocks = [Block(seq=0, pno=1, kind="paragraph", text="题型1 整数运算",
-                        eff_sz=21, is_empty=False)]
+def test_column_headings_are_sections_not_questions():
+    labels = ["题型1 整数运算", "考点2：方程", "提升专练", "真题感知",
+              "能力提升", "即时训练", "巩固练习"]
+    doc = _fixture(labels)
     _, units = predict(doc)
-    assert units[0]["role"] == "question_group"
+    assert [u["role"] for u in units if u["role"] != "body"] == ["section"] * len(labels)
+    assert not any(u["role"] == "question_group" for u in units)
+
+
+def test_independent_consecutive_questions_get_separate_groups():
+    doc = _fixture(["提升专练", "13．求方程的根？", "14．计算下列各式。",
+                    "15．判断结论是否正确？"])
+    index, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 3
+    anchors = [index.text_of(u["spans"][0][0]) for u in groups]
+    assert anchors == ["13．求方程的根？", "14．计算下列各式。", "15．判断结论是否正确？"]
+
+
+def test_subquestions_stay_inside_their_parent_question():
+    doc = _fixture(["巩固练习", "1．解方程，并回答下列问题：", "（1）求出两个根。",
+                    "（2）比较两根的大小。", "2．计算 2+3。"])
+    index, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 2
+    first_nodes = index.interval(*groups[0]["spans"][0])
+    assert {"（1）求出两个根。", "（2）比较两根的大小。"}.issubset(
+        {index.by_id[nid].text for nid in first_nodes})
+
+
+def test_numbered_instruction_and_answer_lines_are_not_questions():
+    doc = _fixture(["知识精讲", "1．首先观察等式两边的结构。", "2．方法：利用公式变形。",
+                    "目标导航", "一、掌握平方差公式。", "方法指导", "一、首先提取公因式。",
+                    "即时训练", "1．求 x？", "答案与解析", "1．B", "一、1.B  2.A  3.C",
+                    "解析：根据题意可知。"])
+    _, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 1
+    answer_units = [u for u in units if u["role"] == "answer"]
+    assert answer_units
+    assert not any("一、1.B" in u.get("note", "") for u in units if u["role"] == "section")
+
+
+def test_toc_detection_remains_intact():
+    doc = _fixture(["目录", "第一章 .......... 1", "第二章 .......... 2",
+                    "第三章 .......... 3", "即时训练", "1．计算 1+1。"])
+    _, units = predict(doc)
+    assert any(u["role"] == "toc" for u in units)
+    assert any(u["role"] == "question_group" for u in units)
 
 
 def test_real_corpus_manifest_has_exact_gold_set():

@@ -177,6 +177,20 @@ def test_group_split_detected():
     assert iss.subject == "g1"
 
 
+def test_equal_coverage_tie_uses_earliest_predicted_unit():
+    """Set/hash iteration must not change a Gold unit's primary prediction."""
+    doc = _doc(["题目第一段", "题目第二段"])
+    gold = {"units": [{"id": "g1", "role": "question_group", "start": 0, "end": 1}]}
+    pred = [
+        {"id": "P1", "role": "body", "start": 0, "end": 0},
+        {"id": "P2", "role": "question_group", "start": 1, "end": 1},
+    ]
+    cmp = compare(doc, gold, pred)
+    assert any(i.code == "MISSED_STRUCTURE" and i.subject == "g1->P1" for i in cmp.issues)
+    assert not any(i.code == "ROLE_MISMATCH" and i.subject.startswith("g1->")
+                   for i in cmp.issues)
+
+
 def test_toc_as_body_and_body_as_toc():
     """目录误当正文 / 正文误当目录，两个方向都要报。"""
     texts = ["目录", "第一章 实数......3", "第二章 方程......9",

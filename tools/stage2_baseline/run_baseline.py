@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Repeatable Stage 2 baseline, faithfully adapted from _research/gen_gold_draft.py.
+"""Repeatable Stage 2 question-boundary baseline, adapted from the Gold draft rules.
 
-This is a baseline snapshot of the old candidate rules, not a new classifier.
-Input/output plumbing and reporting are made reproducible; rule thresholds and
-candidate decisions below intentionally preserve the original implementation.
+The rule pass is intentionally scoped to question-group boundaries and their
+section anchors. It does not infer shared-material bindings or expand answer /
+analysis classification. Input and reporting remain deterministic.
 """
 import argparse
 import hashlib
@@ -31,91 +31,195 @@ BLOCK_ROLES = [
     (re.compile(r"^(即时训练|基础巩固|基础速刷|能力提升|能力跃升|思维挑战|巩固练习|"
                 r"提升专练|真题感知|真题闯关|课堂检测|出门测试|当堂检测|达标检测|"
                 r"实战演练|写作训练|强化训练|课后作业|随堂练习|变式训练|考点突破|专项训练)"),
-     "question_group"),
+     "section"),
     (re.compile(r"^(参考答案|答案与解析|答案解析|答案与点拨|答案详解|试题解析|解析与答案|"
                 r"【答案】|【解析】|【思路】|解析：)"), "answer"),
 ]
 RE_MATERIAL_HEAD = re.compile(r"^(范文|例文|参考范文|Passage\s*\d|阅读(材料|短文|理解)|"
                               r"材料\s*\d|语篇\s*\d|【材料】|示例)")
-RE_TYPE_HEAD = re.compile(r"^(题型|类型|角度|考点|考向|专题)\s*\d+")
+RE_TYPE_HEAD = re.compile(r"^[【\[（(]?(题型|类型|角度|考点|考向|专题)\s*\d+")
 RE_TOC_LINE = re.compile(r"(\.{5,}|·{5,}|．{5,})")
 RE_TOC_ENTRY = re.compile(r"(\.{3,}|·{3,}|．{3,})\s*\d{1,4}\s*$")
 RE_OPTION = re.compile(r"^\s*[A-D][.．、]\s*\S")
 RE_QNUM = re.compile(r"^\s*\d{1,3}\s*[．.、]")
 RE_TOC_WORD = re.compile(r"^(目录|目　录|Contents)$")
+RE_EXAMPLE_HEAD = re.compile(r"^[【\[（(]?(例题?|例|变式|练习)\s*\d+(?:[-－.．]\d+)?")
+RE_ORDERED_SECTION = re.compile(r"^[一二三四五六七八九十]+[、．.]\s*\S")
+RE_ANGLE_SECTION = re.compile(r"^角度\s*\d+")
+RE_INSTRUCTION_LEAD = re.compile(
+    r"^(?:要|需|必须|掌握|熟练|了解|理解|认识|通过|能|能够|实验器材|实验原理|实验步骤|"
+    r"实验操作|注意事项|数据分析|解题步骤|解题策略|方法|技巧|性质|公式|法则|定理|"
+    r"首先|其次|最后|本题|句意|故选|答案|解析|规范)"
+)
+RE_EXPLANATION_TEXT = re.compile(
+    r"^(?:\d{1,3}\s*[．.、]\s*)?(?:句意|故选|因此|所以|符合题意|根据.{0,18}(?:可知|答语)|由此可知)"
+)
+RE_QUESTION_CUE = re.compile(
+    r"(?:[?？]|_{2,}|＿{2,}|（\s*[A-D]\s*[）)]|\([A-D]\)|\([.。?？]\)\s*$|"
+    r"（[.。?？]）\s*$|下列|以下|若|已知|求|计算|化简|比较|如图|试求|判断|填入|分别求|"
+    r"哪一|什么|为何|为什么|怎样|求出|解答|选择|写出)"
+)
+RE_READING_QUESTION = re.compile(
+    r"^\s*\d{1,3}\s*[．.、]\s*(?:what|which|who|why|how|where|when|whose|whom|"
+    r"the author|according to|the text|the passage|by the|best title|we know|"
+    r"what attitude|which method|what happened|does .{0,50} mean|did .{0,50} feel)", re.I
+)
+RE_PLAIN_CHOICE_ANSWER = re.compile(r"^\s*\d{1,3}\s*[．.、]\s*[A-H](?:\s*[,，、;；]\s*[A-H]){0,7}\s*$", re.I)
+EXERCISE_LABELS = ("即时训练", "基础巩固", "基础速刷", "能力提升", "能力跃升", "思维挑战",
+                   "巩固练习", "提升专练", "真题感知", "真题闯关", "课堂检测", "出门测试",
+                   "当堂检测", "达标检测", "实战演练", "写作训练", "强化训练", "课后作业",
+                   "随堂练习", "变式训练", "考点突破", "专项训练")
 MERGE_ROLES = {"answer", "analysis", "knowledge", "body"}
+BASELINE_ID = "question-boundary-rules-v2"
 
 
-def detect_question_runs(index, cands):
-    """Original candidate rule: infer runs from numbered short/question lines."""
-    taken = {c["node"] for c in cands}
-    answer_like = {c["node"] for c in cands
-                   if c["role"] in ("answer", "analysis", "toc")}
+def _heading_text(text):
+    """Remove common decorative prefixes before matching section labels."""
+    return _norm(text).lstrip("⚡🚀🔥⭐★◆●▪·【[（( ")
+
+
+def _is_instruction_or_answer_text(text):
+    t = _norm(text)
+    return bool(RE_INSTRUCTION_LEAD.match(t) or RE_EXPLANATION_TEXT.match(t))
+
+
+def _question_start_strength(text, mode, previous_number):
+    """Accept prompt-like starts; use sequence only inside an exercise section."""
+    t = _norm(text)
+    match = RE_QNUM.match(t)
+    if not match or RE_PLAIN_CHOICE_ANSWER.match(t) or _is_instruction_or_answer_text(t):
+        return None
+    number = int(match.group().strip().rstrip("．.、 "))
+    if RE_QUESTION_CUE.search(t):
+        return number
+    if mode == "exercise" and previous_number is not None and number == previous_number + 1:
+        return number
+    return None
+
+
+def _reading_material_gap_start(index, left_order, right_order):
+    """Group consecutive reading items only when substantial prose intervenes.
+
+    This selects question-group boundaries only; it emits no shared_material
+    unit and creates no material/question relation.
+    """
+    middle = [_norm(n.text) for n in index.nodes[left_order + 1:right_order]]
+    prose = [t for t in middle if len(t) >= 80 and not RE_QNUM.match(t)
+             and not RE_OPTION.match(t) and not RE_PLAIN_CHOICE_ANSWER.match(t)]
+    if len(prose) >= 3 and sum(map(len, prose)) >= 600:
+        first_text = prose[0]
+        for order in range(left_order + 1, right_order):
+            if _norm(index.nodes[order].text) == first_text:
+                return order
+    return None
+
+
+def detect_question_runs(index, zones, section_orders):
+    """Identify actual prompt starts instead of one candidate per numbered run.
+
+    Number-only lines are suppressed in knowledge/answer regions and in
+    instructional/explanatory prose. Explicit example headings count as prompt
+    starts. Consecutive English reading questions stay within one question group
+    unless a substantial prose gap marks the next question set.
+    """
     out = []
-    nodes = index.nodes
-    i = 0
-    while i < len(nodes):
-        n = nodes[i]
-        t = _norm(n.text)
-        if not RE_QNUM.match(t) or n.id in answer_like:
-            i += 1
+    previous_number = None
+    previous_item_order = None
+    reading_group = False
+    section_orders = sorted(section_orders)
+    for i, node in enumerate(index.nodes):
+        t = _norm(node.text)
+        if not t:
             continue
-        run = [n.id]
-        j = i + 1
-        while j < len(nodes):
-            if nodes[j].id in answer_like or nodes[j].id in taken:
-                break
-            tt = _norm(nodes[j].text)
-            if not tt:
-                j += 1
-                continue
-            if RE_QNUM.match(tt) or RE_OPTION.match(tt) or len(tt) <= 60:
-                run.append(nodes[j].id)
-                j += 1
-                continue
-            break
-        if len(run) >= 4:
-            out.append({"node": run[0], "role": "question_group", "conf": "medium",
-                        "evidence": "题号连续段 %d 段（无显式标记）" % len(run)})
-            i = j
-        else:
-            i += 1
+        mode = zones[i]
+        if RE_EXAMPLE_HEAD.match(_heading_text(t)):
+            out.append({"node": node.id, "role": "question_group", "conf": "high",
+                        "evidence": "显式例题/变式题标题"})
+            previous_number = None
+            previous_item_order = i
+            reading_group = False
+            continue
+        number = _question_start_strength(t, mode, previous_number)
+        if number is None or mode in ("knowledge", "answer"):
+            if mode in ("knowledge", "answer"):
+                previous_number = None
+                previous_item_order = None
+                reading_group = False
+            continue
+        is_reading = bool(RE_READING_QUESTION.match(t))
+        crossed_section = previous_item_order is not None and any(
+            previous_item_order < p <= i for p in section_orders)
+        material_gap_start = None
+        same_sequence = (
+            is_reading and reading_group and number == (previous_number or 0) + 1
+            and previous_item_order is not None and not crossed_section
+        )
+        if same_sequence:
+            material_gap_start = _reading_material_gap_start(index, previous_item_order, i)
+        same_reading_group = same_sequence and material_gap_start is None
+        if material_gap_start is not None:
+            out.append({"node": index.nodes[material_gap_start].id, "role": "body", "conf": "medium",
+                        "evidence": "连续阅读题组之间的独立长文区域"})
+        if not same_reading_group:
+            out.append({"node": node.id, "role": "question_group", "conf": "high",
+                        "evidence": "题号 + 题干特征" if RE_QUESTION_CUE.search(t)
+                        else "练习区连续题号"})
+        previous_number = number
+        previous_item_order = i
+        reading_group = is_reading
     return out
 
 
 def detect(index, doc):
-    """Original heading/format/TOC/question-run heuristics, unchanged."""
+    """Detect section anchors and question starts for the v2 boundary pass."""
     body_sz = doc.body_size or 0
     sizes = sorted({n.block.eff_sz for n in index.nodes
                     if n.block and n.block.eff_sz and n.block.eff_sz > body_sz}, reverse=True)
     cands, toc_nodes = [], []
-    for n in index.nodes:
+    zone_markers = {}
+    active_zone = "body"
+    for i, n in enumerate(index.nodes):
         t = _norm(n.text)
         if not t:
             continue
         if RE_TOC_LINE.search(t) or RE_TOC_WORD.match(t):
             continue
+        title = _heading_text(t)
         hit = None
-        for pat, role in BLOCK_ROLES:
-            if pat.match(t):
-                hit = (role, "策略关键词: %s" % pat.pattern[:28])
-                break
-        if hit is None and RE_TYPE_HEAD.match(t):
-            hit = ("question_group", "题型/考点标题")
-        if hit is None and RE_MATERIAL_HEAD.match(t):
-            hit = ("shared_material", "材料/范文标题")
+        zone = None
+        if RE_TYPE_HEAD.match(title) or RE_ANGLE_SECTION.match(title):
+            hit, zone = ("section", "栏目/题型标题"), "exercise"
+        elif any(title.startswith(label) for label in EXERCISE_LABELS):
+            hit, zone = ("section", "训练栏目标题"), "exercise"
+        elif (RE_ORDERED_SECTION.match(t) and len(t) <= 80
+              and active_zone not in ("knowledge", "answer")):
+            hit = ("section", "中文序号栏目标题")
+            zone = "exercise" if re.search(r"选择|排序|补全|填空|改写|计算|训练|练习|检测|题|阅读理解|写作|判断", t) else "body"
+        else:
+            for pat, role in BLOCK_ROLES:
+                if pat.match(t) or pat.match(title):
+                    hit = (role, "策略关键词: %s" % pat.pattern[:28])
+                    zone = {"section": "exercise", "knowledge": "knowledge", "answer": "answer"}[role]
+                    break
         if hit is None and n.block is not None and n.block.eff_sz and body_sz \
                 and n.block.eff_sz > body_sz and len(t) <= 40:
             lvl = sizes.index(n.block.eff_sz) + 1 if n.block.eff_sz in sizes else 2
             hit = ("section", "字号层 %s(正文%s)%s" % (
                 "%gpt" % (n.block.eff_sz / 2.0), "%gpt" % (body_sz / 2.0),
                 " 加粗" if n.block.bold else ""), lvl)
+            zone = "body"
         if hit:
             role, ev = hit[0], hit[1]
             lvl = hit[2] if len(hit) > 2 else None
-            cands.append({"node": n.id, "role": role,
+            candidate = {"node": n.id, "role": role,
                           "conf": "high" if "关键词" in ev or "题型" in ev or "材料标题" in ev else "medium",
-                          "evidence": ev, "level": lvl})
+                          "evidence": ev, "level": lvl}
+            if role == "section":
+                candidate["isolated"] = True
+            cands.append(candidate)
+            if zone:
+                zone_markers[i] = zone
+                active_zone = zone
     for n in index.nodes:
         t = _norm(n.text)
         if RE_TOC_ENTRY.search(t):
@@ -151,7 +255,15 @@ def detect(index, doc):
         else:
             cands.append({"node": n.id, "role": "toc", "conf": "low",
                           "evidence": "疑似目录标题（单节点，需确认是否真目录区）", "toc_end": n.id})
-    cands.extend(detect_question_runs(index, cands))
+    zones = []
+    current_zone = "body"
+    for i in range(len(index.nodes)):
+        if i in zone_markers:
+            current_zone = zone_markers[i]
+        zones.append(current_zone)
+    section_orders = [i for i, c in enumerate(index.nodes)
+                      if any(u["node"] == c.id and u["role"] == "section" for u in cands)]
+    cands.extend(detect_question_runs(index, zones, section_orders))
     toc_containers = [c["toc_container"] for c in cands if c.get("toc_container")]
     if toc_containers:
         cands = [c for c in cands if not (c["node"] in index.by_id and
@@ -176,7 +288,9 @@ def build_units(index, cands):
         start = first_of(c["node"])
         if start is None:
             continue
-        if "toc_end" in c:
+        if c.get("isolated"):
+            end = start
+        elif "toc_end" in c:
             end = last_of(c["toc_end"]) or start
         else:
             nxt = next((first_of(c2["node"]) for c2 in cands[i + 1:]
@@ -336,7 +450,7 @@ def run(manifest_path, corpus_root, out_dir):
         issues = Counter(i.code for i in cmp.issues)
         all_issue_counts.update(issues)
         role_stats = role_metrics(cmp)
-        pred_doc = {"doc": name, "baseline": "gold-draft-heuristics-v1", "units": predicted}
+        pred_doc = {"doc": name, "baseline": BASELINE_ID, "units": predicted}
         prefix = os.path.join(out_dir, sample_id)
         with open(prefix + "_pred.json", "w", encoding="utf-8") as fh:
             json.dump(pred_doc, fh, ensure_ascii=False, indent=2)
@@ -358,15 +472,25 @@ def run(manifest_path, corpus_root, out_dir):
         with open(gold_path, "rb") as fh:
             gold_sha = hashlib.sha256(fh.read()).hexdigest()
         gold_files[spec["sample_id"]] = {"path": spec["gold"], "sha256": gold_sha}
-    return {"baseline": "gold-draft-heuristics-v1", "rule_source": "_research/gen_gold_draft.py",
+    roles = ("section", "toc", "question_group", "shared_material", "answer", "analysis", "unknown")
+    role_totals = {
+        role: {key: sum(sample["roles"][role][key] for sample in summaries)
+               for key in ("gold", "predicted", "correct", "missed", "erroneous",
+                           "boundary_errors", "binding_errors")}
+        for role in roles
+    }
+    return {"baseline": BASELINE_ID, "rule_source": "_research/gen_gold_draft.py",
             "gold_files": gold_files,
-            "samples": summaries, "issue_counts": dict(sorted(all_issue_counts.items()))}
+            "samples": summaries, "issue_counts": dict(sorted(all_issue_counts.items())),
+            "role_totals": role_totals}
 
 
 def render_summary(summary):
-    lines = ["# Splitter V2 Stage2 自动结构识别基线", "",
-             "本报告固定使用 Gold 初稿生成器 `_research/gen_gold_draft.py` 中的既有候选规则；"
-             "没有调整阈值或识别行为。`gold_compare.py` 是正式对照器。",
+    qg = summary["role_totals"]["question_group"]
+    lines = ["# Splitter V2 Stage2 题目边界基线", "",
+             "本轮对 `_research/gen_gold_draft.py` 候选规则做了有范围的 Stage2-1 边界调整："
+             "显式栏目标题成为 section，题目起点单独识别；未修改 Gold，未实现 shared_material、"
+             "answer 或 analysis 的新识别。`gold_compare.py` 是正式对照器。",
              "正确=Gold 单元与预测单元节点集合完全相同且角色相同；漏识别=未精确匹配的 Gold 单元；"
              "错误识别=未精确匹配的预测单元；边界错误=有同角色预测与 Gold 节点相交但范围不一致。",
              "漏识别/错误识别统计单位为单元，可与边界错误重叠。程序额外输出 body/knowledge 等角色，"
@@ -395,14 +519,12 @@ def render_summary(summary):
     for code, count in summary["issue_counts"].items():
         lines.append("- `%s`: %d" % (code, count))
     binding_total = sum(s["binding_errors"] for s in summary["samples"])
+    merge_total = summary["issue_counts"].get("MERGE", 0)
     lines += ["", "绑定错误（UNBOUND）：%d 对。角色表中的绑定错误端点分别计入题组和材料。" % binding_total,
-              "", "## 失败解读与下一轮优先项", "",
-              "最大共性问题是边界候选过稀并由‘当前候选延伸到下一个候选’形成大段合并：正式对照累计"
-              " `MERGE` 95 次；`question_group` 精确范围命中仅 5 个（四份合计 Gold 191 个）。",
-              "其次是角色含义错位：旧规则把 `题型N` 直接标为 `question_group`，而正式口径把题型标题视为 `section`。"
-              "S12 产生 1 次 `TOC_AS_BODY`；S04 的 20 个共享材料均未被规则产出，产生 20 对 `UNBOUND`。",
-              "建议 Stage2-1 只优先解决‘题目边界与栏目标题分离’：题型标题先按 section 识别，题组起止以明确题号/"
-              "题组连续结构确定，并用 S01/S11/S12/S04 做回归。暂不同时扩展答案语义或共享材料推断。", "",
+              "", "## 边界结果解读", "",
+              "四份正式 Gold 中 question_group 精确命中 %d/%d；GoldCompare 的 MERGE 共 %d。"
+              "具体按样本及角色列于上表。" % (qg["correct"], qg["gold"], merge_total),
+              "S04 的 shared_material 未作为本轮识别目标；其关联/边界差异仍留在错误清单中，不作为已支持能力。", "",
               "## 可重复性", "", "同一 runner、相同 source SHA256、相同 Gold 文件与 StructDoc 代码会生成相同预测单元和对照统计；"
               "报告不含运行耗时等非确定性字段。", ""]
     return "\n".join(lines)
