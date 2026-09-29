@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(APP_DIR))
 sys.path.insert(0, os.path.abspath(BASELINE_DIR))
 
 from run_baseline import predict  # noqa: E402
-from struct_doc import Block, StructDoc  # noqa: E402
+from struct_doc import Block, Cell, OleRef, StructDoc, TableBlock  # noqa: E402
 from gold_compare import compare  # noqa: E402
 
 
@@ -22,6 +22,28 @@ def _fixture(texts):
     doc.blocks = [Block(seq=i, pno=i + 1, kind="paragraph", text=text,
                         eff_sz=32 if i == 0 else 21, is_empty=False)
                   for i, text in enumerate(texts)]
+    return doc
+
+
+def _table_fixture(rows):
+    doc = StructDoc(name="baseline-table-fixture")
+    doc.body_size = 21
+    table_rows = []
+    seq = 0
+    for row in rows:
+        cells = []
+        for text in row:
+            blocks = [Block(seq=seq, pno=None, kind="paragraph", text=text,
+                            eff_sz=21, is_empty=not bool(text.strip()))]
+            seq += 1
+            cells.append(Cell(text=text, n_paras=len(blocks), blocks=blocks))
+        table_rows.append(cells)
+    doc.blocks = [
+        Block(seq=0, pno=1, kind="paragraph", text="提升专练", eff_sz=21),
+        Block(seq=1, pno=None, kind="table", text="", table=TableBlock(rows=table_rows)),
+        Block(seq=2, pno=2, kind="paragraph", text="即时训练", eff_sz=21),
+        Block(seq=3, pno=3, kind="paragraph", text="3.计算下列小车通过 AB 段的平均速度是多少？", eff_sz=21),
+    ]
     return doc
 
 
@@ -115,6 +137,22 @@ def test_numbered_teaching_instructions_do_not_become_question_groups():
     assert groups[0]["spans"][0][0]  # The explicit prompt remains detectable.
 
 
+def test_instruction_prefix_wins_over_embedded_weak_question_cue():
+    _, units = predict(_fixture([
+        "提升专练", "1.应用计算时，单位要统一；", "2.求下列小车的平均速度是多少？",
+    ]))
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 1
+    assert groups[0]["spans"][0][0] == "b2"
+
+
+def test_bold_numbered_topic_with_subparts_is_instructional_heading():
+    doc = _fixture(["提升专练", "2．测量平均速度实验的斜面选择", "（1）斜面应选择较小的坡度。"])
+    doc.blocks[1].bold = True
+    _, units = predict(doc)
+    assert not any(u["role"] == "question_group" for u in units)
+
+
 def test_formula_question_is_not_suppressed_as_explanatory_prose():
     index, units = predict(_fixture([
         "提升专练", "1.利用平方差公式计算 x²-9，当 x=4 时结果是多少？",
@@ -132,6 +170,63 @@ def test_numbered_subparts_after_explicit_example_heading_stay_in_group():
     ]))
     groups = [u for u in units if u["role"] == "question_group"]
     assert len(groups) == 2
+
+
+def test_numbered_learning_objectives_are_filtered_before_weak_question_cues():
+    doc = _table_fixture([
+        ["目标导航", "方法指导"],
+        ["1.掌握平均速度的计算方法。", "1.通过实验测量并记录数据。"],
+        ["2.理解实验图像与误差分析。", "2.归纳实验误差的来源。"],
+    ])
+    index, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 1
+    assert index.text_of(groups[0]["spans"][0][0]).startswith("3.")
+
+
+def test_existing_formula_metadata_can_anchor_numbered_exercise_questions():
+    for signal in ("omml", "mathtype"):
+        doc = _fixture(["提升专练", "1．（2025·模拟题）式子的平方根是        。"])
+        question = next(b for b in doc.blocks if "式子的平方根" in b.text)
+        if signal == "omml":
+            question.math_count = 1
+        else:
+            question.oles.append(OleRef(rId="rId1", target="word/embeddings/oleObject1.bin",
+                                        prog_id="Equation.DSMT4"))
+        index, units = predict(doc)
+        groups = [u for u in units if u["role"] == "question_group"]
+        assert len(groups) == 1, signal
+        assert index.text_of(groups[0]["spans"][0][0]).startswith("1．"), signal
+
+
+def test_formula_metadata_does_not_promote_numbered_knowledge_explanations():
+    doc = _fixture(["知识精讲", "1.利用公式进行讲解时，先说明对应概念。"])
+    paragraph = next(b for b in doc.blocks if "利用公式" in b.text)
+    paragraph.math_count = 1
+    _, units = predict(doc)
+    assert not any(u["role"] == "question_group" for u in units)
+
+
+def test_trailing_blank_nodes_do_not_extend_question_group_boundaries():
+    doc = _fixture(["提升专练", "1.计算 2+3？", "A. 5", "B. 6", "", "",
+                    "题型2 继续练习", "2.计算 4+5？", "A. 9", "B. 10"])
+    index, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 2
+    blank_ids = {n.id for n in index.nodes if not n.has_content}
+    assert blank_ids
+    for group in groups:
+        members = index.interval(*group["spans"][0])
+        assert members
+        assert all(index.by_id[nid].has_content for nid in members)
+    assert blank_ids.issubset(set(index.order_ids))
+
+
+def test_trailing_blank_before_answer_section_remains_in_source_span():
+    index, units = predict(_fixture(["提升专练", "1.计算 2+3？", "", "参考答案", "1.A"]))
+    group = next(u for u in units if u["role"] == "question_group")
+    assert group["spans"][0][1] == "b2"
+    assert "b2" in index.order_ids
 
 
 def test_numbered_instruction_and_answer_lines_are_not_questions():

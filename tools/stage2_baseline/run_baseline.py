@@ -82,6 +82,10 @@ RE_CONCEPTUAL_INSTRUCTION = re.compile(
     r".{0,24}(?:解题|实验|数据).{0,16}(?:注意事项|误差|分析|图像|结论))"
 )
 RE_INLINE_OPTIONS = re.compile(r"(?:^|[\s|])A[.．、]\s*\S", re.I)
+RE_EXPLICIT_QUESTION_MARKER = re.compile(
+    r"(?:[?？]|_{2,}|＿{2,}|\(\s*\)|（\s*）|（\s*[A-D]\s*[）)]|\([A-D]\))", re.I
+)
+OBJECTIVE_HEADINGS = ("目标导航", "方法指导", "教学目标", "学习目标", "教学要求", "学习要求")
 RE_EXPLANATION_TEXT = re.compile(
     r"^(?:\d{1,3}\s*[．.、]\s*)?(?:句意|故选|因此|所以|符合题意|根据.{0,18}(?:可知|答语)|由此可知)"
 )
@@ -143,22 +147,85 @@ def _is_instruction_or_answer_text(text):
                 or RE_EXPLANATION_TEXT.match(stripped))
 
 
-def _question_start_strength(text, mode, previous_number):
+def _question_start_strength(text, mode, previous_number, has_formula=False):
     """Accept prompt-like starts; use sequence only inside an exercise section."""
     t = _norm(text)
     match = RE_QNUM.match(t)
     if not match or RE_PLAIN_CHOICE_ANSWER.match(t):
         return None
     number = int(match.group().strip().rstrip("．.、 "))
+    stripped = re.sub(r"^\s*\d{1,3}\s*[．.、]\s*", "", t)
+    if _is_instruction_or_answer_text(t) and not RE_EXPLICIT_QUESTION_MARKER.search(t):
+        return None
     if RE_QUESTION_CUE.search(t):
         return number
     if RE_INLINE_OPTIONS.search(t):
         return number
     if _is_instruction_or_answer_text(t):
         return None
+    if has_formula and mode == "exercise" and RE_SOURCE_CITATION.match(stripped):
+        return number
     if mode == "exercise" and previous_number is not None and number == previous_number + 1:
         return number
     return None
+
+
+def _objective_table_columns(index):
+    """Return table columns whose heading marks objective/guidance content.
+
+    This scopes instructional-number suppression to the structurally related
+    table column instead of changing the exercise zone for the rest of a file.
+    """
+    table_scopes = {}
+    for node in index.nodes:
+        if _heading_text(node.text) not in OBJECTIVE_HEADINGS:
+            continue
+        cell_id = node.container
+        if index.containers.get(cell_id) != "cell":
+            continue
+        match = re.search(r"\.r(\d+)c(\d+)$", cell_id)
+        table_id = index.container_parent.get(cell_id)
+        if not match or index.containers.get(table_id) != "table":
+            continue
+        row, col = int(match.group(1)), int(match.group(2))
+        cols = table_scopes.setdefault(table_id, {})
+        cols[col] = min(cols.get(col, row), row)
+    # A single matching cell can be a label inside a larger page-layout table.
+    # Require a paired objective/guidance header before treating table columns
+    # as a local instructional region.
+    return {(table_id, col): row for table_id, cols in table_scopes.items()
+            if len(cols) >= 2 for col, row in cols.items()}
+
+
+def _in_objective_table_column(index, node, scopes):
+    """Whether a node is below an objective heading in the same table column."""
+    cell_id = node.container
+    while cell_id and index.containers.get(cell_id) != "cell":
+        cell_id = index.container_parent.get(cell_id)
+    if not cell_id:
+        return False
+    match = re.search(r"\.r(\d+)c(\d+)$", cell_id)
+    table_id = index.container_parent.get(cell_id)
+    if not match:
+        return False
+    row, col = int(match.group(1)), int(match.group(2))
+    heading_row = scopes.get((table_id, col))
+    return heading_row is not None and row > heading_row
+
+
+def _is_bold_numbered_explanation_heading(index, order):
+    """Recognize bold numbered knowledge headings followed by sub-explanations."""
+    node = index.nodes[order]
+    if not node.block or not node.block.bold or not RE_QNUM.match(_norm(node.text)):
+        return False
+    heading_text = re.sub(r"^\s*\d{1,3}\s*[．.、]\s*", "", _norm(node.text))
+    if RE_EXAMPLE_HEAD.match(_heading_text(heading_text)) \
+            or re.match(r"^(?:变式|例题?|练习)\s*\d", heading_text):
+        return False
+    next_node = next((n for n in index.nodes[order + 1:]
+                      if n.has_content and n.container == node.container), None)
+    return bool(next_node and re.match(
+        r"^\s*(?:[（(]\s*\d+\s*[）)]|[①②③④⑤⑥⑦⑧⑨])", _norm(next_node.text)))
 
 
 def _reading_material_gap_start(index, left_order, right_order):
@@ -178,7 +245,7 @@ def _reading_material_gap_start(index, left_order, right_order):
     return None
 
 
-def detect_question_runs(index, zones, section_orders, material_orders):
+def detect_question_runs(index, zones, section_orders, material_orders, objective_scopes=None):
     """Identify actual prompt starts instead of one candidate per numbered run.
 
     Number-only lines are suppressed in knowledge/answer regions and in
@@ -192,11 +259,22 @@ def detect_question_runs(index, zones, section_orders, material_orders):
     reading_group = False
     section_order_set = set(section_orders)
     explicit_group_open = False
+    objective_scopes = objective_scopes or {}
     for i, node in enumerate(index.nodes):
         if i in section_order_set:
             explicit_group_open = False
         t = _norm(node.text)
         if not t:
+            continue
+        if _in_objective_table_column(index, node, objective_scopes):
+            previous_number = None
+            previous_item_order = None
+            reading_group = False
+            continue
+        if _is_bold_numbered_explanation_heading(index, i):
+            previous_number = None
+            previous_item_order = None
+            reading_group = False
             continue
         mode = zones[i]
         if RE_EXAMPLE_HEAD.match(_heading_text(t)):
@@ -207,7 +285,9 @@ def detect_question_runs(index, zones, section_orders, material_orders):
             reading_group = False
             explicit_group_open = True
             continue
-        number = _question_start_strength(t, mode, previous_number)
+        block = node.block
+        has_formula = bool(block and (block.math_count or block.oles))
+        number = _question_start_strength(t, mode, previous_number, has_formula)
         if number is None or mode in ("knowledge", "answer", "analysis"):
             if mode in ("knowledge", "answer", "analysis"):
                 previous_number = None
@@ -320,6 +400,7 @@ def detect(index, doc):
                           "evidence": ev, "level": lvl}
             if role == "section":
                 candidate["isolated"] = True
+                candidate["zone"] = zone
             cands.append(candidate)
             if zone:
                 # A knowledge/tip subheading inside an exercise section is
@@ -435,7 +516,8 @@ def detect(index, doc):
                       if any(u["node"] == c.id and u["role"] == "section" for u in cands)]
     material_orders.update(i for i, c in enumerate(index.nodes)
                            if any(u["node"] == c.id and u["role"] == "shared_material" for u in cands))
-    cands.extend(detect_question_runs(index, zones, section_orders, material_orders))
+    cands.extend(detect_question_runs(index, zones, section_orders, material_orders,
+                                      _objective_table_columns(index)))
     toc_containers = [c["toc_container"] for c in cands if c.get("toc_container")]
     if toc_containers:
         cands = [c for c in cands if not (c["node"] in index.by_id and
@@ -460,13 +542,15 @@ def build_units(index, cands):
         start = first_of(c["node"])
         if start is None:
             continue
+        next_candidate = None
         if c.get("isolated"):
             end = start
         elif "toc_end" in c:
             end = last_of(c["toc_end"]) or start
         else:
-            nxt = next((first_of(c2["node"]) for c2 in cands[i + 1:]
-                        if first_of(c2["node"]) is not None), None)
+            next_candidate = next(((c2, first_of(c2["node"])) for c2 in cands[i + 1:]
+                                   if first_of(c2["node"]) is not None), None)
+            nxt = next_candidate[1] if next_candidate else None
             if nxt is None:
                 end = index.nodes[-1].id
             else:
@@ -474,6 +558,18 @@ def build_units(index, cands):
                 end = index.nodes[o - 1].id if o and o > 0 else start
         if index.order_of(end) < index.order_of(start):
             end = start
+        if c["role"] == "question_group" and next_candidate is not None \
+                and next_candidate[0]["role"] == "section" \
+                and next_candidate[0].get("zone") == "exercise" \
+                and index.by_id[start].container == ROOT:
+            end_order = index.order_of(end)
+            start_order = index.order_of(start)
+            while end_order is not None and start_order is not None \
+                    and end_order > start_order \
+                    and not index.nodes[end_order].has_content \
+                    and index.nodes[end_order].container == ROOT:
+                end_order -= 1
+            end = index.nodes[end_order].id
         units.append({"id": "u%03d" % (i + 1), "role": c["role"], "mode": "spans",
                       "spans": [[start, end]], "_conf": c["conf"],
                       "_evidence": c["evidence"], "level": c.get("level")})
