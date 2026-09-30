@@ -78,6 +78,18 @@ def _add_tracked_insertion(path):
     _rewrite_document(path, edit)
 
 
+def _add_cell_revision(path, revision_tag):
+    def edit(root):
+        cell_properties = root.find(".//{%s}body/{%s}tbl/{%s}tr/{%s}tc/{%s}tcPr" %
+                                    (W, W, W, W, W))
+        if cell_properties is None:
+            cell = root.find(".//{%s}body/{%s}tbl/{%s}tr/{%s}tc" % (W, W, W, W))
+            cell_properties = etree.Element("{%s}tcPr" % W)
+            cell.insert(0, cell_properties)
+        etree.SubElement(cell_properties, "{%s}%s" % (W, revision_tag))
+    _rewrite_document(path, edit)
+
+
 class RendererMinimalTests(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
@@ -257,6 +269,28 @@ class RendererMinimalTests(unittest.TestCase):
         with self.assertRaisesRegex(ProjectionError, "tracked-change construct: ins"):
             render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),
                            TemplateTarget(0))
+
+    def test_cell_insertion_revision_fails_closed_in_table_fixture(self):
+        source, template, output = self._paths()
+        _docx(source, table=True)
+        _add_cell_revision(source, "cellIns")
+        Document().save(template)
+
+        with self.assertRaisesRegex(ProjectionError, "tracked-change construct: cellIns"):
+            render_minimal(str(source), str(template), [BlockSpan("b1", "b1")], str(output),
+                           TemplateTarget(0))
+        self.assertFalse(output.exists())
+
+    def test_revision_tag_families_fail_closed_table_driven(self):
+        tags = ("cellDel", "cellMerge", "numberingChange", "tblGridChange",
+                "tblPrExChange", "conflictIns", "conflictDel")
+        for tag in tags:
+            with self.subTest(tag=tag):
+                payload = etree.Element("{%s}tbl" % W)
+                etree.SubElement(payload, "{%s}%s" % (W, tag))
+                with self.assertRaisesRegex(ProjectionError,
+                                            "tracked-change construct: %s" % tag):
+                    renderer_module._validate_payload(payload, {"style": set(), "numbering": set()})
 
     def test_paragraph_span_crossing_table_fails_closed(self):
         source, template, output = self._paths()

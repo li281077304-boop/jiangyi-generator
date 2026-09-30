@@ -277,18 +277,22 @@ def _validate_payload(element, template_ids):
         "customXmlMoveFromRangeEnd", "customXmlMoveToRangeStart",
         "customXmlMoveToRangeEnd", "rPrChange", "pPrChange", "tblPrChange",
         "trPrChange", "tcPrChange", "sectPrChange",
+        "cellIns", "cellDel", "cellMerge", "conflictIns", "conflictDel",
+    }
+    revision_markers = {
+        "ins", "del", "moveFrom", "moveTo", "moveFromRangeStart",
+        "moveFromRangeEnd", "moveToRangeStart", "moveToRangeEnd",
+        "customXmlInsRangeStart", "customXmlInsRangeEnd", "customXmlDelRangeStart",
+        "customXmlDelRangeEnd", "customXmlMoveFromRangeStart",
+        "customXmlMoveFromRangeEnd", "customXmlMoveToRangeStart",
+        "customXmlMoveToRangeEnd", "cellIns", "cellDel", "cellMerge",
+        "conflictIns", "conflictDel",
     }
     for node in element.iter():
         local_name = node.tag.split("}", 1)[1] if node.tag.startswith("{%s}" % W) else ""
-        if local_name in package_scoped:
-            category = "tracked-change" if local_name in (
-                "ins", "del", "moveFrom", "moveTo", "moveFromRangeStart",
-                "moveFromRangeEnd", "moveToRangeStart", "moveToRangeEnd",
-                "customXmlInsRangeStart", "customXmlInsRangeEnd", "customXmlDelRangeStart",
-                "customXmlDelRangeEnd", "customXmlMoveFromRangeStart",
-                "customXmlMoveFromRangeEnd", "customXmlMoveToRangeStart",
-                "customXmlMoveToRangeEnd", "rPrChange", "pPrChange", "tblPrChange",
-                "trPrChange", "tcPrChange", "sectPrChange") else "package-scoped"
+        is_revision_change = bool(local_name) and local_name.endswith("Change")
+        if local_name in package_scoped or is_revision_change:
+            category = "tracked-change" if local_name in revision_markers or is_revision_change else "package-scoped"
             raise ProjectionError("unsupported %s construct: %s" % (category, local_name))
         if node.tag == "{%s}hyperlink" % W and "{%s}anchor" % W in node.attrib:
             raise ProjectionError("bookmark hyperlink anchor requires bookmark migration")
