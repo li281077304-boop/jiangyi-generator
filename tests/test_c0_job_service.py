@@ -59,7 +59,8 @@ def post_one(client, name="课件.docx", content=None):
 
 
 def test_post_persists_single_docx_and_get_recovers_after_service_restart(client, tmp_path):
-    response = post_one(client)
+    source_bytes = make_docx()
+    response = post_one(client, content=source_bytes)
     assert response.status_code == 202
     created = response.get_json()
     assert created["status"] == "queued"
@@ -72,7 +73,7 @@ def test_post_persists_single_docx_and_get_recovers_after_service_restart(client
     root = tmp_path / "results"
     record_path = root / created["job_id"] / "job.json"
     record = json.loads(record_path.read_text(encoding="utf-8"))
-    assert Path(record["source_path"]).read_bytes() == make_docx()
+    assert Path(record["source_path"]).read_bytes() == source_bytes
     assert Path(record["result_dir"]) == record_path.parent
     assert record["options"]["template_type"] == "class"
     assert record["options"]["handoutType"] == "课时讲义"
