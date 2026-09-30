@@ -86,6 +86,10 @@ RE_EXPLICIT_QUESTION_MARKER = re.compile(
     r"(?:[?？]|_{2,}|＿{2,}|\(\s*\)|（\s*）|（\s*[A-D]\s*[）)]|\([A-D]\))", re.I
 )
 OBJECTIVE_HEADINGS = ("目标导航", "方法指导", "教学目标", "学习目标", "教学要求", "学习要求")
+RE_OBJECTIVE_ITEM = re.compile(
+    r"^\s*\d{1,3}\s*[．.、]\s*(?:熟练掌握|掌握|理解|认识|了解|能|能够|会|通过|培养|体会|感受)"
+)
+RE_PROCEDURAL_KNOWLEDGE_NOTE = re.compile(r"^(?:求|将|把).*(?:即可|就可以|即可得到)[。．]?$")
 RE_EXPLANATION_TEXT = re.compile(
     r"^(?:\d{1,3}\s*[．.、]\s*)?(?:句意|故选|因此|所以|符合题意|根据.{0,18}(?:可知|答语)|由此可知)"
 )
@@ -262,6 +266,8 @@ def _recoverable_question_start(index, order, text):
     if not match or RE_PLAIN_CHOICE_ANSWER.match(t) or RE_COMPACT_ANSWER_KEY.match(t):
         return None
     stripped = re.sub(r"^\s*\d{1,3}\s*[．.、]\s*", "", t)
+    if _is_numbered_knowledge_list_note(index, order, stripped):
+        return None
     has_marker = bool(RE_EXPLICIT_QUESTION_MARKER.search(t))
     short_structure = _short_structured_prompt(index, order, stripped)
     # An empty bracket / blank is by itself question evidence, so short stems
@@ -286,12 +292,29 @@ def _recoverable_question_start(index, order, text):
 
 
 def _objective_table_columns(index):
-    """Return table columns whose heading marks objective/guidance content.
+    """Return objective columns and same-row labeled objective-list cells.
 
     This scopes instructional-number suppression to the structurally related
-    table column instead of changing the exercise zone for the rest of a file.
+    table column or a sibling cell, instead of changing the exercise zone for
+    the rest of a file.
     """
     table_scopes = {}
+    objective_cells = set()
+    nodes_by_container = {}
+    for item in index.nodes:
+        if index.containers.get(item.container) == "cell":
+            nodes_by_container.setdefault(item.container, []).append(item)
+
+    def is_numbered_objective_list(cell_id):
+        entries = [n for n in nodes_by_container.get(cell_id, []) if _norm(n.text)]
+        numbered = []
+        for node in entries:
+            match = RE_QNUM.match(_norm(node.text))
+            if not match or not RE_OBJECTIVE_ITEM.match(_norm(node.text)):
+                return False
+            numbered.append(int(match.group().strip().rstrip("．.、 ")))
+        return len(numbered) >= 3 and numbered == list(range(1, len(numbered) + 1))
+
     for node in index.nodes:
         if _heading_text(node.text) not in OBJECTIVE_HEADINGS:
             continue
@@ -305,27 +328,80 @@ def _objective_table_columns(index):
         row, col = int(match.group(1)), int(match.group(2))
         cols = table_scopes.setdefault(table_id, {})
         cols[col] = min(cols.get(col, row), row)
-    # A single matching cell can be a label inside a larger page-layout table.
-    # Require a paired objective/guidance header before treating table columns
-    # as a local instructional region.
-    return {(table_id, col): row for table_id, cols in table_scopes.items()
-            if len(cols) >= 2 for col, row in cols.items()}
+        # Some layouts put one objective label in the left cell and the whole
+        # numbered objective list in the adjacent cell on the same table row.
+        # Require a sequential, verb-led objective list before scoping that cell.
+        for sibling_id, kind in index.containers.items():
+            if kind != "cell" or index.container_parent.get(sibling_id) != table_id:
+                continue
+            sibling_match = re.search(r"\.r(\d+)c(\d+)$", sibling_id)
+            if (sibling_match and int(sibling_match.group(1)) == row
+                    and int(sibling_match.group(2)) != col
+                    and is_numbered_objective_list(sibling_id)):
+                objective_cells.add(sibling_id)
+    # A single heading in a multi-column layout is insufficient to suppress
+    # an entire column; preserve the paired-heading guard for that case.
+    columns = {(table_id, col): row for table_id, cols in table_scopes.items()
+               if len(cols) >= 2 for col, row in cols.items()}
+    return {"columns": columns, "cells": objective_cells}
 
 
 def _in_objective_table_column(index, node, scopes):
-    """Whether a node is below an objective heading in the same table column."""
+    """Whether a node is inside a labeled objective cell or objective column."""
     cell_id = node.container
     while cell_id and index.containers.get(cell_id) != "cell":
         cell_id = index.container_parent.get(cell_id)
     if not cell_id:
         return False
+    if cell_id in scopes.get("cells", set()):
+        return True
     match = re.search(r"\.r(\d+)c(\d+)$", cell_id)
     table_id = index.container_parent.get(cell_id)
     if not match:
         return False
     row, col = int(match.group(1)), int(match.group(2))
-    heading_row = scopes.get((table_id, col))
+    columns = scopes.get("columns", scopes)
+    heading_row = columns.get((table_id, col))
     return heading_row is not None and row > heading_row
+
+
+def _is_numbered_knowledge_list_note(index, order, stripped):
+    """Exclude explanatory steps inside an explicit numbered knowledge list."""
+    if not RE_PROCEDURAL_KNOWLEDGE_NOTE.match(stripped):
+        return False
+    node = index.nodes[order]
+    block = node.block
+    if (block and (block.math_count or block.oles)) or _following_option_run(index, order):
+        return False
+    if RE_EXPLICIT_QUESTION_MARKER.search(stripped) or RE_INLINE_OPTIONS.search(stripped):
+        return False
+    for following in index.nodes[order + 1:order + 13]:
+        if following.container != node.container:
+            break
+        t = _norm(following.text)
+        if not t:
+            continue
+        if RE_QNUM.match(t):
+            break
+        if RE_ANSWER_SECTION.match(t) or RE_ANALYSIS_START.match(t):
+            return False
+    prior_numbered = 0
+    for prior in reversed(index.nodes[max(0, order - 16):order]):
+        if prior.container != node.container:
+            break
+        t = _norm(prior.text)
+        if not t:
+            continue
+        title = _heading_text(t)
+        if re.match(r"^知识点\s*\d+", title):
+            return prior_numbered >= 2
+        if any(title.startswith(label) for label in EXERCISE_LABELS) or RE_ANSWER_SECTION.match(t):
+            return False
+        if RE_SECTION_HEAD.match(title):
+            return False
+        if RE_QNUM.match(t):
+            prior_numbered += 1
+    return False
 
 
 def _is_bold_numbered_explanation_heading(index, order):

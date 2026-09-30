@@ -202,14 +202,44 @@ def test_case_d_x003_original_regression():
 
 
 def test_case_d2_x013_original_regression():
-    """第二份原卷回归：X013 题界数不得因 E1 补丁而变化。"""
+    """X013 keeps every approved question while excluding its objective list."""
     loaded = _load("X013")
     if loaded is None:
         print("  [SKIP] X013 源文件不可用")
         return
     index, units = loaded
     starts = _qg_starts(index, units)
-    assert len(starts) == 39, "X013 原卷题组数变化：%d（期望 39）" % len(starts)
+    gold = _approved_gold_starts("X013")
+    assert gold is not None, "X013 Approved Gold 不可用"
+    gold_starts = {index.order_of(u["spans"][0][0])
+                   for u in gold["units"]["question_groups"]}
+    assert len(gold_starts) == 38
+    assert starts == gold_starts, "X013 预测题界与批准 Gold 不一致"
+
+
+def test_x012_numbered_knowledge_definition_is_not_a_question():
+    loaded = _load("X012")
+    if loaded is None:
+        print("  [SKIP] X012 源文件不可用")
+        return
+    index, units = loaded
+    starts = _qg_starts(index, units)
+    o = _find_order(index, "3.求一个非零有理数的倒数")
+    assert o is not None, "未找到知识区编号定义条目"
+    assert o not in starts, "知识区的编号定义条目被误判为题组"
+
+
+def test_complete_example_in_knowledge_list_remains_dispatchable():
+    doc = _fixture([
+        "提升专练", "1．计算 2+3。", "【答案】5", "【详解】结果是5。",
+        "知识点01 倒数", "1.倒数的概念：两数乘积为1。", "2.倒数的性质：互为倒数。",
+        "3.求一个有理数的倒数并选择正确结果即可。", "A．甲", "B．乙",
+        "【答案】A",
+    ])
+    index, units = predict(doc)
+    starts = _qg_starts(index, units)
+    start = next(n.order for n in index.nodes if n.text.startswith("3.求一个有理数"))
+    assert start in starts, "完整例题因处在知识区编号列表而被压制"
 
 
 # ---------------------------------------------------------------
