@@ -2,6 +2,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+from types import SimpleNamespace
 import sys
 import zipfile
 
@@ -170,6 +171,146 @@ def test_zip_delivery_failure_does_not_fail_validated_local_generation(client, m
     assert snapshot["download_available"] is False
     assert snapshot["delivery_status"] == "failed"
     assert snapshot["delivery_error_code"] == "DELIVERY_DOWNLOAD_FAILED"
+
+
+def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
+        client, tmp_path, monkeypatch):
+    import shutil
+    import renderer_orchestrator
+    import template_block_plan
+
+    root = tmp_path / "results"
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
+                      C0_RUN_JOBS_SYNCHRONOUSLY=True)
+    engine = SimpleNamespace(make_student=lambda source, target: shutil.copyfile(source, target),
+                             CLASS_TEMPLATE="unused-class-template.docx",
+                             DEFAULT_TEMPLATE="unused-1v1-template.docx")
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
+    teacher_plan = SimpleNamespace(template_sha256="teacher-template", blocks=(), units=(), target=None)
+    plan_calls = 0
+
+    def build_plan(*_args, **_kwargs):
+        nonlocal plan_calls
+        plan_calls += 1
+        if plan_calls == 1:
+            return teacher_plan
+        raise template_block_plan.PlanUnsupported("student source unsupported")
+
+    monkeypatch.setattr(template_block_plan, "build_template_block_plan", build_plan)
+    fallback_observed = {}
+
+    def successful_fallback(job, reason):
+        record = JobService(root).list()[0]
+        fallback_observed.update({
+            "renderer": record["renderer"],
+            "fallback_reason": record["fallback_reason"],
+            "baseline_sha": record["baseline_sha"],
+            "reason_arg": reason,
+            "plan_summary": record.get("plan_summary"),
+        })
+        outputs = [Path(job.output_doc), Path(job.student_output_doc)]
+        for output in outputs:
+            output.write_bytes(make_docx())
+        return {"output_paths": [str(path) for path in outputs], "whole_job": True,
+                "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
+
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", successful_fallback)
+    response = post_one(client)
+    assert response.status_code == 202
+    job_id = response.get_json()["job_id"]
+    final = JobService(root).get(job_id)
+    assert plan_calls == 2
+    assert fallback_observed == {
+        "renderer": "V0.9",
+        "fallback_reason": "XML_RENDER_FAILED",
+        "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA,
+        "reason_arg": "XML_RENDER_FAILED",
+        "plan_summary": None,
+    }
+    assert final["status"] == "done"
+    assert final["renderer"] == "V0.9"
+    assert final["fallback_reason"] == "XML_RENDER_FAILED"
+    assert final["baseline_sha"] == renderer_orchestrator.V09_BASELINE_SHA
+    assert final.get("plan_summary") is None
+    assert len(final["output_paths"]) == 2
+    assert all(Path(path).is_file() for path in final["output_paths"])
+
+
+def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp_path, monkeypatch):
+    import shutil
+    import renderer_orchestrator
+
+    root = tmp_path / "results"
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
+                      C0_RUN_JOBS_SYNCHRONOUSLY=True,
+                      C0_FORCE_FALLBACK_REASON="UNSUPPORTED_REVISION_MARKUP")
+    engine = SimpleNamespace(make_student=lambda source, target: shutil.copyfile(source, target),
+                             CLASS_TEMPLATE="unused-class-template.docx",
+                             DEFAULT_TEMPLATE="unused-1v1-template.docx")
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
+    observed = {}
+
+    def fail_fallback(_job, reason):
+        record = JobService(root).list()[0]
+        observed.update({"renderer": record["renderer"],
+                         "fallback_reason": record["fallback_reason"],
+                         "baseline_sha": record["baseline_sha"],
+                         "reason_arg": reason})
+        raise RuntimeError("simulated whole-job fallback failure")
+
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fail_fallback)
+    response = post_one(client)
+    job_id = response.get_json()["job_id"]
+    final = JobService(root).get(job_id)
+    expected = renderer_orchestrator.V09_BASELINE_SHA
+    assert observed == {"renderer": "V0.9",
+                        "fallback_reason": "UNSUPPORTED_REVISION_MARKUP",
+                        "baseline_sha": expected,
+                        "reason_arg": "UNSUPPORTED_REVISION_MARKUP"}
+    assert final["status"] == "error"
+    assert final["renderer"] == "V0.9"
+    assert final["fallback_reason"] == "UNSUPPORTED_REVISION_MARKUP"
+    assert final["baseline_sha"] == expected
+
+
+def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
+        client, tmp_path, monkeypatch):
+    import shutil
+    import renderer_orchestrator
+    import template_block_plan
+    import renderer_xml_minimal
+
+    root = tmp_path / "results"
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
+                      C0_RUN_JOBS_SYNCHRONOUSLY=True)
+    engine = SimpleNamespace(make_student=lambda source, target: shutil.copyfile(source, target),
+                             CLASS_TEMPLATE="unused-class-template.docx",
+                             DEFAULT_TEMPLATE="unused-1v1-template.docx")
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
+    plan = SimpleNamespace(template_sha256="paired-template", template_path="unused-template.docx",
+                           blocks=(), units=(), target=None)
+    monkeypatch.setattr(template_block_plan, "build_template_block_plan",
+                        lambda *_args, **_kwargs: plan)
+
+    def render(_source, _template, _blocks, output, _target):
+        Path(output).write_bytes(make_docx())
+        return SimpleNamespace(output_path=str(output), resource_report={"unsupported": []},
+                               package_report={"valid": True, "errors": []})
+
+    monkeypatch.setattr(renderer_xml_minimal, "render_minimal", render)
+    response = post_one(client)
+    job_id = response.get_json()["job_id"]
+    final = JobService(root).get(job_id)
+    assert final["status"] == "done", final.get("error")
+    assert final["renderer"] == "XML"
+    assert final["plan_summary"] == {
+        "destination_slot": "main_content",
+        "teacher_units": 0,
+        "student_units": 0,
+        "teacher_blocks": 0,
+        "student_blocks": 0,
+        "template_sha256": "paired-template",
+    }
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):

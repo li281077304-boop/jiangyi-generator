@@ -203,6 +203,24 @@ class JobService:
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
+    def record_fallback_attempt(self, job_id: str, reason: str, baseline_sha: str) -> dict:
+        """Persist whole-job fallback intent before entering the fallback runtime."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            now = datetime.now(timezone.utc)
+            record.update({
+                "renderer": "V0.9",
+                "fallback_reason": str(reason),
+                "baseline_sha": str(baseline_sha),
+                "stage": "XML 不支持（%s），正在调用 V0.9 全任务回退" % reason,
+                "updated_at": now.timestamp(),
+                "updated_at_iso": now.isoformat(timespec="seconds"),
+            })
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
     def fail_job(self, job_id: str, detail: str) -> dict:
         """Persist generation failure without conflating it with ZIP delivery."""
         with self._lock:

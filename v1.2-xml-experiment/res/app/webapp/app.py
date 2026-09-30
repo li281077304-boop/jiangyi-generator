@@ -122,15 +122,18 @@ def _execute_job(job_id: str) -> None:
                 return {"supported": False, "reason_code": forced_reason,
                         "detail": "C0 forced unsupported integration fixture"}
             try:
-                plans["teacher"] = build_template_block_plan(source, template_type,
-                                                              split_mode=split_mode)
-                plans["student"] = build_template_block_plan(student_source, template_type,
-                                                              split_mode=split_mode)
+                teacher_plan = build_template_block_plan(source, template_type,
+                                                         split_mode=split_mode)
+                student_plan = build_template_block_plan(student_source, template_type,
+                                                         split_mode=split_mode)
             except PlanUnsupported as exc:
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": str(exc)}
+            # Publish a paired plan only after both inputs are supported. A
+            # student-plan failure must not leave teacher-only diagnostics.
+            plans.update(teacher=teacher_plan, student=student_plan)
             return {"supported": True,
-                    "template_sha256": plans["teacher"].template_sha256}
+                    "template_sha256": teacher_plan.template_sha256}
 
         def xml_render(xml_job):
             teacher_plan, student_plan = plans["teacher"], plans["student"]
@@ -171,6 +174,7 @@ def _execute_job(job_id: str) -> None:
             # This callback receives the original source and no V1.2 spans.
             # Capture locale-decoded PowerShell output from the frozen runtime;
             # replacement characters can otherwise fail when printed to GBK.
+            service.record_fallback_attempt(job_id, reason_code, V09_BASELINE_SHA)
             with redirect_stdout(StringIO()):
                 return render_v09_whole_job(original_job, reason_code)
 
@@ -188,7 +192,7 @@ def _execute_job(job_id: str) -> None:
                 os.replace(student_stage, student_output)
             service.update_progress(job_id, 2, "验证教师版和学生版成品")
             plan_summary = None
-            if plans:
+            if outcome.renderer == "XML" and "teacher" in plans and "student" in plans:
                 plan_summary = {
                     "destination_slot": "main_content",
                     "teacher_units": len(plans["teacher"].units),
