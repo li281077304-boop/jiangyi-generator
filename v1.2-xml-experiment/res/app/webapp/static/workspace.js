@@ -230,7 +230,8 @@
     setText("pairingNote", text);
   }
 
-  function activeJob() { return state.jobs.find(function (job) { return job.status === "running"; }); }
+  function isActiveStatus(status) { return status === "queued" || status === "running"; }
+  function activeJob() { return state.jobs.find(function (job) { return isActiveStatus(job.status); }); }
   function beginElapsed(createdAt) {
     clearInterval(state.elapsedTimer); state.startedAt = createdAt ? createdAt * 1000 : Date.now();
     function tick() { var seconds = Math.max(0, Math.floor((Date.now() - state.startedAt) / 1000)); setText("elapsedLabel", Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0")); }
@@ -252,7 +253,7 @@
     var percent = job.total ? Math.round((job.progress || 0) / job.total * 100) : 0;
     if (job.status === "done") percent = 100;
     setText("progressPercent", percent + "%"); $("barfill").style.width = percent + "%"; $("progressTrack").setAttribute("aria-valuenow", percent);
-    var title = job.status === "done" ? "讲义已生成" : job.status === "error" ? "生成未完成" : "正在生成";
+    var title = job.status === "done" ? "讲义已生成" : job.status === "error" ? "生成未完成" : job.status === "queued" ? "任务排队中" : "正在生成";
     setText("progressTitle", title); setText("progressStage", job.error || job.stage || job.current || "正在准备 Word 文档");
     setText("footerStatus", title); $("progressTrack").classList.remove("disconnected");
     var rows = $("resultRows"); rows.replaceChildren();
@@ -263,8 +264,8 @@
     var warnings = $("warnings"); warnings.hidden = !(job.warnings && job.warnings.length); warnings.textContent = job.warnings && job.warnings.length ? job.warnings.join("；") : "";
     $("downloadResult").hidden = !job.has_result; $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
     if (job.has_result) $("downloadResult").href = "/api/download/" + job.job_id;
-    $("configFields").disabled = job.status === "running"; $("startButton").disabled = job.status === "running" || !state.files.length;
-    if (job.status === "running") beginElapsed(job.created_at);
+    $("configFields").disabled = isActiveStatus(job.status); $("startButton").disabled = isActiveStatus(job.status) || !state.files.length;
+    if (isActiveStatus(job.status)) beginElapsed(job.created_at);
     else { clearInterval(state.elapsedTimer); setText("elapsedLabel", job.produced ? "共 " + job.produced + " 份" : ""); localStorage.removeItem("handout_current_job"); }
     refreshIcons(rows); renderHistory();
   }
@@ -273,7 +274,7 @@
     function poll() {
       requestJson("/api/jobs/" + jobId).then(function (job) {
         setConnected(true); upsertJob(job); showJob(job);
-        if (job.status === "running") state.pollTimer = setTimeout(poll, 1200);
+        if (isActiveStatus(job.status)) state.pollTimer = setTimeout(poll, 1200);
       }).catch(function (error) {
         setConnected(false); $("progressTrack").classList.add("disconnected"); $("reconnect").hidden = false;
         setText("progressStage", error.message); refreshIcons($("progressWrap"));
@@ -292,7 +293,7 @@
     data.append("subject", state.selectedSubject); data.append("grade", $("gradeSelect").value); data.append("handout_type", $("handoutType").value); data.append("academic_year", $("academicYear").value); data.append("template_type", state.templateType); data.append("split_mode", $("splitMode").value); data.append("docx_mode", $("docxMode").value);
     requestJson("/api/jobs", {method: "POST", body: data}).then(function (response) {
       state.currentJob = response.job_id; localStorage.setItem("handout_current_job", response.job_id); beginElapsed();
-      showJob({job_id: response.job_id, status: "running", progress: 0, total: response.total, items: [], stage: "上传完成，正在读取素材", created_at: Date.now() / 1000});
+      upsertJob(response); showJob(response);
       pollJob(response.job_id, false);
     }).catch(function (error) {
       button.disabled = false; setText("footerStatus", "就绪"); toast(error.message);
@@ -306,9 +307,9 @@
   function loadJobs() {
     return requestJson("/api/jobs").then(function (data) {
       state.jobs = data.jobs || []; setConnected(true); renderHistory();
-      var stored = localStorage.getItem("handout_current_job"), running = state.jobs.find(function (job) { return job.status === "running"; });
-      var target = state.jobs.find(function (job) { return job.job_id === stored; }) || running;
-      if (target) { showJob(target); if (target.status === "running") pollJob(target.job_id, false); }
+      var stored = localStorage.getItem("handout_current_job"), active = state.jobs.find(function (job) { return isActiveStatus(job.status); });
+      var target = state.jobs.find(function (job) { return job.job_id === stored; }) || active;
+      if (target) { showJob(target); if (isActiveStatus(target.status)) pollJob(target.job_id, false); }
     }).catch(function () { setConnected(false); renderHistory(); });
   }
 
@@ -316,7 +317,7 @@
     setText("historyCount", state.jobs.length);
     var recent = $("recentTasks"); recent.replaceChildren();
     state.jobs.slice(0, 4).forEach(function (job) {
-      var button = document.createElement("button"); button.className = "recent-task"; button.appendChild(makeIcon(job.status === "done" ? "file-check-2" : job.status === "running" ? "loader-circle" : "file-warning"));
+      var button = document.createElement("button"); button.className = "recent-task"; button.appendChild(makeIcon(job.status === "done" ? "file-check-2" : isActiveStatus(job.status) ? "loader-circle" : "file-warning"));
       var label = document.createElement("span"); label.textContent = job.filenames && job.filenames[0] ? job.filenames[0] : "讲义任务"; button.appendChild(label); button.addEventListener("click", function () { navigate("history"); }); recent.appendChild(button);
     });
     if (!state.jobs.length) { var empty = document.createElement("p"); empty.className = "sidebar-empty"; empty.textContent = "暂无任务"; recent.appendChild(empty); }
@@ -327,11 +328,11 @@
     });
     visible.forEach(function (job) {
       var row = document.createElement("article"); row.className = "history-row";
-      var icon = document.createElement("span"); icon.className = "file-icon"; icon.appendChild(makeIcon(job.status === "done" ? "file-check-2" : job.status === "running" ? "loader-circle" : "file-warning"));
+      var icon = document.createElement("span"); icon.className = "file-icon"; icon.appendChild(makeIcon(job.status === "done" ? "file-check-2" : isActiveStatus(job.status) ? "loader-circle" : "file-warning"));
       var main = document.createElement("button"); main.className = "history-main";
       var title = document.createElement("strong"); title.textContent = job.filenames && job.filenames.length ? job.filenames.join("、") : "讲义任务";
-      var meta = document.createElement("p"), options = job.options || {}; meta.textContent = [options.grade, options.subject, options.handoutType, formatDate(job.created_at)].filter(Boolean).join(" · "); main.append(title, meta); main.addEventListener("click", function () { navigate("workspace"); showJob(job); if (job.status === "running") pollJob(job.job_id, true); });
-      var status = document.createElement("span"); status.className = "history-state " + job.status; status.textContent = job.status === "done" ? "已完成" : job.status === "running" ? "生成中" : "未完成";
+      var meta = document.createElement("p"), options = job.options || {}; meta.textContent = [options.grade, options.subject, options.handoutType, formatDate(job.created_at)].filter(Boolean).join(" · "); main.append(title, meta); main.addEventListener("click", function () { navigate("workspace"); showJob(job); if (isActiveStatus(job.status)) pollJob(job.job_id, true); });
+      var status = document.createElement("span"); status.className = "history-state " + job.status; status.textContent = job.status === "done" ? "已完成" : job.status === "queued" ? "排队中" : job.status === "running" ? "生成中" : "未完成";
       var actions = document.createElement("div"); actions.className = "history-actions";
       if (job.has_result) {
         var download = document.createElement("a"); download.className = "icon-button"; download.href = "/api/download/" + job.job_id; download.setAttribute("aria-label", "下载成品"); download.dataset.tooltip = "下载"; download.appendChild(makeIcon("download")); actions.appendChild(download);

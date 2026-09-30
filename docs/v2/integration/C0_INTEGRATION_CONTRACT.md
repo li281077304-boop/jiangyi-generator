@@ -152,3 +152,12 @@ state. Recovery revalidates both role outputs as readable DOCX packages and
 reconciles missing outputs away from `done`. This round does not connect the
 semantic facade to B-Line, render teacher/student documents, or satisfy C0
 end-to-end acceptance.
+
+The Round 2 Chief PATCH further requires API timestamps to remain numeric
+epoch seconds for the existing workspace client, with ISO companions allowed;
+the workspace treats both `queued` and `running` as active and restores/polls
+the stored job. The single `complete_job` transition accepts separate resolved
+teacher and student paths only and calls the frozen B-Line
+`package_validator.validate_package` for each before writing `done`. Job
+recovery and ZIP delivery repeat both package checks; duplicate role paths or
+malformed package XML cannot remain a successful result.

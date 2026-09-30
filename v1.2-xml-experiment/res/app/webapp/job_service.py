@@ -17,6 +17,7 @@ import uuid
 import zipfile
 
 from werkzeug.utils import secure_filename
+from package_validator import validate_package
 
 
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
@@ -103,7 +104,8 @@ class JobService:
         (job_dir / "work").mkdir(parents=True)
         source_path = job_dir / "work" / safe_name
         source_path.write_bytes(data)
-        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        now = datetime.now(timezone.utc)
+        created_at = now.timestamp()
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
         # workspace.js history currently reads the camelCase spellings below.
         form_options.update({
@@ -119,8 +121,10 @@ class JobService:
             "progress": 0,
             "total": 2,
             "stage": "任务已接收，等待生成流程接入",
-            "created_at": now,
-            "updated_at": now,
+            "created_at": created_at,
+            "created_at_iso": now.isoformat(timespec="seconds"),
+            "updated_at": created_at,
+            "updated_at_iso": now.isoformat(timespec="seconds"),
             "filenames": [safe_name],
             "source_path": str(source_path),
             "options": form_options,
@@ -149,23 +153,23 @@ class JobService:
         if metadata_changed:
             record["result_dir"] = str(job_dir)
         # Never retain a successful status when its final output is gone.
-        outputs = [Path(p) for p in record.get("output_paths", [])]
-        try:
-            confined = all(output.resolve().is_relative_to(job_dir) for output in outputs)
-        except OSError:
-            confined = False
-        valid = confined and self._valid_final_outputs(outputs)
+        valid, _outputs, reports = self._validate_recorded_outputs(record, job_dir)
+        validation_changed = record.get("status") == "done" and record.get("package_validation") != reports
+        if record.get("status") == "done":
+            record["package_validation"] = reports
         if record.get("status") == "done" and not valid:
             record["status"] = "error"
-            record["error"] = "GENERATION_FAILED: 已记录的成品缺失或为空"
+            record["error"] = "GENERATION_FAILED: 已记录的成品缺失、为空或未通过包校验"
             record["stage"] = record["error"]
             record["has_result"] = False
             record["download_available"] = False
-            record["updated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            now = datetime.now(timezone.utc)
+            record["updated_at"] = now.timestamp()
+            record["updated_at_iso"] = now.isoformat(timespec="seconds")
             self._write_json(path, record)
         else:
             has_result = record.get("status") == "done" and valid
-            changed = metadata_changed or (record.get("has_result") != has_result or
+            changed = metadata_changed or validation_changed or (record.get("has_result") != has_result or
                        record.get("download_available") != has_result)
             record["has_result"] = has_result
             record["download_available"] = has_result
@@ -174,25 +178,82 @@ class JobService:
         return record
 
     @staticmethod
-    def _is_valid_docx(path: Path) -> bool:
-        if path.suffix.lower() != ".docx" or not path.is_file() or path.stat().st_size <= 0:
-            return False
+    def _validate_recorded_outputs(record: dict, job_dir: Path) -> tuple[bool, list[Path], dict]:
+        """Require explicit, distinct role paths and B-Line package validation."""
         try:
-            with zipfile.ZipFile(path) as package:
-                names = set(package.namelist())
-                return ("[Content_Types].xml" in names and
-                        "word/document.xml" in names and package.testzip() is None)
-        except (OSError, zipfile.BadZipFile):
-            return False
+            roles = record.get("output_roles") or {}
+            teacher_field = record.get("teacher_output_path")
+            student_field = record.get("student_output_path")
+            teacher_role = roles.get("teacher")
+            student_role = roles.get("student")
+            if teacher_field and teacher_role and Path(teacher_field).resolve() != Path(teacher_role).resolve():
+                return False, [], {}
+            if student_field and student_role and Path(student_field).resolve() != Path(student_role).resolve():
+                return False, [], {}
+            raw_teacher = teacher_field or teacher_role
+            raw_student = student_field or student_role
+            if not raw_teacher or not raw_student:
+                return False, [], {}
+            teacher, student = Path(raw_teacher).resolve(), Path(raw_student).resolve()
+        except (OSError, RuntimeError, TypeError, ValueError):
+            return False, [], {}
+        if teacher == student or not teacher.is_relative_to(job_dir) or not student.is_relative_to(job_dir):
+            return False, [], {}
+        try:
+            listed = [Path(p).resolve() for p in record.get("output_paths", [])]
+        except (OSError, RuntimeError, TypeError, ValueError):
+            return False, [], {}
+        if len(listed) != 2 or set(map(str, [teacher, student])) != set(map(str, listed)):
+            return False, [], {}
+        reports = {"teacher": validate_package(str(teacher)),
+                   "student": validate_package(str(student))}
+        return all(report.get("valid") is True for report in reports.values()), [teacher, student], reports
 
-    @classmethod
-    def _valid_final_outputs(cls, outputs: list[Path]) -> bool:
-        if len(outputs) != 2 or not all(cls._is_valid_docx(path) for path in outputs):
-            return False
-        names = [path.name.casefold() for path in outputs]
-        return any("教师" in name or "teacher" in name for name in names) and any(
-            "学生" in name or "student" in name for name in names
-        )
+    def complete_job(self, job_id: str, teacher_output_path: str | Path,
+                     student_output_path: str | Path, *, renderer: str = "XML",
+                     fallback_reason: str | None = None,
+                     baseline_sha: str | None = None) -> dict:
+        """Record done only after distinct teacher/student packages validate."""
+        job_dir = self._job_dir(job_id)
+        teacher, student = Path(teacher_output_path).resolve(), Path(student_output_path).resolve()
+        if teacher == student:
+            raise ValueError("teacher and student outputs must be different files")
+        if not teacher.is_relative_to(job_dir) or not student.is_relative_to(job_dir):
+            raise ValueError("teacher/student outputs must be inside this job result directory")
+        if teacher.suffix.lower() != ".docx" or student.suffix.lower() != ".docx":
+            raise ValueError("teacher/student outputs must be DOCX files")
+        reports = {"teacher": validate_package(str(teacher)),
+                   "student": validate_package(str(student))}
+        failures = {role: report for role, report in reports.items()
+                    if report.get("valid") is not True}
+        if failures:
+            raise ValueError("package validation failed: %s" % json.dumps(failures, ensure_ascii=False))
+        record = self._recover(job_id)
+        now = datetime.now(timezone.utc)
+        record.update({
+            "status": "done",
+            "progress": record.get("total", 2),
+            "stage": "教师版和学生版 DOCX 已生成并通过包校验",
+            "updated_at": now.timestamp(),
+            "updated_at_iso": now.isoformat(timespec="seconds"),
+            "output_paths": [str(teacher), str(student)],
+            "teacher_output_path": str(teacher),
+            "student_output_path": str(student),
+            "output_roles": {"teacher": str(teacher), "student": str(student)},
+            "download_available": True,
+            "has_result": True,
+            "produced": 2,
+            "renderer": renderer,
+            "fallback_reason": fallback_reason,
+            "baseline_sha": baseline_sha,
+            "package_validation": reports,
+        })
+        for item in record.get("items", []):
+            item["teacher"] = "完成"
+            item["student"] = "完成"
+        with self._lock:
+            self._write_json(job_dir / "job.json", record)
+        return self.snapshot(record)
 
     def get(self, job_id: str) -> dict:
         with self._lock:
@@ -204,7 +265,7 @@ class JobService:
             for path in self.result_root.glob("*/job.json"):
                 try:
                     record = self._recover(path.parent.name)
-                except (OSError, ValueError, json.JSONDecodeError):
+                except (OSError, ValueError, KeyError, json.JSONDecodeError):
                     continue
                 records.append(record)
         records.sort(key=lambda item: item.get("created_at", ""), reverse=True)
@@ -224,11 +285,8 @@ class JobService:
 
     def outputs_for_download(self, job_id: str) -> tuple[dict, list[Path]]:
         record = self._recover(job_id)
-        outputs = [Path(p).resolve() for p in record.get("output_paths", [])]
-        job_dir = self._job_dir(job_id)
-        if (record.get("status") != "done" or
-                any(not p.is_relative_to(job_dir) for p in outputs) or
-                not self._valid_final_outputs(outputs)):
+        valid, outputs, _reports = self._validate_recorded_outputs(record, self._job_dir(job_id))
+        if record.get("status") != "done" or not valid:
             raise ValueError("任务尚无已验证的教师版和学生版 DOCX 成品")
         return record, outputs
 

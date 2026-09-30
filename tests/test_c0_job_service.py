@@ -6,6 +6,7 @@ import sys
 import zipfile
 
 import pytest
+from docx import Document
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,10 +21,19 @@ from job_service import JobService  # noqa: E402
 
 def make_docx() -> bytes:
     buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as package:
-        package.writestr("[Content_Types].xml", "<Types/>")
-        package.writestr("word/document.xml", "<w:document xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'><w:body><w:p><w:r><w:t>内容</w:t></w:r></w:p><w:sectPr/></w:body></w:document>")
+    document = Document()
+    document.add_paragraph("C0 validator fixture")
+    document.save(buf)
     return buf.getvalue()
+
+
+def corrupt_document_xml(path: Path) -> None:
+    replacement = path.with_suffix(".broken.docx")
+    with zipfile.ZipFile(path) as source, zipfile.ZipFile(replacement, "w") as target:
+        for info in source.infolist():
+            target.writestr(info, b"<w:document" if info.filename == "word/document.xml"
+                            else source.read(info.filename))
+    replacement.replace(path)
 
 
 @pytest.fixture
@@ -48,6 +58,9 @@ def test_post_persists_single_docx_and_get_recovers_after_service_restart(client
     assert response.status_code == 202
     created = response.get_json()
     assert created["status"] == "queued"
+    assert isinstance(created["created_at"], (int, float))
+    assert isinstance(created["updated_at"], (int, float))
+    assert created["created_at_iso"].endswith("+00:00")
     assert created["total"] == 2
     assert created["has_result"] is False
     assert created["download_available"] is False
@@ -98,17 +111,18 @@ def test_download_not_ready_is_conflict_and_does_not_change_generation_state(cli
     assert client.get("/api/jobs/" + created["job_id"]).get_json()["status"] == "queued"
 
 
-def test_download_zips_teacher_and_student_without_changing_job_status(client):
+def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(client):
     created = post_one(client).get_json()
     job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
     outputs = [job_dir / "教师版.docx", job_dir / "学生版.docx"]
     for path in outputs:
         path.write_bytes(make_docx())
-    record_path = job_dir / "job.json"
-    record = json.loads(record_path.read_text(encoding="utf-8"))
-    record.update(status="done", output_paths=[str(path) for path in outputs],
-                  result_dir=str(job_dir), download_available=True, has_result=True)
-    record_path.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    service = JobService(Path(app.config["RESULT_ROOT"]))
+    completed = service.complete_job(created["job_id"], outputs[0], outputs[1])
+    assert completed["status"] == "done"
+    assert set(completed["package_validation"]) == {"teacher", "student"}
+    assert all(report["valid"] for report in completed["package_validation"].values())
+    assert completed["output_roles"] == {"teacher": str(outputs[0]), "student": str(outputs[1])}
     response = client.get("/api/download/" + created["job_id"])
     assert response.status_code == 200
     with zipfile.ZipFile(io.BytesIO(response.data)) as archive:
@@ -121,6 +135,7 @@ def test_download_zips_teacher_and_student_without_changing_job_status(client):
     assert recovered["result_dir"] == str(job_dir)
     assert recovered["output_paths"] == [str(path) for path in outputs]
     assert recovered["download_available"] is True
+    assert recovered["created_at"] == created["created_at"]
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
@@ -130,16 +145,57 @@ def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
     student = job_dir / "学生版.docx"
     teacher.write_bytes(make_docx())
     student.write_bytes(make_docx())
-    record_path = job_dir / "job.json"
-    record = json.loads(record_path.read_text(encoding="utf-8"))
-    record.update(status="done", output_paths=[str(teacher), str(student)],
-                  download_available=True, has_result=True)
-    record_path.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    service = JobService(Path(app.config["RESULT_ROOT"]))
+    service.complete_job(created["job_id"], teacher, student)
     student.unlink()
-    recovered = JobService(Path(app.config["RESULT_ROOT"])).get(created["job_id"])
+    recovered = service.get(created["job_id"])
     assert recovered["status"] == "error"
     assert recovered["download_available"] is False
     assert recovered["has_result"] is False
+
+
+def test_duplicate_role_path_never_completes_job(client):
+    created = post_one(client).get_json()
+    output = Path(app.config["RESULT_ROOT"]) / created["job_id"] / "教师版.docx"
+    output.write_bytes(make_docx())
+    service = JobService(Path(app.config["RESULT_ROOT"]))
+    with pytest.raises(ValueError, match="different files"):
+        service.complete_job(created["job_id"], output, output)
+    assert service.get(created["job_id"])["status"] == "queued"
+    assert service.get(created["job_id"])["has_result"] is False
+
+
+def test_corrupt_document_xml_is_rejected_on_complete_recovery_and_download(client):
+    created = post_one(client).get_json()
+    job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
+    teacher, student = job_dir / "教师版.docx", job_dir / "学生版.docx"
+    teacher.write_bytes(make_docx())
+    student.write_bytes(make_docx())
+    service = JobService(Path(app.config["RESULT_ROOT"]))
+    corrupt_document_xml(student)
+    with pytest.raises(ValueError, match="package validation failed"):
+        service.complete_job(created["job_id"], teacher, student)
+    assert service.get(created["job_id"])["status"] == "queued"
+    student.write_bytes(make_docx())
+    service.complete_job(created["job_id"], teacher, student)
+    corrupt_document_xml(student)
+    recovered = service.get(created["job_id"])
+    assert recovered["status"] == "error"
+    assert recovered["has_result"] is False
+    assert recovered["download_available"] is False
+    response = client.get("/api/download/" + created["job_id"])
+    assert response.status_code == 409
+    assert response.status_code != 200
+
+
+def test_workspace_javascript_handles_queued_and_running_states():
+    js = (WEBAPP / "static" / "workspace.js").read_text(encoding="utf-8")
+    assert 'function isActiveStatus(status) { return status === "queued" || status === "running"; }' in js
+    assert "if (isActiveStatus(job.status)) state.pollTimer" in js
+    assert 'job.status === "queued" ? "排队中"' in js
+    assert 'localStorage.setItem("handout_current_job", response.job_id)' in js
+    template = (WEBAPP / "templates" / "index.html").read_text(encoding="utf-8")
+    assert '<option value="queued">排队中</option>' in template
 
 
 def test_semantic_facade_hashes_one_source_snapshot_and_returns_same_units():
