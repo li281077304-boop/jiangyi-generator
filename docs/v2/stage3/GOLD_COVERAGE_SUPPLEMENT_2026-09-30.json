@@ -1,0 +1,236 @@
+{
+  "audit_date": "2026-09-30",
+  "correction_type": "supplemental high-confidence Gold coverage correction",
+  "branch": "feature/splitter-v2-struct-gold",
+  "base_sha": "7be764b9b005c43b6e0cc1137337f2f61e1b9fde",
+  "source_sample": "X012",
+  "source_sha256": "c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1",
+  "source_node": "b481",
+  "order": 557,
+  "business_rules": [
+    "R2",
+    "R5"
+  ],
+  "confidence": "HIGH",
+  "evidence_classes": [
+    "explicit numbered question stem",
+    "formula node",
+    "following answer",
+    "worked solution",
+    "sequence before Q7"
+  ],
+  "decision": "ADD_QG",
+  "unit_id": "AG-X012-QG-056",
+  "gold_file": {
+    "path": "C:\\xml-uat\\stage3-expansion\\gold_preparation_01\\APPROVED_GOLD\\X012_APPROVED_GOLD.json",
+    "sha256_before": "0d0b5cc2fa9d1524277844da6f277e4ba4ff7cf6b600f5da4e28c2445514f956",
+    "sha256_after": "6661a5f711ff5caf87947a0e00e1fa5476c729d1eacaf2deaba3d10590373a17",
+    "qg_before": 55,
+    "qg_after": 56
+  },
+  "prediction_files": {
+    "frozen_ceaaf8b": {
+      "path": "C:\\xml-uat\\stage3-expansion\\STAGE3_EXPANSION_BASELINE\\X012\\prediction.json",
+      "sha256": "7d75752a19d059c1fa0a42ce471beeab28dc5e4cf5d97ed3a1e4a3af7ac2a85d"
+    },
+    "post_e1_7be764b": {
+      "path": "C:\\xml-uat\\stage3-e1-residual-after\\X012\\prediction.json",
+      "sha256": "deab8b0eaa3f509c0b4721f00113f93dc8385d4ae002b559045422daefdabcfa"
+    }
+  },
+  "governance_files": {
+    "roadmap": {
+      "absolute_path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-github\\docs\\decisions\\2026-09-29-v1.1-stop-v1.2-roadmap.md",
+      "sha256": "ecad2d4464d772c47602c56ce8af2f2572e809e6e29d7967cb7e95ba467318eb",
+      "git_state": "present in local governance checkout; files are untracked there"
+    },
+    "business_rules": {
+      "absolute_path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-github\\docs\\decisions\\2026-09-30-splitter-business-rules.md",
+      "sha256": "0db9226f69fc12aecf2dc649483c22d78f2e83e15e818db8f94e857ec42d3e46",
+      "git_state": "present in local governance checkout; files are untracked there"
+    }
+  },
+  "measurements": {
+    "corrected_frozen_checkpoint_ceaaf8b": {
+      "overall": {
+        "gold_qg": 408,
+        "pred_qg": 207,
+        "matched": 206,
+        "precision": 0.9951690821256038,
+        "recall": 0.5049019607843137,
+        "exact_boundary": 0.49754901960784315,
+        "miss": 202,
+        "fp": 1,
+        "merge": 0,
+        "split": 0
+      },
+      "error_counts": {
+        "E1": 201,
+        "E2": 1,
+        "E3": 1,
+        "E4": 3,
+        "E4_SECONDARY": 182
+      },
+      "by_subject": {
+        "mathematics": {
+          "gold_n": 94,
+          "pred_n": 63,
+          "matched_gold": 62,
+          "matched_pred": 62,
+          "exact": 60,
+          "precision": 0.9841269841269841,
+          "recall": 0.6595744680851063,
+          "exact_rate": 0.6382978723404256,
+          "miss": 32,
+          "fp": 1
+        },
+        "physics": {
+          "gold_n": 216,
+          "pred_n": 80,
+          "matched_gold": 80,
+          "matched_pred": 80,
+          "exact": 80,
+          "precision": 1.0,
+          "recall": 0.37037037037037035,
+          "exact_rate": 0.37037037037037035,
+          "miss": 136,
+          "fp": 0
+        },
+        "chemistry": {
+          "gold_n": 98,
+          "pred_n": 64,
+          "matched_gold": 64,
+          "matched_pred": 64,
+          "exact": 63,
+          "precision": 1.0,
+          "recall": 0.6530612244897959,
+          "exact_rate": 0.6428571428571429,
+          "miss": 34,
+          "fp": 0
+        }
+      },
+      "by_doc_type": {
+        "原卷": {
+          "gold_n": 180,
+          "pred_n": 181,
+          "matched_gold": 180,
+          "matched_pred": 180,
+          "exact": 179,
+          "precision": 0.994475138121547,
+          "recall": 1.0,
+          "exact_rate": 0.9944444444444445,
+          "miss": 0,
+          "fp": 1
+        },
+        "解析版": {
+          "gold_n": 228,
+          "pred_n": 26,
+          "matched_gold": 26,
+          "matched_pred": 26,
+          "exact": 24,
+          "precision": 1.0,
+          "recall": 0.11403508771929824,
+          "exact_rate": 0.10526315789473684,
+          "miss": 202,
+          "fp": 0
+        }
+      }
+    },
+    "current_e1_prediction_7be764b": {
+      "overall": {
+        "gold_qg": 408,
+        "pred_qg": 409,
+        "matched": 407,
+        "precision": 0.9951100244498777,
+        "recall": 0.9975490196078431,
+        "exact_boundary": 0.8676470588235294,
+        "miss": 1,
+        "fp": 2,
+        "merge": 0,
+        "split": 0
+      },
+      "error_counts": {
+        "E2": 1,
+        "E3": 2,
+        "E4": 14,
+        "E4_SECONDARY": 3
+      },
+      "by_subject": {
+        "mathematics": {
+          "gold_n": 94,
+          "pred_n": 96,
+          "matched_gold": 94,
+          "matched_pred": 94,
+          "exact": 90,
+          "precision": 0.9791666666666666,
+          "recall": 1.0,
+          "exact_rate": 0.9574468085106383,
+          "miss": 0,
+          "fp": 2
+        },
+        "physics": {
+          "gold_n": 216,
+          "pred_n": 216,
+          "matched_gold": 216,
+          "matched_pred": 216,
+          "exact": 169,
+          "precision": 1.0,
+          "recall": 1.0,
+          "exact_rate": 0.7824074074074074,
+          "miss": 0,
+          "fp": 0
+        },
+        "chemistry": {
+          "gold_n": 98,
+          "pred_n": 97,
+          "matched_gold": 97,
+          "matched_pred": 97,
+          "exact": 95,
+          "precision": 1.0,
+          "recall": 0.9897959183673469,
+          "exact_rate": 0.9693877551020408,
+          "miss": 1,
+          "fp": 0
+        }
+      },
+      "by_doc_type": {
+        "原卷": {
+          "gold_n": 180,
+          "pred_n": 181,
+          "matched_gold": 180,
+          "matched_pred": 180,
+          "exact": 179,
+          "precision": 0.994475138121547,
+          "recall": 1.0,
+          "exact_rate": 0.9944444444444445,
+          "miss": 0,
+          "fp": 1
+        },
+        "解析版": {
+          "gold_n": 228,
+          "pred_n": 228,
+          "matched_gold": 227,
+          "matched_pred": 227,
+          "exact": 175,
+          "precision": 0.9956140350877193,
+          "recall": 0.9956140350877193,
+          "exact_rate": 0.7675438596491229,
+          "miss": 1,
+          "fp": 1
+        }
+      }
+    },
+    "e1_residuals": {
+      "before": 4,
+      "after": 0
+    },
+    "remaining_issues": [
+      "E2 X025: knowledge/practice complete question not recognized",
+      "E3 X012 b34: numbered definition false positive",
+      "E3 X013 b4.r0c1.n4: numbered teaching objective false positive",
+      "E4 true=14",
+      "E4_SECONDARY=3"
+    ]
+  },
+  "chief_verdict": "PASS_HIGH_CONFIDENCE"
+}
