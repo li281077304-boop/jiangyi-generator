@@ -129,3 +129,26 @@ The plan contract must define supported template targets, role/module mapping, s
 ## Machine audit result
 
 **`C0_ROUND1_AUDIT_PASS`** — the integration surfaces and gaps above are evidenced in the current checkout. This is not an end-to-end generation pass. No runtime code, A-Line, B-Line renderer, V0.9 asset, or webapp behavior was modified in this round.
+
+## Round 2 implementation boundary
+
+Round 2 adds `v1.2-xml-experiment/res/app/semantic_facade.py` as the production
+call point for source snapshot hashing, `read_struct_doc_bytes`, and the
+existing `tools/stage2_baseline/run_baseline.py::predict(doc)`. The facade
+loads that source-tree dependency explicitly by repository-relative file path;
+it does not copy or alter its prediction rules. A packaged distribution must
+include the existing `tools/stage2_baseline` source until a later approved
+packaging decision moves that implementation without changing its identity.
+
+The web boundary adds a file-backed, queued-only job repository in
+`v1.2-xml-experiment/res/app/webapp/job_service.py`. It accepts exactly one
+validated DOCX, persists the upload and UI options, and reserves a unique
+per-job folder under `~/Desktop/生成讲义结果`. The app exposes create/list/detail,
+GET open-folder, and ZIP download routes. Since Round 2 does not install an
+executor, new jobs remain `queued`, `has_result=false`, and
+`download_available=false`; no generation success is claimed. ZIP requests
+before final outputs exist return HTTP 409 without changing the generation
+state. Recovery revalidates both role outputs as readable DOCX packages and
+reconciles missing outputs away from `done`. This round does not connect the
+semantic facade to B-Line, render teacher/student documents, or satisfy C0
+end-to-end acceptance.
