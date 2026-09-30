@@ -2,13 +2,13 @@
 
 ## Result
 
-**`FALLBACK_REQUIRED` — `REAL_COM_UAT_PENDING`**
+**`B4_XML_PACKAGE_GATE_PASS — REAL_COM_UAT_PENDING`**
 
-The current renderer was invoked for all three verified real sources against both current B-Line DOCX templates. Every attempt failed closed on a selected source bookmark before saving a DOCX. No source blocks were skipped and no output package is claimed as validated. The rejected cases were not sent to Word/WPS.
+Round 17 added a selection-scope preflight for bookmark pairs and internal hyperlink anchors. The renderer was invoked for all three verified real sources against both current B-Line DOCX templates. All six attempts imported every StructDoc block and produced package-valid DOCX files. For X006 only, the `_GoBack` bookmark starts in selected block `b855`, while its matching end is a standalone direct `w:body` child excluded from StructDoc. The preflight permits this structural case only when the omitted counterpart is itself a direct body bookmark marker, IDs/names resolve uniquely, and no selected hyperlink depends on the bookmark. BlockImporter explicitly drops the orphaned imported marker; the resource report records `standalone_body_bookmark_markers_dropped=1`. This does not apply to an end inside another paragraph or table. The six generated packages have not been opened in Word/WPS, so B4 is not complete.
 
 ## Inputs and reproduction
 
-- B-Line code base: `aeccaa9db057e0cb2827fc67570da48c33d80be8` on `feature/v1.2-renderer-baseline`.
+- B-Line tested working tree: based on `9c29c1363cd5b9b13bab33643ec87d8d050f4dc1` on `feature/v1.2-renderer-baseline`.
 - Stage3 manifest: `C:\xml-uat\stage3-expansion\baseline_inputs.json` (baseline commit `ceaaf8b424738245fa9f6762cdb27bfd022d0905`).
 - Template target for each call: physical direct child index `0` in template `w:body`.
 - The helper resolves every top-level StructDoc block to a singleton `bN` span, preserving each table as an atomic block.
@@ -20,7 +20,7 @@ Run from the repository root:
 & 'C:\xml-uat\.venv\Scripts\python.exe' tools\b4_real_render_uat.py
 ```
 
-Latest machine run: `C:\xml-uat\b4-real-renders\run-20260930T110420Z-e6ef2f77\run_manifest.json`. Earlier attempts used their own unique directories; they created no DOCX outputs.
+Round 17 machine run: `C:\xml-uat\b4-real-renders\run-20260930T111921Z-e7bd776b\run_manifest.json`. Earlier Round 16 attempts used their own unique directories and created no DOCX outputs.
 
 Templates:
 
@@ -31,29 +31,27 @@ Templates:
 
 ## Real-source results
 
-All three source hashes match `baseline_inputs.json`. Source package validation passed for every sample with zero errors and zero warnings. The package validator was not run on renderer outputs because no output DOCX was saved.
+All three source hashes match `baseline_inputs.json`. Source package validation passed for every sample with zero errors and zero warnings. Every renderer output passed package validation.
 
 | Sample | SHA-256 | StructDoc top-level blocks (paragraph / table / unknown) | Source capabilities | Input package parts / validation | First guarded node | 1v1 and class result |
 |---|---|---:|---|---|---|---|
-| X006 physics | `9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410` | 860 (856 / 4 / 0) | 78 image paragraphs; 105 OMML paragraphs; 0 OLE; 0 numbered | 99 parts; PASS, 0 errors | `b855`: `bookmarkStart` | `FALLBACK_REQUIRED`; no output |
-| X012 mathematics | `c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1` | 793 (784 / 9 / 0) | 17 image paragraphs; 553 OMML paragraphs; 6 OLE paragraphs; 8 numbered | 58 parts; PASS, 0 errors | `b792`: `bookmarkStart` and `bookmarkEnd` | `FALLBACK_REQUIRED`; no output |
-| X021 chemistry | `e10818f40e99da4234051b1beeac852f4e8090475cdb96283fbf1bcb5b44a6f4` | 333 (321 / 12 / 0) | 119 image paragraphs; 0 OMML; 0 OLE; 48 numbered | 189 parts; PASS, 0 errors | `b0`: `bookmarkStart` and `bookmarkEnd` | `FALLBACK_REQUIRED`; no output |
+| X006 physics | `9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410` | 860 (856 / 4 / 0) | 78 image paragraphs; 105 OMML paragraphs; 0 OLE; 0 numbered | 99 parts; PASS, 0 errors | `_GoBack` ID `0`: start in `b855`, end as standalone direct `w:body` child 859; no internal anchors | Both templates: 860 nodes imported; package validation PASS; one marker dropped and recorded |
+| X012 mathematics | `c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1` | 793 (784 / 9 / 0) | 17 image paragraphs; 553 OMML paragraphs; 6 OLE paragraphs; 8 numbered | 58 parts; PASS, 0 errors | `b792`: balanced start/end pair | Both templates: 793 nodes imported; package validation PASS |
+| X021 chemistry | `e10818f40e99da4234051b1beeac852f4e8090475cdb96283fbf1bcb5b44a6f4` | 333 (321 / 12 / 0) | 119 image paragraphs; 0 OMML; 0 OLE; 48 numbered | 189 parts; PASS, 0 errors | `b0`: balanced start/end pair | Both templates: 333 nodes imported; package validation PASS |
 
-The exact renderer rejection for each of the six attempts was:
-
-`unsupported package-scoped construct: bookmarkStart`
-
-The selected node has no text-based replacement or omission path. Output package validation and open/save/reopen checks therefore remain unrun for all six cases.
+The X006 pair is named `_GoBack`; its end is not within `sectPr`. It is a standalone direct body child between paragraphs and is omitted from StructDoc content blocks. This exact structural shape can be safely dropped when there is one unique counterpart and no selected anchor reference. The renderer verifies the importer dropped exactly the number of markers authorized by preflight and exposes `standalone_body_bookmark_markers_dropped` in the resource report. Other partial pairs and unresolved or ambiguous references still fail before output replacement.
 
 ## Word/WPS evidence
 
-**`REAL_COM_UAT_PENDING`**. The Codex Computer Use inventory returned `apps=[]`, and native-app controls are unavailable in this environment. A read-only process check observed background WPS processes, but none was controlled or tied to a B4 output; no `WINWORD.exe` process was observed. No document was opened in an application, so the active Word.Application provider could not be identified for this run. No output was available to open, SaveAs, close/reopen, or export to PDF; none of those steps is marked PASS.
+**`REAL_COM_UAT_PENDING`**. The Codex Computer Use inventory returned `apps=[]`, and native-app controls are unavailable in this environment. A read-only process check observed background WPS processes, but none was controlled or tied to a B4 output; no `WINWORD.exe` process was observed. No document was opened in an application, so the active Word.Application provider could not be identified for this run. The six generated packages were not opened, saved, reopened, or exported to PDF; none of those steps is marked PASS.
 
 ## Gate boundary
 
-- Renderer calls: 6 attempted; 0 XML/package-supported; 6 `FALLBACK_REQUIRED`.
+- Round 17 renderer calls: 6 attempted; all 6 XML/package-supported and package-validated.
 - Source DOCX package checks: 3 passed.
-- Output DOCX package checks: 0 run because output files were not created.
+- Output DOCX package checks: 6 passed.
 - Real Word/WPS UAT: pending and unavailable here.
-- Focused machine suites after tightening harness error handling: **33 passed, 7 subtests passed** (renderer, importer, and package validator); helper `py_compile` and `git diff --check` passed.
+- Round 17 focused suites: **35 passed, 7 subtests passed** (renderer, importer, and package validator).
+- Stage3 GoldCompare smoke: 408 QGs / 369 sections in the frozen comparison set; QG `MISS=202, FP=1, MERGE=0, SPLIT=0`, sections exact 369/369, matching the existing baseline. No Stage3 code or data changed.
+- Stage2 smoke was attempted but stopped in the existing `schedule_e2_examples` path with `TypeError: '<' not supported between instances of 'int' and 'NoneType'`; no Stage2 files were changed.
 - No A-Line, V0.9, Gold, Stage3, UI, or fallback code was changed.

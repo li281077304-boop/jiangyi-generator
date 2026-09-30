@@ -218,20 +218,115 @@ class RendererMinimalTests(unittest.TestCase):
         self.assertGreaterEqual(result.resource_report["stats"].get("hyperlinks_copied", 0), 1)
         self.assertTrue(result.package_report["valid"], result.package_report)
 
-    def test_bookmark_hyperlink_anchor_fails_closed(self):
+    def test_balanced_bookmark_and_internal_anchor_are_preserved_and_remapped(self):
+        source, template, output = self._paths()
+        _docx(source)
+        template_doc = Document()
+        template_paragraph = template_doc.add_paragraph("template")
+        existing_start = etree.Element("{%s}bookmarkStart" % W)
+        existing_start.set("{%s}id" % W, "7")
+        existing_start.set("{%s}name" % W, "template_anchor")
+        template_paragraph._p.insert(0, existing_start)
+        existing_end = etree.Element("{%s}bookmarkEnd" % W)
+        existing_end.set("{%s}id" % W, "7")
+        template_paragraph._p.append(existing_end)
+        template_doc.save(template)
+
+        def add_bookmark_anchor(root):
+            paragraphs = root.findall(".//{%s}body/{%s}p" % (W, W))
+            paragraph = paragraphs[0]
+            start = etree.Element("{%s}bookmarkStart" % W)
+            start.set("{%s}id" % W, "7")
+            start.set("{%s}name" % W, "inside")
+            paragraph.insert(0, start)
+            end = etree.Element("{%s}bookmarkEnd" % W)
+            end.set("{%s}id" % W, "7")
+            paragraphs[1].append(end)
+            link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
+            link.set("{%s}anchor" % W, "inside")
+        _rewrite_document(source, add_bookmark_anchor)
+
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b1")], str(output),
+                           TemplateTarget(0))
+        body = Document(str(output)).element.body
+        starts = list(body.iter("{%s}bookmarkStart" % W))
+        ends = list(body.iter("{%s}bookmarkEnd" % W))
+        imported_start = next(node for node in starts
+                              if node.get("{%s}name" % W) == "inside")
+        imported_end = next(node for node in ends
+                            if node.get("{%s}id" % W) == imported_start.get("{%s}id" % W))
+        self.assertNotEqual("7", imported_start.get("{%s}id" % W))
+        self.assertEqual(imported_start.get("{%s}id" % W), imported_end.get("{%s}id" % W))
+        self.assertEqual("inside", next(body.iter("{%s}hyperlink" % W)).get("{%s}anchor" % W))
+        self.assertGreaterEqual(result.resource_report["stats"].get("bookmark_ids_remapped", 0), 1)
+
+    def test_partial_bookmark_pair_and_unresolved_anchor_fail_closed(self):
         source, template, output = self._paths()
         _docx(source)
         Document().save(template)
 
-        def add_bookmark_anchor(root):
-            paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
-            link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
-            link.set("{%s}anchor" % W, "bookmark_1")
-        _rewrite_document(source, add_bookmark_anchor)
+        def add_pair_across_paragraphs(root):
+            paragraphs = root.findall(".//{%s}body/{%s}p" % (W, W))
+            start = etree.Element("{%s}bookmarkStart" % W)
+            start.set("{%s}id" % W, "8")
+            start.set("{%s}name" % W, "crossing")
+            paragraphs[0].insert(0, start)
+            end = etree.Element("{%s}bookmarkEnd" % W)
+            end.set("{%s}id" % W, "8")
+            paragraphs[1].append(end)
+        _rewrite_document(source, add_pair_across_paragraphs)
 
-        with self.assertRaisesRegex(ProjectionError, "bookmark hyperlink"):
+        with self.assertRaisesRegex(ProjectionError, "cuts bookmark pair"):
             render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),
                            TemplateTarget(0))
+        self.assertFalse(output.exists())
+
+        _docx(source)
+        def add_unresolved_anchor(root):
+            paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
+            link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
+            link.set("{%s}anchor" % W, "missing")
+        _rewrite_document(source, add_unresolved_anchor)
+        with self.assertRaisesRegex(ProjectionError, "anchor is missing or ambiguous"):
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),
+                           TemplateTarget(0))
+        self.assertFalse(output.exists())
+
+    def test_standalone_body_bookmark_marker_is_dropped_with_explicit_stat(self):
+        source, template, output = self._paths()
+        _docx(source)
+        Document().save(template)
+
+        def add_standalone_body_end(root):
+            body = root.find("{%s}body" % W)
+            paragraph = body.find("{%s}p" % W)
+            start = etree.Element("{%s}bookmarkStart" % W)
+            start.set("{%s}id" % W, "11")
+            start.set("{%s}name" % W, "standalone_end")
+            paragraph.insert(0, start)
+            end = etree.Element("{%s}bookmarkEnd" % W)
+            end.set("{%s}id" % W, "11")
+            body.insert(1, end)
+        _rewrite_document(source, add_standalone_body_end)
+
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                                str(output), TemplateTarget(0))
+        self.assertEqual(1, result.resource_report["stats"].get(
+            "unmatched_bookmark_starts_dropped", 0))
+        self.assertEqual(1, result.resource_report["stats"].get(
+            "standalone_body_bookmark_markers_dropped", 0))
+        self.assertEqual([], list(Document(str(output)).element.body.iter(
+            "{%s}bookmarkStart" % W)))
+
+        output.unlink()
+        def add_dependent_link(root):
+            paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
+            link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
+            link.set("{%s}anchor" % W, "standalone_end")
+        _rewrite_document(source, add_dependent_link)
+        with self.assertRaisesRegex(ProjectionError, "depends on omitted bookmark"):
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                           str(output), TemplateTarget(0))
         self.assertFalse(output.exists())
 
     def test_output_cannot_alias_source_or_template(self):

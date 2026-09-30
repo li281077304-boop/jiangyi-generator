@@ -37,5 +37,5 @@ The renderer stops before output replacement if the importer reports any unsuppo
 
 - Relationship/content migration is limited to behavior exercised by the copied fixtures and importer report. Any reported unsupported structure rejects the render.
 - The validator does not fully validate content-type declarations or ECMA-376 conformance and cannot establish application visual behavior.
-- The renderer preflight continues to reject package-scoped bookmarks, bookmark anchors, comments/notes, custom XML/content controls, tracked changes, and revision constructs; broader importer abilities do not override that guard.
+- The renderer preflight allows selected bookmark ranges only when their IDs/names are unique and the pair is selected in full. A counterpart may be omitted only when it is itself a standalone direct `w:body` bookmark marker, has no selected hyperlink dependency, and the importer reports the corresponding orphan marker drop; this count is also exposed as `standalone_body_bookmark_markers_dropped`. Partial paragraph/table ranges, unresolved anchors, duplicate IDs/names, comments/notes, custom XML/content controls, tracked changes, and revision constructs remain fail-closed.
 - No whole-job fallback, real source corpus UAT, COM Adapter, UI, or release behavior is part of this gate.

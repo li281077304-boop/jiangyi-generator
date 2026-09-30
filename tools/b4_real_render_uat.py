@@ -162,7 +162,7 @@ def run() -> dict:
     report = {
         "gate": "B4_REAL_XML_PACKAGE_RENDER",
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "approved_code_base": "aeccaa9db057e0cb2827fc67570da48c33d80be8",
+        "approved_code_base": "9c29c1363cd5b9b13bab33643ec87d8d050f4dc1",
         "stage3_manifest": str(MANIFEST_PATH),
         "stage3_baseline_commit": manifest["baseline_commit"],
         "run_dir": str(run_dir),

@@ -83,6 +83,7 @@ def render_minimal(source_doc: str, template_doc: str,
     node_map, table_ids, top_table_ids, table_leaf_ids = _map_structdoc_to_xml(src_body, struct)
     selected = _select_nodes(blocks, index, node_map, table_ids, top_table_ids,
                              table_leaf_ids, struct)
+    permitted_bookmark_drops = _validate_bookmark_scope(src_body, selected)
     for node in selected:
         _validate_payload(node)
 
@@ -91,6 +92,12 @@ def render_minimal(source_doc: str, template_doc: str,
     if resource_report["unsupported"]:
         first = resource_report["unsupported"][0]
         raise ProjectionError("resource import unsupported: %s" % first)
+    actual_bookmark_drops = sum(resource_report["stats"].get(key, 0) for key in (
+        "unmatched_bookmark_starts_dropped", "unmatched_bookmark_ends_dropped"))
+    if actual_bookmark_drops != permitted_bookmark_drops:
+        raise ProjectionError("bookmark importer drop count did not match preflight")
+    if actual_bookmark_drops:
+        resource_report["stats"]["standalone_body_bookmark_markers_dropped"] = actual_bookmark_drops
 
     insert_at = target.body_child_index
     body_children = list(tpl_body)
@@ -234,7 +241,7 @@ def _validate_payload(element):
     if element.tag not in (W_P, W_TBL):
         raise ProjectionError("only w:p and w:tbl payloads are supported")
     package_scoped = {
-        "bookmarkStart", "bookmarkEnd", "commentRangeStart", "commentRangeEnd",
+        "commentRangeStart", "commentRangeEnd",
         "commentReference", "footnoteReference", "endnoteReference",
         "permStart", "permEnd", "sdt", "customXml", "ins", "del",
         "moveFrom", "moveTo", "moveFromRangeStart", "moveFromRangeEnd",
@@ -261,5 +268,74 @@ def _validate_payload(element):
         if local_name in package_scoped or is_revision_change:
             category = "tracked-change" if local_name in revision_markers or is_revision_change else "package-scoped"
             raise ProjectionError("unsupported %s construct: %s" % (category, local_name))
-        if node.tag == "{%s}hyperlink" % W and "{%s}anchor" % W in node.attrib:
-            raise ProjectionError("bookmark hyperlink anchor requires bookmark migration")
+
+
+def _validate_bookmark_scope(source_body, selected_elements):
+    """Require selected bookmark ranges and internal hyperlinks to be complete.
+
+    BlockImporter can remap complete bookmark ranges but deliberately drops
+    orphan range markers. This preflight rejects partial or ambiguous source
+    scopes before that importer can silently remove selected navigation data.
+    """
+    all_starts = list(source_body.iter("{%s}bookmarkStart" % W))
+    all_ends = list(source_body.iter("{%s}bookmarkEnd" % W))
+    selected_nodes = {node for root in selected_elements for node in root.iter()}
+    selected_starts = [node for node in all_starts if node in selected_nodes]
+    selected_ends = [node for node in all_ends if node in selected_nodes]
+    selected_links = [node for root in selected_elements
+                      for node in root.iter("{%s}hyperlink" % W)
+                      if "{%s}anchor" % W in node.attrib]
+
+    starts_by_id = {}
+    ends_by_id = {}
+    starts_by_name = {}
+    for node in all_starts:
+        bookmark_id = node.get("{%s}id" % W)
+        name = node.get("{%s}name" % W)
+        if bookmark_id:
+            starts_by_id.setdefault(bookmark_id, []).append(node)
+        if name:
+            starts_by_name.setdefault(name, []).append(node)
+    for node in all_ends:
+        bookmark_id = node.get("{%s}id" % W)
+        if bookmark_id:
+            ends_by_id.setdefault(bookmark_id, []).append(node)
+
+    permitted_drops = 0
+    relevant_ids = {node.get("{%s}id" % W) for node in selected_starts + selected_ends}
+    for bookmark_id in relevant_ids:
+        if not bookmark_id:
+            raise ProjectionError("selected bookmark has missing ID")
+        starts = starts_by_id.get(bookmark_id, [])
+        ends = ends_by_id.get(bookmark_id, [])
+        if len(starts) != 1 or len(ends) != 1:
+            raise ProjectionError("selected bookmark ID is missing or ambiguous: %s" % bookmark_id)
+        start, end = starts[0], ends[0]
+        name = start.get("{%s}name" % W)
+        if not name:
+            raise ProjectionError("selected bookmark has missing name: %s" % bookmark_id)
+        if len(starts_by_name.get(name, [])) != 1:
+            raise ProjectionError("selected bookmark name is ambiguous: %s" % name)
+        start_selected, end_selected = start in selected_nodes, end in selected_nodes
+        if start_selected != end_selected:
+            omitted = end if start_selected else start
+            omitted_tag = "{%s}%s" % (W, "bookmarkEnd" if start_selected else "bookmarkStart")
+            if (omitted.tag != omitted_tag or omitted.getparent() is not source_body
+                    or omitted not in list(source_body)):
+                raise ProjectionError("selected span cuts bookmark pair: %s" % bookmark_id)
+            if any(link.get("{%s}anchor" % W) == name for link in selected_links):
+                raise ProjectionError("selected hyperlink depends on omitted bookmark: %s" % name)
+            permitted_drops += 1
+
+    for hyperlink in selected_links:
+        anchor = hyperlink.get("{%s}anchor" % W)
+        matches = starts_by_name.get(anchor, [])
+        if not anchor or len(matches) != 1:
+            raise ProjectionError("selected hyperlink anchor is missing or ambiguous: %s" % anchor)
+        start = matches[0]
+        bookmark_id = start.get("{%s}id" % W)
+        ends = ends_by_id.get(bookmark_id, [])
+        if (not bookmark_id or len(ends) != 1 or start not in selected_nodes
+                or ends[0] not in selected_nodes):
+            raise ProjectionError("selected hyperlink anchor is outside selected scope: %s" % anchor)
+    return permitted_drops
