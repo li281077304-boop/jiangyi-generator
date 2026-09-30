@@ -1,0 +1,1176 @@
+{
+  "baseline_commit": "ceaaf8b424738245fa9f6762cdb27bfd022d0905",
+  "overall": {
+    "question_group": {
+      "gold_n": 385,
+      "pred_n": 207,
+      "matched_gold": 206,
+      "matched_pred": 206,
+      "exact": 203,
+      "precision": 0.9951690821256038,
+      "recall": 0.535064935064935,
+      "exact_rate": 0.5272727272727272,
+      "miss": 179,
+      "fp": 1
+    },
+    "section": {
+      "gold_n": 369,
+      "pred_n": 369,
+      "matched_gold": 369,
+      "matched_pred": 369,
+      "exact": 369,
+      "precision": 1.0,
+      "recall": 1.0,
+      "exact_rate": 1.0,
+      "miss": 0,
+      "fp": 0
+    },
+    "merge_n": 0,
+    "split_n": 0,
+    "subquestion": {
+      "total": 290,
+      "inside_parent": 143,
+      "rate": 0.49310344827586206,
+      "orphan_parent": 144,
+      "parent_present_but_outside": 3
+    },
+    "error_counts": {
+      "E1": 178,
+      "E2": 1,
+      "E3": 1,
+      "E4": 3,
+      "E4_SECONDARY": 144
+    },
+    "samples": 8
+  },
+  "by_subject": {
+    "mathematics": {
+      "question_group": {
+        "gold_n": 80,
+        "pred_n": 63,
+        "matched_gold": 62,
+        "matched_pred": 62,
+        "exact": 60,
+        "precision": 0.9841269841269841,
+        "recall": 0.775,
+        "exact_rate": 0.75,
+        "miss": 18,
+        "fp": 1
+      },
+      "section": {
+        "gold_n": 74,
+        "pred_n": 74,
+        "matched_gold": 74,
+        "matched_pred": 74,
+        "exact": 74,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 40,
+        "inside_parent": 26,
+        "rate": 0.65,
+        "orphan_parent": 14,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {
+        "E1": 18,
+        "E3": 1,
+        "E4_SECONDARY": 14
+      },
+      "samples": 2
+    },
+    "physics": {
+      "question_group": {
+        "gold_n": 215,
+        "pred_n": 80,
+        "matched_gold": 80,
+        "matched_pred": 80,
+        "exact": 80,
+        "precision": 1.0,
+        "recall": 0.37209302325581395,
+        "exact_rate": 0.37209302325581395,
+        "miss": 135,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 236,
+        "pred_n": 236,
+        "matched_gold": 236,
+        "matched_pred": 236,
+        "exact": 236,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 202,
+        "inside_parent": 78,
+        "rate": 0.38613861386138615,
+        "orphan_parent": 124,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {
+        "E1": 135,
+        "E4_SECONDARY": 124
+      },
+      "samples": 3
+    },
+    "chemistry": {
+      "question_group": {
+        "gold_n": 90,
+        "pred_n": 64,
+        "matched_gold": 64,
+        "matched_pred": 64,
+        "exact": 63,
+        "precision": 1.0,
+        "recall": 0.7111111111111111,
+        "exact_rate": 0.7,
+        "miss": 26,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 59,
+        "pred_n": 59,
+        "matched_gold": 59,
+        "matched_pred": 59,
+        "exact": 59,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 48,
+        "inside_parent": 39,
+        "rate": 0.8125,
+        "orphan_parent": 6,
+        "parent_present_but_outside": 3
+      },
+      "error_counts": {
+        "E1": 25,
+        "E2": 1,
+        "E4": 3,
+        "E4_SECONDARY": 6
+      },
+      "samples": 3
+    }
+  },
+  "by_doc_type": {
+    "原卷": {
+      "question_group": {
+        "gold_n": 180,
+        "pred_n": 181,
+        "matched_gold": 180,
+        "matched_pred": 180,
+        "exact": 179,
+        "precision": 0.994475138121547,
+        "recall": 1.0,
+        "exact_rate": 0.9944444444444445,
+        "miss": 0,
+        "fp": 1
+      },
+      "section": {
+        "gold_n": 114,
+        "pred_n": 114,
+        "matched_gold": 114,
+        "matched_pred": 114,
+        "exact": 114,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 134,
+        "inside_parent": 131,
+        "rate": 0.9776119402985075,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 3
+      },
+      "error_counts": {
+        "E3": 1,
+        "E4": 3
+      },
+      "samples": 4
+    },
+    "解析版": {
+      "question_group": {
+        "gold_n": 205,
+        "pred_n": 26,
+        "matched_gold": 26,
+        "matched_pred": 26,
+        "exact": 24,
+        "precision": 1.0,
+        "recall": 0.12682926829268293,
+        "exact_rate": 0.11707317073170732,
+        "miss": 179,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 255,
+        "pred_n": 255,
+        "matched_gold": 255,
+        "matched_pred": 255,
+        "exact": 255,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 156,
+        "inside_parent": 12,
+        "rate": 0.07692307692307693,
+        "orphan_parent": 144,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {
+        "E1": 178,
+        "E2": 1,
+        "E4_SECONDARY": 144
+      },
+      "samples": 4
+    }
+  },
+  "samples": [
+    {
+      "sample_id": "X003",
+      "question_group": {
+        "gold_n": 78,
+        "pred_n": 78,
+        "matched_gold": 78,
+        "matched_pred": 78,
+        "exact": 78,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 33,
+        "pred_n": 33,
+        "matched_gold": 33,
+        "matched_pred": 33,
+        "exact": 33,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 78,
+        "inside_parent": 78,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 78,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "physics",
+      "doc_type": "原卷",
+      "name": "专题04 电功率（期末专项训练）（原卷版）.docx"
+    },
+    {
+      "sample_id": "X004",
+      "question_group": {
+        "gold_n": 78,
+        "pred_n": 1,
+        "matched_gold": 1,
+        "matched_pred": 1,
+        "exact": 1,
+        "miss": 77,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 0.01282051282051282,
+        "exact_rate": 0.01282051282051282
+      },
+      "section": {
+        "gold_n": 34,
+        "pred_n": 34,
+        "matched_gold": 34,
+        "matched_pred": 34,
+        "exact": 34,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 72,
+        "inside_parent": 0,
+        "rate": 0.0,
+        "orphan_parent": 72,
+        "parent_present_but_outside": 0,
+        "bad": [
+          {
+            "gold": "AG-X004-QG-004",
+            "order": 51,
+            "parent_missing": true,
+            "text": "(1)智能语音系统中使用的智能芯片，主要利用      （填“半导体”或“超导体”）材料制作而成。"
+          },
+          {
+            "gold": "AG-X004-QG-004",
+            "order": 52,
+            "parent_missing": true,
+            "text": "(2)给电池充电时，电池相当于      （填“电源”或“用电器”），该电池充满电后可以储存    "
+          },
+          {
+            "gold": "AG-X004-QG-004",
+            "order": 53,
+            "parent_missing": true,
+            "text": "(3)若只将本设备接入电路充电10分钟，电能表（主要参数如图乙所示）上的转盘转过      转。"
+          },
+          {
+            "gold": "AG-X004-QG-009",
+            "order": 107,
+            "parent_missing": true,
+            "text": "(1)水吸收的热量；"
+          },
+          {
+            "gold": "AG-X004-QG-009",
+            "order": 108,
+            "parent_missing": true,
+            "text": "(2)该微波炉这段时间消耗电能多少J？（1kW·h=3.6×106J）"
+          }
+        ]
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 1,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {
+        "E1": {
+          "n": 77,
+          "examples": [
+            {
+              "gold": "AG-X004-QG-002",
+              "pred": "u023",
+              "role": "analysis",
+              "order": 33,
+              "text": "2．（24-25九年级上·天津河西·期末）一种家用电能表上的参数如图所示，下列说法错误的是（　　）"
+            },
+            {
+              "gold": "AG-X004-QG-003",
+              "pred": "u024",
+              "role": "answer",
+              "order": 43,
+              "text": "3．（24-25九年级上·广东汕头·期末）如图所示是小明家的电能表，其标定电流为      A。用1度电，它的转盘转过 "
+            },
+            {
+              "gold": "AG-X004-QG-004",
+              "pred": "u025",
+              "role": "answer",
+              "order": 49,
+              "text": "4．（24-25九年级上·湖北武汉·期末）如图甲所示是某款智能语音爬楼“神器”，可以帮助腿脚不便的老年人上下楼。"
+            },
+            {
+              "gold": "AG-X004-QG-005",
+              "pred": "u028",
+              "role": "answer",
+              "order": 64,
+              "text": "5．（24-25九年级上·四川成都·期末）如图是小明同学在家中拍到的一张电能表照片，他仔细观察照片后，得到下列结论，你认"
+            },
+            {
+              "gold": "AG-X004-QG-006",
+              "pred": "u030",
+              "role": "analysis",
+              "order": 77,
+              "text": "6．（24-25九年级上·广东广州·期末）如图所示，分别用甲、乙两个电热水壶装相同质量、相同温度的水后接在220V恒定电"
+            }
+          ]
+        },
+        "E4_SECONDARY": {
+          "n": 72,
+          "examples": [
+            {
+              "gold": "AG-X004-QG-004",
+              "order": 51,
+              "parent_missing": true,
+              "text": "(1)智能语音系统中使用的智能芯片，主要利用      （填“半导体”或“超导体”）材料制作而成。"
+            },
+            {
+              "gold": "AG-X004-QG-004",
+              "order": 52,
+              "parent_missing": true,
+              "text": "(2)给电池充电时，电池相当于      （填“电源”或“用电器”），该电池充满电后可以储存    "
+            },
+            {
+              "gold": "AG-X004-QG-004",
+              "order": 53,
+              "parent_missing": true,
+              "text": "(3)若只将本设备接入电路充电10分钟，电能表（主要参数如图乙所示）上的转盘转过      转。"
+            },
+            {
+              "gold": "AG-X004-QG-009",
+              "order": 107,
+              "parent_missing": true,
+              "text": "(1)水吸收的热量；"
+            },
+            {
+              "gold": "AG-X004-QG-009",
+              "order": 108,
+              "parent_missing": true,
+              "text": "(2)该微波炉这段时间消耗电能多少J？（1kW·h=3.6×106J）"
+            }
+          ]
+        }
+      },
+      "error_counts": {
+        "E1": 77,
+        "E4_SECONDARY": 72
+      },
+      "subject": "physics",
+      "doc_type": "解析版",
+      "name": "专题04 电功率（期末专项训练）（解析版）.docx"
+    },
+    {
+      "sample_id": "X006",
+      "question_group": {
+        "gold_n": 59,
+        "pred_n": 1,
+        "matched_gold": 1,
+        "matched_pred": 1,
+        "exact": 1,
+        "miss": 58,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 0.01694915254237288,
+        "exact_rate": 0.01694915254237288
+      },
+      "section": {
+        "gold_n": 169,
+        "pred_n": 169,
+        "matched_gold": 169,
+        "matched_pred": 169,
+        "exact": 169,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 52,
+        "inside_parent": 0,
+        "rate": 0.0,
+        "orphan_parent": 52,
+        "parent_present_but_outside": 0,
+        "bad": [
+          {
+            "gold": "AG-X006-QG-013",
+            "order": 154,
+            "parent_missing": true,
+            "text": "（1）飞机的发动机 　是　 （选填“是”或“不是”）热机。"
+          },
+          {
+            "gold": "AG-X006-QG-013",
+            "order": 155,
+            "parent_missing": true,
+            "text": "（2）发动机所做的有用功是多少？40kg航空煤油完全燃烧放出的热量是多少？"
+          },
+          {
+            "gold": "AG-X006-QG-013",
+            "order": 156,
+            "parent_missing": true,
+            "text": "（3）发动机的效率是多少？"
+          },
+          {
+            "gold": "AG-X006-QG-018",
+            "order": 195,
+            "parent_missing": true,
+            "text": "（1）闭合开关S，记录电流表示数为I，此时电流表测量的是通过 　R1 的电流（选填“干路”、“R1”"
+          },
+          {
+            "gold": "AG-X006-QG-018",
+            "order": 196,
+            "parent_missing": true,
+            "text": "（2）小丽比较两次电流表示数，可以得到的实验结论是 　I′＞I　 。"
+          }
+        ]
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 1,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {
+        "E1": {
+          "n": 58,
+          "examples": [
+            {
+              "gold": "AG-X006-QG-002",
+              "pred": "u034",
+              "role": "answer",
+              "order": 42,
+              "text": "2．（2024秋•嘉峪关校级期末）火锅是重庆的特色美食，涮火锅时是通过　热传递　 的方式改变食物内能；寒冷的冬天搓手，是"
+            },
+            {
+              "gold": "AG-X006-QG-003",
+              "pred": "u036",
+              "role": "answer",
+              "order": 49,
+              "text": "3．（2024秋•广元期末）图甲是在一个配有活塞的厚壁玻璃筒里放一小团蘸了乙醚的棉花，当迅速压下活塞时，可看见筒内棉花燃"
+            },
+            {
+              "gold": "AG-X006-QG-004",
+              "pred": "u038",
+              "role": "answer",
+              "order": 61,
+              "text": "4．（2024秋•宿城区期末）小明在玻璃试管内装入适量沙子，将温度计插在沙子中。用力晃动十余下，发现温度计示数变大了，这"
+            },
+            {
+              "gold": "AG-X006-QG-005",
+              "pred": "u040",
+              "role": "answer",
+              "order": 67,
+              "text": "5．（2024秋•海淀区期末）已知某种物质吸收的热量Q与比热容c、质量m和温度变化量ΔT之间满足Q＝cmΔT。加热初温相"
+            },
+            {
+              "gold": "AG-X006-QG-006",
+              "pred": "u042",
+              "role": "answer",
+              "order": 81,
+              "text": "6．（2024秋•包河区期末）如果在一个标准大气压下，将质量为1.5kg的水烧开需吸收热量为5.04×105J，则水的初"
+            }
+          ]
+        },
+        "E4_SECONDARY": {
+          "n": 52,
+          "examples": [
+            {
+              "gold": "AG-X006-QG-013",
+              "order": 154,
+              "parent_missing": true,
+              "text": "（1）飞机的发动机 　是　 （选填“是”或“不是”）热机。"
+            },
+            {
+              "gold": "AG-X006-QG-013",
+              "order": 155,
+              "parent_missing": true,
+              "text": "（2）发动机所做的有用功是多少？40kg航空煤油完全燃烧放出的热量是多少？"
+            },
+            {
+              "gold": "AG-X006-QG-013",
+              "order": 156,
+              "parent_missing": true,
+              "text": "（3）发动机的效率是多少？"
+            },
+            {
+              "gold": "AG-X006-QG-018",
+              "order": 195,
+              "parent_missing": true,
+              "text": "（1）闭合开关S，记录电流表示数为I，此时电流表测量的是通过 　R1 的电流（选填“干路”、“R1”"
+            },
+            {
+              "gold": "AG-X006-QG-018",
+              "order": 196,
+              "parent_missing": true,
+              "text": "（2）小丽比较两次电流表示数，可以得到的实验结论是 　I′＞I　 。"
+            }
+          ]
+        }
+      },
+      "error_counts": {
+        "E1": 58,
+        "E4_SECONDARY": 52
+      },
+      "subject": "physics",
+      "doc_type": "解析版",
+      "name": "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx"
+    },
+    {
+      "sample_id": "X012",
+      "question_group": {
+        "gold_n": 42,
+        "pred_n": 24,
+        "matched_gold": 24,
+        "matched_pred": 24,
+        "exact": 22,
+        "miss": 18,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 0.5714285714285714,
+        "exact_rate": 0.5238095238095238
+      },
+      "section": {
+        "gold_n": 34,
+        "pred_n": 34,
+        "matched_gold": 34,
+        "matched_pred": 34,
+        "exact": 34,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 26,
+        "inside_parent": 12,
+        "rate": 0.46153846153846156,
+        "orphan_parent": 14,
+        "parent_present_but_outside": 0,
+        "bad": [
+          {
+            "gold": "AG-X012-QG-039",
+            "order": 784,
+            "parent_missing": true,
+            "text": "(1)．"
+          },
+          {
+            "gold": "AG-X012-QG-039",
+            "order": 785,
+            "parent_missing": true,
+            "text": "(2)．"
+          },
+          {
+            "gold": "AG-X012-QG-040",
+            "order": 801,
+            "parent_missing": true,
+            "text": "(1)；"
+          },
+          {
+            "gold": "AG-X012-QG-040",
+            "order": 802,
+            "parent_missing": true,
+            "text": "(2)；"
+          },
+          {
+            "gold": "AG-X012-QG-040",
+            "order": 803,
+            "parent_missing": true,
+            "text": "(3)；"
+          }
+        ]
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 24,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {
+        "E1": {
+          "n": 18,
+          "examples": [
+            {
+              "gold": "AG-X012-QG-002",
+              "pred": "u009",
+              "role": "analysis",
+              "order": 31,
+              "text": "2．计算： ______．"
+            },
+            {
+              "gold": "AG-X012-QG-003",
+              "pred": "u010",
+              "role": "answer",
+              "order": 34,
+              "text": "3．（25-26七年级上·江苏连云港·期中）计算_______．"
+            },
+            {
+              "gold": "AG-X012-QG-004",
+              "pred": "u018",
+              "role": "answer",
+              "order": 49,
+              "text": "1．的倒数是（     ）"
+            },
+            {
+              "gold": "AG-X012-QG-005",
+              "pred": "u020",
+              "role": "analysis",
+              "order": 55,
+              "text": "2．一个有理数a的倒数等于它本身，那么a等于（     ）"
+            },
+            {
+              "gold": "AG-X012-QG-006",
+              "pred": "u021",
+              "role": "answer",
+              "order": 59,
+              "text": "3．（2026·河北邯郸·二模）若，则“”表示的数是____．"
+            }
+          ]
+        },
+        "E4_SECONDARY": {
+          "n": 14,
+          "examples": [
+            {
+              "gold": "AG-X012-QG-039",
+              "order": 784,
+              "parent_missing": true,
+              "text": "(1)．"
+            },
+            {
+              "gold": "AG-X012-QG-039",
+              "order": 785,
+              "parent_missing": true,
+              "text": "(2)．"
+            },
+            {
+              "gold": "AG-X012-QG-040",
+              "order": 801,
+              "parent_missing": true,
+              "text": "(1)；"
+            },
+            {
+              "gold": "AG-X012-QG-040",
+              "order": 802,
+              "parent_missing": true,
+              "text": "(2)；"
+            },
+            {
+              "gold": "AG-X012-QG-040",
+              "order": 803,
+              "parent_missing": true,
+              "text": "(3)；"
+            }
+          ]
+        }
+      },
+      "error_counts": {
+        "E1": 18,
+        "E4_SECONDARY": 14
+      },
+      "subject": "mathematics",
+      "doc_type": "解析版",
+      "name": "专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册（解析版）.docx"
+    },
+    {
+      "sample_id": "X013",
+      "question_group": {
+        "gold_n": 38,
+        "pred_n": 39,
+        "matched_gold": 38,
+        "matched_pred": 38,
+        "exact": 38,
+        "miss": 0,
+        "fp": 1,
+        "precision": 0.9743589743589743,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 40,
+        "pred_n": 40,
+        "matched_gold": 40,
+        "matched_pred": 40,
+        "exact": 40,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 14,
+        "inside_parent": 14,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 39,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {
+        "E3": {
+          "n": 1,
+          "examples": [
+            {
+              "pred": "u003",
+              "order": 9,
+              "text": "5.会根据指定精确度对有理数（整数、小数、大数、科学记数法表示的数）取近似值，能反向判断近似数的精确位数。",
+              "numbered_but_not_question": true
+            }
+          ]
+        }
+      },
+      "error_counts": {
+        "E3": 1
+      },
+      "subject": "mathematics",
+      "doc_type": "原卷",
+      "name": "专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册（原卷版）.docx"
+    },
+    {
+      "sample_id": "X019",
+      "question_group": {
+        "gold_n": 20,
+        "pred_n": 20,
+        "matched_gold": 20,
+        "matched_pred": 20,
+        "exact": 19,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.95
+      },
+      "section": {
+        "gold_n": 12,
+        "pred_n": 12,
+        "matched_gold": 12,
+        "matched_pred": 12,
+        "exact": 12,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 20,
+        "inside_parent": 17,
+        "rate": 0.85,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 3,
+        "bad": [
+          {
+            "gold": "AG-X019-QG-019",
+            "order": 235,
+            "parent_missing": false,
+            "text": "(1)轻粉微溶于水，是一种白色粉末，这句话描述了轻粉的_____（填“物理”或“化学”，下同）性质；"
+          },
+          {
+            "gold": "AG-X019-QG-019",
+            "order": 236,
+            "parent_missing": false,
+            "text": "(2)材料中提及的轻粉的主要用途是_____。"
+          },
+          {
+            "gold": "AG-X019-QG-019",
+            "order": 237,
+            "parent_missing": false,
+            "text": "(3)轻粉的保存方法应该为_____（填“阴凉处”或“光亮处”）密封。"
+          }
+        ]
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 2,
+        "pred_qg_with_binding": 1,
+        "pred_qg_total": 20,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {
+        "E4": {
+          "n": 3,
+          "examples": [
+            {
+              "gold": "AG-X019-QG-019",
+              "order": 235,
+              "parent_missing": false,
+              "text": "(1)轻粉微溶于水，是一种白色粉末，这句话描述了轻粉的_____（填“物理”或“化学”，下同）性质；"
+            },
+            {
+              "gold": "AG-X019-QG-019",
+              "order": 236,
+              "parent_missing": false,
+              "text": "(2)材料中提及的轻粉的主要用途是_____。"
+            },
+            {
+              "gold": "AG-X019-QG-019",
+              "order": 237,
+              "parent_missing": false,
+              "text": "(3)轻粉的保存方法应该为_____（填“阴凉处”或“光亮处”）密封。"
+            }
+          ]
+        }
+      },
+      "error_counts": {
+        "E4": 3
+      },
+      "subject": "chemistry",
+      "doc_type": "原卷",
+      "name": "1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（原卷版）.docx"
+    },
+    {
+      "sample_id": "X021",
+      "question_group": {
+        "gold_n": 44,
+        "pred_n": 44,
+        "matched_gold": 44,
+        "matched_pred": 44,
+        "exact": 44,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 29,
+        "pred_n": 29,
+        "matched_gold": 29,
+        "matched_pred": 29,
+        "exact": 29,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 22,
+        "inside_parent": 22,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 44,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "chemistry",
+      "doc_type": "原卷",
+      "name": "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（原卷版）.docx"
+    },
+    {
+      "sample_id": "X025",
+      "question_group": {
+        "gold_n": 26,
+        "pred_n": 0,
+        "matched_gold": 0,
+        "matched_pred": 0,
+        "exact": 0,
+        "miss": 26,
+        "fp": 0,
+        "precision": null,
+        "recall": 0.0,
+        "exact_rate": 0.0
+      },
+      "section": {
+        "gold_n": 18,
+        "pred_n": 18,
+        "matched_gold": 18,
+        "matched_pred": 18,
+        "exact": 18,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 6,
+        "inside_parent": 0,
+        "rate": 0.0,
+        "orphan_parent": 6,
+        "parent_present_but_outside": 0,
+        "bad": [
+          {
+            "gold": "AG-X025-QG-001",
+            "order": 85,
+            "parent_missing": true,
+            "text": "(1)红磷作用是         。"
+          },
+          {
+            "gold": "AG-X025-QG-001",
+            "order": 86,
+            "parent_missing": true,
+            "text": "(2)点燃红磷前应先将止水夹         （填“打开”或“关闭”）。"
+          },
+          {
+            "gold": "AG-X025-QG-001",
+            "order": 87,
+            "parent_missing": true,
+            "text": "(3)集气瓶中水面上方的空气体积为450ml，量筒中水的体积为500 mL，冷却后打开止水夹，量筒液"
+          },
+          {
+            "gold": "AG-X025-QG-EXTRA-01",
+            "order": 39,
+            "parent_missing": true,
+            "text": "(1)若用煤块作火炉燃料，是利用该物质的       （选填“物理”或“化学”）性。"
+          },
+          {
+            "gold": "AG-X025-QG-EXTRA-01",
+            "order": 40,
+            "parent_missing": true,
+            "text": "(2)连续加热12天的目的是       ，剩余气体约占原气体总体积的       。"
+          }
+        ]
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 0,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {
+        "E1": {
+          "n": 25,
+          "examples": [
+            {
+              "gold": "AG-X025-QG-001",
+              "pred": "u013",
+              "role": "answer",
+              "order": 83,
+              "text": "1．用如图装置测定空气中氧气的含量。"
+            },
+            {
+              "gold": "AG-X025-QG-002",
+              "pred": "u015",
+              "role": "analysis",
+              "order": 94,
+              "text": "2．用来测定空气成分的方法有很多，小梅用如下图所示的简易装置来测定空气中氧气的含量。下列对该实验的认识中，正确的是"
+            },
+            {
+              "gold": "AG-X025-QG-003",
+              "pred": "u019",
+              "role": "answer",
+              "order": 130,
+              "text": "1．如图表示空气的组成（体积分数），气体X为"
+            },
+            {
+              "gold": "AG-X025-QG-004",
+              "pred": "u021",
+              "role": "analysis",
+              "order": 135,
+              "text": "2．中国正在加速推进稀有气体国产化。下列气体属于稀有气体的是"
+            },
+            {
+              "gold": "AG-X025-QG-005",
+              "pred": "u025",
+              "role": "answer",
+              "order": 169,
+              "text": "1．（25-26九年级下·黑龙江大庆·阶段检测）下列物质属于纯净物的是"
+            }
+          ]
+        },
+        "E2": {
+          "n": 1,
+          "examples": [
+            {
+              "gold": "AG-X025-QG-EXTRA-01",
+              "pred": "u008",
+              "role": "body",
+              "order": 37,
+              "text": "1．下图是拉瓦锡测定空气成分的实验。他将汞放在密闭容器里连续加热12天，得到红色粉末（HgO），他又把红色粉末放在另外容"
+            }
+          ]
+        },
+        "E4_SECONDARY": {
+          "n": 6,
+          "examples": [
+            {
+              "gold": "AG-X025-QG-001",
+              "order": 85,
+              "parent_missing": true,
+              "text": "(1)红磷作用是         。"
+            },
+            {
+              "gold": "AG-X025-QG-001",
+              "order": 86,
+              "parent_missing": true,
+              "text": "(2)点燃红磷前应先将止水夹         （填“打开”或“关闭”）。"
+            },
+            {
+              "gold": "AG-X025-QG-001",
+              "order": 87,
+              "parent_missing": true,
+              "text": "(3)集气瓶中水面上方的空气体积为450ml，量筒中水的体积为500 mL，冷却后打开止水夹，量筒液"
+            },
+            {
+              "gold": "AG-X025-QG-EXTRA-01",
+              "order": 39,
+              "parent_missing": true,
+              "text": "(1)若用煤块作火炉燃料，是利用该物质的       （选填“物理”或“化学”）性。"
+            },
+            {
+              "gold": "AG-X025-QG-EXTRA-01",
+              "order": 40,
+              "parent_missing": true,
+              "text": "(2)连续加热12天的目的是       ，剩余气体约占原气体总体积的       。"
+            }
+          ]
+        }
+      },
+      "error_counts": {
+        "E1": 25,
+        "E2": 1,
+        "E4_SECONDARY": 6
+      },
+      "subject": "chemistry",
+      "doc_type": "解析版",
+      "name": "2.1  我们周围的空气 第1课时（讲义）（解析版）.docx"
+    }
+  ]
+}
