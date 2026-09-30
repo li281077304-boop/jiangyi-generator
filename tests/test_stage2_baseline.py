@@ -111,6 +111,20 @@ def test_subquestions_stay_inside_their_parent_question():
         {index.by_id[nid].text for nid in first_nodes})
 
 
+def test_inline_shared_material_stays_distinct_while_following_subquestions_return_to_parent():
+    doc = _fixture(["20．阅读下列材料，回答问题。", "材料1：第一段。", "材料2：第二段。",
+                    "（1）判断材料中的性质。", "（2）说明材料的用途。", "【答案】答案"])
+    index, units = predict(doc)
+    group = next(u for u in units if u["role"] == "question_group")
+    materials = [u for u in units if u["role"] == "shared_material"]
+    assert len(materials) == 1
+    assert materials[0]["spans"] == [["b1", "b2"]]
+    assert group["spans"] == [["b0", "b4"]]
+    assert group["bind_to"] == materials[0]["id"]
+    assert "（1）判断材料中的性质。" not in {
+        index.by_id[nid].text for nid in index.interval(*materials[0]["spans"][0])}
+
+
 def test_empty_parentheses_mark_consecutive_choice_questions():
     doc = _fixture(["一、选择正确图片/词句。",
                     "1.He's going by bike. (    )", "A.B.",

@@ -108,7 +108,7 @@ EXERCISE_LABELS = ("即时训练", "基础巩固", "基础速刷", "能力提升
                    "巩固练习", "提升专练", "真题感知", "真题闯关", "课堂检测", "出门测试",
                    "当堂检测", "达标检测", "实战演练", "写作训练", "强化训练", "课后作业",
                    "随堂练习", "变式训练", "考点突破", "专项训练", "选择填空", "核心素养")
-MERGE_ROLES = {"knowledge", "body"}
+MERGE_ROLES = {"knowledge", "body", "shared_material"}
 BASELINE_ID = "reading-material-answer-analysis-v1"
 
 
@@ -747,6 +747,139 @@ def build_units(index, cands):
         return nid if nid in index.by_id else index.first_content(nid)
     def last_of(nid):
         return nid if nid in index.by_id else index.last_content(nid)
+
+    def table_member(nid):
+        node = index.by_id.get(nid)
+        container = node.container if node else None
+        while container and container != ROOT:
+            if index.containers.get(container) in ("cell", "table"):
+                return True
+            container = index.container_parent.get(container)
+        return False
+
+    def nested_candidate(candidate):
+        """Candidates that describe content inside a question, not its end."""
+        role = candidate["role"]
+        if role == "shared_material":
+            return True
+        nid = first_of(candidate["node"])
+        if nid is None:
+            return False
+        if table_member(nid):
+            return role in ("section", "answer", "analysis")
+        text = _norm(index.by_id[nid].text)
+        return role == "section" and bool(RE_SUBQUESTION_START.match(text) or RE_OPTION.match(text))
+
+    def closes_question(candidate):
+        """A reliable end of a parent group, excluding incidental font cues."""
+        role = candidate["role"]
+        nid = first_of(candidate["node"])
+        if nid is None:
+            return False
+        if role in ("question_group", "answer", "analysis", "knowledge"):
+            return not table_member(nid)
+        if role == "section":
+            text = _norm(index.by_id[nid].text)
+            return not table_member(nid) and not nested_candidate(candidate) \
+                and (not str(candidate.get("evidence", "")).startswith("字号层")
+                     or "加粗" in str(candidate.get("evidence", "")))
+        return False
+
+    # A question group is a parent interval. Table labels/values, numbered
+    # subquestions, answer choices, and inline shared material can be emitted
+    # as separate role candidates, but they do not close that parent. Keep
+    # those candidates available for their own role units while determining
+    # the question's logical end at the next true boundary.
+    qg_regions = {}
+    for i, candidate in enumerate(cands):
+        if candidate["role"] != "question_group":
+            continue
+        start = first_of(candidate["node"])
+        if start is None:
+            continue
+        naive_boundary = next(((j, c2, first_of(c2["node"]))
+                               for j, c2 in enumerate(cands[i + 1:], i + 1)
+                               if first_of(c2["node"]) is not None), None)
+        boundary = next(((j, c2, first_of(c2["node"]))
+                         for j, c2 in enumerate(cands[i + 1:], i + 1)
+                         if first_of(c2["node"]) is not None and not nested_candidate(c2)), None)
+        naive_end_order = (index.order_of(naive_boundary[2]) - 1
+                           if naive_boundary else len(index.nodes) - 1)
+        end_order = (index.order_of(boundary[2]) - 1 if boundary else len(index.nodes) - 1)
+        # Extend only when numbered child prompts actually occur after the
+        # ordinary candidate boundary. This preserves unrelated question and
+        # section boundaries while recovering a parent's out-of-span subparts.
+        subquestion_numbers = {match.group(1) for order in range(index.order_of(start) + 1,
+                                end_order + 1)
+                               if (match := RE_SUBQUESTION_START.match(
+                                   _norm(index.nodes[order].text)))}
+        extends_for_subquestions = naive_boundary is not None \
+            and nested_candidate(naive_boundary[1]) \
+            and boundary is not None and closes_question(boundary[1]) \
+            and len(subquestion_numbers) >= 2 \
+            and any(
+            RE_SUBQUESTION_START.match(_norm(index.nodes[order].text))
+            for order in range(max(index.order_of(start) + 1, naive_end_order + 1), end_order + 1))
+        if not extends_for_subquestions:
+            end_order = naive_end_order
+            boundary = naive_boundary
+        end_order = max(index.order_of(start), end_order)
+        if boundary is not None and boundary[1]["role"] == "section" \
+                and boundary[1].get("zone") == "exercise" \
+                and index.by_id[start].container == ROOT:
+            start_order = index.order_of(start)
+            while end_order is not None and start_order is not None \
+                    and end_order > start_order \
+                    and not index.nodes[end_order].has_content \
+                    and index.nodes[end_order].container == ROOT:
+                end_order -= 1
+        end = index.nodes[end_order].id
+        def blank_without_assets(order):
+            node = index.nodes[order]
+            block = node.block
+            return not _norm(node.text) and not (block and
+                (block.images or block.oles or block.math_count or block.textbox_texts))
+
+        if extends_for_subquestions and end_order is not None and blank_without_assets(end_order):
+            last_content = next((order for order in range(end_order - 1, index.order_of(start) - 1, -1)
+                                 if not blank_without_assets(order)), None)
+            subquestion_numbers = {match.group(1) for order in range(index.order_of(start) + 1,
+                                    end_order + 1)
+                                   if (match := RE_SUBQUESTION_START.match(
+                                       _norm(index.nodes[order].text)))}
+            if len(subquestion_numbers) >= 2 and last_content is not None \
+                    and RE_SUBQUESTION_START.match(_norm(index.nodes[last_content].text)):
+                while end_order > last_content and blank_without_assets(end_order):
+                    end_order -= 1
+                end = index.nodes[end_order].id
+        qg_regions[i] = (index.order_of(start), index.order_of(end))
+
+    # Subquestions begin a new question-group role inside an inline material
+    # sequence. Stop the material role before the first such marker so that
+    # R6/R7 material remains distinct from the question content that follows.
+    material_regions = []
+    for i, candidate in enumerate(cands):
+        if candidate["role"] != "shared_material":
+            continue
+        start = first_of(candidate["node"])
+        if start is None:
+            continue
+        nxt = next((first_of(c2["node"]) for c2 in cands[i + 1:]
+                    if first_of(c2["node"]) is not None), None)
+        end_order = index.order_of(nxt) - 1 if nxt else len(index.nodes) - 1
+        start_order = index.order_of(start)
+        for order in range(start_order + 1, end_order + 1):
+            if RE_SUBQUESTION_START.match(_norm(index.nodes[order].text)):
+                end_order = order - 1
+                break
+        if end_order >= start_order:
+            material_regions.append((start_order, end_order))
+
+    def qg_spans(start_order, end_order):
+        # Keep the full parent interval intact; a shared_material candidate
+        # remains an overlapping subunit with its own role and binding.
+        return [[index.nodes[start_order].id, index.nodes[end_order].id]]
+
     units = []
     for i, c in enumerate(cands):
         start = first_of(c["node"])
@@ -780,8 +913,14 @@ def build_units(index, cands):
                     and index.nodes[end_order].container == ROOT:
                 end_order -= 1
             end = index.nodes[end_order].id
+        if c["role"] == "shared_material":
+            material = next((r for r in material_regions if r[0] == index.order_of(start)), None)
+            if material is not None:
+                end = index.nodes[material[1]].id
+        spans = qg_spans(*qg_regions[i]) if c["role"] == "question_group" and i in qg_regions \
+            else [[start, end]]
         units.append({"id": "u%03d" % (i + 1), "role": c["role"], "mode": "spans",
-                      "spans": [[start, end]], "_conf": c["conf"],
+                      "spans": spans, "_conf": c["conf"],
                       "_evidence": c["evidence"], "level": c.get("level")})
     return units
 
@@ -806,7 +945,8 @@ def merge_adjacent(index, units):
 def fill_gaps(index, units):
     covered = set()
     for u in units:
-        covered |= index.interval(*u["spans"][0])
+        for span in u["spans"]:
+            covered |= index.interval(*span)
     missing = [n.id for n in index.nodes if n.id not in covered and n.has_content]
     if not missing:
         return units
@@ -828,7 +968,7 @@ def fill_gaps(index, units):
     return merged
 
 
-def assign_relations(units):
+def assign_relations(units, index=None):
     last_section = last_material = None
     for u in units:
         role = u["role"]
@@ -842,6 +982,19 @@ def assign_relations(units):
         elif role == "question_group" and last_material:
             u["bind_to"] = last_material
             u["_evidence"] += "；绑定材料 %s（相邻）" % last_material
+    if index is not None:
+        materials = [u for u in units if u["role"] == "shared_material"]
+        for u in units:
+            if u["role"] != "question_group" or u.get("bind_to"):
+                continue
+            qg_start = index.order_of(u["spans"][0][0])
+            qg_end = index.order_of(u["spans"][-1][1])
+            nested = next((m for m in materials
+                           if qg_start is not None and qg_end is not None
+                           and qg_start < index.order_of(m["spans"][0][0]) < qg_end), None)
+            if nested:
+                u["bind_to"] = nested["id"]
+                u["_evidence"] += "；绑定题组内部材料 %s" % nested["id"]
     return units
 
 
@@ -851,7 +1004,7 @@ def predict(doc):
     units = build_units(index, detect(index, doc))
     units = merge_adjacent(index, units)
     units = fill_gaps(index, units)
-    units = assign_relations(units)
+    units = assign_relations(units, index)
     return index, [{"id": u["id"], "role": u["role"], **(
         {k: u[k] for k in ("level", "parent", "bind_to") if u.get(k) is not None}),
         "spans": u["spans"], "note": "[%s] %s" % (u["_conf"], u["_evidence"])} for u in units]
