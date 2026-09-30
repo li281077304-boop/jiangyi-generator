@@ -1,15 +1,14 @@
-"""Minimal, fail-closed OOXML block projection and template insertion.
+"""Minimal, fail-closed OOXML projection, resource import, and insertion.
 
 This is a B2 experiment only. It maps current StructDoc IDs to elements by
 walking the same source document structure in lockstep. It never searches by
 paragraph text or uses COM paragraph coordinates.
 
 Supported payloads are whole body paragraphs, whole tables, and paragraph
-spans that stay outside tables. Raw XML cloning preserves paragraph/run
-formatting and OMML. Any relationship-bearing content, unrecognized node,
-cross-table span, or required style/numbering dependency that the template
-does not already provide is rejected. Relationship migration and package
-integrity handling belong to later work.
+spans that stay outside tables. The selected raw XML is passed to the adapted
+BlockImporter for relationship, package-part, style, numbering, and XML-ID
+migration. Unsupported import reports and failed saved-package validation
+stop before replacing the requested output.
 """
 from __future__ import annotations
 
@@ -18,9 +17,8 @@ import io
 from pathlib import Path
 import os
 import tempfile
-import zipfile
 
-from lxml import etree
+from docx import Document
 
 _APP = Path(__file__).resolve().parent
 import sys
@@ -32,15 +30,8 @@ from struct_doc import (  # noqa: E402
     read_struct_doc_bytes,
 )
 from struct_nodes import NodeIndex  # noqa: E402
-
-_R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-_W_STYLE = "{%s}pStyle" % W
-_W_RSTYLE = "{%s}rStyle" % W
-_W_TBLSTYLE = "{%s}tblStyle" % W
-_W_NUMID = "{%s}numId" % W
-_REL_ATTR = "{%s}" % _R
-_DOC = "word/document.xml"
-
+from block_importer import BlockImporter  # noqa: E402
+from package_validator import validate_package  # noqa: E402
 
 class ProjectionError(ValueError):
     """The requested source content cannot be projected safely."""
@@ -63,6 +54,8 @@ class TemplateTarget:
 class RenderResult:
     output_path: str
     inserted_nodes: int
+    resource_report: dict
+    package_report: dict
 
 
 def render_minimal(source_doc: str, template_doc: str,
@@ -81,46 +74,42 @@ def render_minimal(source_doc: str, template_doc: str,
     if not blocks:
         raise ProjectionError("at least one StructDoc block span is required")
     source_bytes = _read_source_bytes(src_path)
-    with zipfile.ZipFile(io.BytesIO(source_bytes), "r") as src_zip, zipfile.ZipFile(tpl_path, "r") as tpl_zip:
-        src_xml = _read_document(src_zip)
-        tpl_xml = _read_document(tpl_zip)
-        src_body = src_xml.find("{%s}body" % W)
-        tpl_body = tpl_xml.find("{%s}body" % W)
-        if src_body is None or tpl_body is None:
-            raise ProjectionError("source or template is missing w:body")
+    source_document = Document(io.BytesIO(source_bytes))
+    destination_document = Document(str(tpl_path))
+    src_body = source_document.element.body
+    tpl_body = destination_document.element.body
+    struct = read_struct_doc_bytes(source_bytes, name=str(src_path))
+    index = NodeIndex(struct)
+    node_map, table_ids, top_table_ids, table_leaf_ids = _map_structdoc_to_xml(src_body, struct)
+    selected = _select_nodes(blocks, index, node_map, table_ids, top_table_ids,
+                             table_leaf_ids, struct)
+    for node in selected:
+        _validate_payload(node)
 
-        struct = read_struct_doc_bytes(source_bytes, name=str(src_path))
-        index = NodeIndex(struct)
-        node_map, table_ids, top_table_ids, table_leaf_ids = _map_structdoc_to_xml(src_body, struct)
-        selected = _select_nodes(blocks, index, node_map, table_ids, top_table_ids,
-                                 table_leaf_ids, struct)
-        template_styles = _template_ids(tpl_zip)
-        clones = []
-        for node in selected:
-            _validate_payload(node, template_styles)
-            clones.append(etree.fromstring(etree.tostring(node)))
+    importer = BlockImporter(source_document, destination_document)
+    imported, resource_report = importer.import_blocks(selected)
+    if resource_report["unsupported"]:
+        first = resource_report["unsupported"][0]
+        raise ProjectionError("resource import unsupported: %s" % first)
 
-        insert_at = target.body_child_index
-        body_children = list(tpl_body)
-        section_tail = next((i for i, child in enumerate(body_children)
-                             if child.tag == W_SECTPR), len(body_children))
-        if insert_at < 0 or insert_at > section_tail:
-            raise ProjectionError("template target is outside direct w:body children")
-        for offset, clone in enumerate(clones):
-            tpl_body.insert(insert_at + offset, clone)
-
-        payloads = {name: tpl_zip.read(name) for name in tpl_zip.namelist()}
-        payloads[_DOC] = etree.tostring(tpl_xml, xml_declaration=True,
-                                         encoding="UTF-8", standalone=True)
+    insert_at = target.body_child_index
+    body_children = list(tpl_body)
+    section_tail = next((i for i, child in enumerate(body_children)
+                         if child.tag == W_SECTPR), len(body_children))
+    if insert_at < 0 or insert_at > section_tail:
+        raise ProjectionError("template target is outside direct w:body children")
+    for offset, element in enumerate(imported):
+        tpl_body.insert(insert_at + offset, element)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fd, temp_name = tempfile.mkstemp(prefix=".renderer-", suffix=".docx", dir=str(out_path.parent))
     os.close(fd)
     try:
-        with zipfile.ZipFile(temp_name, "w", compression=zipfile.ZIP_DEFLATED) as output_zip:
-            with zipfile.ZipFile(tpl_path, "r") as tpl_zip:
-                for info in tpl_zip.infolist():
-                    output_zip.writestr(info, payloads[info.filename])
+        destination_document.save(temp_name)
+        package_report = validate_package(temp_name)
+        if not package_report["valid"]:
+            errors = "; ".join(package_report["errors"][:5])
+            raise ProjectionError("saved package failed validation: %s" % errors)
         os.replace(temp_name, out_path)
     except Exception:
         try:
@@ -128,20 +117,12 @@ def render_minimal(source_doc: str, template_doc: str,
         except OSError:
             pass
         raise
-    return RenderResult(str(out_path), len(clones))
+    return RenderResult(str(out_path), len(imported), resource_report, package_report)
 
 
 def _read_source_bytes(path):
     """Read once so XML and StructDoc parsing share one immutable snapshot."""
     return path.read_bytes()
-
-
-def _read_document(zf):
-    try:
-        return etree.fromstring(zf.read(_DOC), parser=etree.XMLParser(resolve_entities=False,
-                                                                        no_network=True))
-    except (KeyError, etree.XMLSyntaxError) as exc:
-        raise ProjectionError("invalid DOCX main document part") from exc
 
 
 def _map_structdoc_to_xml(body, doc):
@@ -249,23 +230,9 @@ def _top_level_body_id(node_id):
     return base if base[1:].isdigit() else None
 
 
-def _template_ids(tpl_zip):
-    ids = {"style": set(), "numbering": set()}
-    if "word/styles.xml" in tpl_zip.namelist():
-        root = etree.fromstring(tpl_zip.read("word/styles.xml"))
-        ids["style"] = {el.get("{%s}styleId" % W) for el in root if el.get("{%s}styleId" % W)}
-    if "word/numbering.xml" in tpl_zip.namelist():
-        root = etree.fromstring(tpl_zip.read("word/numbering.xml"))
-        ids["numbering"] = {el.get("{%s}numId" % W) for el in root
-                             if el.tag == "{%s}num" % W and el.get("{%s}numId" % W)}
-    return ids
-
-
-def _validate_payload(element, template_ids):
+def _validate_payload(element):
     if element.tag not in (W_P, W_TBL):
         raise ProjectionError("only w:p and w:tbl payloads are supported")
-    if any(name.startswith(_REL_ATTR) for node in element.iter() for name in node.attrib):
-        raise ProjectionError("relationship-bearing payload requires package-part migration")
     package_scoped = {
         "bookmarkStart", "bookmarkEnd", "commentRangeStart", "commentRangeEnd",
         "commentReference", "footnoteReference", "endnoteReference",
@@ -296,13 +263,3 @@ def _validate_payload(element, template_ids):
             raise ProjectionError("unsupported %s construct: %s" % (category, local_name))
         if node.tag == "{%s}hyperlink" % W and "{%s}anchor" % W in node.attrib:
             raise ProjectionError("bookmark hyperlink anchor requires bookmark migration")
-    style_tags = (_W_STYLE, _W_RSTYLE, _W_TBLSTYLE)
-    for node in element.iter():
-        if node.tag in style_tags:
-            style_id = node.get("{%s}val" % W)
-            if style_id and style_id not in template_ids["style"]:
-                raise ProjectionError("template is missing referenced style: %s" % style_id)
-        if node.tag == _W_NUMID:
-            num_id = node.get("{%s}val" % W)
-            if num_id and num_id not in template_ids["numbering"]:
-                raise ProjectionError("template is missing referenced numbering definition: %s" % num_id)

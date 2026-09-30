@@ -2,7 +2,7 @@
 
 ## Scope
 
-This round adds an isolated structural extraction and OOXML clone primitive. It is not the production Renderer, does not invoke COM, and does not change A-Line or V0.9 behavior.
+The B2 structural extraction and explicit-target clone primitive is now connected to a narrow resource importer and package check. It is not the production Renderer, does not invoke COM, and does not change A-Line or V0.9 behavior. B3 evidence and limits are recorded separately in `B3_PACKAGE_RESOURCE_INTEGRITY.md`.
 
 `BlockSpan(start, end)` addresses current StructDoc content-node IDs. `TemplateTarget(body_child_index)` identifies the zero-based direct child position in the template `w:body`; insertion occurs before that child. The index counts physical body children, including a terminal `w:sectPr`, so the terminal section properties remain last. No anchor text is searched.
 
@@ -20,13 +20,13 @@ The renderer reads the source DOCX once and passes the same immutable bytes to b
 
 - A table cell paragraph cannot be emitted by itself. It must be selected through its owning top-level table as one atomic block.
 - A paragraph range that crosses a physical top-level table block is rejected, even if that table has no paragraph leaves. Nested tables cannot be selected independently. A cross-table-range flattening could discard table structure.
-- Any relationship-bearing element (images, hyperlinks, OLE, and similar references) is rejected until relationship/package-part migration is added and separately validated.
+- Relationship-bearing content is delegated to the adapted BlockImporter. A nonempty importer `unsupported` report or a failing post-save package check rejects the output before atomic replacement.
 - Package-scoped bookmarks, bookmark hyperlink anchors, comment/footnote/endnote references and ranges, permission ranges, tracked insert/delete/move content and range markers, table-cell revisions (`cellIns`, `cellDel`, `cellMerge`), conflict revisions, and WordprocessingML revision-property tags ending in `Change` are rejected. Content controls and custom XML are also rejected because IDs, ranges, bindings, or related package parts may not survive isolated cloning.
-- Unknown StructDoc blocks, structural count mismatches, absent template parts, and missing style/numbering IDs are rejected.
-- This round does not establish cross-package style/numbering semantic equivalence, content-type/OPC validation, image/OLE integrity, real-corpus coverage, Word/WPS visual fidelity, or a user-facing renderer contract.
+- Unknown StructDoc blocks, structural count mismatches, absent template parts, and unsupported resource/relationship graphs are rejected.
+- Package checking covers selected structural references, but is not ECMA-376 schema validation and does not prove Word/WPS fidelity, real-corpus coverage, or a user-facing renderer contract.
 
-The output retains the template package parts and replaces only `word/document.xml`; the requested payload is inserted only after all selected nodes pass local checks. The output path must differ from both inputs. Output creation uses a temporary file followed by an atomic replace.
+The output begins as the template package; the importer adds dependencies required by selected content. A focused validator checks the saved temporary package before the output path is atomically replaced. The output path must differ from both inputs.
 
 ## Machine evidence
 
-Fifteen isolated fixture tests cover duplicate-text ID selection with a formatting fingerprint, empty paragraph selection, atomic table insertion, nested-table and empty-cell-paragraph preservation, raw OMML preservation, rejection of relationship-bearing, bookmark-anchor, tracked-change, and table-cell revision content, output/input alias protection, rejection of nested-table selection and spans crossing regular or empty table blocks, and single-read source snapshot use. A table-driven check covers representative `Change`, cell, and conflict revision tags. These synthetic DOCX tests do not constitute Word/WPS UAT.
+Eighteen isolated Renderer fixture tests cover duplicate-text ID selection with a formatting fingerprint, empty paragraph selection, atomic table insertion, nested-table and empty-cell-paragraph preservation, raw OMML preservation, image and external hyperlink remapping, dummy OLE embedding copy, fail-closed unresolved relationships, bookmark-anchor and tracked-change rejection, output/input alias protection, nested-table selection rejection, physical spans crossing regular or empty table blocks, and single-read source snapshot use. The adapted importer contributes 9 tests and package validator 6 tests. Synthetic DOCX evidence does not constitute Word/WPS UAT.

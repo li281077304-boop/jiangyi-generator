@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import sys
 import zipfile
 from pathlib import Path
@@ -8,6 +9,10 @@ import unittest
 import hashlib
 
 from docx import Document
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc.packuri import PackURI
+from docx.opc.part import Part
+from docx.oxml.ns import qn
 from lxml import etree
 from unittest import mock
 
@@ -21,7 +26,11 @@ import renderer_xml_minimal as renderer_module  # noqa: E402
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 M = "http://schemas.openxmlformats.org/officeDocument/2006/math"
 R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+O = "urn:schemas-microsoft-com:office:office"
 DOC = "word/document.xml"
+PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/"
+    "SMlYVQAAAABJRU5ErkJggg==")
 
 
 def _docx(path: Path, *, table: bool = False, nested: bool = False):
@@ -186,21 +195,28 @@ class RendererMinimalTests(unittest.TestCase):
         cloned = root.find(".//{%s}body/{%s}p" % (W, W))
         self.assertEqual("".join(cloned.itertext()).strip(), "")
 
-    def test_relationship_bearing_payload_fails_closed_without_output(self):
+    def test_external_hyperlink_relationship_is_remapped_and_validated(self):
         source, template, output = self._paths()
-        _docx(source)
+        source_doc = Document()
+        paragraph = source_doc.add_paragraph("link")
+        rid = source_doc.part.relate_to(
+            "https://example.test/lesson", RT.HYPERLINK, is_external=True)
+        hyperlink = etree.SubElement(paragraph._p, "{%s}hyperlink" % W)
+        hyperlink.set(qn("r:id"), rid)
+        source_doc.save(source)
         Document().save(template)
 
-        def add_hyperlink(root):
-            paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
-            link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
-            link.set("{%s}id" % R, "rIdMissing")
-        _rewrite_document(source, add_hyperlink)
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                                str(output), TemplateTarget(0))
 
-        with self.assertRaisesRegex(ProjectionError, "relationship-bearing"):
-            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),
-                           TemplateTarget(0))
-        self.assertFalse(output.exists())
+        generated = Document(str(output))
+        imported_link = next(generated.element.body.iter("{%s}hyperlink" % W))
+        imported_rid = imported_link.get(qn("r:id"))
+        self.assertTrue(generated.part.rels[imported_rid].is_external)
+        self.assertEqual(generated.part.rels[imported_rid].target_ref,
+                         "https://example.test/lesson")
+        self.assertGreaterEqual(result.resource_report["stats"].get("hyperlinks_copied", 0), 1)
+        self.assertTrue(result.package_report["valid"], result.package_report)
 
     def test_bookmark_hyperlink_anchor_fails_closed(self):
         source, template, output = self._paths()
@@ -290,7 +306,76 @@ class RendererMinimalTests(unittest.TestCase):
                 etree.SubElement(payload, "{%s}%s" % (W, tag))
                 with self.assertRaisesRegex(ProjectionError,
                                             "tracked-change construct: %s" % tag):
-                    renderer_module._validate_payload(payload, {"style": set(), "numbering": set()})
+                    renderer_module._validate_payload(payload)
+
+    def test_image_relationship_is_remapped_and_saved_package_validates(self):
+        source, template, output = self._paths()
+        image_path = self.tmp_path / "pixel.png"
+        image_path.write_bytes(PNG)
+        source_doc = Document()
+        source_doc.add_paragraph("source image").add_run().add_picture(str(image_path))
+        source_doc.add_paragraph("source tail")
+        source_doc.save(source)
+        template_doc = Document()
+        template_doc.add_paragraph("before")
+        template_doc.add_paragraph("after")
+        template_doc.save(template)
+
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                                str(output), TemplateTarget(1))
+
+        self.assertGreaterEqual(result.resource_report["stats"].get("image_relationships_copied", 0), 1)
+        self.assertTrue(result.package_report["valid"], result.package_report)
+        generated = Document(str(output))
+        self.assertEqual([p.text for p in generated.paragraphs], ["before", "source image", "after"])
+        with zipfile.ZipFile(output) as package:
+            media_files = [name for name in package.namelist() if name.startswith("word/media/")]
+            self.assertEqual(len(media_files), 1)
+            self.assertEqual(package.read(media_files[0]), PNG)
+
+    def test_ole_embedding_is_copied_and_validated(self):
+        source, template, output = self._paths()
+        embedding_payload = b"dummy-ole-package-fixture"
+        source_doc = Document()
+        paragraph = source_doc.add_paragraph("OLE source")
+        embedding = Part(PackURI("/word/embeddings/oleObject1.bin"),
+                         "application/vnd.openxmlformats-officedocument.oleObject",
+                         embedding_payload, source_doc.part.package)
+        rel_id = source_doc.part.relate_to(
+            embedding,
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject")
+        object_element = etree.SubElement(paragraph._p, "{%s}object" % W)
+        ole_element = etree.SubElement(object_element, "{%s}OLEObject" % O)
+        ole_element.set(qn("r:id"), rel_id)
+        source_doc.save(source)
+        Document().save(template)
+
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                                str(output), TemplateTarget(0))
+
+        self.assertGreaterEqual(result.resource_report["stats"].get("ole_references_copied", 0), 1)
+        self.assertTrue(result.package_report["valid"], result.package_report)
+        with zipfile.ZipFile(output) as package:
+            embedding_paths = [name for name in package.namelist()
+                               if name.startswith("word/embeddings/") and not name.endswith(".rels")]
+            self.assertEqual(len(embedding_paths), 1)
+            self.assertEqual(package.read(embedding_paths[0]), embedding_payload)
+
+    def test_unresolved_source_relationship_fails_closed_without_output(self):
+        source, template, output = self._paths()
+        _docx(source)
+        Document().save(template)
+
+        def add_missing_relation(root):
+            paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
+            link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
+            link.set(qn("r:id"), "rId404")
+        _rewrite_document(source, add_missing_relation)
+
+        with self.assertRaisesRegex(ProjectionError, "missing_relationship"):
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                           str(output), TemplateTarget(0))
+        self.assertFalse(output.exists())
 
     def test_paragraph_span_crossing_table_fails_closed(self):
         source, template, output = self._paths()
