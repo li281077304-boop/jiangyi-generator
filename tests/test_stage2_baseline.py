@@ -179,7 +179,7 @@ def test_formula_question_is_not_suppressed_as_explanatory_prose():
 
 def test_numbered_subparts_after_explicit_example_heading_stay_in_group():
     _, units = predict(_fixture([
-        "例题1 计算并说明理由", "1.先化简表达式。", "2.再求 x 的值。",
+        "提升专练", "例题1 计算并说明理由", "1.先化简表达式。", "2.再求 x 的值。",
         "变式1 求另一个方程的根？",
     ]))
     groups = [u for u in units if u["role"] == "question_group"]
@@ -209,6 +209,46 @@ def test_multipart_prompt_without_solution_boundary_is_not_dispatchable():
         "(2)说明该实验的目的____。",
     ]))
     assert not any(u["role"] == "question_group" for u in units)
+
+
+def test_incomplete_example_two_cannot_borrow_example_three_answer():
+    starts = _question_group_start_texts(_fixture([
+        "知识精讲", "经典例题2 计算2+2等于多少？",
+        "经典例题3 计算3+3等于多少？", "【答案】6", "随学随练",
+    ]))
+    assert starts == ["经典例题3 计算3+3等于多少？"]
+
+
+def test_two_complete_multipart_questions_can_be_dispatched_in_one_section():
+    doc = _fixture([
+        "随学随练",
+        "1．下图是第一个实验装置。", "(1)记录第一个现象____。", "(2)写出第一个结论____。",
+        "【答案】第一题答案。",
+        "2．下表是第二个实验数据。", "(1)计算第二个结果____。", "(2)说明第二个结论____。",
+        "【答案】第二题答案。",
+    ])
+    index, units = predict(doc)
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert [index.text_of(u["spans"][0][0]) for u in groups] == [
+        "1．下图是第一个实验装置。", "2．下表是第二个实验数据。"]
+    assert [u["spans"] for u in groups] == [[['b1', 'b3']], [['b5', 'b7']]]
+
+
+def test_example_one_outside_knowledge_module_is_not_promoted_from_numbering():
+    for text in ("例1 计算1+1等于多少？", "经典例题1 通过观察理解实验步骤。"):
+        continuation = (["1.先计算中间结果，再写出结论？"]
+                        if text.startswith("例1") else [])
+        _, units = predict(_fixture([text] + continuation + ["【答案】内容说明。"]))
+        assert not any(u["role"] == "question_group" for u in units), text
+
+
+def test_extra_examples_outside_module_are_not_qgs_without_shortage_evidence():
+    starts = _question_group_start_texts(_fixture([
+        "例题2 计算2+2等于多少？", "【答案】4",
+        "例题3 计算3+3等于多少？", "【答案】6",
+        "例题4 计算4+4等于多少？", "【答案】8",
+    ]))
+    assert starts == []
 
 
 def _e2_dispatch_fixture(formal_count, second_module_formal_count=None):

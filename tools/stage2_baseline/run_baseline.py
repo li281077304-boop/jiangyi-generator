@@ -213,6 +213,8 @@ def _has_following_answer_analysis(index, order, window=40):
         t = _norm(node.text)
         if not t:
             continue
+        if RE_EXAMPLE_HEAD.match(_heading_text(t)):
+            return False
         if RE_QNUM.match(t) and not RE_SUBQUESTION_START.match(t):
             return False
         if (RE_ANSWER_SECTION.match(t) or RE_ANALYSIS_START.match(t)
@@ -229,6 +231,23 @@ def _complete_multipart_practice(index, order, text):
     prompt_cue = bool(RE_QUESTION_CUE.search(t) or re.match(r"^\s*\d{1,3}\s*[．.、]\s*(?:下图|下表)", t))
     return (prompt_cue and _following_subquestion_run(index, order)
             and _has_following_answer_analysis(index, order))
+
+
+def _inside_e2_local_practice_section(index, order, candidates):
+    """Whether the nearest module/section heading is the scoped E2 heading."""
+    prior = []
+    for candidate in candidates:
+        candidate_order = index.order_of(candidate["node"])
+        if candidate_order is None or candidate_order >= order:
+            continue
+        if (candidate.get("role") == "section"
+                or _is_e2_knowledge_module(index, candidate)):
+            prior.append((candidate_order, candidate))
+    if not prior:
+        return False
+    nearest_order, nearest = max(prior, key=lambda pair: pair[0])
+    return (nearest.get("role") == "section"
+            and _heading_text(index.nodes[nearest_order].text).startswith("随学随练"))
 
 
 def _short_structured_prompt(index, order, stripped):
@@ -483,13 +502,11 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
     section_order_set = set(section_orders)
     explicit_group_open = False
     e2_multipart_zone = False
-    e2_section_has_group = False
     objective_scopes = objective_scopes or {}
     for i, node in enumerate(index.nodes):
         if i in section_order_set:
             explicit_group_open = False
             e2_multipart_zone = _heading_text(index.nodes[i].text).startswith("随学随练")
-            e2_section_has_group = False
         t = _norm(node.text)
         if not t:
             continue
@@ -507,8 +524,14 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
             continue
         mode = zones[i]
         if RE_EXAMPLE_HEAD.match(_heading_text(t)):
-            out.append({"node": node.id, "role": "question_group", "conf": "high",
-                        "evidence": "显式例题/变式题标题"})
+            example_number = _e2_example_number(t)
+            keep_example_one = (example_number == 1 and mode != "exercise"
+                                and not e2_multipart_zone)
+            out.append({"node": node.id,
+                        "role": "knowledge" if keep_example_one else "question_group",
+                        "conf": "high",
+                        "evidence": ("例1默认保留在知识讲解" if keep_example_one
+                                     else "显式例题/变式题标题")})
             previous_number = None
             previous_item_order = i
             reading_group = False
@@ -518,7 +541,6 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
         has_formula = bool(block and (block.math_count or block.oles))
         number = _question_start_strength(t, mode, previous_number, has_formula)
         complete_multipart = (e2_multipart_zone and mode in ("body", "exercise")
-                              and not e2_section_has_group
                               and _complete_multipart_practice(index, i, t))
         if number is None or mode in ("knowledge", "answer", "analysis"):
             if complete_multipart:
@@ -561,8 +583,6 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
                         "evidence": ("题干 + 连续小问结构" if complete_multipart
                                      else "题号 + 题干特征" if RE_QUESTION_CUE.search(t)
                                      else "练习区连续题号")})
-            if e2_multipart_zone:
-                e2_section_has_group = True
         previous_number = number
         previous_item_order = i
         reading_group = is_reading or material_context
@@ -729,12 +749,16 @@ def detect(index, doc):
             analysis_mode = False
             zones[i] = "answer"
             continue
-        if _recoverable_question_start(index, i, t):
-            # E1: a complete new prompt ends the answer/analysis region and
-            # reopens a question boundary. Explanation numbering stays inside
-            # the region because it cannot satisfy the completeness evidence.
+        e2_multipart_recovery = (_inside_e2_local_practice_section(index, i, cands)
+                                 and _complete_multipart_practice(index, i, t))
+        if _recoverable_question_start(index, i, t) or e2_multipart_recovery:
+            # A complete new prompt ends the answer/analysis region and reopens
+            # a question boundary. Scoped E2 multipart prompts use the same
+            # state transition without weakening the general E1 completeness gate.
             cands.append({"node": node.id, "role": "question_group", "conf": "high",
-                          "evidence": "答案/解析区后恢复的完整新题干"})
+                          "evidence": ("答案/解析区后恢复的完整E2多问题"
+                                       if e2_multipart_recovery
+                                       else "答案/解析区后恢复的完整新题干")})
             recovered_starts.add(i)
             analysis_mode = False
             zones[i] = "exercise"
@@ -835,10 +859,26 @@ def _is_e2_practice_section(index, candidate):
         return False
     if candidate.get("evidence") == "知识模块局部补题标题":
         return True
+    if candidate.get("zone") == "exercise":
+        return True
     order = index.order_of(candidate["node"])
     return bool(order is not None and any(
         _heading_text(index.nodes[order].text).startswith(label)
         for label in EXERCISE_LABELS))
+
+
+def _in_formal_practice_context(index, order, candidates):
+    boundaries = []
+    for candidate in candidates:
+        candidate_order = index.order_of(candidate["node"])
+        if candidate_order is None or candidate_order >= order:
+            continue
+        if candidate.get("role") == "section" or _is_e2_knowledge_module(index, candidate):
+            boundaries.append((candidate_order, candidate))
+    if not boundaries:
+        return False
+    _, nearest = max(boundaries, key=lambda pair: pair[0])
+    return nearest.get("role") == "section" and _is_e2_practice_section(index, nearest)
 
 
 def schedule_e2_examples(index, candidates):
@@ -850,6 +890,17 @@ def schedule_e2_examples(index, candidates):
                          if c.get("role") == "question_group"
                          and str(c.get("evidence", "")).startswith("显式例题/变式题标题")
                          and _e2_example_number(index.text_of(c["node"]) or "") is not None]
+    module_ranges = []
+    for pos, module in enumerate(modules):
+        start = index.order_of(module["node"])
+        end = index.order_of(modules[pos + 1]["node"]) if pos + 1 < len(modules) else len(index.nodes)
+        module_ranges.append((start, end))
+    for example in explicit_examples:
+        order = index.order_of(example["node"])
+        in_module = any(start < order < end for start, end in module_ranges)
+        if not in_module and not _in_formal_practice_context(index, order, ordered):
+            example["role"] = "knowledge"
+            example["evidence"] = "模块外额外例题无本地题量调度依据"
     for pos, module in enumerate(modules):
         start = index.order_of(module["node"])
         end = index.order_of(modules[pos + 1]["node"]) if pos + 1 < len(modules) else len(index.nodes)
