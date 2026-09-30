@@ -9,12 +9,14 @@ import hashlib
 
 from docx import Document
 from lxml import etree
+from unittest import mock
 
 APP = Path(__file__).resolve().parents[1] / "v1.2-xml-experiment" / "res" / "app"
 sys.path.insert(0, str(APP))
 from renderer_xml_minimal import (  # noqa: E402
     BlockSpan, ProjectionError, TemplateTarget, render_minimal,
 )
+import renderer_xml_minimal as renderer_module  # noqa: E402
 
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 M = "http://schemas.openxmlformats.org/officeDocument/2006/math"
@@ -54,6 +56,26 @@ def _counts(path):
     with zipfile.ZipFile(path, "r") as zf:
         root = etree.fromstring(zf.read(DOC))
     return root, len(root.findall(".//{%s}body/{%s}p" % (W, W))), len(root.findall(".//{%s}tbl" % W))
+
+
+def _add_empty_table_between_first_two_paragraphs(path):
+    def edit(root):
+        body = root.find("{%s}body" % W)
+        table = etree.Element("{%s}tbl" % W)
+        etree.SubElement(table, "{%s}tblPr" % W)
+        etree.SubElement(table, "{%s}tblGrid" % W)
+        body.insert(1, table)
+    _rewrite_document(path, edit)
+
+
+def _add_tracked_insertion(path):
+    def edit(root):
+        paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
+        insertion = etree.SubElement(paragraph, "{%s}ins" % W)
+        run = etree.SubElement(insertion, "{%s}r" % W)
+        text = etree.SubElement(run, "{%s}t" % W)
+        text.text = "inserted"
+    _rewrite_document(path, edit)
 
 
 class RendererMinimalTests(unittest.TestCase):
@@ -195,11 +217,52 @@ class RendererMinimalTests(unittest.TestCase):
                            TemplateTarget(0))
         self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), before)
 
+    def test_source_is_read_once_for_both_structdoc_and_xml_parsing(self):
+        source, template, output = self._paths()
+        _docx(source)
+        Document().save(template)
+
+        with mock.patch.object(renderer_module, "_read_source_bytes",
+                               wraps=renderer_module._read_source_bytes) as read_source:
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),
+                           TemplateTarget(0))
+        read_source.assert_called_once()
+
+    def test_zero_paragraph_table_between_endpoints_is_not_crossed(self):
+        source, template, output = self._paths()
+        _docx(source)
+        _add_empty_table_between_first_two_paragraphs(source)
+        Document().save(template)
+
+        with self.assertRaisesRegex(ProjectionError, "crosses a top-level table"):
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b2")], str(output),
+                           TemplateTarget(0))
+
+    def test_nested_table_node_cannot_be_selected_as_atomic_payload(self):
+        source, template, output = self._paths()
+        _docx(source, table=True, nested=True)
+        Document().save(template)
+
+        with self.assertRaisesRegex(ProjectionError, "only a top-level bN table"):
+            render_minimal(str(source), str(template),
+                           [BlockSpan("b1.r0c0.n1", "b1.r0c0.n1")], str(output),
+                           TemplateTarget(0))
+
+    def test_tracked_change_fails_closed(self):
+        source, template, output = self._paths()
+        _docx(source)
+        _add_tracked_insertion(source)
+        Document().save(template)
+
+        with self.assertRaisesRegex(ProjectionError, "tracked-change construct: ins"):
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),
+                           TemplateTarget(0))
+
     def test_paragraph_span_crossing_table_fails_closed(self):
         source, template, output = self._paths()
         _docx(source, table=True)
         Document().save(template)
 
-        with self.assertRaisesRegex(ProjectionError, "crosses table"):
+        with self.assertRaisesRegex(ProjectionError, "crosses .*table"):
             render_minimal(str(source), str(template), [BlockSpan("b0", "b2")], str(output),
                            TemplateTarget(0))

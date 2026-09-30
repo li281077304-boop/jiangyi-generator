@@ -14,6 +14,7 @@ integrity handling belong to later work.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import io
 from pathlib import Path
 import os
 import tempfile
@@ -79,7 +80,8 @@ def render_minimal(source_doc: str, template_doc: str,
         raise ProjectionError("output path must not alias the source or template")
     if not blocks:
         raise ProjectionError("at least one StructDoc block span is required")
-    with zipfile.ZipFile(src_path, "r") as src_zip, zipfile.ZipFile(tpl_path, "r") as tpl_zip:
+    source_bytes = _read_source_bytes(src_path)
+    with zipfile.ZipFile(io.BytesIO(source_bytes), "r") as src_zip, zipfile.ZipFile(tpl_path, "r") as tpl_zip:
         src_xml = _read_document(src_zip)
         tpl_xml = _read_document(tpl_zip)
         src_body = src_xml.find("{%s}body" % W)
@@ -87,10 +89,11 @@ def render_minimal(source_doc: str, template_doc: str,
         if src_body is None or tpl_body is None:
             raise ProjectionError("source or template is missing w:body")
 
-        struct = read_struct_doc_bytes(src_path.read_bytes(), name=str(src_path))
+        struct = read_struct_doc_bytes(source_bytes, name=str(src_path))
         index = NodeIndex(struct)
-        node_map, table_ids, table_leaf_ids = _map_structdoc_to_xml(src_body, struct)
-        selected = _select_nodes(blocks, index, node_map, table_ids, table_leaf_ids)
+        node_map, table_ids, top_table_ids, table_leaf_ids = _map_structdoc_to_xml(src_body, struct)
+        selected = _select_nodes(blocks, index, node_map, table_ids, top_table_ids,
+                                 table_leaf_ids, struct)
         template_styles = _template_ids(tpl_zip)
         clones = []
         for node in selected:
@@ -128,6 +131,11 @@ def render_minimal(source_doc: str, template_doc: str,
     return RenderResult(str(out_path), len(clones))
 
 
+def _read_source_bytes(path):
+    """Read once so XML and StructDoc parsing share one immutable snapshot."""
+    return path.read_bytes()
+
+
 def _read_document(zf):
     try:
         return etree.fromstring(zf.read(_DOC), parser=etree.XMLParser(resolve_entities=False,
@@ -140,6 +148,7 @@ def _map_structdoc_to_xml(body, doc):
     """Build ID -> exact element map through ordinal structural traversal."""
     mapping = {"body": body}
     table_ids = set()
+    top_table_ids = set()
     table_leaf_ids = set()
     body_content = [(i, child) for i, child in enumerate(body)
                     if child.tag != W_SECTPR and child.tag not in (
@@ -186,20 +195,24 @@ def _map_structdoc_to_xml(body, doc):
         if body_idx != block.body_idx:
             raise ProjectionError("StructDoc body index mismatch at b%d" % block.seq)
         add_block(block, element, "b%d" % block.seq)
-    return mapping, table_ids, table_leaf_ids
+        if block.kind == "table":
+            top_table_ids.add("b%d" % block.seq)
+    return mapping, table_ids, top_table_ids, table_leaf_ids
 
 
-def _select_nodes(spans, index, mapping, table_ids, table_leaf_ids):
+def _select_nodes(spans, index, mapping, table_ids, top_table_ids,
+                  table_leaf_ids, struct_doc):
     selected = []
+    top_level_kinds = [block.kind for block in struct_doc.blocks]
     for span in spans:
         start, end = index.resolve_ref(span.start), index.resolve_ref(span.end)
         if start is None or end is None:
             raise ProjectionError("span endpoints must be StructDoc IDs")
-        if start == end and start in table_ids:
+        if start == end and start in top_table_ids:
             selected.append(mapping[start])
             continue
         if start in table_ids or end in table_ids:
-            raise ProjectionError("table containers are supported only as atomic single-node blocks")
+            raise ProjectionError("only a top-level bN table can be selected atomically")
         if start in table_leaf_ids or end in table_leaf_ids:
             raise ProjectionError("cell paragraph endpoints require the owning table as an atomic block")
         if start not in index.by_id or end not in index.by_id:
@@ -207,6 +220,14 @@ def _select_nodes(spans, index, mapping, table_ids, table_leaf_ids):
         a, b = index.order_of(start), index.order_of(end)
         if a is None or b is None or a > b:
             raise ProjectionError("span endpoints are reversed or unresolved")
+        start_top = _top_level_body_id(start)
+        end_top = _top_level_body_id(end)
+        if start_top is None or end_top is None:
+            raise ProjectionError("paragraph span endpoints must be top-level body paragraphs")
+        if int(end_top[1:]) >= len(top_level_kinds) or int(start_top[1:]) >= len(top_level_kinds):
+            raise ProjectionError("span endpoint is outside top-level StructDoc blocks")
+        if any(kind == "table" for kind in top_level_kinds[int(start_top[1:]) + 1:int(end_top[1:])]):
+            raise ProjectionError("paragraph span crosses a top-level table block")
         ids = index.order_ids[a:b + 1]
         if any(node_id in table_leaf_ids for node_id in ids):
             raise ProjectionError("paragraph span crosses table content")
@@ -219,6 +240,13 @@ def _select_nodes(spans, index, mapping, table_ids, table_leaf_ids):
                 raise ProjectionError("span cannot map to a paragraph at %s" % node_id)
             selected.append(element)
     return selected
+
+
+def _top_level_body_id(node_id):
+    if not node_id.startswith("b"):
+        return None
+    base = node_id.split(".", 1)[0]
+    return base if base[1:].isdigit() else None
 
 
 def _template_ids(tpl_zip):
@@ -241,13 +269,27 @@ def _validate_payload(element, template_ids):
     package_scoped = {
         "bookmarkStart", "bookmarkEnd", "commentRangeStart", "commentRangeEnd",
         "commentReference", "footnoteReference", "endnoteReference",
-        "permStart", "permEnd", "sdt", "customXml", "moveFromRangeStart",
-        "moveFromRangeEnd", "moveToRangeStart", "moveToRangeEnd",
+        "permStart", "permEnd", "sdt", "customXml", "ins", "del",
+        "moveFrom", "moveTo", "moveFromRangeStart", "moveFromRangeEnd",
+        "moveToRangeStart", "moveToRangeEnd",
+        "customXmlInsRangeStart", "customXmlInsRangeEnd", "customXmlDelRangeStart",
+        "customXmlDelRangeEnd", "customXmlMoveFromRangeStart",
+        "customXmlMoveFromRangeEnd", "customXmlMoveToRangeStart",
+        "customXmlMoveToRangeEnd", "rPrChange", "pPrChange", "tblPrChange",
+        "trPrChange", "tcPrChange", "sectPrChange",
     }
     for node in element.iter():
         local_name = node.tag.split("}", 1)[1] if node.tag.startswith("{%s}" % W) else ""
         if local_name in package_scoped:
-            raise ProjectionError("unsupported package-scoped construct: %s" % local_name)
+            category = "tracked-change" if local_name in (
+                "ins", "del", "moveFrom", "moveTo", "moveFromRangeStart",
+                "moveFromRangeEnd", "moveToRangeStart", "moveToRangeEnd",
+                "customXmlInsRangeStart", "customXmlInsRangeEnd", "customXmlDelRangeStart",
+                "customXmlDelRangeEnd", "customXmlMoveFromRangeStart",
+                "customXmlMoveFromRangeEnd", "customXmlMoveToRangeStart",
+                "customXmlMoveToRangeEnd", "rPrChange", "pPrChange", "tblPrChange",
+                "trPrChange", "tcPrChange", "sectPrChange") else "package-scoped"
+            raise ProjectionError("unsupported %s construct: %s" % (category, local_name))
         if node.tag == "{%s}hyperlink" % W and "{%s}anchor" % W in node.attrib:
             raise ProjectionError("bookmark hyperlink anchor requires bookmark migration")
     style_tags = (_W_STYLE, _W_RSTYLE, _W_TBLSTYLE)
@@ -260,4 +302,3 @@ def _validate_payload(element, template_ids):
             num_id = node.get("{%s}val" % W)
             if num_id and num_id not in template_ids["numbering"]:
                 raise ProjectionError("template is missing referenced numbering definition: %s" % num_id)
-
