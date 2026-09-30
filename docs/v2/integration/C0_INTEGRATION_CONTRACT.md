@@ -94,7 +94,9 @@ The previous v1.1 backend provides a nearby, concrete API precedent in `v1.1-sta
 
 Browser ZIP download is a convenience channel and must not be the only delivery path. Successful teacher/student DOCX files must first be written to a stable, per-job local result directory that does not overwrite another job. A job may become `done` only after each required final DOCX exists, is non-empty, and passes the corresponding package validation. Persist `result_dir`, `output_paths`, and `download_available` in job metadata.
 
-`POST /api/open/<job_id>` or the existing compatible open route must locate/open the job result folder directly. The UI must show that generation succeeded, the local output path, an “open output folder” action, and an optional ZIP download action. A ZIP/download failure after validated files are on disk is `DELIVERY_DOWNLOAD_FAILED`; it must not change a successful generation to `GENERATION_FAILED` or remove the DOCX outputs. The class-template integration UAT must prove HTTP job creation → class XML or whole-job fallback → validated teacher/student files on disk → `done` snapshot → open endpoint resolves the result directory, and test ZIP download separately.
+`GET /api/open/<job_id>` must be supported because the existing `workspace.js::openJob` invokes it with GET; it must resolve/open the job result folder directly. POST may be added as an optional alias, but cannot replace GET. The UI must show that generation succeeded, the local output path, an “open output folder” action, and an optional ZIP download action. A ZIP/download failure after validated files are on disk is `DELIVERY_DOWNLOAD_FAILED`; it must not change a successful generation to `GENERATION_FAILED` or remove the DOCX outputs. The class-template integration UAT must prove HTTP job creation → class XML or whole-job fallback → validated teacher/student files on disk → `done` snapshot → GET open endpoint resolves the result directory, and test ZIP download separately.
+
+Job state and result records must be file-backed, not memory-only: after service restart, the API must recover recent job snapshots and the records for still-valid on-disk outputs, including `result_dir`, `output_paths`, and `download_available`. Reconcile missing or invalid outputs rather than reporting them as successful `done` results.
 
 ## Integration gaps and risks
 
@@ -102,8 +104,8 @@ Browser ZIP download is a convenience channel and must not be the only delivery 
 2. **No semantic-to-renderer mapping:** A-Line units have role + node spans; XML rendering needs spans plus template path and target. No slot map exists, and one `render_minimal` call inserts everything at one body offset.
 3. **Orchestrator cannot receive a plan:** `RenderJob` contains source/output/template metadata but no units or blocks. The XML callback is injected and is not bound to a production plan builder.
 4. **Student semantics differ by route:** XML normal path returns one output and does not use the student fields. V0.9 fallback does full-document student preparation/rendering. The C0 worker needs explicit pair/separate behavior so fallback and XML produce compatible job items/results.
-5. **No job service or result endpoints in v1.2:** UI contract cannot complete an end-to-end request until create/status/list/download/open and durable-enough per-process job state are implemented.
-6. **Batch input behavior needs preservation:** UI allows DOCX/ZIP, auto pairing or separate mode, and returns per-item teacher/student statuses, while the renderer orchestrator is a single-source RenderJob abstraction. An orchestration layer must resolve inputs and create explicit per-output jobs without silently merging unrelated documents.
+5. **No job service or result endpoints in v1.2:** UI contract cannot complete an end-to-end request until create/status/list/download/open are implemented with file-backed metadata and recovery of recent jobs and valid results after service restart.
+6. **Input support must be explicit:** `workspace.js` sends repeated `files` and the established fields `subject`, `grade`, `handout_type`, `academic_year`, `template_type`, `split_mode`, and `docx_mode`; keep these names and accept them at the HTTP boundary. C0 must support a single DOCX input. ZIP and multi-file/auto-pair/separate inputs may return a clear unsupported response; a batch/auto-pair input resolver is not a C0 prerequisite. Do not silently merge unrelated documents.
 7. **Fallback reason visibility:** reason codes exist internally, but job snapshots/UI currently have only generic `stage`/`warnings`; C0 should preserve `renderer`, fallback reason, and baseline identity in server-side job details/logs for diagnosis.
 8. **Fallback is intentionally independent of A-Line:** unsupported XML must run V0.9 on the original teacher/student source, not the V1.2 block plan. Do not add a StructDoc→COM projection.
 
@@ -113,13 +115,13 @@ Before calling C0 end-to-end, require a worker-level boundary equivalent to:
 
 ```text
 uploaded inputs + UI options
-  -> input resolver (ZIP/DOCX, auto-pair/separate)
+  -> validate one DOCX input (ZIP/multiple files may fail explicitly as unsupported)
   -> production A-Line facade (source snapshot -> StructDoc -> semantic units)
   -> explicit semantic-unit-to-template block plan
   -> per-source RenderJob + XML capability/render/validation
        or explicit-reason V0.9 whole-job fallback on the original source
   -> teacher/student output records + job snapshot fields consumed by workspace.js
-  -> download/open routes
+  -> durable job metadata and local result directory -> GET open route + required ZIP download route; download failure must not invalidate `done` or local outputs
 ```
 
 The plan contract must define supported template targets, role/module mapping, span/order behavior, and fail-closed cases. Machine tests should exercise one supported XML path and one forced fallback path through the actual job service, not only through injected orchestrator callbacks. Keep the V0.9 runtime assets and A-Line rules unchanged; record the renderer choice and fallback reason in observable job state.
