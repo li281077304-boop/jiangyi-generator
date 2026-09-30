@@ -52,6 +52,6 @@ The X006 pair is named `_GoBack`; its end is not within `sectPr`. It is a standa
 - Output DOCX package checks: 6 passed.
 - Real Word/WPS UAT: pending and unavailable here.
 - Round 17 focused suites: **35 passed, 7 subtests passed** (renderer, importer, and package validator).
-- Stage3 GoldCompare smoke: 408 QGs / 369 sections in the frozen comparison set; QG `MISS=202, FP=1, MERGE=0, SPLIT=0`, sections exact 369/369, matching the existing baseline. No Stage3 code or data changed.
-- Stage2 smoke was attempted but stopped in the existing `schedule_e2_examples` path with `TypeError: '<' not supported between instances of 'int' and 'NoneType'`; no Stage2 files were changed.
+- A-Line protected Stage3 regression used `C:\xml-uat\stage3-e2-after-round7` predictions: QG **408/408**, `MISS=0, FP=0, MERGE=0, SPLIT=0`; sections **369/369** exact; subquestions **328/328** inside parents; E1-E4 all zero. Stage2 focused tests: **39/39 passed**. No A-Line or Stage3 code/data changed.
+- An earlier diagnostic GoldCompare call used the tool's default frozen prediction directory (207 predictions) and is not the protected regression result. The reported Stage3 gate above uses the approved post-Round-7 A-Line predictions explicitly.
 - No A-Line, V0.9, Gold, Stage3, UI, or fallback code was changed.
