@@ -170,6 +170,76 @@ def _question_start_strength(text, mode, previous_number, has_formula=False):
     return None
 
 
+MIN_RECOVERED_STEM_LEN = 12
+MIN_CITED_STEM_LEN = 24
+RE_LEAD_CITATION = re.compile(r"^\s*[（(][^）)]{2,30}[）)]")
+
+
+def _following_option_run(index, order, window=8, min_options=2):
+    """Whether the following sibling nodes form an option list (A./B./C./D.).
+
+    Option lists are completeness evidence for a recovered prompt; on their own
+    they never open a boundary.
+    """
+    count = 0
+    seen = 0
+    container = index.nodes[order].container
+    for node in index.nodes[order + 1:]:
+        if node.container != container:
+            break
+        t = _norm(node.text)
+        if not t:
+            continue
+        if RE_QNUM.match(t):
+            break
+        seen += 1
+        if RE_OPTION.match(t):
+            count += 1
+        if seen >= window:
+            break
+    return count >= min_options
+
+
+def _recoverable_question_start(index, order, text):
+    """A complete prompt that may reopen a question boundary inside answer/analysis.
+
+    Business rule R5: only an **explicit and complete** new prompt ends the
+    answer/analysis region. Explanation steps, answer keys and short numbered
+    notes must stay suppressed, so the gate is deliberately conservative:
+
+      · numbered start that is not an answer key / plain choice-answer row;
+      · long enough to be a prompt rather than a step label;
+      · not an explanation-leading sentence;
+      · explicit completeness evidence: question cue, exam/source citation,
+        question marker, inline options, or an option list on the next lines.
+
+    No sample IDs, subject terms or specific years are used.
+    """
+    t = _norm(text)
+    match = RE_QNUM.match(t)
+    if not match or RE_PLAIN_CHOICE_ANSWER.match(t) or RE_COMPACT_ANSWER_KEY.match(t):
+        return None
+    stripped = re.sub(r"^\s*\d{1,3}\s*[．.、]\s*", "", t)
+    has_marker = bool(RE_EXPLICIT_QUESTION_MARKER.search(t))
+    # An empty bracket / blank is by itself question evidence, so short stems
+    # carrying one are accepted; other short numbered lines are step labels.
+    if len(stripped) < MIN_RECOVERED_STEM_LEN and not has_marker:
+        return None
+    if RE_EXPLANATION_TEXT.match(stripped):
+        return None
+    evidence = bool(
+        RE_QUESTION_CUE.search(t)
+        or has_marker
+        or RE_INLINE_OPTIONS.search(t)
+        or (RE_SOURCE_CITATION.match(stripped) and len(stripped) >= MIN_CITED_STEM_LEN)
+        or (RE_LEAD_CITATION.match(stripped) and len(stripped) >= MIN_CITED_STEM_LEN)
+        or _following_option_run(index, order)
+    )
+    if not evidence:
+        return None
+    return int(match.group().strip().rstrip("．.、 "))
+
+
 def _objective_table_columns(index):
     """Return table columns whose heading marks objective/guidance content.
 
@@ -245,15 +315,20 @@ def _reading_material_gap_start(index, left_order, right_order):
     return None
 
 
-def detect_question_runs(index, zones, section_orders, material_orders, objective_scopes=None):
+def detect_question_runs(index, zones, section_orders, material_orders, objective_scopes=None,
+                         skip_orders=None):
     """Identify actual prompt starts instead of one candidate per numbered run.
 
     Number-only lines are suppressed in knowledge/answer regions and in
     instructional/explanatory prose. Explicit example headings count as prompt
     starts. Consecutive English reading questions stay within one question group
     unless a substantial prose gap marks the next question set.
+
+    ``skip_orders`` carries prompts already recovered from an answer/analysis
+    region by the stateful pass, so they are not emitted twice.
     """
     out = []
+    skip_orders = skip_orders or set()
     previous_number = None
     previous_item_order = None
     reading_group = False
@@ -265,6 +340,8 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
             explicit_group_open = False
         t = _norm(node.text)
         if not t:
+            continue
+        if i in skip_orders:
             continue
         if _in_objective_table_column(index, node, objective_scopes):
             previous_number = None
@@ -460,6 +537,7 @@ def detect(index, doc):
     # out of question detection without relying on sample IDs or node numbers.
     answer_area = False
     analysis_mode = False
+    recovered_starts = set()
     for i, node in enumerate(index.nodes):
         t = _norm(node.text)
         if not t:
@@ -484,6 +562,16 @@ def detect(index, doc):
             # but start the next answer group after any preceding explanation.
             analysis_mode = False
             zones[i] = "answer"
+            continue
+        if _recoverable_question_start(index, i, t):
+            # E1: a complete new prompt ends the answer/analysis region and
+            # reopens a question boundary. Explanation numbering stays inside
+            # the region because it cannot satisfy the completeness evidence.
+            cands.append({"node": node.id, "role": "question_group", "conf": "high",
+                          "evidence": "答案/解析区后恢复的完整新题干"})
+            recovered_starts.add(i)
+            analysis_mode = False
+            zones[i] = "exercise"
             continue
         analysis_match = RE_ANALYSIS_START.match(t)
         if analysis_match:
@@ -517,7 +605,8 @@ def detect(index, doc):
     material_orders.update(i for i, c in enumerate(index.nodes)
                            if any(u["node"] == c.id and u["role"] == "shared_material" for u in cands))
     cands.extend(detect_question_runs(index, zones, section_orders, material_orders,
-                                      _objective_table_columns(index)))
+                                      _objective_table_columns(index),
+                                      skip_orders=recovered_starts))
     toc_containers = [c["toc_container"] for c in cands if c.get("toc_container")]
     if toc_containers:
         cands = [c for c in cands if not (c["node"] in index.by_id and

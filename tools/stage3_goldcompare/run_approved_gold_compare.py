@@ -106,10 +106,11 @@ class Ctx(object):
         return None, None
 
 
-def load_sample(sid):
+def load_sample(sid, predictions_dir=None):
     doc = json.load(open(os.path.join(APPROVED, "%s_APPROVED_GOLD.json" % sid), encoding="utf-8"))
     ctx = Ctx(sid)
-    pred = json.load(open(os.path.join(BASELINE, sid, "prediction.json"), encoding="utf-8"))
+    pred_path = os.path.join(predictions_dir or BASELINE, sid, "prediction.json")
+    pred = json.load(open(pred_path, encoding="utf-8"))
     for u in pred["units"]:
         u["_iv"] = ctx.interval(u["spans"])
     gold = {"qg": [], "section": [], "answer": [], "analysis": [], "sm": [], "subq": []}
@@ -293,12 +294,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=None)
     ap.add_argument("--json", dest="json_out", default=None)
+    ap.add_argument("--predictions-dir", default=None,
+                    help="覆盖预测目录（<dir>/<sid>/prediction.json）；默认用冻结基线")
     args = ap.parse_args()
 
     meta = {s["sample_id"]: s for s in json.load(open(INPUTS, encoding="utf-8"))["samples"]}
     metrics = []
     for sid in SAMPLES:
-        doc, ctx, pred, gold = load_sample(sid)
+        doc, ctx, pred, gold = load_sample(sid, args.predictions_dir)
         m = analyse_sample(sid, doc, ctx, pred, gold)
         nm = meta[sid]["name"]
         m["subject"] = meta[sid]["subject"]
