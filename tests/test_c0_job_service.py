@@ -16,6 +16,7 @@ sys.path.insert(0, str(WEBAPP))
 sys.path.insert(0, str(APP_DIR))
 
 from app import app  # noqa: E402
+import app as app_module  # noqa: E402
 from job_service import JobService  # noqa: E402
 
 
@@ -38,7 +39,10 @@ def corrupt_document_xml(path: Path) -> None:
 
 @pytest.fixture
 def client(tmp_path):
-    app.config.update(TESTING=True, RESULT_ROOT=tmp_path / "results")
+    app.config.update(TESTING=True, RESULT_ROOT=tmp_path / "results",
+                      C0_DISABLE_JOB_SUBMISSION=True,
+                      C0_RUN_JOBS_SYNCHRONOUSLY=False,
+                      C0_FORCE_FALLBACK_REASON=None)
     app.config.pop("OPEN_FOLDER", None)
     return app.test_client()
 
@@ -135,7 +139,37 @@ def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(c
     assert recovered["result_dir"] == str(job_dir)
     assert recovered["output_paths"] == [str(path) for path in outputs]
     assert recovered["download_available"] is True
+    assert recovered["delivery_status"] == "zip_ready"
     assert recovered["created_at"] == created["created_at"]
+
+
+def test_zip_delivery_failure_does_not_fail_validated_local_generation(client, monkeypatch):
+    created = post_one(client).get_json()
+    job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
+    outputs = [job_dir / "教师版.docx", job_dir / "学生版.docx"]
+    for path in outputs:
+        path.write_bytes(make_docx())
+    JobService(Path(app.config["RESULT_ROOT"])).complete_job(created["job_id"], *outputs)
+
+    original_zip = app_module.zipfile.ZipFile
+
+    def fail_zip(file, *args, **kwargs):
+        if hasattr(file, "write"):
+            raise OSError("simulated response archive failure")
+        return original_zip(file, *args, **kwargs)
+
+    monkeypatch.setattr(app_module.zipfile, "ZipFile", fail_zip)
+    response = client.get("/api/download/" + created["job_id"])
+    assert response.status_code == 503
+    assert response.get_json()["error_code"] == "DELIVERY_DOWNLOAD_FAILED"
+    snapshot = client.get("/api/jobs/" + created["job_id"]).get_json()
+    assert snapshot["status"] == "done"
+    assert snapshot["has_result"] is True
+    assert snapshot["result_dir"] == str(job_dir.resolve())
+    assert snapshot["output_paths"] == [str(path.resolve()) for path in outputs]
+    assert snapshot["download_available"] is False
+    assert snapshot["delivery_status"] == "failed"
+    assert snapshot["delivery_error_code"] == "DELIVERY_DOWNLOAD_FAILED"
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
@@ -196,6 +230,9 @@ def test_workspace_javascript_handles_queued_and_running_states():
     assert 'localStorage.setItem("handout_current_job", response.job_id)' in js
     template = (WEBAPP / "templates" / "index.html").read_text(encoding="utf-8")
     assert '<option value="queued">排队中</option>' in template
+    assert 'id="resultDelivery"' in template
+    assert 'id="openResult"' in template and "打开成品文件夹" in template
+    assert "本地输出路径：" in js and "下载 ZIP" in template
 
 
 def test_semantic_facade_hashes_one_source_snapshot_and_returns_same_units():

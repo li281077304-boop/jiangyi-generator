@@ -262,7 +262,16 @@
       topic.textContent = item.topic || "识别中"; teacher.appendChild(statusCell(item.teacher)); student.appendChild(statusCell(item.student)); tr.append(topic, teacher, student); rows.appendChild(tr);
     });
     var warnings = $("warnings"); warnings.hidden = !(job.warnings && job.warnings.length); warnings.textContent = job.warnings && job.warnings.length ? job.warnings.join("；") : "";
-    $("downloadResult").hidden = !job.has_result; $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
+    var delivery = $("resultDelivery");
+    delivery.hidden = job.status !== "done";
+    if (job.status === "done") {
+      var pathText = job.result_dir ? "本地输出路径：" + job.result_dir + "。" : "成品已保存在本地结果目录。";
+      var deliveryText = job.delivery_error_code === "DELIVERY_DOWNLOAD_FAILED"
+        ? "成品已生成并通过校验。" + pathText + "ZIP 下载暂不可用（" + job.delivery_error_code + "），可打开成品文件夹获取 DOCX。"
+        : "成品已生成并通过校验。" + pathText + "可打开成品文件夹，也可以下载 ZIP。";
+      delivery.textContent = deliveryText;
+    } else { delivery.textContent = ""; }
+    $("downloadResult").hidden = !job.download_available; $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
     if (job.has_result) $("downloadResult").href = "/api/download/" + job.job_id;
     $("configFields").disabled = isActiveStatus(job.status); $("startButton").disabled = isActiveStatus(job.status) || !state.files.length;
     if (isActiveStatus(job.status)) beginElapsed(job.created_at);
@@ -335,15 +344,17 @@
       var status = document.createElement("span"); status.className = "history-state " + job.status; status.textContent = job.status === "done" ? "已完成" : job.status === "queued" ? "排队中" : job.status === "running" ? "生成中" : "未完成";
       var actions = document.createElement("div"); actions.className = "history-actions";
       if (job.has_result) {
-        var download = document.createElement("a"); download.className = "icon-button"; download.href = "/api/download/" + job.job_id; download.setAttribute("aria-label", "下载成品"); download.dataset.tooltip = "下载"; download.appendChild(makeIcon("download")); actions.appendChild(download);
         var open = document.createElement("button"); open.className = "icon-button"; open.setAttribute("aria-label", "打开成品位置"); open.dataset.tooltip = "成品位置"; open.appendChild(makeIcon("folder-open")); open.addEventListener("click", function () { openJob(job.job_id); }); actions.appendChild(open);
+      }
+      if (job.download_available) {
+        var download = document.createElement("a"); download.className = "icon-button"; download.href = "/api/download/" + job.job_id; download.setAttribute("aria-label", "下载 ZIP"); download.dataset.tooltip = "下载 ZIP"; download.appendChild(makeIcon("download")); actions.appendChild(download);
       }
       row.append(icon, main, status, actions); list.appendChild(row);
     });
     if (!visible.length) { var emptyView = document.createElement("div"); emptyView.className = "empty-view"; emptyView.appendChild(makeIcon("inbox")); var message = document.createElement("p"); message.textContent = state.jobs.length ? "没有符合条件的任务" : "生成完成的讲义会出现在这里"; emptyView.appendChild(message); list.appendChild(emptyView); }
     refreshIcons(recent); refreshIcons(list);
   }
-  function openJob(jobId) { requestJson("/api/open/" + jobId).then(function () { toast("已在资源管理器中打开"); }).catch(function (error) { toast(error.message); }); }
+  function openJob(jobId) { requestJson("/api/open/" + jobId).then(function (result) { toast("已打开成品文件夹：" + result.result_dir); }).catch(function (error) { toast(error.message); }); }
 
   function navigate(view) {
     ["workspace", "history", "templates"].forEach(function (name) { $(name + "View").hidden = name !== view; });

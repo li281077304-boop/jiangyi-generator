@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Small file-backed job repository for the C0 HTTP boundary.
-
-This round deliberately persists jobs as ``job.json`` and uploaded sources,
-but does not execute a renderer or mark jobs complete. C0 outputs are reserved
-under each job's stable result directory for the next integration round.
-"""
+"""File-backed job records and validated local result delivery for C0."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -41,6 +36,31 @@ class JobService:
         self.result_root.mkdir(parents=True, exist_ok=True)
         self.opener = opener or self._open_folder
         self._lock = threading.RLock()
+        self._recover_interrupted_jobs()
+
+    def _recover_interrupted_jobs(self) -> None:
+        """Requeue an interrupted running job when a new service instance starts."""
+        with self._lock:
+            for metadata in self.result_root.glob("*/job.json"):
+                try:
+                    record = self._read_json(metadata)
+                    if record.get("status") != "running":
+                        continue
+                    now = datetime.now(timezone.utc)
+                    record.update({
+                        "status": "queued",
+                        "progress": 0,
+                        "stage": "服务重启后已重新排队",
+                        "updated_at": now.timestamp(),
+                        "updated_at_iso": now.isoformat(timespec="seconds"),
+                        "recovered_after_restart": True,
+                    })
+                    self._write_json(metadata, record)
+                except (OSError, ValueError, KeyError, json.JSONDecodeError):
+                    continue
+
+    def queued_jobs(self) -> list[dict]:
+        return [record for record in self.list() if record.get("status") == "queued"]
 
     @staticmethod
     def _open_folder(path: Path) -> None:
@@ -120,7 +140,7 @@ class JobService:
             "status": "queued",
             "progress": 0,
             "total": 2,
-            "stage": "任务已接收，等待生成流程接入",
+            "stage": "任务已接收，等待生成",
             "created_at": created_at,
             "created_at_iso": now.isoformat(timespec="seconds"),
             "updated_at": created_at,
@@ -138,10 +158,102 @@ class JobService:
             "renderer": None,
             "fallback_reason": None,
             "baseline_sha": None,
+            "delivery_status": "not_attempted",
+            "delivery_error_code": None,
+            "delivery_error": None,
+            "recovered_after_restart": False,
+            "generation_attempts": 0,
         }
         with self._lock:
             self._write_json(job_dir / "job.json", record)
         return self.snapshot(record)
+
+    def start_job(self, job_id: str) -> dict:
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") == "done":
+                return self.snapshot(record)
+            if record.get("status") not in ("queued", "running"):
+                return self.snapshot(record)
+            now = datetime.now(timezone.utc)
+            record.update({
+                "status": "running",
+                "stage": "准备 Splitter 与 Renderer",
+                "started_at": now.timestamp(),
+                "started_at_iso": now.isoformat(timespec="seconds"),
+                "updated_at": now.timestamp(),
+                "updated_at_iso": now.isoformat(timespec="seconds"),
+                "generation_attempts": int(record.get("generation_attempts", 0)) + 1,
+            })
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def update_progress(self, job_id: str, progress: int, stage: str) -> dict:
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            now = datetime.now(timezone.utc)
+            record.update({
+                "progress": max(0, min(int(progress), int(record.get("total", 2)))),
+                "stage": str(stage),
+                "updated_at": now.timestamp(),
+                "updated_at_iso": now.isoformat(timespec="seconds"),
+            })
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def fail_job(self, job_id: str, detail: str) -> dict:
+        """Persist generation failure without conflating it with ZIP delivery."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") == "done":
+                return self.snapshot(record)
+            now = datetime.now(timezone.utc)
+            error = str(detail)
+            if not error.startswith("GENERATION_FAILED"):
+                error = "GENERATION_FAILED: " + error
+            record.update({
+                "status": "error",
+                "error": error,
+                "stage": error,
+                "has_result": False,
+                "download_available": False,
+                "progress": 0,
+                "updated_at": now.timestamp(),
+                "updated_at_iso": now.isoformat(timespec="seconds"),
+            })
+            for item in record.get("items", []):
+                item["teacher"] = "失败"
+                item["student"] = "失败"
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def record_download_succeeded(self, job_id: str) -> dict:
+        # The server prepared a ZIP response. This does not claim that the
+        # browser persisted it; local DOCX files remain the source of truth.
+        return self._update_delivery(job_id, "zip_ready", None, None)
+
+    def record_download_failed(self, job_id: str, detail: str) -> dict:
+        return self._update_delivery(job_id, "failed", "DELIVERY_DOWNLOAD_FAILED", str(detail))
+
+    def _update_delivery(self, job_id: str, status: str, code: str | None,
+                         detail: str | None) -> dict:
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "done":
+                return self.snapshot(record)
+            now = datetime.now(timezone.utc)
+            record.update({
+                "delivery_status": status,
+                "download_available": status == "zip_ready",
+                "delivery_error_code": code,
+                "delivery_error": detail,
+                "updated_at": now.timestamp(),
+                "updated_at_iso": now.isoformat(timespec="seconds"),
+            })
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
 
     def _recover(self, job_id: str) -> dict:
         path = self._job_dir(job_id) / "job.json"
@@ -169,10 +281,12 @@ class JobService:
             self._write_json(path, record)
         else:
             has_result = record.get("status") == "done" and valid
+            default_download_available = record.get("delivery_status") not in ("failed", "unavailable")
+            download_available = bool(record.get("download_available", default_download_available)) if has_result else False
             changed = metadata_changed or validation_changed or (record.get("has_result") != has_result or
-                       record.get("download_available") != has_result)
+                       record.get("download_available") != download_available)
             record["has_result"] = has_result
-            record["download_available"] = has_result
+            record["download_available"] = download_available
             if changed:
                 self._write_json(path, record)
         return record
@@ -212,7 +326,8 @@ class JobService:
     def complete_job(self, job_id: str, teacher_output_path: str | Path,
                      student_output_path: str | Path, *, renderer: str = "XML",
                      fallback_reason: str | None = None,
-                     baseline_sha: str | None = None) -> dict:
+                     baseline_sha: str | None = None,
+                     plan_summary: dict | None = None) -> dict:
         """Record done only after distinct teacher/student packages validate."""
         job_dir = self._job_dir(job_id)
         teacher, student = Path(teacher_output_path).resolve(), Path(student_output_path).resolve()
@@ -241,12 +356,16 @@ class JobService:
             "student_output_path": str(student),
             "output_roles": {"teacher": str(teacher), "student": str(student)},
             "download_available": True,
+            "delivery_status": "available",
+            "delivery_error_code": None,
+            "delivery_error": None,
             "has_result": True,
             "produced": 2,
             "renderer": renderer,
             "fallback_reason": fallback_reason,
             "baseline_sha": baseline_sha,
             "package_validation": reports,
+            "plan_summary": plan_summary,
         })
         for item in record.get("items", []):
             item["teacher"] = "完成"
