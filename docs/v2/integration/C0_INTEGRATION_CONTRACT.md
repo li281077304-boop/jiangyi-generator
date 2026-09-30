@@ -90,6 +90,12 @@ For job snapshots, `showJob` consumes `job_id`, `status` (`running`/`done`/`erro
 
 The previous v1.1 backend provides a nearby, concrete API precedent in `v1.1-stable/res/app/webapp/app.py`: multipart job creation returns `job_id`/`total`; public snapshots add `job_id`/`has_result`; status, download, and open routes exist. That route is only a schema precedent. Its worker is a different legacy generation pipeline and must not be copied wholesale into C-Line.
 
+### C0 result delivery requirement (user addition, 2026-09-30)
+
+Browser ZIP download is a convenience channel and must not be the only delivery path. Successful teacher/student DOCX files must first be written to a stable, per-job local result directory that does not overwrite another job. A job may become `done` only after each required final DOCX exists, is non-empty, and passes the corresponding package validation. Persist `result_dir`, `output_paths`, and `download_available` in job metadata.
+
+`POST /api/open/<job_id>` or the existing compatible open route must locate/open the job result folder directly. The UI must show that generation succeeded, the local output path, an “open output folder” action, and an optional ZIP download action. A ZIP/download failure after validated files are on disk is `DELIVERY_DOWNLOAD_FAILED`; it must not change a successful generation to `GENERATION_FAILED` or remove the DOCX outputs. The class-template integration UAT must prove HTTP job creation → class XML or whole-job fallback → validated teacher/student files on disk → `done` snapshot → open endpoint resolves the result directory, and test ZIP download separately.
+
 ## Integration gaps and risks
 
 1. **No production A-Line entry:** `predict(doc)` is in `tools/`, used by Stage3 evaluation scripts, and is not called by v1.2 app code. C0 cannot wire the app to a presumed packaged splitter API.
