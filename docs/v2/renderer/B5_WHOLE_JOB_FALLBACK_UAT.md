@@ -16,15 +16,23 @@ rendering the student document.
 
 | Template | Output | Bytes | Package validation |
 | --- | --- | ---: | --- |
-| 1v1 | `X006-teacher.docx` | 2,909,775 | PASS |
-| 1v1 | `X006-student.docx` | 2,254,757 | PASS |
-| class | `X006-teacher.docx` | 3,635,362 | PASS |
-| class | `X006-student.docx` | 3,006,029 | PASS |
+| 1v1 | `X006-teacher.docx` | 2,909,778 | PASS |
+| 1v1 | `X006-student.docx` | 2,254,701 | PASS |
+| class | `X006-teacher.docx` | 3,634,645 | PASS |
+| class | `X006-student.docx` | 3,004,837 | PASS |
 
 Evidence reports and generated outputs are in isolated local UAT directories:
 
-- `C:\xml-uat\b5-v09-fallback-x006-1v1-final3\fallback_uat.json`
-- `C:\xml-uat\b5-v09-fallback-x006-class\fallback_uat.json`
+- `C:\xml-uat\b5-round20-x006-1v1\fallback_uat.json`
+- `C:\xml-uat\b5-round20-x006-class\fallback_uat.json`
+
+Round 20 reran the committed UAT tool against the current orchestrator after
+the syntax-only import repair. Both reports record
+`details.fallback_invoked=true`, `details.whole_job=true`, and baseline SHA
+`0922e08631226b95a77a6599bbc0ac3784e9134b`; all four output packages validate.
+The tool checks both teacher and student destinations are fresh before the
+V0.9 engine begins, and a focused regression test confirms an occupied student
+destination cannot leave a partial teacher output.
 
 The source was `C:\xml-uat\stage3-expansion\sources\X006.docx`; it was not
 used as an output. The archived V0.9 application assets, writer scripts, and

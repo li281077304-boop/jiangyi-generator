@@ -245,6 +245,13 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
     if output.exists():
         raise FileExistsError("V0.9 fallback requires a fresh output path: %s" % output)
 
+    student_output = Path(job.student_output_doc).resolve() if job.student_output_doc else output.with_name(
+        output.stem + "-学生版.docx")
+    if student_output in (source, output):
+        raise ValueError("student fallback output must not alias source or teacher output")
+    if student_output.exists():
+        raise FileExistsError("V0.9 fallback requires a fresh student output path: %s" % student_output)
+
     outputs = []
     logs = []
     with contextlib.redirect_stdout(io.StringIO()):
@@ -259,12 +266,6 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
     outputs.append(str(output))
     logs.append(str(log))
 
-    student_output = Path(job.student_output_doc).resolve() if job.student_output_doc else output.with_name(
-        output.stem + "-学生版.docx")
-    if student_output in (source, output):
-        raise ValueError("student fallback output must not alias source or teacher output")
-    if student_output.exists():
-        raise FileExistsError("V0.9 fallback requires a fresh student output path: %s" % student_output)
     if job.student_source_doc:
         student_source = Path(job.student_source_doc).resolve()
         if not student_source.is_file():
@@ -308,5 +309,3 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
 def _require_v09_output(path: Path, log: Any) -> None:
     if not path.is_file() or path.stat().st_size == 0:
         raise RuntimeError("V0.9 Writer did not produce a non-empty output: %s; log=%s" % (path, log))
-
-\n

@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 
 APP = Path(__file__).resolve().parents[1] / "v1.2-xml-experiment" / "res" / "app"
 sys.path.insert(0, str(APP))
@@ -9,8 +10,10 @@ sys.path.insert(0, str(APP))
 from renderer_orchestrator import (  # noqa: E402
     FallbackRequired,
     RenderJob,
+    render_v09_whole_job,
     render_xml_or_fallback,
 )
+import renderer_orchestrator as orchestrator  # noqa: E402
 
 
 def _write_bad_package(output_path):
@@ -63,6 +66,31 @@ class RendererOrchestratorTests(unittest.TestCase):
             )
         self.assertEqual(self.output.read_bytes(), b"keep-existing-file")
         self.assertEqual(self.calls, [])
+
+    def test_preexisting_student_destination_prevents_partial_teacher_output(self):
+        source = Path(self.temp.name) / "source.docx"
+        source.write_bytes(b"source")
+        template = Path(self.temp.name) / "template.docx"
+        template.write_bytes(b"template")
+        student_output = self.output.with_name(self.output.stem + "-学生版.docx")
+        student_output.write_bytes(b"keep-existing-student-file")
+        calls = []
+        fake_engine = SimpleNamespace(
+            CLASS_TEMPLATE=str(template), DEFAULT_TEMPLATE=str(template),
+            build_version=lambda *args, **kwargs: calls.append((args, kwargs)),
+        )
+        original_loader = orchestrator._load_v09_engine
+        orchestrator._load_v09_engine = lambda: fake_engine
+        with self.assertRaises(FileExistsError):
+            try:
+                render_v09_whole_job(
+                    RenderJob(str(source), str(self.output), template_path=str(template)),
+                    "UNSUPPORTED_REVISION_MARKUP")
+            finally:
+                orchestrator._load_v09_engine = original_loader
+        self.assertFalse(self.output.exists())
+        self.assertEqual(student_output.read_bytes(), b"keep-existing-student-file")
+        self.assertEqual(calls, [])
 
     def test_forced_unsupported_preflight_invokes_fallback_and_records_reason(self):
         result = render_xml_or_fallback(
