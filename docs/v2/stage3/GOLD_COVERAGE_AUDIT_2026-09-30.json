@@ -1,0 +1,808 @@
+{
+  "audit_date": "2026-09-30",
+  "branch": "feature/splitter-v2-struct-gold",
+  "base_sha": "0d20ad9d7c726240ab11967e51f892a76193a5be",
+  "governance": [
+    "docs/decisions/2026-09-29-v1.1-stop-v1.2-roadmap.md",
+    "docs/decisions/2026-09-30-splitter-business-rules.md"
+  ],
+  "business_rule_version": "Splitter Business Rules v1.0",
+  "audit_type": "independent Gold Coverage Audit",
+  "chief_mode": "CODEX ONLY",
+  "verdict": "PASS_HIGH_CONFIDENCE_GOLD_CORRECTION",
+  "approved_additions": [
+    {
+      "sample_id": "X006",
+      "unit_id": "AG-X006-QG-060",
+      "candidate_id": "GCA-X006-QG-01",
+      "source_nodes": [
+        "b444",
+        "b455"
+      ],
+      "orders": [
+        473,
+        484
+      ],
+      "subquestion_node_ids": [
+        "b446",
+        "b447",
+        "b448",
+        "b451"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号35题；实验题干和(1)-(4)四项连续完整，后接【答案】与【解答】，下一题36另起。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-043",
+      "candidate_id": "GCA-X012-QG-01",
+      "source_nodes": [
+        "b448",
+        "b449"
+      ],
+      "orders": [
+        524,
+        525
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号1题；倒数题干和A-D选项齐全，后接【答案】A及【分析】。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-044",
+      "candidate_id": "GCA-X012-QG-02",
+      "source_nodes": [
+        "b454",
+        "b455"
+      ],
+      "orders": [
+        530,
+        531
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号2题；独立题干和三项选择齐全，后接【答案】。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-045",
+      "candidate_id": "GCA-X012-QG-03",
+      "source_nodes": [
+        "b461",
+        "b462"
+      ],
+      "orders": [
+        537,
+        538
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号3题；倒数概念判断题干和四项选择齐全，后接【答案】及逐项解析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-046",
+      "candidate_id": "GCA-X012-QG-04",
+      "source_nodes": [
+        "b470",
+        "b470"
+      ],
+      "orders": [
+        546,
+        546
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号4题；完整运算流程题干和填空目标，后接【答案】与解析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-047",
+      "candidate_id": "GCA-X012-QG-05",
+      "source_nodes": [
+        "b473",
+        "b473"
+      ],
+      "orders": [
+        549,
+        549
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号5题；完整数轴应用题干和填空目标，后接【答案】及解析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-048",
+      "candidate_id": "GCA-X012-QG-06",
+      "source_nodes": [
+        "b486",
+        "b488"
+      ],
+      "orders": [
+        562,
+        564
+      ],
+      "subquestion_node_ids": [
+        "b487",
+        "b488"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号7题；题干后有(1)(2)两小问，随后【答案】与分析，R1归为一个题组。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-049",
+      "candidate_id": "GCA-X012-QG-07",
+      "source_nodes": [
+        "b501",
+        "b507"
+      ],
+      "orders": [
+        577,
+        583
+      ],
+      "subquestion_node_ids": [
+        "b502",
+        "b503",
+        "b504",
+        "b505",
+        "b506",
+        "b507"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号8题；“计算下面各题”并含(1)-(6)六个子题，随后【答案】分项列答。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-050",
+      "candidate_id": "GCA-X012-QG-08",
+      "source_nodes": [
+        "b552",
+        "b555"
+      ],
+      "orders": [
+        628,
+        648
+      ],
+      "subquestion_node_ids": [
+        "b554",
+        "b555"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号9题；题干、数据表和(1)(2)两小问完整，随后【答案】与解析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-051",
+      "candidate_id": "GCA-X012-QG-09",
+      "source_nodes": [
+        "b567",
+        "b570"
+      ],
+      "orders": [
+        660,
+        663
+      ],
+      "subquestion_node_ids": [
+        "b569",
+        "b570"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号10题；公交线路题干及(1)(2)两小问，随后【答案】及逐问解析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-052",
+      "candidate_id": "GCA-X012-QG-10",
+      "source_nodes": [
+        "b582",
+        "b585"
+      ],
+      "orders": [
+        675,
+        693
+      ],
+      "subquestion_node_ids": [
+        "b584",
+        "b585"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "编号11题；含七日数据表和(1)(2)两小问，随后【答案】及解析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-053",
+      "candidate_id": "GCA-X012-QG-11",
+      "source_nodes": [
+        "b599",
+        "b601"
+      ],
+      "orders": [
+        707,
+        709
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "新练习区编号1题；完整乘法符号判断题和A-D选项，随后【答案】与详解。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-054",
+      "candidate_id": "GCA-X012-QG-12",
+      "source_nodes": [
+        "b608",
+        "b611"
+      ],
+      "orders": [
+        716,
+        719
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "同练习区编号2题；数轴关系题干、判断式与A-D选项完整，随后【答案】与分析。"
+    },
+    {
+      "sample_id": "X012",
+      "unit_id": "AG-X012-QG-055",
+      "candidate_id": "GCA-X012-QG-13",
+      "source_nodes": [
+        "b620",
+        "b621"
+      ],
+      "orders": [
+        728,
+        737
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "同练习区编号3题；阶梯水价题干和完整多行价格表，表格之后有A-D选项并随后【答案】。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-027",
+      "candidate_id": "GCA-X025-QG-01",
+      "source_nodes": [
+        "b300",
+        "b301"
+      ],
+      "orders": [
+        402,
+        403
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "基础通关区编号1题；完整鸡蛋气室题干、A-D选项，随后【答案】和详解。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-028",
+      "candidate_id": "GCA-X025-QG-02",
+      "source_nodes": [
+        "b305",
+        "b306"
+      ],
+      "orders": [
+        407,
+        408
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "基础通关区编号2题；火星制氧题干、A-D选项，随后【答案】和详解。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-029",
+      "candidate_id": "GCA-X025-QG-03",
+      "source_nodes": [
+        "b330",
+        "b335"
+      ],
+      "orders": [
+        432,
+        437
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "基础通关区编号5题；拉瓦锡实验题干及A-D选项完整，随后【答案】及解析。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-030",
+      "candidate_id": "GCA-X025-QG-04",
+      "source_nodes": [
+        "b342",
+        "b343"
+      ],
+      "orders": [
+        444,
+        445
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "基础通关区编号6题；拉瓦锡金属选择题干及A-D选项，随后【答案】及详解。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-031",
+      "candidate_id": "GCA-X025-QG-05",
+      "source_nodes": [
+        "b434",
+        "b440"
+      ],
+      "orders": [
+        536,
+        542
+      ],
+      "subquestion_node_ids": [
+        "b435",
+        "b436",
+        "b437",
+        "b438",
+        "b439",
+        "b440"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "基础通关区编号15题；红磷实验题干及(1)-(5)五个小问完整，随后【答案】及详解。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-032",
+      "candidate_id": "GCA-X025-QG-06",
+      "source_nodes": [
+        "b453",
+        "b454"
+      ],
+      "orders": [
+        555,
+        556
+      ],
+      "subquestion_node_ids": [],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "素养提升区编号16题；芯片保护气题干及A-D选项，随后【答案】及详解。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-033",
+      "candidate_id": "GCA-X025-QG-07",
+      "source_nodes": [
+        "b534",
+        "b544"
+      ],
+      "orders": [
+        636,
+        646
+      ],
+      "subquestion_node_ids": [
+        "b537",
+        "b538",
+        "b539",
+        "b540",
+        "b541",
+        "b542",
+        "b543"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "迁移创新区编号24题；两个实验部分及(1)-(6)连续小问完整，随后【答案】与解析。"
+    },
+    {
+      "sample_id": "X025",
+      "unit_id": "AG-X025-QG-034",
+      "candidate_id": "GCA-X025-QG-08",
+      "source_nodes": [
+        "b569",
+        "b593"
+      ],
+      "orders": [
+        671,
+        695
+      ],
+      "subquestion_node_ids": [
+        "b573",
+        "b574",
+        "b576",
+        "b586",
+        "b587",
+        "b588",
+        "b593"
+      ],
+      "confidence": "HIGH",
+      "business_rules": [
+        "R2",
+        "R5"
+      ],
+      "evidence_class": "迁移创新区编号26题；实验1/2和(1)-(7)小问均属于同一道综合实验题，直到【答案】前结束。"
+    }
+  ],
+  "rejected_candidate": {
+    "sample_id": "X012",
+    "node_id": "b34",
+    "order": 47,
+    "verdict": "TRUE_SPLITTER_FALSE_POSITIVE",
+    "confidence": "HIGH",
+    "reason": "位于“知识点02 倒数”的连续编号定义/性质列表中；与同级 1、2 项同构，不构成完整题目；没有选项或该条自身答案解析。保留现状。"
+  },
+  "source_files": {
+    "X006": {
+      "path_relative_to_stage3_root": "sources/X006.docx",
+      "sha256": "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+      "bytes": 2849764
+    },
+    "X012": {
+      "path_relative_to_stage3_root": "sources/X012.docx",
+      "sha256": "c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1",
+      "bytes": 993220
+    },
+    "X025": {
+      "path_relative_to_stage3_root": "sources/X025.docx",
+      "sha256": "92dbe48d732b9350b4fc1b06f479edd3b696942cd585a68d853b652788c799fd",
+      "bytes": 2261168
+    }
+  },
+  "gold_files": {
+    "X006": {
+      "path": "gold_preparation_01/APPROVED_GOLD/X006_APPROVED_GOLD.json",
+      "sha256_before": "0fc4d510f963cc18af416f37c3abf8a9483e9b575df65f6518fe82e2f550e520",
+      "source_sha256": "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+      "question_group_count_before": 59,
+      "sha256_after": "710c94a07e8b4d2488f59bb74d58d4e119a574975376bf651cbe8b6a20a11ec7",
+      "question_group_count_after": 60,
+      "added_unit_ids": [
+        "AG-X006-QG-060"
+      ]
+    },
+    "X012": {
+      "path": "gold_preparation_01/APPROVED_GOLD/X012_APPROVED_GOLD.json",
+      "sha256_before": "cd55780cb68251ea3b480baaaa49bfa2d474cbe116584813bde6419fa38d344e",
+      "source_sha256": "c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1",
+      "question_group_count_before": 42,
+      "sha256_after": "0d0b5cc2fa9d1524277844da6f277e4ba4ff7cf6b600f5da4e28c2445514f956",
+      "question_group_count_after": 55,
+      "added_unit_ids": [
+        "AG-X012-QG-043",
+        "AG-X012-QG-044",
+        "AG-X012-QG-045",
+        "AG-X012-QG-046",
+        "AG-X012-QG-047",
+        "AG-X012-QG-048",
+        "AG-X012-QG-049",
+        "AG-X012-QG-050",
+        "AG-X012-QG-051",
+        "AG-X012-QG-052",
+        "AG-X012-QG-053",
+        "AG-X012-QG-054",
+        "AG-X012-QG-055"
+      ]
+    },
+    "X025": {
+      "path": "gold_preparation_01/APPROVED_GOLD/X025_APPROVED_GOLD.json",
+      "sha256_before": "89a421e0ecf8ac87a70a2461d4bd83a3f634dcb5b1548c1ff43a21567723d3b1",
+      "source_sha256": "92dbe48d732b9350b4fc1b06f479edd3b696942cd585a68d853b652788c799fd",
+      "question_group_count_before": 26,
+      "sha256_after": "03c7be184fe88ba978689a84c5d6e94a2f0eb964d8880f4647079e71138cc00a",
+      "question_group_count_after": 34,
+      "added_unit_ids": [
+        "AG-X025-QG-027",
+        "AG-X025-QG-028",
+        "AG-X025-QG-029",
+        "AG-X025-QG-030",
+        "AG-X025-QG-031",
+        "AG-X025-QG-032",
+        "AG-X025-QG-033",
+        "AG-X025-QG-034"
+      ]
+    }
+  },
+  "prediction_files": {
+    "X006": {
+      "path_relative_to_stage3_root": "stage3-e1-after/X006/prediction.json",
+      "sha256": "6008b8d283c18350d13586fb88ee11aa23179b7e6359f7cf6b9e6aa79cc12905"
+    },
+    "X012": {
+      "path_relative_to_stage3_root": "stage3-e1-after/X012/prediction.json",
+      "sha256": "a99801edf0ed287233ffb3a1acb8d7e1dda0406b0e6c11b2494147d4cd1cfccb"
+    },
+    "X025": {
+      "path_relative_to_stage3_root": "stage3-e1-after/X025/prediction.json",
+      "sha256": "2bb70b50764af501e0cc688abdf7246319edc6318119a02748e8a865a2dcc48b"
+    }
+  },
+  "metrics": {
+    "corrected_gold_frozen_baseline": {
+      "gold_qg": 407,
+      "pred_qg": 207,
+      "precision": 0.9951690821256038,
+      "recall": 0.5061425061425061,
+      "exact_boundary": 0.4987714987714988,
+      "miss": 201,
+      "fp": 1,
+      "merge": 0,
+      "split": 0,
+      "errors": {
+        "E1": 200,
+        "E2": 1,
+        "E3": 1,
+        "E4": 3,
+        "E4_SECONDARY": 182
+      },
+      "by_subject": {
+        "mathematics": {
+          "gold_n": 93,
+          "pred_n": 63,
+          "matched_gold": 62,
+          "matched_pred": 62,
+          "exact": 60,
+          "precision": 0.9841269841269841,
+          "recall": 0.6666666666666666,
+          "exact_rate": 0.6451612903225806,
+          "miss": 31,
+          "fp": 1
+        },
+        "physics": {
+          "gold_n": 216,
+          "pred_n": 80,
+          "matched_gold": 80,
+          "matched_pred": 80,
+          "exact": 80,
+          "precision": 1.0,
+          "recall": 0.37037037037037035,
+          "exact_rate": 0.37037037037037035,
+          "miss": 136,
+          "fp": 0
+        },
+        "chemistry": {
+          "gold_n": 98,
+          "pred_n": 64,
+          "matched_gold": 64,
+          "matched_pred": 64,
+          "exact": 63,
+          "precision": 1.0,
+          "recall": 0.6530612244897959,
+          "exact_rate": 0.6428571428571429,
+          "miss": 34,
+          "fp": 0
+        }
+      },
+      "by_doc_type": {
+        "原卷": {
+          "gold_n": 180,
+          "pred_n": 181,
+          "matched_gold": 180,
+          "matched_pred": 180,
+          "exact": 179,
+          "precision": 0.994475138121547,
+          "recall": 1.0,
+          "exact_rate": 0.9944444444444445,
+          "miss": 0,
+          "fp": 1
+        },
+        "解析版": {
+          "gold_n": 227,
+          "pred_n": 26,
+          "matched_gold": 26,
+          "matched_pred": 26,
+          "exact": 24,
+          "precision": 1.0,
+          "recall": 0.1145374449339207,
+          "exact_rate": 0.10572687224669604,
+          "miss": 201,
+          "fp": 0
+        }
+      }
+    },
+    "corrected_gold_post_e1": {
+      "gold_qg": 407,
+      "pred_qg": 404,
+      "precision": 0.995049504950495,
+      "recall": 0.9877149877149877,
+      "exact_boundary": 0.8574938574938575,
+      "miss": 5,
+      "fp": 2,
+      "merge": 0,
+      "split": 0,
+      "errors": {
+        "E1": 4,
+        "E2": 1,
+        "E3": 2,
+        "E4": 14,
+        "E4_SECONDARY": 16
+      },
+      "by_subject": {
+        "mathematics": {
+          "gold_n": 93,
+          "pred_n": 92,
+          "matched_gold": 90,
+          "matched_pred": 90,
+          "exact": 86,
+          "precision": 0.9782608695652174,
+          "recall": 0.967741935483871,
+          "exact_rate": 0.9247311827956989,
+          "miss": 3,
+          "fp": 2
+        },
+        "physics": {
+          "gold_n": 216,
+          "pred_n": 215,
+          "matched_gold": 215,
+          "matched_pred": 215,
+          "exact": 168,
+          "precision": 1.0,
+          "recall": 0.9953703703703703,
+          "exact_rate": 0.7777777777777778,
+          "miss": 1,
+          "fp": 0
+        },
+        "chemistry": {
+          "gold_n": 98,
+          "pred_n": 97,
+          "matched_gold": 97,
+          "matched_pred": 97,
+          "exact": 95,
+          "precision": 1.0,
+          "recall": 0.9897959183673469,
+          "exact_rate": 0.9693877551020408,
+          "miss": 1,
+          "fp": 0
+        }
+      },
+      "by_doc_type": {
+        "原卷": {
+          "gold_n": 180,
+          "pred_n": 181,
+          "matched_gold": 180,
+          "matched_pred": 180,
+          "exact": 179,
+          "precision": 0.994475138121547,
+          "recall": 1.0,
+          "exact_rate": 0.9944444444444445,
+          "miss": 0,
+          "fp": 1
+        },
+        "解析版": {
+          "gold_n": 227,
+          "pred_n": 223,
+          "matched_gold": 222,
+          "matched_pred": 222,
+          "exact": 170,
+          "precision": 0.9955156950672646,
+          "recall": 0.9779735682819384,
+          "exact_rate": 0.748898678414097,
+          "miss": 5,
+          "fp": 1
+        }
+      }
+    },
+    "new_additions_matched": 22,
+    "new_additions_exact_boundary": 20,
+    "new_additions_boundary_differences": [
+      {
+        "sample_id": "X006",
+        "unit_id": "AG-X006-QG-060",
+        "gold_orders": [
+          473,
+          484
+        ],
+        "prediction_orders": [
+          473,
+          480
+        ],
+        "reason": "源文中第(4)小问及其后①②③子步骤在答案前连续，Gold保留完整父题；当前预测结束过早。"
+      },
+      {
+        "sample_id": "X012",
+        "unit_id": "AG-X012-QG-055",
+        "gold_orders": [
+          728,
+          737
+        ],
+        "prediction_orders": [
+          728,
+          732
+        ],
+        "reason": "表格行序延伸至737，选项738和答案739随后出现；Gold包含完整题目表格。"
+      }
+    ],
+    "remaining_false_positive_count": 2,
+    "remaining_false_positive_ids": [
+      "X012:b34",
+      "X013:b4.r0c1.n4"
+    ]
+  },
+  "governance_files": {
+    "roadmap": {
+      "absolute_path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-github\\docs\\decisions\\2026-09-29-v1.1-stop-v1.2-roadmap.md",
+      "sha256": "ecad2d4464d772c47602c56ce8af2f2572e809e6e29d7967cb7e95ba467318eb",
+      "git_state": "present in local governance checkout; files are untracked there"
+    },
+    "business_rules": {
+      "absolute_path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-github\\docs\\decisions\\2026-09-30-splitter-business-rules.md",
+      "sha256": "0db9226f69fc12aecf2dc649483c22d78f2e83e15e818db8f94e857ec42d3e46",
+      "git_state": "present in local governance checkout; files are untracked there"
+    }
+  }
+}
