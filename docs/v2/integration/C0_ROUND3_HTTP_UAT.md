@@ -51,3 +51,9 @@ For the X021 class XML outputs, both teacher and student completed WPS `open →
 ## Final scope notes
 
 Only one normal XML template slot is supported in C0. ZIP availability describes the server-side ZIP response operation; the validated teacher/student DOCX files in the result directory remain the durable success condition. No A-Line or B-Line behavior, student answer-removal rules, renderer internals, template files, UI platform shell, or release packaging was changed.
+
+## Round 4 closure
+
+The independent `Codex GPT-6.1 Sol` review found two C0 job-boundary cases in Round 3 and returned PATCH. Round 4 now publishes teacher/student plans atomically, so a student-plan rejection cannot leave a partial summary that breaks a successful V0.9 fallback. The fallback attempt's renderer, reason code, and frozen baseline SHA are persisted before entering V0.9, so a failed fallback still leaves an auditable reason.
+
+The regression suite covers both a successful fallback after student-plan rejection and a failing fallback with its attempt metadata retained. A pre-existing upload-persistence assertion was made deterministic by comparing the exact same generated `source_bytes` used for upload. The final full repository run passed **145 tests and 7 subtests**. `Codex GPT-6.1 Sol` returned **PASS** on `f1ffba963732152ee2b65508c7e35be934d29af6`.
