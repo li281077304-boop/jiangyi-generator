@@ -1,0 +1,76 @@
+{
+  "baseline_commit": "0922e08631226b95a77a6599bbc0ac3784e9134b",
+  "baseline_tag": "baseline/known-good-v0.9",
+  "assets": [
+    {
+      "source": "known-good-v0.9/res/app/2025+1v1讲义模板(2).docx",
+      "target": "2025+1v1讲义模板(2).docx",
+      "git_blob": "e4b2b4b6ff9833f1c1167388ea3f060431226a39",
+      "sha256": "1318fceabaa957b12e371310902fd81a0db08be09cee2121f6cd2606d8fd6a1a",
+      "size_bytes": 26629
+    },
+    {
+      "source": "known-good-v0.9/res/app/2025班课模板.doc",
+      "target": "2025班课模板.doc",
+      "git_blob": "363ad69a68748467e06017efd25f8f572334d337",
+      "sha256": "370cfa0d52ddf1b7afc220cc7dfeebd5fb093b01986c2af4d2de24367596b7a6",
+      "size_bytes": 606208
+    },
+    {
+      "source": "known-good-v0.9/res/app/_add_blanks_com.ps1",
+      "target": "_add_blanks_com.ps1",
+      "git_blob": "521582ca0cec4440ad7604e13045d29730427c32",
+      "sha256": "750709c55fb66501e489ef7c1bf09065140757bbba2c4ad6ff71dc3af49b4bbd",
+      "size_bytes": 4328
+    },
+    {
+      "source": "known-good-v0.9/res/app/_fill_class.ps1",
+      "target": "_fill_class.ps1",
+      "git_blob": "b55b0fac0c8a73645c1694a9b556889399de0527",
+      "sha256": "668325f998e7cfa1553e606d6287cdb6fc8cd4353503c6d61967a875303e1b8d",
+      "size_bytes": 8645
+    },
+    {
+      "source": "known-good-v0.9/res/app/_fill_com.ps1",
+      "target": "_fill_com.ps1",
+      "git_blob": "916c7428c2873b9bede74824a87a2ae710a586d9",
+      "sha256": "039480c600a3265810113bc4abce693eceebe0f45c3bfc7686a03535e96d59d1",
+      "size_bytes": 10733
+    },
+    {
+      "source": "known-good-v0.9/res/app/_scan_com.ps1",
+      "target": "_scan_com.ps1",
+      "git_blob": "12f210ef586366d8a8afc573233744021049111a",
+      "sha256": "0e237d4006eab86e10c70bcdc1106f7b3f8f88b313fe4293398f45f3d70e35d7",
+      "size_bytes": 1532
+    },
+    {
+      "source": "known-good-v0.9/res/app/_strip_answer_com.ps1",
+      "target": "_strip_answer_com.ps1",
+      "git_blob": "307cf009d01d35639d500f945cadeec873df242b",
+      "sha256": "fe46b471dd69653cc7b6bf3216de408be45f1beb8c6037a020e1c634b078e23d",
+      "size_bytes": 4929
+    },
+    {
+      "source": "known-good-v0.9/res/app/handout.py",
+      "target": "handout.py",
+      "git_blob": "992712c2b00e397b18d5834cc288ceb31350b138",
+      "sha256": "e35a45e871acbacb8f3e3c8da297c141e9bcf6e083fa1136171480dced92ce6d",
+      "size_bytes": 64048
+    },
+    {
+      "source": "known-good-v0.9/res/app/toc_split.py",
+      "target": "toc_split.py",
+      "git_blob": "e0f7a2a2d6ee30858f4ce45ce7b87c2bf90ae6f7",
+      "sha256": "d7c330cea4a67bae8220374d5aec44e9d1d52c9d64691469078072b617ba2ad2",
+      "size_bytes": 11117
+    },
+    {
+      "source": "known-good-v0.9/KNOWN_GOOD_V0.9_RUNTIME_REQUIREMENTS.lock",
+      "target": "KNOWN_GOOD_V0.9_RUNTIME_REQUIREMENTS.lock",
+      "git_blob": "2105a3a598ffae7c6aa594c0d697849e8b406782",
+      "sha256": "75023b745d0dd19b628780c2f7d42878574379758d716b37542c392f46a584ee",
+      "size_bytes": 619
+    }
+  ]
+}
