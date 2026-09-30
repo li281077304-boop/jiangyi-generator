@@ -186,6 +186,86 @@ def test_numbered_subparts_after_explicit_example_heading_stay_in_group():
     assert len(groups) == 2
 
 
+def test_suixuesuilian_heading_needs_a_complete_parent_question():
+    _, units = predict(_fixture([
+        "随学随练", "1．下图是某实验装置。", "(1)写出实验现象____。",
+        "(2)说明该实验的目的____。", "【答案】现象如图所示。",
+    ]))
+    groups = [u for u in units if u["role"] == "question_group"]
+    assert len(groups) == 1
+    assert groups[0]["spans"][0][0] == "b1"
+
+
+def test_suixuesuilian_heading_or_numbering_alone_does_not_make_question_groups():
+    _, units = predict(_fixture([
+        "随学随练", "1.第一步先检查装置。", "2.第二步再记录实验结果。",
+    ]))
+    assert not any(u["role"] == "question_group" for u in units)
+
+
+def test_multipart_prompt_without_solution_boundary_is_not_dispatchable():
+    _, units = predict(_fixture([
+        "随学随练", "1．下图是某实验装置。", "(1)写出实验现象____。",
+        "(2)说明该实验的目的____。",
+    ]))
+    assert not any(u["role"] == "question_group" for u in units)
+
+
+def _e2_dispatch_fixture(formal_count, second_module_formal_count=None):
+    def module(title, count):
+        rows = [title, "经典例题1 计算1+1等于多少？", "【答案】2",
+                "经典例题2 计算2+2等于多少？", "【答案】4",
+                "经典例题3 计算3+3等于多少？", "【答案】6", "随学随练"]
+        for number in range(1, count + 1):
+            rows.extend(["%d．如图所示，计算第%d题？" % (number, number), "【答案】完成"])
+        return rows
+    rows = module("知识精讲", formal_count)
+    if second_module_formal_count is not None:
+        rows.extend(module("知识精讲第二模块", second_module_formal_count))
+    return _fixture(rows)
+
+
+def _question_group_start_texts(doc):
+    index, units = predict(doc)
+    return [index.text_of(u["spans"][0][0]) for u in units
+            if u["role"] == "question_group"]
+
+
+def test_e2_dispatch_tops_up_zero_formal_groups_with_examples_two_then_three():
+    starts = _question_group_start_texts(_e2_dispatch_fixture(0))
+    assert starts == ["经典例题2 计算2+2等于多少？", "经典例题3 计算3+3等于多少？"]
+
+
+def test_e2_dispatch_tops_up_one_formal_group_with_example_two_only():
+    starts = _question_group_start_texts(_e2_dispatch_fixture(1))
+    assert starts == ["经典例题2 计算2+2等于多少？", "1．如图所示，计算第1题？"]
+
+
+def test_e2_dispatch_keeps_extra_examples_when_two_formal_groups_exist():
+    starts = _question_group_start_texts(_e2_dispatch_fixture(2))
+    assert starts == ["1．如图所示，计算第1题？", "2．如图所示，计算第2题？"]
+
+
+def test_e2_formal_example_groups_after_practice_heading_count_toward_target():
+    doc = _fixture([
+        "知识精讲", "经典例题1 计算1+1等于多少？", "【答案】2",
+        "经典例题2 计算2+2等于多少？", "【答案】4",
+        "经典例题3 计算3+3等于多少？", "【答案】6", "随学随练",
+        "例题1 如图所示，完成练习甲？", "【答案】甲",
+        "例题2 如图所示，完成练习乙？", "【答案】乙",
+    ])
+    starts = _question_group_start_texts(doc)
+    assert starts == ["例题1 如图所示，完成练习甲？", "例题2 如图所示，完成练习乙？"]
+
+
+def test_e2_dispatch_is_module_local_and_preserves_example_one():
+    starts = _question_group_start_texts(_e2_dispatch_fixture(2, 0))
+    assert starts == ["1．如图所示，计算第1题？", "2．如图所示，计算第2题？",
+                      "经典例题2 计算2+2等于多少？",
+                      "经典例题3 计算3+3等于多少？"]
+    assert all(not text.startswith("经典例题1") for text in starts)
+
+
 def test_numbered_learning_objectives_are_filtered_before_weak_question_cues():
     doc = _table_fixture([
         ["目标导航", "方法指导"],

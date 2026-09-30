@@ -68,7 +68,7 @@ RE_TOC_ENTRY = re.compile(r"(\.{3,}|·{3,}|．{3,})\s*\d{1,4}\s*$")
 RE_OPTION = re.compile(r"^\s*[A-D][.．、]\s*\S")
 RE_QNUM = re.compile(r"^\s*\d{1,3}\s*[．.、]")
 RE_TOC_WORD = re.compile(r"^(?:目\s*录|Contents|内容导航|目录导读|目录导航|本讲目录)$", re.I)
-RE_EXAMPLE_HEAD = re.compile(r"^[【\[（(]?(例题?|例|变式|练习)\s*\d+(?:[-－.．]\d+)?")
+RE_EXAMPLE_HEAD = re.compile(r"^[【\[（(]?(?:经典)?(例题?|例|变式|练习)\s*\d+(?:[-－.．]\d+)?")
 RE_ORDERED_SECTION = re.compile(r"^[一二三四五六七八九十]+[、．.]\s*\S")
 RE_ANGLE_SECTION = re.compile(r"^角度\s*\d+")
 RE_INSTRUCTION_LEAD = re.compile(
@@ -202,6 +202,33 @@ def _following_subquestion_run(index, order, window=12, min_parts=2):
         if seen >= window:
             break
     return len(parts) >= min_parts
+
+
+def _has_following_answer_analysis(index, order, window=40):
+    """Require an answer/analysis boundary after a candidate prompt structure."""
+    container = index.nodes[order].container
+    for node in index.nodes[order + 1:order + 1 + window]:
+        if node.container != container:
+            break
+        t = _norm(node.text)
+        if not t:
+            continue
+        if RE_QNUM.match(t) and not RE_SUBQUESTION_START.match(t):
+            return False
+        if (RE_ANSWER_SECTION.match(t) or RE_ANALYSIS_START.match(t)
+                or re.match(r"^【\s*(?:答案|参考答案|解析|详解|分析)", t)):
+            return True
+    return False
+
+
+def _complete_multipart_practice(index, order, text):
+    """E2 exception: a cued parent, numbered subparts, and its solution marker."""
+    t = _norm(text)
+    if not RE_QNUM.match(t) or _is_instruction_or_answer_text(t):
+        return False
+    prompt_cue = bool(RE_QUESTION_CUE.search(t) or re.match(r"^\s*\d{1,3}\s*[．.、]\s*(?:下图|下表)", t))
+    return (prompt_cue and _following_subquestion_run(index, order)
+            and _has_following_answer_analysis(index, order))
 
 
 def _short_structured_prompt(index, order, stripped):
@@ -455,10 +482,14 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
     reading_group = False
     section_order_set = set(section_orders)
     explicit_group_open = False
+    e2_multipart_zone = False
+    e2_section_has_group = False
     objective_scopes = objective_scopes or {}
     for i, node in enumerate(index.nodes):
         if i in section_order_set:
             explicit_group_open = False
+            e2_multipart_zone = _heading_text(index.nodes[i].text).startswith("随学随练")
+            e2_section_has_group = False
         t = _norm(node.text)
         if not t:
             continue
@@ -486,12 +517,19 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
         block = node.block
         has_formula = bool(block and (block.math_count or block.oles))
         number = _question_start_strength(t, mode, previous_number, has_formula)
+        complete_multipart = (e2_multipart_zone and mode in ("body", "exercise")
+                              and not e2_section_has_group
+                              and _complete_multipart_practice(index, i, t))
         if number is None or mode in ("knowledge", "answer", "analysis"):
-            if mode in ("knowledge", "answer", "analysis"):
+            if complete_multipart:
+                number = int(RE_QNUM.match(t).group().strip().rstrip("．.、 "))
+            elif mode in ("knowledge", "answer", "analysis"):
                 previous_number = None
                 previous_item_order = None
                 reading_group = False
-            continue
+                continue
+            else:
+                continue
         if explicit_group_open:
             # A numbered prompt immediately after an explicit example/variant
             # heading is part of that group, not a new independent question.
@@ -520,8 +558,11 @@ def detect_question_runs(index, zones, section_orders, material_orders, objectiv
                         "evidence": "连续阅读题之间出现独立长文材料"})
         if not same_reading_group:
             out.append({"node": node.id, "role": "question_group", "conf": "high",
-                        "evidence": "题号 + 题干特征" if RE_QUESTION_CUE.search(t)
-                        else "练习区连续题号"})
+                        "evidence": ("题干 + 连续小问结构" if complete_multipart
+                                     else "题号 + 题干特征" if RE_QUESTION_CUE.search(t)
+                                     else "练习区连续题号")})
+            if e2_multipart_zone:
+                e2_section_has_group = True
         previous_number = number
         previous_item_order = i
         reading_group = is_reading or material_context
@@ -557,6 +598,10 @@ def detect(index, doc):
                 "body" if title.startswith("教学内容") else "knowledge")
         elif RE_TYPE_HEAD.match(title) or RE_ANGLE_SECTION.match(title):
             hit, zone = ("section", "栏目/题型标题"), "exercise"
+        elif title.startswith("随学随练"):
+            # This heading scopes only the E2 local-completeness exception.
+            # It does not enable exercise-zone sequential numbering.
+            hit, zone = ("section", "知识模块局部补题标题"), "body"
         elif (RE_NUMERIC_SECTION.match(t) and next_nonempty is not None
               and RE_SOURCE_CITATION.match(_norm(next_nonempty.text))):
             hit, zone = ("section", "材料前的独立序号"), "body"
@@ -732,6 +777,7 @@ def detect(index, doc):
     if toc_containers:
         cands = [c for c in cands if not (c["node"] in index.by_id and
                   any(c["node"] in index.descendants[tc] for tc in toc_containers))]
+    schedule_e2_examples(index, cands)
     def candidate_order(c):
         nid = c["node"]
         o = index.order_of(nid)
@@ -740,6 +786,95 @@ def detect(index, doc):
             o = index.order_of(first) if first else 10 ** 9
         return o
     return sorted(cands, key=candidate_order)
+
+
+def _e2_example_number(text):
+    match = re.match(r"^[【\[（(]?(?:经典)?例题?\s*(\d+)", _heading_text(text))
+    return int(match.group(1)) if match else None
+
+
+def _e2_complete_example(index, order):
+    """An example is dispatchable only with a prompt and a solution boundary."""
+    node = index.nodes[order]
+    title = _heading_text(node.text)
+    remainder = re.sub(r"^[【\[（(]?(?:经典)?例题?\s*\d+(?:[-－.．]\d+)?\s*", "", title)
+    prompt_order, prompt_text = order, remainder
+    if not prompt_text:
+        prompt = next((n for n in index.nodes[order + 1:]
+                       if n.container == node.container and _norm(n.text)), None)
+        if prompt is None:
+            return False
+        prompt_order = prompt.order
+        prompt_text = _norm(prompt.text)
+    prompt_complete = bool(RE_QUESTION_CUE.search(prompt_text)
+                           or RE_EXPLICIT_QUESTION_MARKER.search(prompt_text)
+                           or (RE_QNUM.match(prompt_text)
+                               and _complete_multipart_practice(index, prompt_order, prompt_text)))
+    return prompt_complete and _has_following_answer_analysis(index, prompt_order)
+
+
+def _is_e2_knowledge_module(index, candidate):
+    if candidate.get("role") not in ("knowledge", "section"):
+        return False
+    if (candidate.get("evidence") == "正文内定义/提示标签"
+            or candidate.get("role") == "section" and candidate.get("zone") != "knowledge"):
+        return False
+    node_id = candidate["node"]
+    order = index.order_of(node_id)
+    if order is None:
+        return False
+    title = _heading_text(index.nodes[order].text)
+    return bool(
+        RE_SECTION_HEAD.match(title.rstrip("】]）) "))
+        or any(role == "knowledge" and pattern.match(title)
+               for pattern, role in BLOCK_ROLES))
+
+
+def _is_e2_practice_section(index, candidate):
+    if candidate.get("role") != "section":
+        return False
+    if candidate.get("evidence") == "知识模块局部补题标题":
+        return True
+    order = index.order_of(candidate["node"])
+    return bool(order is not None and any(
+        _heading_text(index.nodes[order].text).startswith(label)
+        for label in EXERCISE_LABELS))
+
+
+def schedule_e2_examples(index, candidates):
+    """Top up each knowledge module locally with complete extra examples."""
+    ordered = sorted(candidates, key=lambda c: index.order_of(c["node"])
+                     if index.order_of(c["node"]) is not None else 10 ** 9)
+    modules = [c for c in ordered if _is_e2_knowledge_module(index, c)]
+    explicit_examples = [c for c in ordered
+                         if c.get("role") == "question_group"
+                         and str(c.get("evidence", "")).startswith("显式例题/变式题标题")
+                         and _e2_example_number(index.text_of(c["node"]) or "") is not None]
+    for pos, module in enumerate(modules):
+        start = index.order_of(module["node"])
+        end = index.order_of(modules[pos + 1]["node"]) if pos + 1 < len(modules) else len(index.nodes)
+        module_examples = [c for c in explicit_examples
+                           if start < index.order_of(c["node"]) < end]
+        practice_heads = [c for c in ordered if start < index.order_of(c["node"]) < end
+                          and _is_e2_practice_section(index, c)]
+        practice_start = min((index.order_of(c["node"]) for c in practice_heads), default=end)
+        eligible = [c for c in module_examples if index.order_of(c["node"]) < practice_start]
+        for example in eligible:
+            example["role"] = "knowledge"
+            example["evidence"] = "知识模块额外例题（待局部题量调度）"
+        formal_qgs = [c for c in ordered if c.get("role") == "question_group"
+                      and index.order_of(c["node"]) is not None
+                      and practice_start <= index.order_of(c["node"]) < end]
+        needed = max(0, 2 - len(formal_qgs))
+        dispatchable = sorted(
+            (c for c in eligible if _e2_example_number(index.text_of(c["node"]) or "") != 1
+             and _e2_complete_example(index, index.order_of(c["node"]))),
+            key=lambda c: (_e2_example_number(index.text_of(c["node"]) or ""),
+                           index.order_of(c["node"])))
+        for example in dispatchable[:needed]:
+            example["role"] = "question_group"
+            example["evidence"] = "知识模块题量不足，调度完整额外例题"
+    return candidates
 
 
 def build_units(index, cands):
