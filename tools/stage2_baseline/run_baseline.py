@@ -173,6 +173,48 @@ def _question_start_strength(text, mode, previous_number, has_formula=False):
 MIN_RECOVERED_STEM_LEN = 12
 MIN_CITED_STEM_LEN = 24
 RE_LEAD_CITATION = re.compile(r"^\s*[（(][^）)]{2,30}[）)]")
+RE_CITED_READING_PROMPT = re.compile(r"阅读.{0,16}回答问题|阅读材料.{0,16}作答")
+RE_SHORT_CALCULATION_PROMPT = re.compile(r"(?:计算|化简|求值|求出|求解)")
+RE_SUBQUESTION_START = re.compile(r"^\s*[（(]\s*(\d+)\s*[）)]")
+
+
+def _following_subquestion_run(index, order, window=12, min_parts=2):
+    """Whether a short numbered prompt is followed by a genuine multipart body."""
+    parts = set()
+    seen = 0
+    container = index.nodes[order].container
+    for node in index.nodes[order + 1:]:
+        if node.container != container:
+            break
+        t = _norm(node.text)
+        if not t:
+            continue
+        if RE_QNUM.match(t) or re.match(r"^\s*(?:【\s*)?(?:答案|分析|详解|解答)", t):
+            break
+        seen += 1
+        match = RE_SUBQUESTION_START.match(t)
+        if match:
+            parts.add(int(match.group(1)))
+        if seen >= window:
+            break
+    return len(parts) >= min_parts
+
+
+def _short_structured_prompt(index, order, stripped):
+    """Completeness evidence for compact calculation and cited reading prompts.
+
+    Some valid source questions distribute the mathematical expression or the
+    multipart body across following XML nodes, while a reading prompt's citation
+    and "read and answer" lead-in form a complete task even before its passage.
+    """
+    node = index.nodes[order]
+    block = node.block
+    has_formula = bool(block and (block.math_count or block.oles))
+    is_calculation = bool(RE_SHORT_CALCULATION_PROMPT.search(stripped))
+    if is_calculation and (has_formula or _following_subquestion_run(index, order)):
+        return True
+    return bool(RE_LEAD_CITATION.match(stripped)
+                and RE_CITED_READING_PROMPT.search(stripped))
 
 
 def _following_option_run(index, order, window=8, min_options=2):
@@ -221,9 +263,11 @@ def _recoverable_question_start(index, order, text):
         return None
     stripped = re.sub(r"^\s*\d{1,3}\s*[．.、]\s*", "", t)
     has_marker = bool(RE_EXPLICIT_QUESTION_MARKER.search(t))
+    short_structure = _short_structured_prompt(index, order, stripped)
     # An empty bracket / blank is by itself question evidence, so short stems
-    # carrying one are accepted; other short numbered lines are step labels.
-    if len(stripped) < MIN_RECOVERED_STEM_LEN and not has_marker:
+    # carrying one are accepted. Compact formula and multipart prompts are
+    # accepted only when their source structure supplies completeness evidence.
+    if len(stripped) < MIN_RECOVERED_STEM_LEN and not has_marker and not short_structure:
         return None
     if RE_EXPLANATION_TEXT.match(stripped):
         return None
@@ -233,6 +277,7 @@ def _recoverable_question_start(index, order, text):
         or RE_INLINE_OPTIONS.search(t)
         or (RE_SOURCE_CITATION.match(stripped) and len(stripped) >= MIN_CITED_STEM_LEN)
         or (RE_LEAD_CITATION.match(stripped) and len(stripped) >= MIN_CITED_STEM_LEN)
+        or short_structure
         or _following_option_run(index, order)
     )
     if not evidence:

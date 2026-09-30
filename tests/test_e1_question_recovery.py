@@ -225,6 +225,51 @@ def test_x012_recovers_missing_questions():
     assert len(starts) >= 40, "X012 题组数未提升（%d，期望 ≥40）" % len(starts)
 
 
+def test_residual_x006_cited_reading_prompt_recovers():
+    """A cited reading task can have a short lead-in before its passage."""
+    loaded = _load("X006")
+    if loaded is None:
+        print("  [SKIP] X006 源文件不可用")
+        return
+    index, units = loaded
+    starts = _qg_starts(index, units)
+    o = _find_order(index, "39．（2024秋•鞍山期末）阅读短文，回答问题")
+    assert o is not None, "未找到 X006 第39题阅读题干"
+    assert o in starts, "R5: 带来源标记的完整阅读题未恢复题界"
+
+
+def test_residual_x012_short_calculation_prompts_recover():
+    """Short calculation labels are complete when formula/part structure follows."""
+    loaded = _load("X012")
+    if loaded is None:
+        print("  [SKIP] X012 源文件不可用")
+        return
+    index, units = loaded
+    starts = _qg_starts(index, units)
+    for needle in ("6．计算：", "8．计算：", "9．计算"):
+        o = _find_order(index, needle)
+        assert o is not None, "未找到 X012 残余题目: %s" % needle
+        assert o in starts, "R5: 完整短计算题未恢复题界: %s" % needle
+
+
+def test_short_numbered_calculation_step_stays_suppressed():
+    """A short numbered calculation step inside an explanation is not a new QG."""
+    doc = _fixture([
+        "1．下列说法正确的是（　　）",
+        "A．甲",
+        "B．乙",
+        "【答案】A",
+        "【详解】根据题意逐步计算。",
+        "1.计算：",
+        "代入原式即可得到结果。",
+        "【答案】A",
+    ])
+    index, units = predict(doc)
+    starts = _qg_starts(index, units)
+    step = next(n.order for n in index.nodes if n.text == "1.计算：")
+    assert step not in starts, "短编号解析步骤被误判为新题组"
+
+
 ALL = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
 
 
