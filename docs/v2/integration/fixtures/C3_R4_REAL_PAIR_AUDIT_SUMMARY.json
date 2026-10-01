@@ -1,0 +1,2236 @@
+{
+  "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN",
+  "approved_manifests": 0,
+  "derived_studentizer_outputs": 0,
+  "wps_derived_uat": "NOT_RUN_NO_APPROVED_DERIVATIVE",
+  "sources": [
+    {
+      "sample_id": "X001",
+      "subject": "physics",
+      "source_sha256": "cbd854ce5155e71bac9bf37a8e5f423019eb28a8133830cd6fe3ef0078d22021",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 928,
+      "document_sha256": "94c91a2a7b2cc988e28e71d08912045934a6aba5f8662f78f18181ec17fda15e",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X002",
+      "subject": "physics",
+      "source_sha256": "b01bee652e52fb8689ea5db63c2897d3b63cf650777cd43c6354e5ded50e17fe",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 494,
+      "document_sha256": "aab0f639a4e9cd41b5b3c19c65af4ae3bec38e96d5975caaaf8a9fb4ba51dd8e",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X003",
+      "subject": "physics",
+      "source_sha256": "c2ca024c794d60d0b68916592f38f4ed0d3b550c3e91057ac7efe06054d810ec",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 396,
+      "document_sha256": "962219105ab5f123166b6cdbd919f4ce1ef6a20b6d045fb2037dfdb1463110c8",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X004",
+      "subject": "physics",
+      "source_sha256": "6e8ba62da63916b6e0bfa072c59102ab5074ba089f2b4c83a084264ccfaea755",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 859,
+      "document_sha256": "d6fe0c738ad348edc505ad9fb67e0d8ae0b2f2f805a10774d898018ee291f668",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X005",
+      "subject": "physics",
+      "source_sha256": "c66f88d26f1fae9306442ef8e1f55a807d3e705edaa37e57334d4499d3c6a009",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 357,
+      "document_sha256": "545171f2fec601a5129840f5d85a0e9eeb0e2c29c11e9281b79b14560d40d288",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X006",
+      "subject": "physics",
+      "source_sha256": "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 862,
+      "document_sha256": "4372265adadd8d297deb8d209289b52f7c1df95b59e30e39ba0fab16f4c4cabb",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X007",
+      "subject": "physics",
+      "source_sha256": "fb08ccae04b5140607a67d3e80526efa7d9a96f787c9c558b1c9b6bd3ab26e2a",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 145,
+      "document_sha256": "d05039f4a01216f2e2ef6a03ec6a2798b9c445b41808a1d68c6e286d93323fcd",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X008",
+      "subject": "physics",
+      "source_sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 264,
+      "document_sha256": "c22e5213f33a7be9ea3c0c5189fc62bdca75057ad7e57284397b228e622f66c2",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X009",
+      "subject": "physics",
+      "source_sha256": "d66018c144badbbfb2c9418221720a47abc57293efc6ee8214599ddb8ed8314b",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 168,
+      "document_sha256": "9c2cb3916895d4315fd4b48c968c8f54cb11760e1d9962deb2aa13501596cc4f",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X010",
+      "subject": "physics",
+      "source_sha256": "48657169b8567b5c2b94714e70f0818e51a726b3b3bc0b46837a89380fb6b67a",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 302,
+      "document_sha256": "a4d761122970089a9be304614d74c4ef470725c2b72cb2c3b72e130f8b1f7883",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X011",
+      "subject": "mathematics",
+      "source_sha256": "05159219160e645f615cd408c448806aa940c18160557661215752bcd53cffb2",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 221,
+      "document_sha256": "d5ea6a00ee581418dafd0a3aa217d65c079d9fca2b2aa089039286a403fe12d7",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X012",
+      "subject": "mathematics",
+      "source_sha256": "c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 794,
+      "document_sha256": "885dc75d00090ef64fec4fcae507fccf26640c481aa2cd2413a8a9c862e1c87a",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X013",
+      "subject": "mathematics",
+      "source_sha256": "c9702e8da1997065d903cca16ec2ff9af3df987f921ec620bb0bb5c491a4d1fc",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 223,
+      "document_sha256": "a9fbe741cf97477e5db618a068ec3c39fed88997d76a20b7ee5a633d01bc222a",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X014",
+      "subject": "mathematics",
+      "source_sha256": "1c6aace1947016c0d03a531dac2811ca582be6286824d4eb76ced4b32eecaede",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 656,
+      "document_sha256": "99974b24ceec45b79eba3ddc828a10fe8c13c3ff79ee0e297a8d70de4747fa7f",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X015",
+      "subject": "mathematics",
+      "source_sha256": "4929eaeb604962e34d866509782b2365693afbb95bd760af6618e9af1786e922",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 299,
+      "document_sha256": "a781b91151f66a767b96092b1a80121a0d41ec7279518b6255a7a9252e761d9b",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X016",
+      "subject": "mathematics",
+      "source_sha256": "6ac70b3647633f8562883e9c32729d10cfcb866794a2d80e4e12f9a979f8262d",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 1114,
+      "document_sha256": "eeb669823a3c4e5acdf4ef9e30c8a6ea0b9c62f0a511b8cc5e2ad822c3f87d25",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X017",
+      "subject": "chemistry",
+      "source_sha256": "37a122a04516764af8f4d89844d7b4724500104f94b514b186191566223a2ab3",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 207,
+      "document_sha256": "1097f10e8aa00c0af7d61ba3f086e186bbe38389215a0d034222319749749ee7",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X018",
+      "subject": "chemistry",
+      "source_sha256": "c2ca52c3967b650fd16aad965fa46687cce309a8b03905b57757da4fcb247e8c",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 399,
+      "document_sha256": "e60c2a4520b28d6787deed786c4b4769bc32d37a710014a414329b1320ed04c8",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X019",
+      "subject": "chemistry",
+      "source_sha256": "9d99c793b5a7f0fd4b800729b096ebe18645058fd3bbf83eb624d786df329758",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 192,
+      "document_sha256": "f586220821bc793e3ac7677f6454bedbf5a5dc2c1bbe37468837965a8863cbc0",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X020",
+      "subject": "chemistry",
+      "source_sha256": "1ccdcda89f832e7b3e5b82b6b302be4582af08ca031ab381d58fb691bf24f388",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 399,
+      "document_sha256": "15dab4c0672702ee0b30ab9578dc6d3fb45b916aec9784e3fc5002d55e3d8619",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X021",
+      "subject": "chemistry",
+      "source_sha256": "e10818f40e99da4234051b1beeac852f4e8090475cdb96283fbf1bcb5b44a6f4",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 334,
+      "document_sha256": "2944769e377460eb57bc64cba68db551dde4aa610f5d91e2058f6bd35050ce9c",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X022",
+      "subject": "chemistry",
+      "source_sha256": "6d1257211c6ee9b4b40c28cc648ec0b8c7baabcec7863acb385051c1037f442b",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 120,
+      "document_sha256": "efecd50ffacbbb78f61f300bf404daf4d9a85099c6e12a20b94de765c530267e",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X023",
+      "subject": "chemistry",
+      "source_sha256": "19fe81bd43f19e9acb2170b2d431452690c179cbecb4e4ee773f8e024eef0163",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 630,
+      "document_sha256": "2236251134f49a30c0dcb82c96633242a228626db4a0a0b142e0bef95c681ad5",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X024",
+      "subject": "chemistry",
+      "source_sha256": "b427e0c2c48e0873d30533cadb3fe31ceadae99a997e8542b7a8f8150912c908",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 328,
+      "document_sha256": "53f50346cdf2508758f8210bc4b50765081674bcd9196c1a2695bd4a12252a83",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X025",
+      "subject": "chemistry",
+      "source_sha256": "92dbe48d732b9350b4fc1b06f479edd3b696942cd585a68d853b652788c799fd",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 614,
+      "document_sha256": "4a8ce827893a69a2ba6ea8d9045b090ff7599fb4421e2d19161c7a4d8e99c7b7",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X026",
+      "subject": "chemistry",
+      "source_sha256": "61e45171e13a2e49c76cac052258b5d7c70cc9047e80abb491db870d9323ea05",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 278,
+      "document_sha256": "695a967733f3a12f2ddff8a6dca1695e05a74a9069cc3916580126ca8bd67a10",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    },
+    {
+      "sample_id": "X027",
+      "subject": "chemistry",
+      "source_sha256": "fdc96b41a6d2f660f9a3db7c2623db0a055923d9571879b43b73fe518a59c360",
+      "manifest_sha_ok": true,
+      "source_unchanged": true,
+      "body_count": 530,
+      "document_sha256": "e2e9807ee366a0acb7983e92a420e32e3f186a0011b965bc8a949b78530875d5",
+      "authority": "DIAGNOSTIC_ONLY_NOT_REVIEWED_GOLDEN"
+    }
+  ],
+  "corpus_pairs": [
+    {
+      "teacher": "X001",
+      "student": "X002",
+      "subject": "physics",
+      "teacher_body_count": 928,
+      "student_body_count": 494,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 17,
+      "student_table_count": 17,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 1124,
+        "tbl": 17,
+        "oMath": 0,
+        "drawing": 101,
+        "pict": 2,
+        "OLEObject": 332,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 6
+      },
+      "student_features": {
+        "p": 690,
+        "tbl": 17,
+        "oMath": 0,
+        "drawing": 91,
+        "pict": 2,
+        "OLEObject": 99,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 6
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0,
+          4,
+          8,
+          36,
+          58,
+          66,
+          91,
+          101,
+          118,
+          133,
+          143,
+          148,
+          149,
+          176,
+          250,
+          251,
+          306,
+          329,
+          330,
+          383,
+          443,
+          552,
+          623
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          2,
+          149,
+          177,
+          196,
+          251,
+          268,
+          295,
+          307,
+          330,
+          337,
+          353,
+          384,
+          444,
+          514,
+          553,
+          850,
+          866
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          48,
+          76
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 13,
+        "body": 11,
+        "question_group": 62,
+        "answer": 88,
+        "analysis": 32
+      },
+      "student_semantic_roles": {
+        "section": 13,
+        "body": 11,
+        "question_group": 24
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 151
+    },
+    {
+      "teacher": "X004",
+      "student": "X003",
+      "subject": "physics",
+      "teacher_body_count": 859,
+      "student_body_count": 396,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 6,
+      "student_table_count": 6,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 908,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 73,
+        "pict": 0,
+        "OLEObject": 497,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 445,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 64,
+        "pict": 0,
+        "OLEObject": 147,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          2,
+          64,
+          197,
+          219,
+          471,
+          483
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          2,
+          5,
+          48,
+          90,
+          148,
+          226,
+          260,
+          353,
+          411,
+          443,
+          492,
+          540,
+          612,
+          703,
+          737,
+          787
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 34,
+        "body": 2,
+        "question_group": 78,
+        "answer": 69,
+        "analysis": 78
+      },
+      "student_semantic_roles": {
+        "section": 33,
+        "body": 2,
+        "question_group": 78
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 152
+    },
+    {
+      "teacher": "X006",
+      "student": "X005",
+      "subject": "physics",
+      "teacher_body_count": 862,
+      "student_body_count": 357,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 4,
+      "student_table_count": 4,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 905,
+        "tbl": 4,
+        "oMath": 127,
+        "drawing": 81,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 401,
+        "tbl": 4,
+        "oMath": 2,
+        "drawing": 62,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          28,
+          29
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          251,
+          284,
+          523,
+          553
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          855,
+          859
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 169,
+        "body": 83,
+        "question_group": 60,
+        "answer": 67
+      },
+      "student_semantic_roles": {
+        "section": 82,
+        "body": 9,
+        "question_group": 59
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 328
+    },
+    {
+      "teacher": "X008",
+      "student": "X007",
+      "subject": "physics",
+      "teacher_body_count": 264,
+      "student_body_count": 145,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 0,
+      "student_table_count": 0,
+      "ordered_table_subtrees_byte_equivalent_c14n": true,
+      "ordered_table_subtrees_expanded_name_equal": true,
+      "teacher_features": {
+        "p": 260,
+        "tbl": 0,
+        "oMath": 0,
+        "drawing": 24,
+        "pict": 0,
+        "OLEObject": 4,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 4,
+        "fldChar": 15
+      },
+      "student_features": {
+        "p": 141,
+        "tbl": 0,
+        "oMath": 0,
+        "drawing": 24,
+        "pict": 0,
+        "OLEObject": 4,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 4,
+        "fldChar": 15
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          3,
+          5,
+          9,
+          15
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          3,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          18,
+          19,
+          57,
+          158
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 19,
+        "toc": 1,
+        "question_group": 29,
+        "answer": 35,
+        "analysis": 30
+      },
+      "student_semantic_roles": {
+        "section": 19,
+        "toc": 1,
+        "question_group": 32
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 43
+    },
+    {
+      "teacher": "X010",
+      "student": "X009",
+      "subject": "physics",
+      "teacher_body_count": 302,
+      "student_body_count": 168,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 1,
+      "student_table_count": 1,
+      "ordered_table_subtrees_byte_equivalent_c14n": true,
+      "ordered_table_subtrees_expanded_name_equal": true,
+      "teacher_features": {
+        "p": 316,
+        "tbl": 1,
+        "oMath": 0,
+        "drawing": 47,
+        "pict": 0,
+        "OLEObject": 3,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 8,
+        "fldChar": 15
+      },
+      "student_features": {
+        "p": 182,
+        "tbl": 1,
+        "oMath": 0,
+        "drawing": 41,
+        "pict": 0,
+        "OLEObject": 3,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 8,
+        "fldChar": 15
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          3,
+          7,
+          12,
+          19
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          3,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          22,
+          23,
+          66,
+          209
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          287
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 21,
+        "toc": 1,
+        "question_group": 32,
+        "answer": 37,
+        "analysis": 33
+      },
+      "student_semantic_roles": {
+        "section": 21,
+        "toc": 1,
+        "question_group": 36
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 57
+    },
+    {
+      "teacher": "X012",
+      "student": "X011",
+      "subject": "mathematics",
+      "teacher_body_count": 794,
+      "student_body_count": 221,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 9,
+      "student_table_count": 9,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 909,
+        "tbl": 9,
+        "oMath": 786,
+        "drawing": 18,
+        "pict": 0,
+        "OLEObject": 9,
+        "txbxContent": 0,
+        "numPr": 8,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 336,
+        "tbl": 9,
+        "oMath": 248,
+        "drawing": 18,
+        "pict": 0,
+        "OLEObject": 9,
+        "txbxContent": 0,
+        "numPr": 8,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          160,
+          188,
+          411,
+          422,
+          431,
+          553,
+          583,
+          621
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          792
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 34,
+        "body": 9,
+        "question_group": 56,
+        "answer": 78,
+        "analysis": 66
+      },
+      "student_semantic_roles": {
+        "section": 35,
+        "body": 14,
+        "question_group": 42
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 14
+    },
+    {
+      "teacher": "X014",
+      "student": "X013",
+      "subject": "mathematics",
+      "teacher_body_count": 656,
+      "student_body_count": 223,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 1,
+      "student_table_count": 1,
+      "ordered_table_subtrees_byte_equivalent_c14n": true,
+      "ordered_table_subtrees_expanded_name_equal": true,
+      "teacher_features": {
+        "p": 671,
+        "tbl": 1,
+        "oMath": 628,
+        "drawing": 34,
+        "pict": 0,
+        "OLEObject": 23,
+        "txbxContent": 0,
+        "numPr": 12,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 238,
+        "tbl": 1,
+        "oMath": 191,
+        "drawing": 32,
+        "pict": 0,
+        "OLEObject": 23,
+        "txbxContent": 0,
+        "numPr": 12,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          654
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 42,
+        "body": 11,
+        "question_group": 63,
+        "answer": 81,
+        "analysis": 71
+      },
+      "student_semantic_roles": {
+        "section": 40,
+        "body": 15,
+        "question_group": 38
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 9
+    },
+    {
+      "teacher": "X016",
+      "student": "X015",
+      "subject": "mathematics",
+      "teacher_body_count": 1114,
+      "student_body_count": 299,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 28,
+      "student_table_count": 27,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 1415,
+        "tbl": 29,
+        "oMath": 1549,
+        "drawing": 39,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 23,
+        "bookmarkStart": 3,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 587,
+        "tbl": 28,
+        "oMath": 370,
+        "drawing": 37,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 23,
+        "bookmarkStart": 3,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          185,
+          287,
+          314,
+          338,
+          397,
+          421,
+          459,
+          488,
+          535,
+          558,
+          560,
+          589,
+          620,
+          669,
+          682,
+          699,
+          731,
+          749,
+          796,
+          816,
+          890,
+          903,
+          941,
+          989,
+          1036,
+          1038,
+          1086
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          4,
+          9,
+          1085
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 14,
+        "body": 8,
+        "question_group": 43,
+        "answer": 63,
+        "analysis": 48
+      },
+      "student_semantic_roles": {
+        "section": 14,
+        "body": 8,
+        "question_group": 25
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 23
+    },
+    {
+      "teacher": "X018",
+      "student": "X017",
+      "subject": "chemistry",
+      "teacher_body_count": 399,
+      "student_body_count": 207,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 8,
+      "student_table_count": 8,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 550,
+        "tbl": 8,
+        "oMath": 0,
+        "drawing": 80,
+        "pict": 7,
+        "OLEObject": 6,
+        "txbxContent": 16,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 358,
+        "tbl": 8,
+        "oMath": 0,
+        "drawing": 80,
+        "pict": 7,
+        "OLEObject": 0,
+        "txbxContent": 16,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TEXTBOX_SCOPE_UNSUPPORTED": [
+          0,
+          17,
+          35,
+          52,
+          152,
+          180,
+          204
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          0,
+          3
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          15,
+          33,
+          73,
+          116,
+          118,
+          144,
+          166
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          397
+        ]
+      },
+      "teacher_semantic_roles": {
+        "body": 5,
+        "section": 14,
+        "question_group": 30,
+        "knowledge": 2,
+        "answer": 44,
+        "analysis": 33
+      },
+      "student_semantic_roles": {
+        "body": 7,
+        "section": 14,
+        "question_group": 27,
+        "knowledge": 2
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 205
+    },
+    {
+      "teacher": "X020",
+      "student": "X019",
+      "subject": "chemistry",
+      "teacher_body_count": 399,
+      "student_body_count": 192,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 5,
+      "student_table_count": 5,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 502,
+        "tbl": 5,
+        "oMath": 0,
+        "drawing": 38,
+        "pict": 7,
+        "OLEObject": 9,
+        "txbxContent": 16,
+        "numPr": 1,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 295,
+        "tbl": 5,
+        "oMath": 0,
+        "drawing": 38,
+        "pict": 7,
+        "OLEObject": 6,
+        "txbxContent": 16,
+        "numPr": 1,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TEXTBOX_SCOPE_UNSUPPORTED": [
+          0,
+          27,
+          37,
+          58,
+          124,
+          152,
+          177
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          0,
+          3
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          32,
+          35,
+          56,
+          238
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          9
+        ]
+      },
+      "teacher_semantic_roles": {
+        "body": 7,
+        "section": 12,
+        "knowledge": 2,
+        "question_group": 25,
+        "answer": 43,
+        "analysis": 31,
+        "shared_material": 1
+      },
+      "student_semantic_roles": {
+        "body": 10,
+        "section": 12,
+        "knowledge": 2,
+        "question_group": 20,
+        "shared_material": 1
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 192
+    },
+    {
+      "teacher": "X022",
+      "student": "X021",
+      "subject": "chemistry",
+      "teacher_body_count": 120,
+      "student_body_count": 334,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 0,
+      "student_table_count": 12,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 119,
+        "tbl": 0,
+        "oMath": 0,
+        "drawing": 31,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 475,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 48,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 15,
+        "body": 14,
+        "question_group": 42
+      },
+      "student_semantic_roles": {
+        "section": 29,
+        "body": 30,
+        "question_group": 44
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 334
+    },
+    {
+      "teacher": "X023",
+      "student": "X021",
+      "subject": "chemistry",
+      "teacher_body_count": 630,
+      "student_body_count": 334,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 12,
+      "student_table_count": 12,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 770,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 1,
+        "txbxContent": 0,
+        "numPr": 48,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 475,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 48,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          1,
+          393,
+          432
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          20,
+          43,
+          153,
+          182,
+          276,
+          356,
+          393,
+          432,
+          511,
+          521,
+          524,
+          573
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          322
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 29,
+        "body": 32,
+        "answer": 66,
+        "analysis": 15,
+        "question_group": 43
+      },
+      "student_semantic_roles": {
+        "section": 29,
+        "body": 30,
+        "question_group": 44
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 159
+    },
+    {
+      "teacher": "X025",
+      "student": "X024",
+      "subject": "chemistry",
+      "teacher_body_count": 614,
+      "student_body_count": 328,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 6,
+      "student_table_count": 6,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 795,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 86,
+        "pict": 13,
+        "OLEObject": 65,
+        "txbxContent": 28,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 15
+      },
+      "student_features": {
+        "p": 501,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 78,
+        "pict": 9,
+        "OLEObject": 18,
+        "txbxContent": 20,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 15
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TEXTBOX_SCOPE_UNSUPPORTED": [
+          0,
+          11,
+          33,
+          63,
+          84,
+          157,
+          197,
+          235,
+          265,
+          284
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          0,
+          3,
+          27
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          11,
+          27,
+          61,
+          82,
+          116
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          27
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          301
+        ]
+      },
+      "teacher_semantic_roles": {
+        "body": 8,
+        "section": 18,
+        "knowledge": 4,
+        "question_group": 34,
+        "answer": 57,
+        "analysis": 39
+      },
+      "student_semantic_roles": {
+        "body": 13,
+        "section": 18,
+        "knowledge": 4,
+        "question_group": 25
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 328
+    },
+    {
+      "teacher": "X027",
+      "student": "X026",
+      "subject": "chemistry",
+      "teacher_body_count": 530,
+      "student_body_count": 278,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 7,
+      "student_table_count": 7,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 695,
+        "tbl": 7,
+        "oMath": 0,
+        "drawing": 63,
+        "pict": 17,
+        "OLEObject": 72,
+        "txbxContent": 36,
+        "numPr": 0,
+        "bookmarkStart": 41,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 432,
+        "tbl": 7,
+        "oMath": 0,
+        "drawing": 57,
+        "pict": 11,
+        "OLEObject": 26,
+        "txbxContent": 24,
+        "numPr": 0,
+        "bookmarkStart": 49,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TEXTBOX_SCOPE_UNSUPPORTED": [
+          0,
+          14,
+          35,
+          38,
+          39,
+          42,
+          43,
+          45,
+          46,
+          49,
+          89,
+          173,
+          204,
+          233
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          0,
+          2
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          3,
+          33,
+          38,
+          42,
+          45,
+          69,
+          405
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          13,
+          34,
+          38,
+          51,
+          54,
+          55,
+          78,
+          80,
+          82,
+          85,
+          86,
+          87,
+          88,
+          89,
+          96,
+          108,
+          109,
+          110,
+          114,
+          116,
+          144,
+          148,
+          360,
+          444
+        ]
+      },
+      "teacher_semantic_roles": {
+        "body": 5,
+        "section": 14,
+        "question_group": 36,
+        "knowledge": 3,
+        "answer": 53,
+        "analysis": 38
+      },
+      "student_semantic_roles": {
+        "body": 9,
+        "section": 14,
+        "question_group": 33,
+        "knowledge": 3
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "student_blocks_absent_from_teacher_count": 273
+    }
+  ],
+  "legacy_pairs": [
+    {
+      "teacher": "X006",
+      "student": "X006-V09",
+      "subject": "physics",
+      "teacher_body_count": 862,
+      "student_body_count": 1170,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 4,
+      "student_table_count": 4,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 905,
+        "tbl": 4,
+        "oMath": 127,
+        "drawing": 81,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 1262,
+        "tbl": 4,
+        "oMath": 105,
+        "drawing": 62,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          28,
+          29
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          251,
+          284,
+          523,
+          553
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          855,
+          859
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 169,
+        "body": 83,
+        "question_group": 60,
+        "answer": 67
+      },
+      "student_semantic_roles": {
+        "section": 84,
+        "body": 37,
+        "question_group": 58
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "A",
+      "job_id": "0cf5b084f8d34763924b74a9af69ab0c",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X004",
+      "student": "X004-V09",
+      "subject": "physics",
+      "teacher_body_count": 859,
+      "student_body_count": 1222,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 6,
+      "student_table_count": 6,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 908,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 73,
+        "pict": 0,
+        "OLEObject": 497,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 1274,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 64,
+        "pict": 0,
+        "OLEObject": 147,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 96
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          2,
+          64,
+          197,
+          219,
+          471,
+          483
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          2,
+          5,
+          48,
+          90,
+          148,
+          226,
+          260,
+          353,
+          411,
+          443,
+          492,
+          540,
+          612,
+          703,
+          737,
+          787
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 34,
+        "body": 2,
+        "question_group": 78,
+        "answer": 69,
+        "analysis": 78
+      },
+      "student_semantic_roles": {
+        "section": 33,
+        "body": 2,
+        "question_group": 78
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "A",
+      "job_id": "2e926807668a4ebfb6ffc2ee9678f731",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X023",
+      "student": "X023-V09",
+      "subject": "chemistry",
+      "teacher_body_count": 630,
+      "student_body_count": 660,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 12,
+      "student_table_count": 12,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 770,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 1,
+        "txbxContent": 0,
+        "numPr": 48,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 818,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 60,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          1,
+          393,
+          432
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          20,
+          43,
+          153,
+          182,
+          276,
+          356,
+          393,
+          432,
+          511,
+          521,
+          524,
+          573
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          322
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 29,
+        "body": 32,
+        "answer": 66,
+        "analysis": 15,
+        "question_group": 43
+      },
+      "student_semantic_roles": {
+        "section": 29,
+        "body": 56,
+        "question_group": 44
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "A",
+      "job_id": "8310e43925a1409089eee5146cabd813",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X025",
+      "student": "X025-V09",
+      "subject": "chemistry",
+      "teacher_body_count": 614,
+      "student_body_count": 734,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 6,
+      "student_table_count": 6,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 795,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 86,
+        "pict": 13,
+        "OLEObject": 65,
+        "txbxContent": 28,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 15
+      },
+      "student_features": {
+        "p": 954,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 84,
+        "pict": 13,
+        "OLEObject": 18,
+        "txbxContent": 28,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 15
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TEXTBOX_SCOPE_UNSUPPORTED": [
+          0,
+          11,
+          33,
+          63,
+          84,
+          157,
+          197,
+          235,
+          265,
+          284
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          0,
+          3,
+          27
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          11,
+          27,
+          61,
+          82,
+          116
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          27
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          301
+        ]
+      },
+      "teacher_semantic_roles": {
+        "body": 8,
+        "section": 18,
+        "knowledge": 4,
+        "question_group": 34,
+        "answer": 57,
+        "analysis": 39
+      },
+      "student_semantic_roles": {
+        "body": 39,
+        "section": 18,
+        "knowledge": 4,
+        "question_group": 25
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "A",
+      "job_id": "ac180a46a327498bae0c81830430c033",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X001",
+      "student": "X001-V09",
+      "subject": "physics",
+      "teacher_body_count": 928,
+      "student_body_count": 1486,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 17,
+      "student_table_count": 17,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 1124,
+        "tbl": 17,
+        "oMath": 0,
+        "drawing": 101,
+        "pict": 2,
+        "OLEObject": 332,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 6
+      },
+      "student_features": {
+        "p": 1997,
+        "tbl": 17,
+        "oMath": 0,
+        "drawing": 91,
+        "pict": 2,
+        "OLEObject": 99,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 84
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0,
+          4,
+          8,
+          36,
+          58,
+          66,
+          91,
+          101,
+          118,
+          133,
+          143,
+          148,
+          149,
+          176,
+          250,
+          251,
+          306,
+          329,
+          330,
+          383,
+          443,
+          552,
+          623
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          2,
+          149,
+          177,
+          196,
+          251,
+          268,
+          295,
+          307,
+          330,
+          337,
+          353,
+          384,
+          444,
+          514,
+          553,
+          850,
+          866
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          48,
+          76
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 13,
+        "body": 11,
+        "question_group": 62,
+        "answer": 88,
+        "analysis": 32
+      },
+      "student_semantic_roles": {
+        "section": 13,
+        "body": 97,
+        "question_group": 24
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "A",
+      "job_id": "bc049832f12e437cbfefe141e9b77457",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X004",
+      "student": "X004-V09",
+      "subject": "physics",
+      "teacher_body_count": 859,
+      "student_body_count": 1222,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 6,
+      "student_table_count": 6,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 908,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 73,
+        "pict": 0,
+        "OLEObject": 497,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 1274,
+        "tbl": 6,
+        "oMath": 0,
+        "drawing": 64,
+        "pict": 0,
+        "OLEObject": 147,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 96
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          2,
+          64,
+          197,
+          219,
+          471,
+          483
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          2,
+          5,
+          48,
+          90,
+          148,
+          226,
+          260,
+          353,
+          411,
+          443,
+          492,
+          540,
+          612,
+          703,
+          737,
+          787
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 34,
+        "body": 2,
+        "question_group": 78,
+        "answer": 69,
+        "analysis": 78
+      },
+      "student_semantic_roles": {
+        "section": 33,
+        "body": 2,
+        "question_group": 78
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "C",
+      "job_id": "86a49cc854614a50b5d4a3af53a56831",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X006",
+      "student": "X006-V09",
+      "subject": "physics",
+      "teacher_body_count": 862,
+      "student_body_count": 1170,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 4,
+      "student_table_count": 4,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 905,
+        "tbl": 4,
+        "oMath": 127,
+        "drawing": 81,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 1262,
+        "tbl": 4,
+        "oMath": 105,
+        "drawing": 62,
+        "pict": 0,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 0,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          28,
+          29
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          251,
+          284,
+          523,
+          553
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          855,
+          859
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 169,
+        "body": 83,
+        "question_group": 60,
+        "answer": 67
+      },
+      "student_semantic_roles": {
+        "section": 84,
+        "body": 37,
+        "question_group": 58
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c2-round6",
+      "case": "D",
+      "job_id": "7302a197cc6d4224a9ad6e9c1bff5a03",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X021",
+      "student": "X021-V09",
+      "subject": "chemistry",
+      "teacher_body_count": 334,
+      "student_body_count": 364,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 12,
+      "student_table_count": 12,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 475,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 48,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 523,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 60,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          1,
+          223,
+          240
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          20,
+          38,
+          97,
+          113,
+          165,
+          207,
+          223,
+          240,
+          277,
+          281,
+          284,
+          312
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          192
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 29,
+        "body": 30,
+        "question_group": 44
+      },
+      "student_semantic_roles": {
+        "section": 29,
+        "body": 41,
+        "question_group": 44
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c1-final",
+      "case": "c1-final-runtime-20261001",
+      "job_id": "f87f61acc0eb4ba5aeb8f47ab076147d",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X012",
+      "student": "X012-V09",
+      "subject": "mathematics",
+      "teacher_body_count": 794,
+      "student_body_count": 1067,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 9,
+      "student_table_count": 9,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 909,
+        "tbl": 9,
+        "oMath": 786,
+        "drawing": 18,
+        "pict": 0,
+        "OLEObject": 9,
+        "txbxContent": 0,
+        "numPr": 8,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "student_features": {
+        "p": 1233,
+        "tbl": 9,
+        "oMath": 662,
+        "drawing": 17,
+        "pict": 0,
+        "OLEObject": 9,
+        "txbxContent": 0,
+        "numPr": 26,
+        "bookmarkStart": 1,
+        "fldChar": 0
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          4,
+          160,
+          188,
+          411,
+          422,
+          431,
+          553,
+          583,
+          621
+        ],
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          792
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 34,
+        "body": 9,
+        "question_group": 56,
+        "answer": 78,
+        "analysis": 66
+      },
+      "student_semantic_roles": {
+        "section": 35,
+        "body": 59,
+        "question_group": 42
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c1-rerun",
+      "case": "runtime",
+      "job_id": "0d150f33c6cf4eaa8f1cbc446e9bff4b",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    },
+    {
+      "teacher": "X021",
+      "student": "X021-V09",
+      "subject": "chemistry",
+      "teacher_body_count": 334,
+      "student_body_count": 364,
+      "exact_student_subsequence_embeddings_capped2": 0,
+      "exact_expanded_name_student_subsequence_embeddings_capped2": 0,
+      "teacher_table_count": 12,
+      "student_table_count": 12,
+      "ordered_table_subtrees_byte_equivalent_c14n": false,
+      "ordered_table_subtrees_expanded_name_equal": false,
+      "teacher_features": {
+        "p": 475,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 48,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "student_features": {
+        "p": 523,
+        "tbl": 12,
+        "oMath": 0,
+        "drawing": 220,
+        "pict": 3,
+        "OLEObject": 0,
+        "txbxContent": 0,
+        "numPr": 60,
+        "bookmarkStart": 1,
+        "fldChar": 3
+      },
+      "source_scope_blockers": {
+        "STUDENTIZER_BOOKMARK_SCOPE_UNSUPPORTED": [
+          0
+        ],
+        "STUDENTIZER_REVISION_SCOPE_UNSUPPORTED": [
+          1,
+          223,
+          240
+        ],
+        "STUDENTIZER_TABLE_SCOPE_UNSUPPORTED": [
+          20,
+          38,
+          97,
+          113,
+          165,
+          207,
+          223,
+          240,
+          277,
+          281,
+          284,
+          312
+        ],
+        "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED": [
+          192
+        ]
+      },
+      "teacher_semantic_roles": {
+        "section": 29,
+        "body": 30,
+        "question_group": 44
+      },
+      "student_semantic_roles": {
+        "section": 29,
+        "body": 41,
+        "question_group": 44
+      },
+      "selection": "REJECTED_NO_COMPLETE_APPROVED_DELETION_ALIGNMENT",
+      "authority": "DIAGNOSTIC_ONLY_NO_DELETION_PLAN",
+      "origin": "c1-rerun",
+      "case": "runtime",
+      "job_id": "b22af3820cb54d49a3065b8d6ce5be8c",
+      "teacher_unchanged": true,
+      "student_unchanged": true,
+      "student_marker_candidates": 0
+    }
+  ]
+}
