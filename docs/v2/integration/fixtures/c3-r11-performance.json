@@ -1,0 +1,628 @@
+{
+  "utc": "2026-10-01T15:57:51.783354+00:00",
+  "c2_baselines": {
+    "case_a_teacher_only_5": 121.33,
+    "case_b_teacher_student_3": 13.975
+  },
+  "python": "3.12.10",
+  "records": [
+    {
+      "case": "synthetic-wiring-proof",
+      "note": "SYNTHETIC reviewed source: proves the reviewed-supported teacher-only path reaches XML with zero COM and zero fallback. Not a real-corpus measurement.",
+      "template": "1v1",
+      "is_batch": false,
+      "files": [
+        "合成专题 教师版.docx"
+      ],
+      "distinct_source_sha256": [
+        "63a4fb2065116e2c464f96a8a768032b1e7e49e8bcb2290e55bd291d9cf06835"
+      ],
+      "items": 1,
+      "started_utc": "2026-10-01T15:49:07.377443+00:00",
+      "ended_utc": "2026-10-01T15:49:08.175351+00:00",
+      "elapsed_seconds": 0.749,
+      "status": "done",
+      "batch_outcome": null,
+      "xml_items": 1,
+      "fallback_items": 0,
+      "fallback_reasons": [],
+      "fallback_details": [],
+      "studentizer_statuses": [
+        "XML_PREPARED"
+      ],
+      "studentizer_reason_codes": [],
+      "studentizer_seconds": 0.411047,
+      "reviewed_evidence": [],
+      "make_student_called_items": 0,
+      "wps_com_started_items": 0,
+      "outputs": 2,
+      "all_packages_valid": true,
+      "item_seconds": [
+        0.677
+      ],
+      "instrumentation": {
+        "com_script_invocations": 0,
+        "make_student_calls": 0,
+        "aline_calls": 3,
+        "slot_router_total_calls": 2,
+        "slot_router_aline_calls": 2,
+        "xml_renderer_calls": 2,
+        "package_validation_calls": 9,
+        "seconds": {
+          "aline_seconds": 0.063804,
+          "slot_router_aline_seconds": 0.036873,
+          "slot_router_total_seconds": 0.048176,
+          "xml_renderer_seconds": 0.15505,
+          "package_validation_seconds": 0.144577,
+          "make_student_seconds": 0.0,
+          "com_script_seconds": 0.0
+        },
+        "slot_router_seconds": 0.011303
+      },
+      "process_monitor": {
+        "new_instances": 0,
+        "by_name": {},
+        "preexisting_instances": 4,
+        "observed_instances": 4,
+        "started": [],
+        "availability_error": null
+      },
+      "seconds_per_item": 0.749
+    },
+    {
+      "case": "x008-teacher-only-1",
+      "note": "SAME-SOURCE performance workload: 1 item(s) built from the single approved X008 source under distinct names. Same-source timing does not represent multi-sample coverage.",
+      "template": "1v1",
+      "is_batch": false,
+      "files": [
+        "专题01 教师版.docx"
+      ],
+      "distinct_source_sha256": [
+        "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4"
+      ],
+      "items": 1,
+      "started_utc": "2026-10-01T15:49:08.181475+00:00",
+      "ended_utc": "2026-10-01T15:49:33.911004+00:00",
+      "elapsed_seconds": 25.568,
+      "status": "done",
+      "batch_outcome": null,
+      "xml_items": 0,
+      "fallback_items": 1,
+      "fallback_reasons": [
+        "UNSUPPORTED_BOOKMARK_SCOPE"
+      ],
+      "fallback_details": [
+        "ProjectionError: selected hyperlink anchor is missing or ambiguous: _Toc9"
+      ],
+      "studentizer_statuses": [
+        "XML_PREPARED"
+      ],
+      "studentizer_reason_codes": [],
+      "studentizer_seconds": 0.883855,
+      "reviewed_evidence": [
+        "X008"
+      ],
+      "make_student_called_items": 1,
+      "wps_com_started_items": 1,
+      "outputs": 2,
+      "all_packages_valid": true,
+      "item_seconds": [
+        25.493
+      ],
+      "instrumentation": {
+        "com_script_invocations": 6,
+        "make_student_calls": 1,
+        "aline_calls": 3,
+        "slot_router_total_calls": 2,
+        "slot_router_aline_calls": 2,
+        "xml_renderer_calls": 1,
+        "package_validation_calls": 6,
+        "seconds": {
+          "aline_seconds": 0.152716,
+          "slot_router_aline_seconds": 0.096647,
+          "slot_router_total_seconds": 0.113665,
+          "xml_renderer_seconds": 0.076315,
+          "package_validation_seconds": 0.217832,
+          "make_student_seconds": 7.666381,
+          "com_script_seconds": 23.675436
+        },
+        "slot_router_seconds": 0.017018
+      },
+      "process_monitor": {
+        "new_instances": 12,
+        "by_name": {
+          "wps.exe": 12
+        },
+        "preexisting_instances": 4,
+        "observed_instances": 16,
+        "started": [
+          "wps.exe#1804",
+          "wps.exe#1960",
+          "wps.exe#22012",
+          "wps.exe#2336",
+          "wps.exe#25872",
+          "wps.exe#26376",
+          "wps.exe#27484",
+          "wps.exe#28172",
+          "wps.exe#28628",
+          "wps.exe#5292",
+          "wps.exe#8428",
+          "wps.exe#884"
+        ],
+        "availability_error": null
+      },
+      "seconds_per_item": 25.568
+    },
+    {
+      "case": "x008-teacher-only-3",
+      "note": "SAME-SOURCE performance workload: 3 item(s) built from the single approved X008 source under distinct names. Same-source timing does not represent multi-sample coverage.",
+      "template": "1v1",
+      "is_batch": true,
+      "files": [
+        "专题01 教师版.docx",
+        "专题02 教师版.docx",
+        "专题03 教师版.docx"
+      ],
+      "distinct_source_sha256": [
+        "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4"
+      ],
+      "items": 3,
+      "started_utc": "2026-10-01T15:49:33.918596+00:00",
+      "ended_utc": "2026-10-01T15:50:51.593505+00:00",
+      "elapsed_seconds": 77.202,
+      "status": "done",
+      "batch_outcome": "ALL_SUCCESS",
+      "xml_items": 0,
+      "fallback_items": 3,
+      "fallback_reasons": [
+        "UNSUPPORTED_BOOKMARK_SCOPE"
+      ],
+      "fallback_details": [
+        "ProjectionError: selected hyperlink anchor is missing or ambiguous: _Toc9"
+      ],
+      "studentizer_statuses": [
+        "XML_PREPARED"
+      ],
+      "studentizer_reason_codes": [],
+      "studentizer_seconds": 2.67257,
+      "reviewed_evidence": [
+        "X008"
+      ],
+      "make_student_called_items": 3,
+      "wps_com_started_items": 3,
+      "outputs": 6,
+      "all_packages_valid": true,
+      "item_seconds": [
+        25.461,
+        25.404,
+        25.082
+      ],
+      "instrumentation": {
+        "com_script_invocations": 18,
+        "make_student_calls": 3,
+        "aline_calls": 9,
+        "slot_router_total_calls": 6,
+        "slot_router_aline_calls": 6,
+        "xml_renderer_calls": 3,
+        "package_validation_calls": 42,
+        "seconds": {
+          "aline_seconds": 0.492638,
+          "slot_router_aline_seconds": 0.305787,
+          "slot_router_total_seconds": 0.373879,
+          "xml_renderer_seconds": 0.24152,
+          "package_validation_seconds": 1.504059,
+          "make_student_seconds": 22.66731,
+          "com_script_seconds": 70.489938
+        },
+        "slot_router_seconds": 0.068092
+      },
+      "process_monitor": {
+        "new_instances": 36,
+        "by_name": {
+          "wps.exe": 36
+        },
+        "preexisting_instances": 4,
+        "observed_instances": 40,
+        "started": [
+          "wps.exe#1412",
+          "wps.exe#14316",
+          "wps.exe#1448",
+          "wps.exe#14720",
+          "wps.exe#14868",
+          "wps.exe#17404",
+          "wps.exe#18752",
+          "wps.exe#19264",
+          "wps.exe#20080",
+          "wps.exe#21184",
+          "wps.exe#21300",
+          "wps.exe#21500",
+          "wps.exe#21812",
+          "wps.exe#22780",
+          "wps.exe#22920",
+          "wps.exe#23688",
+          "wps.exe#24392",
+          "wps.exe#25368",
+          "wps.exe#25436",
+          "wps.exe#25620",
+          "wps.exe#26372",
+          "wps.exe#2648",
+          "wps.exe#26756",
+          "wps.exe#27492",
+          "wps.exe#27944",
+          "wps.exe#28420",
+          "wps.exe#3164",
+          "wps.exe#3172",
+          "wps.exe#4516",
+          "wps.exe#5260",
+          "wps.exe#5916",
+          "wps.exe#6420",
+          "wps.exe#7976",
+          "wps.exe#8292",
+          "wps.exe#8684",
+          "wps.exe#9408"
+        ],
+        "availability_error": null
+      },
+      "seconds_per_item": 25.734
+    },
+    {
+      "case": "x008-teacher-only-5",
+      "note": "SAME-SOURCE performance workload: 5 item(s) built from the single approved X008 source under distinct names. Same-source timing does not represent multi-sample coverage.",
+      "template": "1v1",
+      "is_batch": true,
+      "files": [
+        "专题01 教师版.docx",
+        "专题02 教师版.docx",
+        "专题03 教师版.docx",
+        "专题04 教师版.docx",
+        "专题05 教师版.docx"
+      ],
+      "distinct_source_sha256": [
+        "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4"
+      ],
+      "items": 5,
+      "started_utc": "2026-10-01T15:50:51.601426+00:00",
+      "ended_utc": "2026-10-01T15:53:01.502069+00:00",
+      "elapsed_seconds": 129.138,
+      "status": "done",
+      "batch_outcome": "ALL_SUCCESS",
+      "xml_items": 0,
+      "fallback_items": 5,
+      "fallback_reasons": [
+        "UNSUPPORTED_BOOKMARK_SCOPE"
+      ],
+      "fallback_details": [
+        "ProjectionError: selected hyperlink anchor is missing or ambiguous: _Toc9"
+      ],
+      "studentizer_statuses": [
+        "XML_PREPARED"
+      ],
+      "studentizer_reason_codes": [],
+      "studentizer_seconds": 4.403428,
+      "reviewed_evidence": [
+        "X008"
+      ],
+      "make_student_called_items": 5,
+      "wps_com_started_items": 5,
+      "outputs": 10,
+      "all_packages_valid": true,
+      "item_seconds": [
+        25.236,
+        25.06,
+        25.292,
+        25.241,
+        25.187
+      ],
+      "instrumentation": {
+        "com_script_invocations": 30,
+        "make_student_calls": 5,
+        "aline_calls": 15,
+        "slot_router_total_calls": 10,
+        "slot_router_aline_calls": 10,
+        "xml_renderer_calls": 5,
+        "package_validation_calls": 100,
+        "seconds": {
+          "aline_seconds": 0.773077,
+          "slot_router_aline_seconds": 0.484842,
+          "slot_router_total_seconds": 0.572527,
+          "xml_renderer_seconds": 0.394052,
+          "package_validation_seconds": 3.441891,
+          "make_student_seconds": 37.988011,
+          "com_script_seconds": 117.102218
+        },
+        "slot_router_seconds": 0.087685
+      },
+      "process_monitor": {
+        "new_instances": 60,
+        "by_name": {
+          "wps.exe": 60
+        },
+        "preexisting_instances": 4,
+        "observed_instances": 64,
+        "started": [
+          "wps.exe#10080",
+          "wps.exe#10156",
+          "wps.exe#10336",
+          "wps.exe#10932",
+          "wps.exe#11032",
+          "wps.exe#11268",
+          "wps.exe#12132",
+          "wps.exe#12980",
+          "wps.exe#13136",
+          "wps.exe#14692",
+          "wps.exe#14972",
+          "wps.exe#15572",
+          "wps.exe#15824",
+          "wps.exe#16768",
+          "wps.exe#17280",
+          "wps.exe#19620",
+          "wps.exe#19804",
+          "wps.exe#19964",
+          "wps.exe#21044",
+          "wps.exe#21160",
+          "wps.exe#21160",
+          "wps.exe#21708",
+          "wps.exe#22516",
+          "wps.exe#2384",
+          "wps.exe#24020",
+          "wps.exe#24044",
+          "wps.exe#24156",
+          "wps.exe#25016",
+          "wps.exe#25160",
+          "wps.exe#25324",
+          "wps.exe#25604",
+          "wps.exe#25988",
+          "wps.exe#26076",
+          "wps.exe#26304",
+          "wps.exe#26308",
+          "wps.exe#26476",
+          "wps.exe#26844",
+          "wps.exe#27132",
+          "wps.exe#27364",
+          "wps.exe#27472",
+          "wps.exe#27544",
+          "wps.exe#27612",
+          "wps.exe#2788",
+          "wps.exe#27932",
+          "wps.exe#28352",
+          "wps.exe#28512",
+          "wps.exe#28568",
+          "wps.exe#3380",
+          "wps.exe#3620",
+          "wps.exe#5076",
+          "wps.exe#5240",
+          "wps.exe#5344",
+          "wps.exe#6000",
+          "wps.exe#6124",
+          "wps.exe#6868",
+          "wps.exe#7104",
+          "wps.exe#7760",
+          "wps.exe#8368",
+          "wps.exe#8684",
+          "wps.exe#9376"
+        ],
+        "availability_error": null
+      },
+      "seconds_per_item": 25.828
+    },
+    {
+      "case": "c2-case-a-teacher-only",
+      "note": "Identical workload to C2 Case A (X001, X004, X006, X023, X025; 1v1) for a direct comparison with the recorded 121.330 s.",
+      "template": "1v1",
+      "is_batch": true,
+      "files": [
+        "专题02 电压 电阻＆欧姆定律（期末复习讲义）解析版.docx",
+        "专题04 电功率（期末专项训练）（解析版）.docx",
+        "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx",
+        "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（解析版）.docx",
+        "2.1  我们周围的空气 第1课时（讲义）（解析版）.docx"
+      ],
+      "distinct_source_sha256": [
+        "19fe81bd43f19e9acb2170b2d431452690c179cbecb4e4ee773f8e024eef0163",
+        "6e8ba62da63916b6e0bfa072c59102ab5074ba089f2b4c83a084264ccfaea755",
+        "92dbe48d732b9350b4fc1b06f479edd3b696942cd585a68d853b652788c799fd",
+        "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+        "cbd854ce5155e71bac9bf37a8e5f423019eb28a8133830cd6fe3ef0078d22021"
+      ],
+      "items": 5,
+      "started_utc": "2026-10-01T15:53:01.509694+00:00",
+      "ended_utc": "2026-10-01T15:57:38.788383+00:00",
+      "elapsed_seconds": 274.791,
+      "status": "done",
+      "batch_outcome": "ALL_SUCCESS",
+      "xml_items": 0,
+      "fallback_items": 5,
+      "fallback_reasons": [
+        "XML_RENDER_FAILED"
+      ],
+      "fallback_details": [
+        "STUDENTIZER_COVERAGE_UNPROVEN: no complete reviewed Golden evidence"
+      ],
+      "studentizer_statuses": [
+        "STUDENTIZER_FALLBACK_REQUIRED"
+      ],
+      "studentizer_reason_codes": [
+        "STUDENTIZER_COVERAGE_UNPROVEN"
+      ],
+      "studentizer_seconds": 1.074216,
+      "reviewed_evidence": [],
+      "make_student_called_items": 5,
+      "wps_com_started_items": 5,
+      "outputs": 10,
+      "all_packages_valid": true,
+      "item_seconds": [
+        73.26,
+        54.515,
+        52.81,
+        42.849,
+        40.983
+      ],
+      "instrumentation": {
+        "com_script_invocations": 30,
+        "make_student_calls": 5,
+        "aline_calls": 5,
+        "slot_router_total_calls": 0,
+        "slot_router_aline_calls": 0,
+        "xml_renderer_calls": 0,
+        "package_validation_calls": 95,
+        "seconds": {
+          "aline_seconds": 0.988311,
+          "slot_router_aline_seconds": 0.0,
+          "slot_router_total_seconds": 0.0,
+          "xml_renderer_seconds": 0.0,
+          "package_validation_seconds": 12.417804,
+          "make_student_seconds": 84.114764,
+          "com_script_seconds": 258.031246
+        },
+        "slot_router_seconds": 0.0
+      },
+      "process_monitor": {
+        "new_instances": 60,
+        "by_name": {
+          "wps.exe": 60
+        },
+        "preexisting_instances": 4,
+        "observed_instances": 64,
+        "started": [
+          "wps.exe#10080",
+          "wps.exe#10096",
+          "wps.exe#10144",
+          "wps.exe#10188",
+          "wps.exe#10564",
+          "wps.exe#10920",
+          "wps.exe#12072",
+          "wps.exe#12072",
+          "wps.exe#1256",
+          "wps.exe#12852",
+          "wps.exe#12896",
+          "wps.exe#13136",
+          "wps.exe#1444",
+          "wps.exe#14716",
+          "wps.exe#14720",
+          "wps.exe#14876",
+          "wps.exe#15912",
+          "wps.exe#16232",
+          "wps.exe#1736",
+          "wps.exe#17756",
+          "wps.exe#18060",
+          "wps.exe#18320",
+          "wps.exe#18548",
+          "wps.exe#18600",
+          "wps.exe#19032",
+          "wps.exe#19568",
+          "wps.exe#20132",
+          "wps.exe#20152",
+          "wps.exe#20224",
+          "wps.exe#20404",
+          "wps.exe#21192",
+          "wps.exe#2140",
+          "wps.exe#21556",
+          "wps.exe#22776",
+          "wps.exe#24052",
+          "wps.exe#24120",
+          "wps.exe#24772",
+          "wps.exe#25052",
+          "wps.exe#25056",
+          "wps.exe#25116",
+          "wps.exe#25152",
+          "wps.exe#2568",
+          "wps.exe#26700",
+          "wps.exe#26800",
+          "wps.exe#27508",
+          "wps.exe#27824",
+          "wps.exe#28208",
+          "wps.exe#28220",
+          "wps.exe#28288",
+          "wps.exe#28332",
+          "wps.exe#3172",
+          "wps.exe#3628",
+          "wps.exe#3920",
+          "wps.exe#4728",
+          "wps.exe#4860",
+          "wps.exe#5360",
+          "wps.exe#6000",
+          "wps.exe#6096",
+          "wps.exe#7200",
+          "wps.exe#9476"
+        ],
+        "availability_error": null
+      },
+      "seconds_per_item": 54.958
+    },
+    {
+      "case": "c2-case-b-teacher-student",
+      "note": "Identical workload to C2 Case B (X001, X002, X020, X019, X023, X021; class) for a direct teacher+student XML batch regression check against the recorded 13.975 s.",
+      "template": "class",
+      "is_batch": true,
+      "files": [
+        "专题02 电压 电阻＆欧姆定律（期末复习讲义）解析版.docx",
+        "专题02 电压 电阻＆欧姆定律（期末复习讲义）（原卷版）.docx",
+        "1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（解析版）.docx",
+        "1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（原卷版）.docx",
+        "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（解析版）.docx",
+        "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（原卷版）.docx"
+      ],
+      "distinct_source_sha256": [
+        "19fe81bd43f19e9acb2170b2d431452690c179cbecb4e4ee773f8e024eef0163",
+        "1ccdcda89f832e7b3e5b82b6b302be4582af08ca031ab381d58fb691bf24f388",
+        "9d99c793b5a7f0fd4b800729b096ebe18645058fd3bbf83eb624d786df329758",
+        "b01bee652e52fb8689ea5db63c2897d3b63cf650777cd43c6354e5ded50e17fe",
+        "cbd854ce5155e71bac9bf37a8e5f423019eb28a8133830cd6fe3ef0078d22021",
+        "e10818f40e99da4234051b1beeac852f4e8090475cdb96283fbf1bcb5b44a6f4"
+      ],
+      "items": 3,
+      "started_utc": "2026-10-01T15:57:38.796177+00:00",
+      "ended_utc": "2026-10-01T15:57:51.783354+00:00",
+      "elapsed_seconds": 11.768,
+      "status": "done",
+      "batch_outcome": "ALL_SUCCESS",
+      "xml_items": 3,
+      "fallback_items": 0,
+      "fallback_reasons": [],
+      "fallback_details": [],
+      "studentizer_statuses": [
+        "STUDENT_SOURCE_BYPASS"
+      ],
+      "studentizer_reason_codes": [],
+      "studentizer_seconds": 0,
+      "reviewed_evidence": [],
+      "make_student_called_items": 0,
+      "wps_com_started_items": 0,
+      "outputs": 6,
+      "all_packages_valid": true,
+      "item_seconds": [
+        4.556,
+        1.329,
+        2.538
+      ],
+      "instrumentation": {
+        "com_script_invocations": 0,
+        "make_student_calls": 0,
+        "aline_calls": 6,
+        "slot_router_total_calls": 6,
+        "slot_router_aline_calls": 6,
+        "xml_renderer_calls": 6,
+        "package_validation_calls": 51,
+        "seconds": {
+          "aline_seconds": 0.732494,
+          "slot_router_aline_seconds": 0.732494,
+          "slot_router_total_seconds": 0.827535,
+          "xml_renderer_seconds": 6.083927,
+          "package_validation_seconds": 5.281574,
+          "make_student_seconds": 0.0,
+          "com_script_seconds": 0.0
+        },
+        "slot_router_seconds": 0.095041
+      },
+      "process_monitor": {
+        "new_instances": 0,
+        "by_name": {},
+        "preexisting_instances": 4,
+        "observed_instances": 4,
+        "started": [],
+        "availability_error": null
+      },
+      "seconds_per_item": 3.923
+    }
+  ]
+}
