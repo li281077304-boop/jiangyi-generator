@@ -1,6 +1,7 @@
 # C2 Round 1 — Batch Input Resolver
 
-Worker: GPT-6.1 (`gpt-6.1-sol`). Chief review is pending; this report does not claim `C2_BATCH_PASS`.
+Worker: GPT-6.1 (`gpt-6.1-sol`). Round 1 Chief returned PATCH; Round 2 independent
+review is pending. This report does not claim `C2_BATCH_PASS`.
 
 Base: `7daa519bb804d5cb5fd4328636b2346e166ba81c`.
 
@@ -16,14 +17,21 @@ HTTP submission still has the C1 single/pair restriction until the next round.
 
 - Direct DOCX and ZIP inputs expand to source records; ZIP entry directories
   remain provenance metadata. No archive-controlled filesystem path is written.
-- Chinese filenames and nested directories are supported. `~$*.docx`, non-DOCX
+- UTF-8 and Windows GBK Chinese filenames and nested directories are supported.
+  Unflagged non-ASCII ZIP names follow an explicit GBK policy; bytes also valid
+  as different UTF-8 names fail with `AMBIGUOUS_ZIP_NAME_ENCODING`. Unsupported
+  legacy names fail with `UNSUPPORTED_ZIP_NAME_ENCODING`, preserving safety
+  instead of exposing CP437 mojibake. `~$*.docx`, non-DOCX
   entries, and `__MACOSX` files are ignored.
 - Absolute paths, `..`, Windows drive/UNC/alternate-stream paths, symbolic links,
   and duplicate archive entries are rejected. Limits are 200 DOCX files, 4,000
   archive entries, and 200 MiB of expanded DOCX upload bytes. The DOCX package's
   own expanded size also has a 200 MiB safety limit.
-- Strong teacher/student labels and recognized revision/version suffixes are
-  removed before topic comparison. Meaningful numbers such as `专题12` remain.
+- Teacher/student labels are removed only at safe filename boundaries:
+  strong Chinese suffixes, separated prefixes, or bracketed labels. Short labels
+  require separators or brackets. Recognized revision/version suffixes are
+  removed before topic comparison. Meaningful topic words (`教师素养`,
+  `学生素养`, `学生用电安全`) and numbers such as `专题12` remain.
 - Automatic pairing requires the same normalized topic and the approved C1
   filename/content classification. File size and upload/archive ordering are
   never pairing criteria. The exact supplied student bytes are retained.
@@ -40,7 +48,15 @@ Executed with `C:\xml-uat\.venv\Scripts\python.exe`:
 
 `pytest tests/test_batch_inputs.py tests/test_input_versions.py tests/test_stage2_baseline.py -q`
 
-Result: **68 passed** (23 batch cases, 6 C1 classification tests, Stage2 39/39).
+Round 1 result: **68 passed** (23 batch cases, 6 C1 classification tests, Stage2 39/39).
+
+Round 2 PATCH result: **79 passed** (34 batch cases, 6 C1 classification tests,
+Stage2 39/39). New evidence uses an actual DOCX DEFLATE member with forbidden
+BTYPE bits: `_validate_source` catches `zlib.error`, marks only the bad item
+failed, and returns the valid sibling. Tests also prove role words inside
+different topics cannot cause false pairing, actual no-UTF8-flag GBK ZIP names
+pair correctly, traversal checks still apply after GBK decoding, and dual-valid
+UTF-8/GBK member names fail explicitly.
 
 Batch tests cover five teacher items, three shuffled pairs, mixed versions,
 Chinese ZIP directories, all required strong keywords, unchanged student bytes,

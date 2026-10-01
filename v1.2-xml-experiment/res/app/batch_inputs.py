@@ -12,6 +12,7 @@ from pathlib import PurePosixPath
 import re
 import stat
 import zipfile
+import zlib
 
 from input_versions import UnknownInputVersion, classify_inputs
 
@@ -43,8 +44,15 @@ class LogicalInput:
     error: str | None = None
 
 
-_TEACHER = re.compile(r"教师版|解析版|答案版|教师用|教师|老师|teacher|answer|solution", re.I)
-_STUDENT = re.compile(r"学生版|原卷版|空白版|学生用|学生|原卷|无答案|student|blank", re.I)
+_TEACHER_LABELS = {"教师版", "解析版", "答案版", "教师用", "教师", "老师", "teacher", "answer", "solution"}
+_STRONG_LABEL = r"教师版|解析版|答案版|教师用|学生版|原卷版|空白版|学生用"
+_SHORT_LABEL = r"教师|老师|学生|原卷|无答案|teacher|answer|solution|student|blank"
+_SUFFIX_LABEL = re.compile(
+    r"(?:[（(\[【](?P<wrapped>" + _STRONG_LABEL + "|" + _SHORT_LABEL + r")[）)\]】]"
+    r"|(?P<strong>" + _STRONG_LABEL + r")|(?:^|[\s._-])(?P<short>" + _SHORT_LABEL + r"))$", re.I)
+_PREFIX_LABEL = re.compile(
+    r"^(?:[（(\[【](?P<wrapped>" + _STRONG_LABEL + "|" + _SHORT_LABEL + r")[）)\]】]"
+    r"|(?P<plain>" + _STRONG_LABEL + "|" + _SHORT_LABEL + r")[\s._-]+)", re.I)
 _VERSION_SUFFIX = re.compile(
     r"(?:[\s._-]*(?:[（(\[【]?(?:修订版|修正版|最新版|更新版|最终版|正式版|定稿版|"
     r"第[一二三四五六七八九十\d]+版|v\d+(?:\.\d+)*|版本\s*\d+)[）)\]】]?))$", re.I)
@@ -53,20 +61,49 @@ _VERSION_SUFFIX = re.compile(
 def topic_identity(name: str) -> tuple[str, str | None]:
     """Return a readable topic and role, preserving meaningful topic numbers."""
     stem = PurePosixPath(name.replace("\\", "/")).stem
-    teacher, student = bool(_TEACHER.search(stem)), bool(_STUDENT.search(stem))
-    if teacher and student:
-        raise UnknownInputVersion("文件名同时包含教师与学生标记，拒绝猜测")
-    role = "teacher" if teacher else "student" if student else None
-    # Drop labels wherever they appear, then only recognized version suffixes.
-    stem = _TEACHER.sub("", stem) if teacher else _STUDENT.sub("", stem) if student else stem
+    roles = set()
     previous = None
     while previous != stem:
         previous = stem
-        stem = _VERSION_SUFFIX.sub("", stem).strip(" ._-（）()[]【】")
+        stem = _VERSION_SUFFIX.sub("", stem).strip(" ._-")
+        suffix, prefix = _SUFFIX_LABEL.search(stem), _PREFIX_LABEL.search(stem)
+        marker = suffix or prefix
+        if marker:
+            label = next(value for value in marker.groupdict().values() if value).casefold()
+            roles.add("teacher" if label in _TEACHER_LABELS else "student")
+            stem = (stem[:marker.start()] + stem[marker.end():]).strip(" ._-")
+    if len(roles) > 1:
+        raise UnknownInputVersion("文件名同时包含教师与学生标记，拒绝猜测")
+    role = next(iter(roles)) if roles else None
     stem = re.sub(r"[_\s]+", " ", stem).strip(" .-")
     if not stem:
         raise UnknownInputVersion("去除版本标记后没有可验证的专题名称")
     return stem, role
+
+
+def _zip_member_name(entry: zipfile.ZipInfo) -> str:
+    """Use UTF-8 flags or an explicit Windows GBK policy, never mojibake.
+
+    Non-ASCII names without UTF-8 flags must be valid GBK with Chinese text.
+    If the same bytes are also valid UTF-8, reject the ambiguous encoding.
+    Archive reads still use the original ZipInfo, so local-header checks hold.
+    """
+    if entry.flag_bits & 0x800 or entry.filename.isascii():
+        return entry.filename
+    raw = entry.filename.encode("cp437")
+    try:
+        decoded = raw.decode("gbk")
+    except UnicodeDecodeError as exc:
+        raise BatchInputError("UNSUPPORTED_ZIP_NAME_ENCODING: %s" % entry.filename) from exc
+    if not re.search(r"[\u3400-\u9fff]", decoded):
+        raise BatchInputError("UNSUPPORTED_ZIP_NAME_ENCODING: %s" % entry.filename)
+    try:
+        alternative = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        alternative = None
+    if alternative is not None and alternative != decoded:
+        raise BatchInputError("AMBIGUOUS_ZIP_NAME_ENCODING: %s" % entry.filename)
+    return decoded
 
 
 def _archive_path(raw: str) -> str:
@@ -106,7 +143,7 @@ def expand_uploads(files: list[tuple[str, bytes]]) -> list[SourceInput]:
                         raise BatchInputError("BATCH_INPUT_LIMIT_EXCEEDED")
                     seen = set()
                     for entry in entries:
-                        path = _archive_path(entry.filename)
+                        path = _archive_path(_zip_member_name(entry))
                         if stat.S_ISLNK(entry.external_attr >> 16):
                             raise BatchInputError("UNSAFE_ZIP_SYMLINK: %s" % path)
                         if entry.is_dir():
@@ -121,7 +158,7 @@ def expand_uploads(files: list[tuple[str, bytes]]) -> list[SourceInput]:
                         if len(expanded) >= MAX_DOCX_FILES or total + entry.file_size > MAX_EXPANDED_BYTES:
                             raise BatchInputError("BATCH_INPUT_LIMIT_EXCEEDED")
                         append(leaf, archive.read(entry), name + ":" + path)
-            except (zipfile.BadZipFile, RuntimeError, OSError) as exc:
+            except (zipfile.BadZipFile, RuntimeError, OSError, zlib.error) as exc:
                 raise BatchInputError("INVALID_ZIP: %s" % name) from exc
         else:
             raise BatchInputError("仅支持 DOCX 或 ZIP：%s" % name)
@@ -143,7 +180,7 @@ def _validate_source(source: SourceInput) -> None:
                 raise ValueError("缺少 DOCX 主文档部件")
             if package.testzip() is not None:
                 raise ValueError("DOCX CRC 校验失败")
-    except (zipfile.BadZipFile, RuntimeError, OSError) as exc:
+    except (zipfile.BadZipFile, RuntimeError, OSError, zlib.error) as exc:
         raise ValueError("无效或损坏的 DOCX") from exc
 
 
@@ -176,7 +213,10 @@ def resolve_batch(files: list[tuple[str, bytes]], docx_mode: str = "auto") -> li
         try:
             for source in sources:
                 _validate_source(source)
-            canonical = [(topic + (" 教师版" if role == "teacher" else " 学生版" if role == "student" else "")
+            # Identity is already established by the normalized topic key.
+            # Avoid feeding meaningful topic words such as 教师素养 back into
+            # C1's broad filename-role heuristics; only pass verified labels.
+            canonical = [("source" + (" 教师版" if role == "teacher" else " 学生版" if role == "student" else "")
                           + ".docx", source.data) for source, _topic, role in group]
             if len(canonical) > 2:
                 raise UnknownInputVersion("同专题存在多个来源，无法唯一配对")
