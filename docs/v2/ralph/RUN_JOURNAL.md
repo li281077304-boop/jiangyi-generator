@@ -335,3 +335,47 @@ flatten table ownership or authorize mutation. No full Golden, new expected DOCX
 removal ledger, source transformation, real derived UAT or broad pair inventory
 was performed. Read-only source page counts are not open/save/reopen/PDF or visual
 UAT. Current suite includes existing approved X008 API protection only.
+
+| C3-R9 | 2026-10-01 14:00 UTC (first implementation file timestamp; predecessor rounds ended 2026-10-01 13:38:35 UTC) | 2026-10-01 14:27:27 UTC (commit `a836f2e`) | DeepSeek V4.1 Flash | fd5377bfb0d48125aba94f43fe11ed0a54a97936 | a836f2e6a1e415cfb24b0f6e8939af712fdaa7be | PASS: full `tests/` 351 passed + 7 subtests in 213.17s (327 before the round, +24 new); packaged manifest binds the approved X008 Golden and reproduces approved DOCX `67e0bc36…`; provider answers only for the exact digest; 14 malformed evidence variants refused; duplicate evidence for one digest refused; missing directory refused; unloadable registry fails closed and reports; supported path never calls `make_student`; unreviewed source falls back with no half-student; real renderer refusal persists the exact reason and hands the original teacher to the fallback; corpus 27/27 unchanged; no stray artifact in the corpus directory; `py_compile` and `git diff --check` (working tree and staged) clean | Codex GPT-6.1 Sol (required; PENDING) | PENDING | Item 2 (27-source capability scan) and item 3 (performance); no production activation change beyond the reviewed registry | Yes: implementation `a836f2e` committed and pushed; remote SHA verified equal |
+
+Round 9 wires the already verified reviewed physical-range Studentizer into the
+real production teacher-only route: reviewed coverage gate → XML Studentizer →
+derived student source → A-Line → C1 Slot Router → B-Line XML Renderer, and
+whole-job V0.9 fallback otherwise with a persisted reason. **New blocking
+finding:** X008's retained front matter (`w:body` 3–13) holds 8 hyperlinks to 5
+bookmark names that do not exist in the document (`_Toc9`, `_Toc67`, `_Toc3947`,
+`_Toc21406`, `_Toc22623`, `_Toc29290`); the same inherited missing anchors the
+Chief approval already recorded. The frozen B-Line projection refuses any
+selected hyperlink with an unresolvable anchor and C1 routes that front matter
+into `knowledge`, so the renderer refuses and the item correctly falls back. No
+end-to-end COM-free teacher-only run is reachable on the only approved source.
+This round makes no zero-COM, speed or completion claim.
+
+| C3-R10 | 2026-10-01 14:30 UTC (scan tool creation; exact kickoff not captured) | 2026-10-01 15:01:54 UTC (commit `13f8e4b`) | DeepSeek V4.1 Flash | a836f2e6a1e415cfb24b0f6e8939af712fdaa7be | 13f8e4b386b3900a56a513ab05e71af7a87685ef | PASS: 5 new focused scan tests; total simulated/measured 27/27 sources read; production gate 1 supported / 26 fail closed with `STUDENTIZER_COVERAGE_UNPROVEN`; boundary verdicts 15 clear / 12 `STUDENTIZ_BOUNDARY_DEPENDENCY_UNSUPPORTED` (8 `txbxContent`, 2 `clrChange`, 2 unsupported field parameter); 4 sources carry unresolvable hyperlink anchors that the frozen renderer refuses; corpus hashes unchanged after the scan; `py_compile` and `git diff --check` clean | Codex GPT-6.1 Sol (required; PENDING) | PENDING | Item 3 (real performance), then full regression | Yes: scan tool, tests, evidence and report `13f8e4b` committed and pushed; remote SHA verified equal |
+
+Round 10 is read-only statistics only. The scan deliberately separates the
+authoritative production gate result from a diagnostic boundary-system verdict
+obtained by calling the Studentizer's own validator with an empty removal set.
+Measured reviewed coverage is 1/27. Low coverage is the expected outcome and was
+not treated as a reason to add TOC/bookmark/OLE/textbox/table/field/hyperlink or
+formula capability.
+
+| C3-R11 | 2026-10-01 15:05 UTC (harness creation; exact kickoff not captured) | 2026-10-01 15:59:26 UTC (commit `af87809`) | DeepSeek V4.1 Flash | 13f8e4b386b3900a56a513ab05e71af7a87685ef | af87809a2ca6f62a407953f0d0795c5e2333b19c | PASS: 4 new harness tests (including a real end-to-end synthetic reviewed teacher-only run with 0 COM scripts, 0 `make_student`, 0 new office processes, `XML_PREPARED`, 2/2 packages valid); real production measurements for 6 cases; Stage2 39/39; fresh Stage3 QG 408/408 (P/R 100%, exact 87.7%), sections 369/369 exact 100%, subquestions 328/328, errors `{}` (E1–E4 0), MISS/FP/MERGE/SPLIT 0; full `tests/` 360 passed + 7 subtests in 199.78s; V0.9 frozen assets 10/10; corpus 27/27; `py_compile` and `git diff --check` clean | Codex GPT-6.1 Sol (required; PENDING) | PENDING | Chief/product decision on the teacher-only fallback route; no further scope | Yes: harness, sampler, tests, evidence and reports `af87809` committed and pushed; remote SHA verified equal |
+
+Round 11 measures, it does not optimise. Reviewed-supported teacher-only path:
+0.749 s, Studentizer 0.411 s, A-Line 0.064 s, Slot Router 0.011 s, renderer
+0.155 s, validation 0.145 s, **COM 0, fallback 0** (synthetic reviewed source;
+no approved source can complete the renderer). X008 teacher-only, same-source
+workload: 1 item 25.568 s, 3 items 77.202 s, 5 items 129.138 s, all falling back
+with `UNSUPPORTED_BOOKMARK_SCOPE` / `ProjectionError: selected hyperlink anchor
+is missing or ambiguous: _Toc9`; 6 COM scripts and ~12 new office processes per
+item. **Identical C2 Case A workload: 274.791 s versus the recorded 121.330 s
+(+126%)**, because unreviewed teacher-only now runs the whole-job V0.9 fallback
+(6 COM scripts per item) instead of C2's one-COM prepare plus XML render; the
+`make_student` phase itself is unchanged (84.1 s versus ~87.2 s). **Identical
+C2 Case B teacher+student XML batch: 11.768 s versus 13.975 s, no regression.**
+One earlier full-suite run once reported 128 fixture errors; two subsequent
+clean runs (356 and 360 passed) did not reproduce it, and this environment's
+bulk-delete guard was observed to fail closed during pytest temporary-directory
+cleanup, which is the most likely cause. No `C3_STUDENTIZER_PERFORMANCE_PASS`,
+no tag, no EXE/installer/release work.
