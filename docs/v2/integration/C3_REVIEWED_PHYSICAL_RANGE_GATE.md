@@ -2,7 +2,9 @@
 
 Base: `a7ced4bc615c7d9641557ab05a35e1a2a2340e46`.
 Worker: actual GPT-6.1 (`gpt-6.1-sol`).
-Chief: **Codex GPT-6.1 Sol**; independent implementation verdict **PENDING**.
+Chief: **Codex GPT-6.1 Sol**. Original Round 7 implementation verdict **PATCH**
+(missing `TOC \b` bookmark dependency). Corrected implementation re-review
+**PENDING**.
 
 ## Scope and trust contract
 
@@ -151,3 +153,45 @@ deletion. Mathematics/chemistry remain unapproved; there is no general real-corp
 coverage, production activation or C3 completion claim. A-Line/C1/B-Line/V0.9,
 production planner/provider/orchestrator and UI remain unchanged. Stop for
 Codex GPT-6.1 Sol independent implementation/UAT review.
+
+## R7 TOC dependency PATCH
+
+Patch base: `7e5959fddb1694d19b989e23185d8bb1790fd6d4`.
+The original Chief found that a preserved `fldSimple` with `TOC \b topic`
+could reference a paired bookmark encompassing removed `body[2..3]`, yet the
+old capability published output. The new minimal real-OOXML regression first
+reproduced that false acceptance, then passed after the generic fix.
+
+The TOC parser now admits only unique simple `\b`, `\o`, `\h`, `\u`
+switches, balanced quoting, valid bookmark names and simple increasing outline
+levels. It rejects repeated/unknown/complex/missing parameters. `\b` targets
+enter the same dependency list as REF/PAGEREF/hyperlinks, so both `fldSimple`
+and balanced complex fields fail closed when the referenced bookmark's interval
+intersects removal. Runtime reason is
+`STUDENTIZER_BOUNDARY_DEPENDENCY_UNSUPPORTED` with detail
+`deletion changes referenced bookmark scope`; no output/mutations occur and
+the source remains unchanged. A valid TOC bookmark wholly outside deletion
+still preserves successfully. No X008-specific branch or frozen-core change.
+
+PATCH machine gate: **233 passed in 55.11s** (previous 222 plus 11 TOC cases),
+including Stage2 **39/39**. Fresh Stage3 source **8/8** and all protected metrics
+above remain unchanged; V0.9 assets **10/10**; compile/diff gates pass.
+New actual public-API X008 output remains exactly Chief Golden package
+`67e0bc...` and after-root `6b93cf...`, with all 118 removals/146 retained
+fingerprints/order/non-document parts intact.
+
+A fresh real WPS roundtrip used that new output under
+`C:\xml-uat\c3-round7-toc-patch\verified-wps\` with actual DisplayAlerts **-1**.
+Open/SaveAs-new/Close/Reopen/PDF returned successfully; current saved DOCX
+**7,067,505 bytes**, PDF **2,127,287 bytes**. Packages validate, all 142 paragraph
+texts/order and all 4 OLE payloads survive, 9 PDF pages are automatically readable,
+and question numbers 1–34 extract in order. Pages **1/5/6/9** were actually
+inspected again, covering title/TOC, middle diagrams/options, Q23 temperatures,
+and final graph/subquestions. Original and current PDF bookmark errors remain
+**2→2**; XML cached text counts remain 0 and are not the PDF display statistic.
+Source/Golden/input hashes stay unchanged. Repair absence remains **NOT_PROVEN**;
+performance benchmark **NOT_RUN**; no new subject/provider/production activation.
+
+Durable current evidence: `fixtures/c3-r7-toc-patch-evidence.json`.
+Original diagnostic fixture remains historical capture, not a new Chief PASS.
+Corrected capability awaits independent **Codex GPT-6.1 Sol** re-review.

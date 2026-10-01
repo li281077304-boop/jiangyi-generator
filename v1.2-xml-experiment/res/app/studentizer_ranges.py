@@ -114,7 +114,30 @@ def _boundaries(root, removed, parts, inherited_missing):
         if command not in {'TOC', 'REF', 'PAGEREF', 'HYPERLINK'}:
             fail('unsupported field dependency: ' + command)
         target = None
-        if command in {'REF', 'PAGEREF'}:
+        if command == 'TOC':
+            # Admit only explicit simple switches whose dependencies are known.
+            # Balanced quoting/token boundaries exclude complex field syntax.
+            if not re.fullmatch(r'TOC(?:\s+(?:"[^"\r\n]*"|[^\s"]+))*\s*', instruction.strip(), re.I):
+                fail('malformed/complex TOC field parameters')
+            seen, index = set(), 1
+            while index < len(tokens):
+                switch = tokens[index].lower()
+                if switch not in {'\\b', '\\o', '\\h', '\\u'} or switch in seen:
+                    fail('unknown/repeated TOC field parameter: ' + switch)
+                seen.add(switch)
+                index += 1
+                if switch in {'\\b', '\\o'}:
+                    if index >= len(tokens):
+                        fail('missing TOC field parameter value')
+                    value = tokens[index].strip('"')
+                    index += 1
+                    if switch == '\\b':
+                        if not re.fullmatch(r'(?:[^\W\d]|_)\w*', value):
+                            fail('complex/invalid TOC bookmark target')
+                        target = value
+                    elif not re.fullmatch(r'[1-9]-[1-9]', value) or int(value[0]) > int(value[2]):
+                        fail('complex/invalid TOC outline levels')
+        elif command in {'REF', 'PAGEREF'}:
             if len(tokens) < 2 or tokens[1].startswith('\\'):
                 fail('missing reference field target')
             target = tokens[1].strip('"')

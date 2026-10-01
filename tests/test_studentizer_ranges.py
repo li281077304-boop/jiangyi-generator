@@ -213,3 +213,40 @@ def test_relationship_fragment_dependency_is_not_silently_allowed(tmp_path, cros
     data = buffer.getvalue()
     refuse(tmp_path, data, replace(s, source_sha256=sha256(data).hexdigest()),
            'STUDENTIZER_BOUNDARY_DEPENDENCY_UNSUPPORTED')
+
+
+@pytest.mark.parametrize('simple', [True, False])
+def test_toc_bookmark_dependency_cannot_cover_removed_answers(tmp_path, simple):
+    def extra(body):
+        bookmarks(body)
+        if simple:
+            field = etree.SubElement(body[0], TAG('fldSimple')); field.set(TAG('instr'), 'TOC \\b topic')
+        else:
+            field = etree.SubElement(body[0], TAG('fldChar')); field.set(TAG('fldCharType'), 'begin')
+            etree.SubElement(body[0], TAG('instrText')).text = 'TOC \\b topic'
+            field = etree.SubElement(body[0], TAG('fldChar')); field.set(TAG('fldCharType'), 'end')
+    data, s = fixture(extra)
+    source = tmp_path/'source.docx'; source.write_bytes(data)
+    result = refuse(tmp_path, source, s, 'STUDENTIZER_BOUNDARY_DEPENDENCY_UNSUPPORTED')
+    assert result.reason_detail == 'deletion changes referenced bookmark scope'
+    assert source.read_bytes() == data
+
+
+@pytest.mark.parametrize('instruction', [
+    'TOC \\b topic \\b other', 'TOC \\b', 'TOC \\b "topic',
+    'TOC \\b "two names"', 'TOC \\t "Custom,1"', 'TOC \\h \\h',
+    'TOC \\o "4-1"', 'TOC unexplained'])
+def test_toc_ambiguous_unknown_or_complex_parameters_refuse(tmp_path, instruction):
+    def extra(body):
+        field = etree.SubElement(body[0], TAG('fldSimple')); field.set(TAG('instr'), instruction)
+    data, s = fixture(extra)
+    refuse(tmp_path, data, s, 'STUDENTIZER_BOUNDARY_DEPENDENCY_UNSUPPORTED')
+
+
+def test_toc_bookmark_outside_deletion_can_be_preserved(tmp_path):
+    def extra(body):
+        start = etree.SubElement(body[0], TAG('bookmarkStart')); start.set(TAG('id'), '7'); start.set(TAG('name'), 'safe_topic')
+        end = etree.SubElement(body[0], TAG('bookmarkEnd')); end.set(TAG('id'), '7')
+        field = etree.SubElement(body[4], TAG('fldSimple')); field.set(TAG('instr'), 'TOC \\b "safe_topic" \\o "1-3" \\h \\u')
+    data, s = fixture(extra)
+    assert prepare_student(data, s, tmp_path/'student.docx').status == 'XML_PREPARED'
