@@ -86,7 +86,7 @@ Explorer accessibility and headed browser screenshots confirm local delivery.
 Chief identity is exclusively `Codex GPT-6.1 Sol`; Round 7 review has not yet
 been performed. A-Line/B-Line/V0.9/C1 frozen code and Business Rules are unchanged.
 
-| C3-R1 | ~2026-10-01 10:10 UTC (first fresh regression evidence; branch/tag verification preceded it, exact kickoff not captured) | 2026-10-01 10:16:55 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | f3fc31ab10f32673afc1398c98df124971b0cd13 | 397e7ba002d388f84f5907b1c088b16d63b8749e | PASS audit-only machine gate: C2 annotated tag object887693a and targetf3fc31a verified local/remote; C3 branch created/pushed from tag; frozen V0.9 app assets10/10; read-only27-real-source feature inventory/hash27/27; Stage2 39/39; fresh Stage3 QG408/408 sections369/369 subquestions328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0; existing C1 WPS/C2 batch/browser evidence locations confirmed; staged diff-check PASS; documentation-only diff | Codex GPT-6.1 Sol (required; independent Round 1 review pending) | PENDING; no review or Studentizer capability PASS fabricated | Stop before Studentizer production implementation; submit pushed capability audit for independent Codex GPT-6.1 Sol review | Yes: audit397e7ba committed/pushed; Journal metadata commit/push follows |
+| C3-R1 | ~2026-10-01 10:10 UTC (first fresh regression evidence; branch/tag verification preceded it, exact kickoff not captured) | 2026-10-01 10:16:55 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | f3fc31ab10f32673afc1398c98df124971b0cd13 | 397e7ba002d388f84f5907b1c088b16d63b8749e | PASS audit-only machine gate: C2 annotated tag object887693a and targetf3fc31a verified local/remote; C3 branch created/pushed from tag; frozen V0.9 app assets10/10; read-only27-real-source feature inventory/hash27/27; Stage2 39/39; fresh Stage3 QG408/408 sections369/369 subquestions328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0; existing C1 WPS/C2 batch/browser evidence locations confirmed; staged diff-check PASS; documentation-only diff | Codex GPT-6.1 Sol (actual independent review) | PASS for capability audit only; no real Studentizer support claimed | Round 2: implement conservative standalone reviewed-allowlist Studentizer and synthetic preservation fixtures; no production routing | Yes: audit397e7ba committed/pushed; Journal metadata commit/push follows |
 
 C3 Round 1 audits the real frozen red/marker/blank conversion flow. The report
 separates observed behavior from proposed XML capabilities, documents the Python
@@ -98,3 +98,16 @@ gate. Source files remain unchanged. External fresh evidence is
 `C:\xml-uat\c3-round1-capability\`; existing C1/C2 WPS/browser/performance evidence
 is referenced, not reimplemented or represented as newly executed C3 UAT.
 Chief model for this round is exclusively `Codex GPT-6.1 Sol`, review pending.
+
+| C3-R2 | ~2026-10-01 10:25 UTC (first implementation file timestamp; exact kickoff/initial design time not captured) | 2026-10-01 10:32:40 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 36636ffbafbf891cff094c3b86558b774f84b00e | f6d058b52f7be85cbfee9dae122238affc6a8b4d | PASS scoped standalone machine gate: 29 synthetic Studentizer fixtures; combined153 tests including existing124/Stage2 39/39; reviewed exact-source/body-address/fingerprint terminal answer removal, supplied-student byte bypass, role/section/stale binding/mixed/table/object/bookmark/revision ambiguity failclosed, adjacent body/next question/duplicate/red knowledge unchanged, preserved image/media/rels/package members; fresh Stage3QG408/408 sections369/369 subquestions328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0; V0.9 assets10/10; compile/staged diff-check PASS; existing frozen files unchanged | Codex GPT-6.1 Sol (required; independent Round 2 review pending) | PENDING; no Chief verdict fabricated | Stop before production routing or real-sample support claims; submit standalone capability/preservation candidate for independent Chief review | Yes: implementation/tests/report f6d058b committed/pushed; Journal metadata commit/push follows |
+
+C3 Round 1 actual independent Chief PASS is recorded above. Round 2 is standalone:
+the trusted reviewed ownership allowlist is a caller contract, not newly inferred
+A-Line binding. The production app cannot supply it and remains untouched. Only
+dedicated plain-text terminal answer paragraphs with reviewed structural identity
+can be removed; no color stripping, partial text deletion or blank insertion is
+implemented. Synthetic tests exercise actual file creation/validation with source
+and adjacent content preservation; they are not real-corpus XML Studentizer or
+WPS UAT. No real sample support/performance/zero-COM conclusion or C3 completion
+is claimed. Report: `C3_STUDENTIZER_STANDALONE_GATE.md`; fresh external regression
+evidence: `C:\xml-uat\c3-round2-studentizer\stage3\`.
