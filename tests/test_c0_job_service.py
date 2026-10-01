@@ -54,7 +54,7 @@ def client(tmp_path):
                       RUNTIME_ROOT=tmp_path / "runtime-jobs",
                       C0_DISABLE_JOB_SUBMISSION=True,
                       C0_RUN_JOBS_SYNCHRONOUSLY=False,
-                      C0_FORCE_FALLBACK_REASON=None)
+                      C0_FORCE_FALLBACK_REASON=None, STUDENTIZER_EVIDENCE_PROVIDER=None)
     app.config.pop("OPEN_FOLDER", None)
     return app.test_client()
 
@@ -229,7 +229,8 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
                 "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
 
     monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", successful_fallback)
-    response = post_one(client)
+    response = _post_files(client, [("Unit 教师版.docx", make_docx()),
+                                    ("Unit 学生版.docx", make_student_docx())])
     assert response.status_code == 202
     job_id = response.get_json()["job_id"]
     final = make_service(root).get(job_id)
@@ -314,7 +315,8 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
                                package_report={"valid": True, "errors": []})
 
     monkeypatch.setattr(template_slot_composer, "render_slots", render)
-    response = post_one(client)
+    response = _post_files(client, [("Unit 教师版.docx", make_docx()),
+                                    ("Unit 学生版.docx", make_student_docx())])
     job_id = response.get_json()["job_id"]
     final = make_service(root).get(job_id)
     assert final["status"] == "done", final.get("error")
@@ -529,6 +531,9 @@ def test_failed_make_student_attempt_is_persisted_truthfully(client, monkeypatch
         DEFAULT_TEMPLATE="unused-1v1-template.docx",
     )
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
+    def failed_whole_job(job, _reason):
+        engine.make_student(job.source_doc, job.student_output_doc)
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", failed_whole_job)
     response = post_one(client, "Chapter 教师版.docx", make_docx())
     job_id = response.get_json()["job_id"]
     final = make_service().get(job_id)

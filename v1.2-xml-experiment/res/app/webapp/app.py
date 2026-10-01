@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -29,6 +30,8 @@ app.config.setdefault("RUNTIME_ROOT", _LOCAL_APP_DATA / "讲义生成器" / "job
 app.config.setdefault("C0_RUN_JOBS_SYNCHRONOUSLY", False)
 app.config.setdefault("C0_FORCE_FALLBACK_REASON", None)  # integration-test hook only
 app.config.setdefault("C0_DISABLE_JOB_SUBMISSION", False)
+app.config.setdefault("STUDENTIZER_EVIDENCE_PROVIDER", None)  # trusted server config only; no upload/UI API
+_V09_FALLBACK_LOCK = threading.RLock()
 
 
 def _jobs() -> JobService:
@@ -107,6 +110,7 @@ def _execute_job(job_id: str) -> None:
     from renderer_orchestrator import FallbackRequired
     from slot_router import SlotRoutingError, build_slot_routing_plan
     from template_slot_composer import render_slots
+    from studentizer_planner import prepare_complete_student
 
     result_dir = None
     try:
@@ -144,23 +148,23 @@ def _execute_job(job_id: str) -> None:
 
         preparation = {"make_student_called": False, "input_version": input_version,
                        "elapsed_seconds": 0.0, "wps_com_started": False,
-                       "package_valid": None, "output_package_valid": None}
+                       "package_valid": None, "output_package_valid": None,
+                       "engine": "BYPASS", "status": "STUDENT_SOURCE_BYPASS",
+                       "reason_code": None, "reason_detail": None}
+        studentizer_rejected = False
         if input_version == "TEACHER_ONLY":
             service.update_progress(job_id, 0, "正在从教师版准备学生版")
-            engine = _load_v09_engine()
             started = time.perf_counter()
-            preparation.update({"make_student_called": True, "wps_com_started": True})
-            service.update_student_preparation(job_id, preparation)
-            try:
-                engine.make_student(str(teacher_source), str(student_source))
-            finally:
-                preparation["elapsed_seconds"] = round(time.perf_counter() - started, 3)
-                service.update_student_preparation(job_id, preparation)
-            if not student_source.is_file() or student_source.stat().st_size == 0:
-                raise RuntimeError("V0.9 make_student 未生成有效学生版源文件")
-            preparation["package_valid"] = validate_package(str(student_source)).get("valid") is True
-            if not preparation["package_valid"]:
-                raise RuntimeError("V0.9 make_student 输出未通过 DOCX 包校验")
+            prepared, coverage = prepare_complete_student(
+                teacher_source, student_source, app.config.get("STUDENTIZER_EVIDENCE_PROVIDER"))
+            preparation.update({"engine": prepared.engine, "status": prepared.status,
+                                "reason_code": prepared.reason_code, "reason_detail": prepared.reason_detail,
+                                "source_sha256": prepared.source_sha256, "output_sha256": prepared.output_sha256,
+                                "coverage": coverage, "studentizer_elapsed_seconds": round(time.perf_counter()-started, 6),
+                                "elapsed_seconds": round(time.perf_counter()-started, 6)})
+            studentizer_rejected = prepared.status != "XML_PREPARED"
+            if not studentizer_rejected:
+                preparation["package_valid"] = prepared.validation.get("valid") is True
         elif student_source is not None:
             preparation["package_valid"] = validate_package(str(student_source)).get("valid") is True
         service.update_student_preparation(job_id, preparation)
@@ -177,6 +181,10 @@ def _execute_job(job_id: str) -> None:
             if forced_reason:
                 return {"supported": False, "reason_code": forced_reason,
                         "detail": "forced unsupported integration fixture"}
+            if studentizer_rejected:
+                fallback_detail["value"] = "%s: %s" % (preparation["reason_code"], preparation["reason_detail"])
+                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
+                        "detail": fallback_detail["value"]}
             try:
                 for role, source_path in active_sources.items():
                     plans[role] = build_slot_routing_plan(source_path, template_type,
@@ -220,7 +228,7 @@ def _execute_job(job_id: str) -> None:
             template_type=template_type, topic=topic,
             grade=options.get("grade", ""), subject=options.get("subject", ""),
             handout_type=options.get("handout_type", ""),
-            student_source_doc=(str(student_source) if teacher_source and student_source else None),
+            student_source_doc=(str(student_source) if teacher_source and student_source and not studentizer_rejected else None),
             student_output_doc=(str(internal_student) if teacher_source and internal_student else None),
             student_only=teacher_source is None, label=("学生版" if teacher_source is None else "教师版"),
         )
@@ -228,8 +236,38 @@ def _execute_job(job_id: str) -> None:
         def fallback(original_job, reason_code):
             service.record_fallback_attempt(job_id, reason_code, V09_BASELINE_SHA,
                                              detail=fallback_detail["value"])
-            with redirect_stdout(StringIO()):
-                return render_v09_whole_job(original_job, reason_code)
+            # Teacher-only fallback always starts from the original teacher,
+            # even if a later renderer gate rejected a validated XML derivative.
+            if input_version == "TEACHER_ONLY":
+                original_job = replace(original_job, student_source_doc=None)
+            with _V09_FALLBACK_LOCK:
+                engine = _load_v09_engine() if input_version == "TEACHER_ONLY" else None
+                original_make_student = engine.make_student if engine else None
+                def observed_make_student(*args, **kwargs):
+                    stamp = time.perf_counter()
+                    preparation.update({"make_student_called": True, "wps_com_started": True,
+                                        "wps_com_evidence": "COM_CAPABLE_MAKE_STUDENT_ENTRY_ONLY"})
+                    service.update_student_preparation(job_id, preparation)
+                    try:
+                        return original_make_student(*args, **kwargs)
+                    finally:
+                        preparation["make_student_elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
+                        service.update_student_preparation(job_id, preparation)
+                stamp = time.perf_counter()
+                preparation["fallback_engine"] = "V0.9_WHOLE_JOB"
+                service.update_student_preparation(job_id, preparation)
+                if engine:
+                    engine.make_student = observed_make_student
+                try:
+                    with redirect_stdout(StringIO()):
+                        return render_v09_whole_job(original_job, reason_code)
+                finally:
+                    if engine:
+                        engine.make_student = original_make_student
+                    preparation["fallback_elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
+                    preparation["elapsed_seconds"] = (preparation.get("studentizer_elapsed_seconds", 0)
+                                                      + preparation.get("make_student_elapsed_seconds", 0))
+                    service.update_student_preparation(job_id, preparation)
 
         outcome = render_xml_or_fallback(
             render_job, xml_preflight=xml_preflight, xml_render=xml_render,

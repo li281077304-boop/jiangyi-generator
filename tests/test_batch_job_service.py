@@ -40,7 +40,8 @@ def client(tmp_path):
     app.config.update(TESTING=True, RESULT_ROOT=tmp_path / "results",
                       RUNTIME_ROOT=tmp_path / "runtime",
                       C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True,
-                      C0_FORCE_FALLBACK_REASON=None, OPEN_FOLDER=lambda _folder: None)
+                      C0_FORCE_FALLBACK_REASON=None, STUDENTIZER_EVIDENCE_PROVIDER=None,
+                      OPEN_FOLDER=lambda _folder: None)
     return app.test_client()
 
 
@@ -87,6 +88,9 @@ def renderer(monkeypatch):
         if job.student_source_doc:
             Path(job.student_output_doc).write_bytes(Path(job.student_source_doc).read_bytes())
             outputs.append(job.student_output_doc)
+        elif not job.student_only:
+            engine.make_student(job.source_doc, job.student_output_doc)
+            outputs.append(job.student_output_doc)
         return {"output_paths": outputs, "whole_job": True,
                 "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
 
@@ -97,8 +101,8 @@ def renderer(monkeypatch):
     monkeypatch.setattr(slot_router, "build_slot_routing_plan", build)
     monkeypatch.setattr(template_slot_composer, "render_slots", render)
     monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fallback)
-    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
-                        lambda: SimpleNamespace(make_student=make_student))
+    engine = SimpleNamespace(make_student=make_student)
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
     return calls
 
 
