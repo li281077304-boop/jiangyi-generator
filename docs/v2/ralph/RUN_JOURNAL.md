@@ -314,3 +314,24 @@ benchmark remains NOT_RUN. New durable evidence:
 `fixtures/c3-r7-toc-patch-evidence.json`; report patch section:
 `C3_REVIEWED_PHYSICAL_RANGE_GATE.md`. Source/Golden and frozenassets unchanged;
 math/chem remain unapproved, no provider or new production activation.
+
+| C3-R8 | Before 2026-10-01 13:20:20 UTC (first recorded Worker clock; exact kickoff unavailable) | 2026-10-01 13:38:35 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 9493423e62db0f7e0f29ef6e99ae8e2453a7d530 | cd6ccadaea8fba082a84a08bfc1be68c0d932e5a (selection report/evidence implementation HEAD) | PASS selection-only: corpus SHA27/27; selected X012486/486 and X023370/370 endpoints valid; read-only source WPS page counts30/32, hashesunchanged; focused235/235 in52.70s inclStage2 39/39; fresh8-source Stage3 QG408/408 sections369/369 subq328/328 originalRecall100% E1-E4/MISS/FP/MERGE/SPLIT0 exact87.7%; V09assets10/10; compile/stageddiffcheckPASS; production/frozenunchanged; performanceNOT_RUN; no math/chem Golden, Studentizer or derived WPS UAT approval | Codex GPT-6.1 Sol (required independent review; not yet invoked by Worker) | PENDING | Independent Chief selection review, then separate full source Golden/capability work; no production activation or C3 completion | Yes: cd6ccad committed/pushed and remote fullSHA verified; Journal metadata commit/push follows |
+
+### C3-R8 selection evidence boundary
+
+`chief_model = Codex GPT-6.1 Sol` (required; actual independent review PENDING).
+Worker does not impersonate a Chief. `performance = NOT_RUN`.
+Report: `docs/v2/integration/C3_R8_SUBJECT_CANDIDATE_SELECTION.md`;
+durable evidence: `fixtures/c3-r8-subject-selection.json`.
+Recommendation X012 mathematics / X023 chemistry is CANDIDATE_ONLY and both
+CURRENT_CAPABILITY_BLOCKED. All three genuine math teacher sources were compared;
+X012 retains formula-answer/shading blockers. X023 has112 dedicated marker
+paragraphs without nontext, but no QG parent chain proves question ownership,
+unsupported formatting remains and retained ` = 6 \* GB3 ` field is blocked.
+Physical question total/full answer ownership remain NOT_ESTABLISHED. Existing
+student companions are reference-only, not independent Golden. All frozen unit
+spans are recorded, including7/28 complex endpoints; top-body context does not
+flatten table ownership or authorize mutation. No full Golden, new expected DOCX,
+removal ledger, source transformation, real derived UAT or broad pair inventory
+was performed. Read-only source page counts are not open/save/reopen/PDF or visual
+UAT. Current suite includes existing approved X008 API protection only.
