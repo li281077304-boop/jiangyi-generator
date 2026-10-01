@@ -191,3 +191,16 @@ No new production Studentizer timing, speedup or zero-COM measurement was made;
 prior source-only WPS times remain source preparation measurements. No derived
 WPS save/reopen/PDF UAT or new subject coverage was added. External fresh
 protected evidence: `C:\xml-uat\c3-round5-source-review\patch-ole\`.
+
+| C3-R5-CHIEF-FULL | Before 2026-10-01 12:05:48 UTC (first recorded Chief clock; all-page inspection began earlier, exact kickoff not captured) | 2026-10-01 12:09:40 UTC (content review/report completed, before metadata publication) | N/A — Chief-only content review; no Worker implementation | 12ebfac84d77ca0dffdd99b211fbdd8638751f47 | 12ebfac84d77ca0dffdd99b211fbdd8638751f47 (reviewed content/code HEAD; subsequent metadata commit contains this record) | PASS exact-source Golden comparison: all14 original WPS pages/264physical body records independently read;34 physical owners;118 disjoint answer/analysis paragraphs;146 retained full fingerprints/order; independently enumerated coordinates reconstruct exact expected root6b93cfc1594afc35bfa7801a4a73768185058fb2101e41e9f3d363173f31e0a2; expected candidate package67e0bc3617dfbf4e282cce4d0036fda61d42fd8192de96b533a60fbf4400ade9; exact source SHA56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4; all package members accounted/non-document bytes identical;4OLE in retained Q23 body164;Q11 body75-77 text only; no source/candidate/executable edits; preceding same-base independently executed181tests inclStage2 39/39/freshStage3 408/369/328 zero errors/V09assets10/10 evidence retained, not falsely rerun as UAT | Codex GPT-6.1 Sol (actual independent full-content review) | X008_GOLDEN_APPROVED exact source content/after-document only; no provider or production support approval | Separate Studentizer capability review/implementation and derived WPS/UAT;5missing frozen QGs remain unresolved production compatibility;math/chem remain unapproved;no C3 completion/zeroCOM/performance PASS | Yes: Chief-only report/Journal metadata committed and pushed after stating verdict; publication SHA/remote verification supplied in Chief reply |
+
+This Chief-only entry is distinct from R5 packet integrity. Report:
+`C3_X008_INDEPENDENT_GOLDEN_APPROVAL.md`. The Chief personally inspected every
+original page and each complete owner/removal region, including unmarked
+explanation continuations. The approval binds only the exact source hash and
+expected after-root hash above; it creates no color/role/numbering deletion
+rule and does not authorize a production provider or frozen-core change.
+Existing draft packets retain `approved=false`/`production_provider=false`;
+this report supplies independent content authority for a separately gated
+capability step. All14pages reviewed does not mean new derived-output WPS UAT:
+none was run. No new performance/zeroCOM result or C3 completion is claimed.
