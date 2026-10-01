@@ -118,7 +118,7 @@ Round 2 actual independent Chief reviewed candidate `f6d058b` and remote tip
 and returned PASS. Its caveat is mandatory: exact approved deletion/preservation
 is not whole-document answer completeness. No real support or zero COM was proved.
 
-| C3-R3 | ~2026-10-01 10:42:12 UTC (planner file creation; exact kickoff not captured) | 2026-10-01 10:56 UTC (minute rounded) | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | dddcd8185f3de4f42345f577d3f4dad844772608 | deee628047c42ca7dceb332fa8c5134408ff3fdd | PASS scoped integration machine gate: 174 focused tests in49.59s (existing124 + standalone29 + integration21), Stage2 39/39; complete reviewed Golden manifest and frozen semantic/source/body identities; incomplete/stale/candidate/table/textbox/provider-mutation failclosed; supplied student bypass; later XML failure whole-job fallback resets original teacher; observed make_student restoration on success/error; concurrent fallback max active1; mixed batch/restart metadata; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0, exact QG boundaries87.7%, source8/8; V0.9assets10/10; real27-source coverage audit27/27 COVERAGE_UNPROVEN, source hashes unchanged,0 derivatives; compile/diff checks PASS; frozen C2 boundaries unchanged | Codex GPT-6.1 Sol (required; independent Round 3 review pending) | PENDING; no Chief verdict fabricated | Stop Worker edits for independent review; real complete reviewed Golden/WPS/performance gate remains pending; no C3 completion/real XML support/zero COM claim | Yes: implementation/report deee628 committed and pushed; this Journal metadata commit/push follows |
+| C3-R3 | ~2026-10-01 10:42:12 UTC (planner file creation; exact kickoff not captured) | 2026-10-01 10:56 UTC (minute rounded) | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | dddcd8185f3de4f42345f577d3f4dad844772608 | deee628047c42ca7dceb332fa8c5134408ff3fdd | PASS scoped integration machine gate: 174 focused tests in49.59s (existing124 + standalone29 + integration21), Stage2 39/39; complete reviewed Golden manifest and frozen semantic/source/body identities; incomplete/stale/candidate/table/textbox/provider-mutation failclosed; supplied student bypass; later XML failure whole-job fallback resets original teacher; observed make_student restoration on success/error; concurrent fallback max active1; mixed batch/restart metadata; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0, exact QG boundaries87.7%, source8/8; V0.9assets10/10; real27-source coverage audit27/27 COVERAGE_UNPROVEN, source hashes unchanged,0 derivatives; compile/diff checks PASS; frozen C2 boundaries unchanged | Codex GPT-6.1 Sol (actual independent review) | PASS scoped complete-coverage orchestration; real Golden/WPS/performance remain pending | Round 4: audit genuine paired and existing legacy student sources for narrowly reviewed real Golden; no broad support or performance claim | Yes: implementation/report deee628 committed and pushed; this Journal metadata commit/push follows |
 
 Round 3 changes only orchestration, a complete-evidence planner, focused tests
 and this report/Journal. Human-reviewed Golden authority is trusted server-only
@@ -130,4 +130,24 @@ records observed entry into the COM-capable frozen make_student, with explicit
 `wps_com_evidence=COM_CAPABLE_MAKE_STUDENT_ENTRY_ONLY`; it is not an OS process
 probe or proof of actual process start on failure. Paired/student-only XML is
 preserved. Fresh evidence: `C:\xml-uat\c3-round3-integration\`. Chief exclusively
-Codex GPT-6.1 Sol, review pending.
+Codex GPT-6.1 Sol; actual Round 3 scoped PASS confirmed by the parent after independent review.
+
+| C3-R4 | ~2026-10-01 11:07:51 UTC (audit tool creation; actual pair inspection began earlier, exact kickoff not captured) | 2026-10-01 11:20:55 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 8a8b1724bc6bdae6506483084973e8b084d5f7fd | 472f90924ca17bb9feb259ad576433a02e4e53aa | PASS truthful audit/gap machine gate: 177 focused tests in49.46s (existing174+exactaudit3), Stage2 39/39; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%, source8/8; V0.9assets10/10; read-only27-source hashes27/27 unchanged; exact-topic14 candidates inspected, full C14N and expanded-name student subsequence embeddings0; existingC2 7/C1 3 legacy derivatives inspected,10/10 source/oracle unchanged; X014/X010 immutable tables exact-positive but other complete answer/inline/boundary gaps remain; approved manifests0, XMLStudentizer outputs0, new derived WPS/PDF UAT NOT_RUN; compile/diff-checkPASS; production/frozen code unchanged | Codex GPT-6.1 Sol (required; independent Round 4 review pending) | PENDING; no Chief verdict fabricated | Stop Worker edits for independent Chief; select narrow manually reviewed exact-location Golden/capability round; 0 existing suitable pairs does not establish C3 completion or prevent independent full source annotation | Yes: audit/report/diagnostic fixture472f909 committed/pushed; this Journal metadata commit/push follows |
+
+Round 4 produces a small durable read-only structural audit and diagnostic
+summary, not approved Golden or new Studentizer policy. All full-body exact
+fingerprint comparisons are stricter than business content equivalence; changed
+OMML/OLE/QG counts are diagnostic signals, not claims of lost classroom content.
+Legacy marker absence/WPS/package UAT does not review every answer or protected
+object. C1 X021 was a student original renamed teacher, not a valid teacher
+business oracle. C2 CaseA contains no math input, but C1 X012 was additionally
+inspected. No suitable current complete paragraph-only transformation was proved.
+The report gives a concrete manual-Golden path based on full original source
+annotation and exact structural addresses, requiring separately reviewed scope
+for immutable tables/inline knowledge fills/multi-paragraph answers/boundaries.
+Physical body indices are explicitly distinct from StructDoc bN where main-body
+bookmark siblings occur. No derivatives exist, so new WPS derivative UAT was not
+run; the environment is not marked unavailable. No new speedup/zeroCOM/performance
+result is claimed. Evidence: `C:\xml-uat\c3-round4-real-pairs\`; report
+`C3_REAL_GOLDEN_CANDIDATE_GATE.md`. Chief exclusively Codex GPT-6.1 Sol,
+independent Round 4 review pending.
