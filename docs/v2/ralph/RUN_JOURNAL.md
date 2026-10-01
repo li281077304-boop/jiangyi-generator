@@ -225,3 +225,37 @@ than an OS process probe or product zeroCOM proof. Report:
 `fixtures/c3-r6-approved-probe.json`; external protected evidence:
 `C:\xml-uat\c3-round6-approved-source\`. Minimal future capability proposal is
 documented but not implemented. Chief exclusively Codex GPT-6.1 Sol, PENDING.
+
+| C3-R7 | Before 2026-10-01 12:25:51 UTC (first recorded Worker clock; API inspection preceded it, exact kickoff not captured) | 2026-10-01 12:54:13 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | a7ced4bc615c7d9641557ab05a35e1a2a2340e46 | 3fe390a4edf087ec68f8aa47219de93a7a047cf2 | PASS scoped standalone physical-range capability/protected gate:222focused tests in52.49s inclStage2 39/39;37new cases inclrealapproved transform; exhaustive264-child ledger/34physical owners/118plainanswer removals/146retained fullfingerprints/order; actual publicprepare_student XML_PREPARED after-root6b93cf... and fullDOCX67e0bc... equalChiefGolden; non-documentparts/memberorderexact; revisedcross-story PAGE/NUMPAGEScounter testsPASS, REF/PAGEREF/unknown/fragmentlinksfailclosed; final freshStage3source8/8 QG408/408 sections369/369 subq328/328 originalrecall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%; V09assets10/10 compile/stageddiffchecksPASS; actualKWps alerts-enabledOpen/SaveAsnew/Close/Reopen/PDFcallsPASS onfreshverifiedoutput; bothpackagesvalid,142paragraphtexts/orderexact,4OLEpayloadsbyteidentical,9PDFpagesreadable,34questionnumbers1-34ordered,visualpages1/5/6/9inspected; source/Golden/inputunchanged; inheritedTOCerrors2→2; repairabsenceNOT_PROVEN; wholejobperformancebenchmarkNOT_RUN; productionprovider/planner/orchestrator/frozencoresunchanged | Codex GPT-6.1 Sol (required; independent Round 7 implementation/UAT review pending) | PENDING; no Chief implementation verdict fabricated; scoped Worker gate is not C3 completion/production activation | Stop Worker for independent review of standalone contract/boundaries/exactGolden/derived WPS evidence; math/chem remain unapproved; no provider or C3complete/zeroCOM/performancePASS | Yes: implementation/harness/tests/report/evidence3fe390a committed/pushed and fullremoteSHA verified; this Journal metadata commit/push follows |
+
+Round 7 implements a separate standalone `PhysicalRangeSemantics` dispatch;
+legacy marked-single-answer semantics/_plan and supplied-student bypass are
+unchanged. It never invents frozen QGs, routes by sample ID/hash or installs a
+production provider. The real UAT harness only constructs reviewed evidence and
+calls `studentizer.prepare_student`; it does not manually splice the output.
+An intermediate too-broad cross-story field guard refused unchanged footer page
+counters (216pass/1fail). It was corrected to support only balanced PAGE/NUMPAGES
+with optional MERGEFORMAT; a new verified output, final222-test rerun and fresh
+WPS roundtrip supersede all prior trials. Other cross-story field dependencies
+and ambiguous hyperlink relationships continue to fail closed.
+
+Final WPS input SHA equals the independent Golden67e0bc...; actual provider is
+KWps.Application/wps.exe, not Microsoft Word despite compatibilityName. Saved
+DOCX7067486bytes/PDF2127287bytes are nonempty/readable. PDF all9pages receive
+automated readability/content evidence; actual visual inspection is4pages
+(1/5/6/9), not a nine-page visual/classroom-readiness verdict. No OMML/table
+exists in this source; all4OLE stay inQ23, and answer-object removal remains
+untested. OriginalPDF/derivedPDF both display2undefined-bookmark errors; cached
+XMLw:t counts0use a different field-evaluation statistic and do not override
+PDF observations. Source TOC page caches are intentionally not repaired.
+
+Alerts-enabled synchronous ordinaryOpen/Reopen returned without an unresolved
+blocking modal or exception; repair was not requested. Modal dialogs were not
+directly instrumented, and automatic repair without a prompt cannot be excluded;
+repairabsence is NOT_PROVEN. Performancebenchmark is NOT_RUN: API elapsed/WPS
+timestamps are diagnostics, not whole-job speed or OSzeroCOM measurements.
+Source and independentGolden hashes remain unchanged. Report:
+`C3_REVIEWED_PHYSICAL_RANGE_GATE.md`; durableevidence:
+`fixtures/c3-r7-physical-range-evidence.json`; fresh external evidence:
+`C:\xml-uat\c3-round7-physical-ranges\verified-wps\` plus parent directory
+transform/protected reports. Chief exclusively Codex GPT-6.1 Sol, PENDING.
