@@ -18,6 +18,7 @@ import zipfile
 
 from lxml import etree
 from package_validator import validate_package
+from studentizer_ranges import PhysicalRangeSemantics
 
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 TAG = lambda name: "{%s}%s" % (W, name)
@@ -159,7 +160,7 @@ def _plan(root, semantics):
 
 
 def prepare_student(source_snapshot: bytes | str | Path,
-                    semantic_snapshot: StudentizerSemantics | None,
+                    semantic_snapshot: StudentizerSemantics | PhysicalRangeSemantics | None,
                     output_path: str | Path,
                     policy: StudentizerPolicy = StudentizerPolicy()) -> StudentizerResult:
     """Validate and publish a fresh standalone derived source, or fail closed.
@@ -167,6 +168,8 @@ def prepare_student(source_snapshot: bytes | str | Path,
     A reviewed caller allowlist is mandatory for teacher input. Frozen A-Line
     SemanticSnapshot does not satisfy that contract. Unsupported cases return
     FALLBACK without an output; this function never invokes fallback or COM.
+    PhysicalRangeSemantics is a separate standalone exhaustive reviewed ledger
+    and exact-Golden contract; the legacy marked-single-answer scope is unchanged.
     """
     started = time.perf_counter()
     digest = ""
@@ -186,7 +189,7 @@ def prepare_student(source_snapshot: bytes | str | Path,
                   and policy.source_role == "student")
         if not bypass and (policy.input_version != "TEACHER_ONLY" or policy.source_role != "teacher"):
             _refuse("STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN", "input version and source side must be explicit")
-        if not bypass and not isinstance(semantic_snapshot, StudentizerSemantics):
+        if not bypass and not isinstance(semantic_snapshot, (StudentizerSemantics, PhysicalRangeSemantics)):
             _refuse("STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN", "frozen roles/section parents are not reviewed ownership")
         if not bypass and semantic_snapshot.source_sha256 != digest:
             _refuse("STUDENTIZER_SOURCE_IDENTITY_MISMATCH", "semantic snapshot must bind the identical source bytes")
@@ -201,11 +204,17 @@ def prepare_student(source_snapshot: bytes | str | Path,
         if bypass:
             generated = data  # Supplied student is preserved byte for byte.
         else:
-            retained, mutations = _plan(root, semantic_snapshot)
+            if isinstance(semantic_snapshot, PhysicalRangeSemantics):
+                from studentizer_ranges import plan_physical_ranges
+                retained, mutations = plan_physical_ranges(root, semantic_snapshot, parts)
+            else:
+                retained, mutations = _plan(root, semantic_snapshot)
             revised = etree.tostring(root, encoding="UTF-8", xml_declaration=True)
             check = etree.fromstring(revised, etree.XMLParser(resolve_entities=False, no_network=True))
             if [element_sha256(n) for n in check.find(TAG("body"))] != retained:
                 _refuse("STUDENTIZER_PRESERVATION_CHECK_FAILED", "retained block structure/order changed")
+            if isinstance(semantic_snapshot, PhysicalRangeSemantics) and element_sha256(check) != semantic_snapshot.expected_document_sha256:
+                _refuse("STUDENTIZER_GOLDEN_COMPARISON_FAILED", "serialized after-root does not match independent Golden")
             buffer = BytesIO()
             with zipfile.ZipFile(buffer, "w") as target:
                 for info in infos:

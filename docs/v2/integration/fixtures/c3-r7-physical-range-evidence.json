@@ -1,0 +1,307 @@
+{
+  "worker": "GPT-6.1 (gpt-6.1-sol)",
+  "chief": "Codex GPT-6.1 Sol",
+  "chief_verdict": "PENDING",
+  "transform": {
+    "entrypoint": "studentizer.prepare_student",
+    "contract": "PhysicalRangeSemantics",
+    "result": {
+      "status": "XML_PREPARED",
+      "engine": "XML",
+      "source_sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+      "output_path": "C:\\xml-uat\\c3-round7-physical-ranges\\X008-studentizer-verified.docx",
+      "output_sha256": "67e0bc3617dfbf4e282cce4d0036fda61d42fd8192de96b533a60fbf4400ade9",
+      "reason_code": null,
+      "reason_detail": null,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "stats": {
+          "package_parts": 54,
+          "xml_parts": 12,
+          "relationships": 51,
+          "relationship_references": 44,
+          "style_references": 14,
+          "docPr_ids": 28,
+          "picture_ids": 27,
+          "drawing_image_references": 27,
+          "image_media_targets": 33,
+          "vml_image_references": 6,
+          "ole_references": 4,
+          "embedding_parts": 4,
+          "errors": 0,
+          "warnings": 0
+        }
+      },
+      "elapsed_seconds": 0.610507,
+      "com_invocations": 0
+    },
+    "source_unchanged": true,
+    "golden_unchanged": true,
+    "production_provider_created": false,
+    "performance_benchmark": "NOT_RUN",
+    "inherited_missing_bookmark_targets": [
+      "_Toc21406",
+      "_Toc22623",
+      "_Toc29290",
+      "_Toc3947",
+      "_Toc67",
+      "_Toc9"
+    ],
+    "after_root_sha256": "6b93cfc1594afc35bfa7801a4a73768185058fb2101e41e9f3d363173f31e0a2",
+    "after_root_matches_golden": true,
+    "retained_children": 146,
+    "retained_fingerprints_order_exact": true,
+    "non_document_package_parts_exact": true,
+    "package_members_order_exact": true,
+    "removed_paragraphs": 118
+  },
+  "real_wps_uat": {
+    "app_provider": "KWps.Application",
+    "source_unchanged": true,
+    "wps_processes": [
+      {
+        "Id": 8548,
+        "Path": "D:\\Program Files\\WPS Office\\12.1.0.28505\\office6\\wps.exe"
+      },
+      {
+        "Id": 25116,
+        "Path": "D:\\Program Files\\WPS Office\\12.1.0.28505\\office6\\wps.exe"
+      },
+      {
+        "Id": 27424,
+        "Path": "D:\\Program Files\\WPS Office\\12.1.0.28505\\office6\\wps.exe"
+      },
+      {
+        "Id": 28004,
+        "Path": "D:\\Program Files\\WPS Office\\12.1.0.28505\\office6\\wps.exe"
+      }
+    ],
+    "repair_prompt_observation": "NOT_DIRECTLY_INSTRUMENTED; alerts enabled normal Open returns without unresolved modal; automatic repair without prompt cannot be excluded",
+    "close": "PASS",
+    "reopen": "PASS",
+    "input_unchanged": true,
+    "performance_benchmark": "NOT_RUN",
+    "app_version": "12.0",
+    "repair_exception": false,
+    "saved_docx_bytes": 7067486,
+    "before": {
+      "tables": 0,
+      "inline": 27,
+      "shapes": 1,
+      "pages": 9,
+      "omaths": 0,
+      "inline_types": {
+        "1": 4,
+        "3": 23
+      },
+      "paragraphs": 142
+    },
+    "saveas": "PASS",
+    "app_name": "Microsoft Word",
+    "pdf_export": "PASS",
+    "started_utc": "2026-10-01T12:44:18.7779518Z",
+    "saved_docx": "C:\\xml-uat\\c3-round7-physical-ranges\\verified-wps\\X008-wps-saved.docx",
+    "source_sha256": "56065CBF98AF67818AE2C83E3169A3B932A6868BE45B282DD51C71F0D5E16FE4",
+    "repair_requested": false,
+    "after": {
+      "tables": 0,
+      "inline": 27,
+      "shapes": 1,
+      "pages": 9,
+      "omaths": 0,
+      "inline_types": {
+        "1": 4,
+        "3": 23
+      },
+      "paragraphs": 142
+    },
+    "open": "PASS",
+    "input_sha256": "67E0BC3617DFBF4E282CCE4D0036FDA61D42FD8192DE96B533A60FBF4400ADE9",
+    "golden_unchanged": true,
+    "pdf": "C:\\xml-uat\\c3-round7-physical-ranges\\verified-wps\\X008-wps-reopened.pdf",
+    "ended_utc": "2026-10-01T12:44:22.9283012Z",
+    "golden_sha256": "67E0BC3617DFBF4E282CCE4D0036FDA61D42FD8192DE96B533A60FBF4400ADE9",
+    "pdf_bytes": 2127287,
+    "input": "C:\\xml-uat\\c3-round7-physical-ranges\\X008-studentizer-verified.docx"
+  },
+  "content": {
+    "output_package": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "stats": {
+        "package_parts": 54,
+        "xml_parts": 12,
+        "relationships": 51,
+        "relationship_references": 44,
+        "style_references": 14,
+        "docPr_ids": 28,
+        "picture_ids": 27,
+        "drawing_image_references": 27,
+        "image_media_targets": 33,
+        "vml_image_references": 6,
+        "ole_references": 4,
+        "embedding_parts": 4,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    "wps_saved_package": {
+      "valid": true,
+      "errors": [],
+      "warnings": [],
+      "stats": {
+        "package_parts": 66,
+        "xml_parts": 13,
+        "relationships": 52,
+        "relationship_references": 44,
+        "style_references": 11,
+        "docPr_ids": 28,
+        "picture_ids": 27,
+        "drawing_image_references": 27,
+        "image_media_targets": 33,
+        "vml_image_references": 6,
+        "ole_references": 4,
+        "embedding_parts": 4,
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    "output_objects": {
+      "paragraphs": 142,
+      "ole": 4,
+      "omml": 0,
+      "drawing": 24,
+      "table": 0
+    },
+    "wps_saved_objects": {
+      "paragraphs": 142,
+      "ole": 4,
+      "omml": 0,
+      "drawing": 24,
+      "table": 0
+    },
+    "all_paragraph_text_order_exact_after_wps": true,
+    "paragraphs_checked": 142,
+    "ole_payloads_byte_identical_after_wps": true,
+    "pdf_pages": 9,
+    "pages": [
+      {
+        "page": 1,
+        "text_chars": 943,
+        "image_instances": 2,
+        "readable": true
+      },
+      {
+        "page": 2,
+        "text_chars": 635,
+        "image_instances": 4,
+        "readable": true
+      },
+      {
+        "page": 3,
+        "text_chars": 594,
+        "image_instances": 4,
+        "readable": true
+      },
+      {
+        "page": 4,
+        "text_chars": 366,
+        "image_instances": 9,
+        "readable": true
+      },
+      {
+        "page": 5,
+        "text_chars": 656,
+        "image_instances": 5,
+        "readable": true
+      },
+      {
+        "page": 6,
+        "text_chars": 531,
+        "image_instances": 5,
+        "readable": true
+      },
+      {
+        "page": 7,
+        "text_chars": 525,
+        "image_instances": 5,
+        "readable": true
+      },
+      {
+        "page": 8,
+        "text_chars": 903,
+        "image_instances": 3,
+        "readable": true
+      },
+      {
+        "page": 9,
+        "text_chars": 407,
+        "image_instances": 4,
+        "readable": true
+      }
+    ],
+    "pdf_answer_markers": {
+      "【答案】": 0,
+      "【解析】": 0,
+      "【详解】": 0,
+      "【解答】": 0
+    },
+    "pdf_question_number_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34
+    ],
+    "original_pdf_bookmark_error_count": 2,
+    "derived_pdf_bookmark_error_count": 2,
+    "output_cached_xml_bookmark_error_count": 0,
+    "saved_cached_xml_bookmark_error_count": 0,
+    "pdf_sha256": "605fcce456595a07d377c831f52b54ca3977a412791a0a9dd9ad6ae774d35c46",
+    "visually_inspected_pages": [
+      1,
+      5,
+      6,
+      9
+    ],
+    "full_visual_all_pages_claimed": false,
+    "source_sha256_final": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+    "golden_sha256_final": "67e0bc3617dfbf4e282cce4d0036fda61d42fd8192de96b533a60fbf4400ade9",
+    "all_34_question_numbers_in_order": true
+  },
+  "performance_benchmark": "NOT_RUN",
+  "repair_absence_proven": false,
+  "production_provider_created": false
+}
