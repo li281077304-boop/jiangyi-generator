@@ -175,6 +175,9 @@ select:hover { border-color: #bdc4ce; }
 .progress-heading strong { font-weight: 550; }
 .progress-heading > span { font-variant-numeric: tabular-nums; color: var(--accent); font-size: 12px; }
 .progress-stage { font-size: 11px; color: var(--muted); line-height: 1.8; overflow-wrap: anywhere; margin: 9px 0; }
+.batch-summary { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11px; color: var(--muted); margin: 10px 0; }
+.batch-summary strong { font-weight: 500; color: var(--text); }
+.batch-current { width: 100%; overflow-wrap: anywhere; }
 .progress-track { height: 5px; border-radius: 3px; background: var(--surface); overflow: hidden; }
 .progress-track > div { height: 100%; width: 0; background: var(--accent); border-radius: 3px; transition: width .3s; }
 .progress-track.disconnected > div { background: #bc913e; }
@@ -182,7 +185,7 @@ select:hover { border-color: #bdc4ce; }
 table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11px; margin-top: 18px; }
 th { color: var(--muted); font-weight: 400; font-size: 10px; }
 td, th { padding: 10px 6px; border-bottom: 1px solid var(--line); text-align: left; overflow-wrap: anywhere; line-height: 1.6; }
-th:first-child { width: 48%; }
+th:first-child { width: 34%; }
 .result-status { display: inline-flex; align-items: center; gap: 4px; }
 .result-status .lucide { width: 12px; height: 12px; }
 .result-status.done { color: var(--green); }
@@ -205,6 +208,7 @@ th:first-child { width: 48%; }
 .history-actions { display: flex; gap: 4px; }
 .history-state { font-size: 11px; margin: 5px; color: var(--muted); }
 .history-state.done { color: var(--green); }
+.history-state.partial { color: #b27c28; }
 .history-state.running { color: var(--accent); }
 .empty-view { padding: 75px 15px; text-align: center; color: var(--muted); font-size: 12px; }
 .empty-view .lucide { width: 36px; height: 36px; margin-bottom: 18px; stroke-width: 1; }

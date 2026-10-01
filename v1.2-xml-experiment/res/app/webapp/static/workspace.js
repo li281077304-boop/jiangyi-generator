@@ -233,7 +233,11 @@
     if (!state.files.length) text = "尚未添加素材";
     else if ($("docxMode").value === "auto" && docs === 2 && !zips) text = "两个 DOCX 按文件名与答案结构配对；已有学生版优先使用，不会再次去答案";
     else if (docs === 1 && !zips) text = "单个 DOCX 按文件名与答案结构判断：教师版会准备学生版；学生版只生成学生版";
-    else text = "本阶段只支持一个 DOCX，或一组教师版和学生版 DOCX；ZIP 与批量处理尚未开放";
+    else if (zips && $("docxMode").value === "separate") text = "ZIP 会递归查找 DOCX，每份 DOCX 各自生成；临时文件会忽略，教师版会准备学生版，学生版只生成学生版";
+    else if (zips) text = "ZIP 会递归查找 DOCX，并按同一专题的教师版与学生版可靠配对；临时文件会忽略，每个专题独立生成";
+    else if (docs >= 3 && $("docxMode").value === "separate") text = "每份 DOCX 各自生成；教师版会准备学生版，学生版只生成学生版";
+    else if (docs >= 3) text = "按专题名称配对教师版与学生版；未配对的教师版或学生版各自生成，单个专题失败不影响其他成品";
+    else text = "两个 DOCX 请使用“按专题配对”，并提供同一专题的教师版与学生版；独立专题可使用 ZIP 或一次上传至少三份 DOCX";
     setText("pairingNote", text);
   }
 
@@ -247,7 +251,7 @@
   function statusCell(value) {
     var span = document.createElement("span"), icon = "minus", label = value || "—";
     span.className = "result-status";
-    if (value === "完成") { span.classList.add("done"); icon = "check-circle-2"; }
+    if (value === "完成" || value === "成功") { span.classList.add("done"); icon = "check-circle-2"; }
     else if (value === "处理中") { span.classList.add("running"); icon = "loader-circle"; }
     else if (value && value.indexOf("失败") === 0) { span.classList.add("error"); icon = "circle-alert"; }
     span.appendChild(makeIcon(icon)); span.appendChild(document.createTextNode(label));
@@ -260,22 +264,35 @@
     var percent = job.total ? Math.round((job.progress || 0) / job.total * 100) : 0;
     if (job.status === "done") percent = 100;
     setText("progressPercent", percent + "%"); $("barfill").style.width = percent + "%"; $("progressTrack").setAttribute("aria-valuenow", percent);
-    var title = job.status === "done" ? "讲义已生成" : job.status === "error" ? "生成未完成" : job.status === "queued" ? "任务排队中" : "正在生成";
+    var title = job.status === "done" ? "讲义已生成" : job.status === "partial" ? "部分讲义已生成" : job.status === "error" ? (job.is_batch ? "全部专题生成失败" : "生成未完成") : job.status === "queued" ? "任务排队中" : "正在生成";
     setText("progressTitle", title); setText("progressStage", job.error || job.stage || job.current || "正在准备 Word 文档");
     setText("footerStatus", title); $("progressTrack").classList.remove("disconnected");
+    $("batchSummary").hidden = !job.is_batch;
+    if (job.is_batch) {
+      setText("batchTotal", job.total || 0); setText("batchCompleted", job.completed || 0); setText("batchFailed", job.failed || 0);
+      setText("batchCurrent", job.current_topic || (isActiveStatus(job.status) ? "等待处理" : "已结束"));
+    }
     var rows = $("resultRows"); rows.replaceChildren();
     (job.items || []).forEach(function (item) {
-      var tr = document.createElement("tr"), topic = document.createElement("td"), teacher = document.createElement("td"), student = document.createElement("td");
-      topic.textContent = item.topic || "识别中"; teacher.appendChild(statusCell(item.teacher)); student.appendChild(statusCell(item.student)); tr.append(topic, teacher, student); rows.appendChild(tr);
+      var tr = document.createElement("tr"), topic = document.createElement("td"), teacher = document.createElement("td"), student = document.createElement("td"), renderer = document.createElement("td"), status = document.createElement("td");
+      topic.textContent = item.topic || "识别中"; teacher.appendChild(statusCell(item.teacher)); student.appendChild(statusCell(item.student));
+      var itemRenderer = item.renderer || (!job.is_batch && job.renderer);
+      var itemStatus = item.status || job.status;
+      renderer.textContent = itemRenderer === "XML" ? "XML" : itemRenderer === "V0.9" ? "fallback（V0.9）" : itemStatus === "error" ? "未执行" : "待确定";
+      if (item.fallback_reason || (!job.is_batch && job.fallback_reason)) renderer.title = "回退原因：" + (item.fallback_detail || item.fallback_reason || job.fallback_reason);
+      status.appendChild(statusCell(itemStatus === "done" ? "成功" : itemStatus === "error" ? "失败" : itemStatus === "running" ? "处理中" : "等待中"));
+      if (item.error) status.title = item.error;
+      tr.append(topic, teacher, student, renderer, status); rows.appendChild(tr);
     });
     var warnings = $("warnings"); warnings.hidden = !(job.warnings && job.warnings.length); warnings.textContent = job.warnings && job.warnings.length ? job.warnings.join("；") : "";
     var delivery = $("resultDelivery");
-    delivery.hidden = job.status !== "done";
-    if (job.status === "done") {
+    delivery.hidden = !job.has_result;
+    if (job.has_result) {
       var pathText = job.result_dir ? "本地输出路径：" + job.result_dir + "。" : "成品已保存在本地结果目录。";
+      var generatedText = job.status === "partial" ? "已成功生成 " + job.completed + " 个专题，" + job.failed + " 个失败。成功成品已通过校验，不受失败项影响。" : isActiveStatus(job.status) ? "已完成专题的成品已保存并通过校验，其余专题正在处理。" : "成品已生成并通过校验。";
       var deliveryText = job.delivery_error_code === "DELIVERY_DOWNLOAD_FAILED"
-        ? "成品已生成并通过校验。" + pathText + "ZIP 下载暂不可用（" + job.delivery_error_code + "），可打开成品文件夹获取 DOCX。"
-        : "成品已生成并通过校验。" + pathText + "可打开成品文件夹，也可以下载 ZIP。";
+        ? generatedText + pathText + "ZIP 下载暂不可用，可打开成品文件夹获取 DOCX。"
+        : generatedText + pathText + (job.download_available ? "优先打开成品文件夹，也可以下载 ZIP。" : "可打开成品文件夹获取已完成的 DOCX。");
       delivery.textContent = deliveryText;
     } else { delivery.textContent = ""; }
     $("downloadResult").hidden = !job.download_available; $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
@@ -348,7 +365,7 @@
       var main = document.createElement("button"); main.className = "history-main";
       var title = document.createElement("strong"); title.textContent = job.filenames && job.filenames.length ? job.filenames.join("、") : "讲义任务";
       var meta = document.createElement("p"), options = job.options || {}; meta.textContent = [options.grade, options.subject, options.handoutType, formatDate(job.created_at)].filter(Boolean).join(" · "); main.append(title, meta); main.addEventListener("click", function () { navigate("workspace"); showJob(job); if (isActiveStatus(job.status)) pollJob(job.job_id, true); });
-      var status = document.createElement("span"); status.className = "history-state " + job.status; status.textContent = job.status === "done" ? "已完成" : job.status === "queued" ? "排队中" : job.status === "running" ? "生成中" : "未完成";
+      var status = document.createElement("span"); status.className = "history-state " + job.status; status.textContent = job.status === "done" ? "已完成" : job.status === "partial" ? "部分完成" : job.status === "queued" ? "排队中" : job.status === "running" ? "生成中" : "未完成";
       var actions = document.createElement("div"); actions.className = "history-actions";
       if (job.has_result) {
         var open = document.createElement("button"); open.className = "icon-button"; open.setAttribute("aria-label", "打开成品位置"); open.dataset.tooltip = "成品位置"; open.appendChild(makeIcon("folder-open")); open.addEventListener("click", function () { openJob(job.job_id); }); actions.appendChild(open);

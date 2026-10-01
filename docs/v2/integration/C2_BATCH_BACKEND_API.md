@@ -3,8 +3,8 @@
 Worker: GPT-6.1 (`gpt-6.1-sol`). Base:
 `c44b2279fd7e516f770edf8128500d57b9970d16`.
 Round 2 Input Resolver Chief review returned PASS. Round 3 Chief returned PATCH
-for a concurrent first-submission executor race. Round 4 fixes that race;
-independent review is pending. This scoped backend gate is not `C2_BATCH_PASS`.
+for a concurrent first-submission executor race. Round 4 fixes that race and
+independent Chief review returned PASS. This scoped backend gate is not `C2_BATCH_PASS`.
 
 ## Production behavior
 

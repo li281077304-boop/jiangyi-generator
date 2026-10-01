@@ -69,7 +69,7 @@
                 </div>
                 <div id="fileList" class="file-list" aria-label="素材列表"></div>
                 <div id="uploadErrors" class="notice error" role="alert" hidden></div>
-                <div class="pairing-row"><label for="docxMode">Word 文件分组</label><select id="docxMode" class="quiet-select"><option value="auto">两个文件成对</option><option value="separate">各自生成</option></select></div>
+                <div class="pairing-row"><label for="docxMode">Word 文件分组</label><select id="docxMode" class="quiet-select"><option value="auto">按专题配对（推荐）</option><option value="separate">各自生成</option></select></div>
                 <div id="pairingNote" class="pairing-note" aria-live="polite">尚未添加素材</div>
               </section>
 
@@ -79,13 +79,14 @@
                 <div id="progressWrap" hidden>
                   <div class="progress-heading"><strong id="progressTitle" aria-live="polite">准备中</strong><span id="progressPercent">0%</span></div>
                   <p class="progress-stage" id="progressStage"></p>
+                  <div id="batchSummary" class="batch-summary" aria-live="polite" hidden><span>总数 <strong id="batchTotal">0</strong></span><span>已完成 <strong id="batchCompleted">0</strong></span><span>失败数 <strong id="batchFailed">0</strong></span><span class="batch-current">当前处理专题：<strong id="batchCurrent">等待处理</strong></span></div>
                   <div class="progress-track" id="progressTrack" role="progressbar" aria-label="生成进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="barfill"></div></div>
-                  <div class="result-table-wrap"><table><thead><tr><th>专题</th><th>教师版</th><th>学生版</th></tr></thead><tbody id="resultRows"></tbody></table></div>
+                  <div class="result-table-wrap"><table><thead><tr><th>专题</th><th>教师版</th><th>学生版</th><th>生成方式</th><th>状态</th></tr></thead><tbody id="resultRows"></tbody></table></div>
                   <div id="warnings" class="notice" hidden></div>
                   <p id="resultDelivery" class="notice" role="status" aria-live="polite" hidden></p>
                   <div class="result-actions">
-                    <a class="primary-button" id="downloadResult" hidden><i data-lucide="download"></i>下载 ZIP</a>
-                    <button class="secondary-button" id="openResult" hidden><i data-lucide="folder-open"></i>打开成品文件夹</button>
+                    <button class="primary-button" id="openResult" hidden><i data-lucide="folder-open"></i>打开成品文件夹</button>
+                    <a class="secondary-button" id="downloadResult" hidden><i data-lucide="download"></i>下载 ZIP</a>
                     <button class="secondary-button" id="reconnect" hidden><i data-lucide="refresh-cw"></i>重新连接</button>
                   </div>
                 </div>
@@ -121,7 +122,7 @@
 
         <section id="historyView" class="view" hidden>
           <div class="page-heading"><div><p class="eyebrow">我的讲义</p><h1>生成记录</h1></div><button class="icon-button" id="refreshHistory" aria-label="刷新生成记录" data-tooltip="刷新记录"><i data-lucide="refresh-cw"></i></button></div>
-          <div class="history-toolbar"><label class="search-field"><i data-lucide="search"></i><input id="historySearch" type="search" placeholder="搜索文件名或学科" aria-label="搜索生成记录"></label><select id="historyFilter" aria-label="任务状态"><option value="all">全部状态</option><option value="queued">排队中</option><option value="running">生成中</option><option value="done">已完成</option><option value="error">未完成</option></select></div>
+          <div class="history-toolbar"><label class="search-field"><i data-lucide="search"></i><input id="historySearch" type="search" placeholder="搜索文件名或学科" aria-label="搜索生成记录"></label><select id="historyFilter" aria-label="任务状态"><option value="all">全部状态</option><option value="queued">排队中</option><option value="running">生成中</option><option value="done">已完成</option><option value="partial">部分完成</option><option value="error">未完成</option></select></div>
           <div id="historyList"></div>
         </section>
 
