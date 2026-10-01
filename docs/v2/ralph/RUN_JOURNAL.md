@@ -263,12 +263,44 @@ Round 7 implementation review returned PATCH for the missing TOC bookmark
 dependency. That scoped machine/UAT evidence did not authorize production use.
 
 
-| C3-R7-PATCH | Before 2026-10-01 13:00:12 UTC (first recorded Worker clock; exact kickoff not captured) | 2026-10-01 13:07:40 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 7e5959fddb1694d19b989e23185d8bb1790fd6d4 | e93e69513877c70e5519a8344dc540d7dd6107be | PASS scoped TOC dependency correction:233focused tests in55.11s inclStage2 39/39;oldbug reproduced beforefix;11newTOC tests(simple+complex field/bookmark overlap refusal withnooutput/sourceunchanged,8ambiguous/unknown/repeatedparameter refusals,legitimatebookmarkoutsideremoval preserves);fresh actual publicprepare_student X008after-root6b93cf.../DOCX67e0bc... exactChiefGolden,118removals/146retained+non-documentparts/orderunchanged;freshStage3source8/8 QG408/408 sections369/369 subq328/328 originalrecall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%;V09assets10/10 compile/stageddiffchecksPASS;newoutput actualKWps alerts=-1 Open/SaveAsnew/Close/Reopen/PDFcallsPASS,packagesvalid,142para text/order/4OLEpayloadsexact,9PDFpagesreadable/34numbersordered,visualpages1/5/6/9inspected;source/Golden/inputunchanged;inheritedTOCerrors2→2;repairabsenceNOT_PROVEN;performancebenchmarkNOT_RUN;production/frozenunchanged | Codex GPT-6.1 Sol (required; independent correction re-review pending) | PENDING; no new Chief verdict fabricated | Stop Worker for independent TOC parser/boundary/realGolden/WPS re-review; no production provider/C3complete/zeroCOM/performanceclaim | Yes: small parser/tests/report/diagnosticfix e93e695 committed/pushed and remoteSHA verified; this Journal metadata commit/push follows |
+| C3-R7-PATCH | Before 2026-10-01 13:00:12 UTC (first recorded Worker clock; exact kickoff not captured) | 2026-10-01 13:07:40 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 7e5959fddb1694d19b989e23185d8bb1790fd6d4 | 9bf784e050c93d1ed6254ec6ddffd7fba5e8327d (reviewed HEAD; implementation e93e695) | PASS scoped TOC dependency correction:233focused tests in55.11s inclStage2 39/39;oldbug reproduced beforefix;11newTOC tests(simple+complex field/bookmark overlap refusal withnooutput/sourceunchanged,8ambiguous/unknown/repeatedparameter refusals,legitimatebookmarkoutsideremoval preserves);fresh actual publicprepare_student X008after-root6b93cf.../DOCX67e0bc... exactChiefGolden,118removals/146retained+non-documentparts/orderunchanged;freshStage3source8/8 QG408/408 sections369/369 subq328/328 originalrecall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%;V09assets10/10 compile/stageddiffchecksPASS;newoutput actualKWps alerts=-1 Open/SaveAsnew/Close/Reopen/PDFcallsPASS,packagesvalid,142para text/order/4OLEpayloadsexact,9PDFpagesreadable/34numbersordered,visualpages1/5/6/9inspected;source/Golden/inputunchanged;inheritedTOCerrors2→2;repairabsenceNOT_PROVEN;performancebenchmarkNOT_RUN;production/frozenunchanged | Codex GPT-6.1 Sol (actual independent correction re-review;2026-10-01 13:18:36 UTC) | PASS scoped standalone physical-range capability + exact X008 WPS UAT;performance NOT_RUN;repair/modal absence NOT_PROVEN;original R7 PATCH retained | Continue C3 math/chem evidence, safe production integration and real workload performance gates under already authorized C3 goal;no C3complete/zeroCOM/performanceclaim | Yes: small parser/tests/report/diagnosticfix e93e695 committed/pushed and remoteSHA verified; this Journal metadata commit/push follows |
+
+### C3-R7-PATCH independent Chief re-review — 2026-10-01 13:18:36 UTC
+
+`chief_model = Codex GPT-6.1 Sol` (actual independent Chief invocation).
+`reviewed_head_sha = 9bf784e050c93d1ed6254ec6ddffd7fba5e8327d`;
+local/remote matched and worktree was clean at review. The Round row records
+this reviewed HEAD and preserves implementation SHA
+`e93e69513877c70e5519a8344dc540d7dd6107be` in its implementation note.
+
+**Chief verdict: PASS, scoped to standalone reviewed physical-range capability
+and the exact approved X008 derived-output WPS UAT.** This replaces the corrected
+implementation's PENDING verdict only; original Round 7 Chief PATCH remains.
+Independent machine gate: **233/233 in 52.40s**, including Stage2 **39/39**;
+simple and split-instrText complex TOC bookmark dependency reproduced as refusal,
+without publication/mutations. New public API output exactly matches approved
+package/root hashes, 118 removals and 146 retained children. All eight Stage3
+predictions independently recomputed and matched; independent GoldCompare QG
+408/408, sections369/369, subquestions328/328, original Recall100%,
+E1-E4/MISS/FP/MERGE/SPLIT0; QG exact boundaries87.7%. Frozen V0.9 assets10/10
+independently byte-identical. New WPS input provenance/timestamps verified;
+open/SaveAs-new/close/reopen/PDF calls pass, both packages valid,142 paragraph
+w:t values/order and4 OLE payloads exact,9 PDF pages readable,Q1-34 ordered,
+source/current undefined-bookmark errors2->2. Chief again visually inspected
+pages1/5/6/9; no all-page visual/classroom claim.
+
+`performance = NOT_RUN`; `repair/modal_absence = NOT_PROVEN`.
+No production provider, general math/chem coverage, product zero-COM proof,
+performance improvement or C3 completion is approved by this verdict.
+Next action: continue C3 math/chem evidence, safe production integration and
+real workload performance gates under the user's already authorized C3 goal.
+Commit/push: this metadata-only Chief Journal update is committed and pushed;
+verify its resulting local/remote SHA and clean worktree after publication.
 
 R7 PATCH changes only the generic TOC parameter/dependency handler and related
 regressions/evidence. It does not special-case X008 or change frozen/production
 routing. Original Chief PATCH is truthfully recorded above; corrected review is
-PENDING. The actual updated public Studentizer newly generated
+scoped PASS as recorded in the independent re-review entry above. The actual updated public Studentizer newly generated
 `C:\xml-uat\c3-round7-toc-patch\X008-studentizer-verified.docx` before the
 fresh complete WPS roundtrip in that directory's `verified-wps` folder. Its
 identical Golden package SHA demonstrates this dependency guard does not change
