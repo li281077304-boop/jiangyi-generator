@@ -13,7 +13,8 @@ import zipfile
 
 from werkzeug.utils import secure_filename
 from package_validator import validate_package
-from input_versions import classify_inputs, UnknownInputVersion
+from input_versions import classify_inputs, UnknownInputVersion, InputClassification
+from batch_inputs import resolve_batch
 
 
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
@@ -149,15 +150,18 @@ class JobService:
                 candidate = self.result_root / (base + "（%d）" % suffix)
                 suffix += 1
 
-    def create_inputs(self, files: list[tuple[str, bytes]], options: dict) -> dict:
+    def create_inputs(self, files: list[tuple[str, bytes]], options: dict, *,
+                      _classification: InputClassification | None = None,
+                      _topic: str | None = None, _result_dir: Path | None = None,
+                      _parent_job_id: str | None = None) -> dict:
         if not files or len(files) > 2:
             raise UnsupportedInput("本轮只支持一个 DOCX，或一组教师版和学生版 DOCX")
         validated = [(filename or "source.docx", self.validate_docx(filename or "source.docx", data), data)
                      for filename, data in files]
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
         try:
-            classification = classify_inputs([(name, data) for name, _safe, data in validated],
-                                              form_options["docx_mode"] or "auto")
+            classification = _classification or classify_inputs(
+                [(name, data) for name, _safe, data in validated], form_options["docx_mode"] or "auto")
         except UnknownInputVersion:
             raise
         job_id = uuid.uuid4().hex
@@ -183,8 +187,8 @@ class JobService:
         })
         topic_source = (input_paths[classification.teacher_index][0] if classification and
                         classification.teacher_index is not None else input_paths[0][0])
-        topic = self._topic_name(topic_source)
-        result_dir = self._allocate_result_dir(form_options, topic)
+        topic = _topic or self._topic_name(topic_source)
+        result_dir = _result_dir or self._allocate_result_dir(form_options, topic)
         teacher_source = (str(input_paths[classification.teacher_index][1]) if classification and
                           classification.teacher_index is not None else None)
         student_source = (str(input_paths[classification.student_index][1]) if classification and
@@ -192,6 +196,7 @@ class JobService:
         version = classification.input_version
         record = {
             "job_id": job_id,
+            "parent_job_id": _parent_job_id,
             "status": "queued",
             "progress": 0,
             "total": 2,
@@ -237,6 +242,120 @@ class JobService:
             self._write_json(job_dir / "job.json", record)
         return self.snapshot(record)
 
+    def create_batch(self, files: list[tuple[str, bytes]], options: dict) -> dict:
+        """Persist a parent plus isolated C1 jobs; never route a whole batch to COM."""
+        logical = resolve_batch(files, str(options.get("docx_mode") or "auto"))
+        form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
+        job_id = uuid.uuid4().hex
+        job_dir = self._job_dir(job_id)
+        job_dir.mkdir(parents=True)
+        result_dir = self._allocate_result_dir(form_options, "批量讲义")
+        items = []
+        for index, item in enumerate(logical):
+            entry = {
+                "item_id": str(index + 1), "topic": item.topic,
+                "input_version": item.input_version,
+                "teacher_source": None, "student_source": None,
+                "status": "error" if item.error else "queued",
+                "renderer": None, "fallback_reason": None,
+                "output_paths": [], "error": item.error,
+                "teacher": "失败" if item.error else "未提供",
+                "student": "失败" if item.error else "未提供",
+                "source_origins": [source.origin for source in item.sources],
+            }
+            if not item.error:
+                try:
+                    # Allocate only readable topic folders; never use ZIP directories.
+                    folder = result_dir / (self._display_part(item.topic) or "专题")
+                    number = 2
+                    while folder.exists():
+                        folder = result_dir / ((self._display_part(item.topic) or "专题") + "（%d）" % number)
+                        number += 1
+                    folder.mkdir()
+                    teacher_index = next((i for i, source in enumerate(item.sources)
+                                          if source is item.teacher_source), None)
+                    student_index = next((i for i, source in enumerate(item.sources)
+                                          if source is item.student_source), None)
+                    classification = InputClassification(item.input_version, teacher_index,
+                                                         student_index, item.evidence)
+                    child = self.create_inputs([(source.name, source.data) for source in item.sources],
+                                               form_options, _classification=classification,
+                                               _topic=item.topic, _result_dir=folder,
+                                               _parent_job_id=job_id)
+                    entry.update({"child_job_id": child["job_id"],
+                                  "teacher_source": child["teacher_source_path"],
+                                  "student_source": child["student_source_path"],
+                                  "teacher": child["items"][0]["teacher"],
+                                  "student": child["items"][0]["student"],
+                                  "result_dir": str(folder)})
+                except Exception as exc:
+                    entry.update(status="error", error="GENERATION_FAILED: %s: %s" %
+                                 (type(exc).__name__, exc), teacher="失败", student="失败")
+            items.append(entry)
+        now = datetime.now(timezone.utc)
+        record = {
+            "job_id": job_id, "is_batch": True, "status": "queued",
+            "total": len(items), "progress": 0, "completed": 0,
+            "failed": sum(item["status"] == "error" for item in items),
+            "current_topic": None, "items": items, "options": form_options,
+            "filenames": [Path(name).name for name, _data in files],
+            "created_at": now.timestamp(), "created_at_iso": now.isoformat(timespec="seconds"),
+            "updated_at": now.timestamp(), "updated_at_iso": now.isoformat(timespec="seconds"),
+            "stage": "批量任务已接收，等待生成", "result_dir": str(result_dir),
+            "output_paths": [], "produced": 0, "has_result": False,
+            "download_available": False, "delivery_status": "not_attempted",
+            "generation_attempts": 0, "warnings": [],
+        }
+        with self._lock:
+            self._write_json(job_dir / "job.json", record)
+        return self.snapshot(record)
+
+    def _recover_batch(self, record: dict) -> dict:
+        """Refresh only successful child outputs; failures cannot erase siblings."""
+        result_dir = Path(record.get("result_dir") or "").resolve()
+        if not result_dir.is_relative_to(self.result_root):
+            raise ValueError("batch result directory escaped result root")
+        for item in record.get("items", []):
+            if not item.get("child_job_id"):
+                continue
+            try:
+                child = self._recover(item["child_job_id"])
+                if child.get("parent_job_id") != record["job_id"]:
+                    raise ValueError("child does not belong to this batch")
+                if not Path(child["result_dir"]).resolve().is_relative_to(result_dir):
+                    raise ValueError("child result directory escaped batch")
+                roles = child.get("items", [{}])[0]
+                item.update({key: child.get(key) for key in (
+                    "status", "renderer", "fallback_reason", "fallback_detail", "output_paths",
+                    "error", "plan_summary", "student_preparation", "package_validation",
+                    "started_at", "updated_at", "elapsed_seconds")})
+                item["teacher"], item["student"] = roles.get("teacher"), roles.get("student")
+            except (JobNotFound, OSError, ValueError, KeyError) as exc:
+                item.update(status="error", error="GENERATION_FAILED: " + str(exc), output_paths=[])
+        successes = [item for item in record["items"] if item["status"] == "done"]
+        failures = [item for item in record["items"] if item["status"] == "error"]
+        record["completed"], record["failed"] = len(successes), len(failures)
+        record["progress"] = len(successes) + len(failures)
+        record["output_paths"] = [path for item in successes for path in item["output_paths"]]
+        record["produced"] = len(record["output_paths"])
+        record["has_result"] = bool(record["output_paths"])
+        # Preserve queued/running state until the executor starts the parent.
+        if record.get("status") != "queued" and record["progress"] == record["total"]:
+            record["status"] = "done" if not failures else "partial" if successes else "error"
+            record["batch_outcome"] = "ALL_SUCCESS" if not failures else "PARTIAL_SUCCESS" if successes else "ALL_FAILED"
+            record["current_topic"] = None
+            record["stage"] = "批量生成完成：%d 个成功，%d 个失败" % (len(successes), len(failures))
+            if record["status"] == "error":
+                record["error"] = "GENERATION_FAILED: 所有专题均生成失败"
+            if record.get("started_at"):
+                record.setdefault("elapsed_seconds", round(datetime.now(timezone.utc).timestamp() - record["started_at"], 3))
+        record["download_available"] = (record["has_result"] and record["status"] in ("done", "partial")
+                                        and record.get("delivery_status") != "failed")
+        now = datetime.now(timezone.utc)
+        record["updated_at"], record["updated_at_iso"] = now.timestamp(), now.isoformat(timespec="seconds")
+        self._write_json(self._job_dir(record["job_id"]) / "job.json", record)
+        return record
+
     def create(self, filename: str, data: bytes, options: dict) -> dict:
         """Compatibility wrapper for a single DOCX submission."""
         return self.create_inputs([(filename, data)], options)
@@ -261,7 +380,8 @@ class JobService:
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
-    def update_progress(self, job_id: str, progress: int, stage: str) -> dict:
+    def update_progress(self, job_id: str, progress: int, stage: str, *,
+                        current_topic: str | None = None) -> dict:
         with self._lock:
             record = self._recover(job_id)
             if record.get("status") != "running":
@@ -273,6 +393,8 @@ class JobService:
                 "updated_at": now.timestamp(),
                 "updated_at_iso": now.isoformat(timespec="seconds"),
             })
+            if record.get("is_batch"):
+                record["current_topic"] = current_topic
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
@@ -324,6 +446,7 @@ class JobService:
                 "progress": 0,
                 "updated_at": now.timestamp(),
                 "updated_at_iso": now.isoformat(timespec="seconds"),
+                "elapsed_seconds": round(now.timestamp() - record.get("started_at", now.timestamp()), 3),
             })
             for item in record.get("items", []):
                 item["teacher"] = "未提供" if record.get("input_version") == "STUDENT_ONLY" else "失败"
@@ -343,7 +466,7 @@ class JobService:
                          detail: str | None) -> dict:
         with self._lock:
             record = self._recover(job_id)
-            if record.get("status") != "done":
+            if record.get("status") not in ("done", "partial"):
                 return self.snapshot(record)
             now = datetime.now(timezone.utc)
             record.update({
@@ -362,6 +485,9 @@ class JobService:
         if not path.is_file():
             raise JobNotFound(job_id)
         record = self._read_json(path)
+        if record.get("is_batch"):
+            with self._lock:
+                return self._recover_batch(record)
         job_dir = self._job_dir(job_id)
         result_dir = Path(record.get("result_dir") or "").resolve()
         metadata_changed = not result_dir.is_relative_to(self.result_root)
@@ -396,6 +522,15 @@ class JobService:
 
     def _validate_recorded_outputs(self, record: dict) -> tuple[bool, list[Path], dict]:
         """Validate every published role file inside the clean user result folder."""
+        if record.get("is_batch"):
+            result_dir = Path(record.get("result_dir") or "").resolve()
+            paths = [Path(raw).resolve() for raw in record.get("output_paths", [])]
+            if (not paths or not result_dir.is_relative_to(self.result_root)
+                    or len(set(paths)) != len(paths)
+                    or any(not path.is_relative_to(result_dir) or path.suffix.lower() != ".docx" for path in paths)):
+                return False, [], {}
+            reports = {str(path): validate_package(str(path)) for path in paths}
+            return all(report.get("valid") is True for report in reports.values()), paths, reports
         try:
             roles = record.get("output_roles") or {}
             if not roles or not set(roles).issubset({"teacher", "student"}):
@@ -470,6 +605,7 @@ class JobService:
             "package_validation": reports,
             "plan_summary": plan_summary,
             "student_preparation": student_preparation or record.get("student_preparation", {}),
+            "elapsed_seconds": round(now.timestamp() - record.get("started_at", now.timestamp()), 3),
         })
         for item in record.get("items", []):
             item["teacher"] = "完成" if has_teacher else "未提供"
@@ -490,6 +626,8 @@ class JobService:
                     record = self._recover(path.parent.name)
                 except (OSError, ValueError, KeyError, json.JSONDecodeError):
                     continue
+                if record.get("parent_job_id"):
+                    continue
                 records.append(record)
         records.sort(key=lambda item: item.get("created_at", ""), reverse=True)
         return [self.snapshot(record) for record in records]
@@ -509,7 +647,7 @@ class JobService:
     def outputs_for_download(self, job_id: str) -> tuple[dict, list[Path]]:
         record = self._recover(job_id)
         valid, outputs, _reports = self._validate_recorded_outputs(record)
-        if record.get("status") != "done" or not valid:
+        if record.get("status") not in ("done", "partial") or not valid:
             raise ValueError("任务尚无已验证的 DOCX 成品")
         return record, outputs
 

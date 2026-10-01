@@ -114,7 +114,9 @@ def test_upload_accepts_one_explicit_pair_and_rejects_unsupported_inputs(client)
                                                         (io.BytesIO(make_student_docx()), "a学生版.docx"),
                                                         (io.BytesIO(one), "b.docx")]},
                         content_type="multipart/form-data")
-    assert three.status_code == 415
+    assert three.status_code == 202
+    assert three.get_json()["is_batch"] is True
+    assert three.get_json()["total"] == 2
 
 
 def test_open_route_resolves_and_opens_result_folder(client, tmp_path):

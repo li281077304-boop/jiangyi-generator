@@ -1,7 +1,8 @@
 # C2 Round 1 — Batch Input Resolver
 
 Worker: GPT-6.1 (`gpt-6.1-sol`). Round 1 Chief returned PATCH; Round 2 independent
-review is pending. This report does not claim `C2_BATCH_PASS`.
+Chief review returned PASS for the resolver foundation. This report does not
+claim `C2_BATCH_PASS`.
 
 Base: `7daa519bb804d5cb5fd4328636b2346e166ba81c`.
 
@@ -13,7 +14,8 @@ point to the base above. `feature/v1.2-c2-batch` was created and pushed from it.
 
 `res/app/batch_inputs.py` adds an independent upload resolver. It does not
 change approved C1 routing rules, invoke a renderer, or modify frozen code.
-HTTP submission still has the C1 single/pair restriction until the next round.
+At Round 1/2, HTTP submission retained the C1 single/pair restriction. Round 3
+connects this foundation to the backend; see `C2_BATCH_BACKEND_API.md`.
 
 - Direct DOCX and ZIP inputs expand to source records; ZIP entry directories
   remain provenance metadata. No archive-controlled filesystem path is written.

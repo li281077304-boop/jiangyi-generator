@@ -94,6 +94,10 @@ def _visible_output_name(options: dict, topic: str, role: str) -> str:
 
 def _execute_job(job_id: str) -> None:
     """Run a classified teacher/student job with isolated runtime staging."""
+    service = _jobs()
+    if service.get(job_id).get("is_batch"):
+        _execute_batch(job_id)
+        return
     from renderer_orchestrator import (
         RenderJob, V09_BASELINE_SHA, _load_v09_engine, render_v09_whole_job,
         render_xml_or_fallback,
@@ -103,7 +107,6 @@ def _execute_job(job_id: str) -> None:
     from slot_router import SlotRoutingError, build_slot_routing_plan
     from template_slot_composer import render_slots
 
-    service = _jobs()
     result_dir = None
     try:
         record = service.start_job(job_id)
@@ -279,6 +282,31 @@ def _execute_job(job_id: str) -> None:
         service.fail_job(job_id, "%s: %s" % (type(exc).__name__, exc))
 
 
+def _execute_batch(job_id: str) -> None:
+    """Run isolated existing C1 jobs serially, including COM preparation/fallback.
+
+    The production executor already has a single worker. A batch never passes
+    new spans to COM and never changes the renderer decision for its siblings.
+    Restarted parents skip validated completed children and retain item errors.
+    """
+    service = _jobs()
+    record = service.start_job(job_id)
+    if record.get("status") != "running":
+        return
+    for item in record["items"]:
+        if item.get("child_job_id") and item["status"] not in ("done", "error"):
+            progress = service.get(job_id)["progress"]
+            service.update_progress(job_id, progress, "正在处理专题：" + item["topic"],
+                                    current_topic=item["topic"])
+            try:
+                _execute_job(item["child_job_id"])
+            except Exception as exc:
+                service.fail_job(item["child_job_id"], "%s: %s" % (type(exc).__name__, exc))
+        # Refresh and persist the aggregate after every item; no batch-wide
+        # cleanup can remove successful children.
+        service.get(job_id)
+
+
 @app.get("/")
 def index():
     return render_template("index.html")
@@ -294,16 +322,19 @@ def list_jobs():
 @app.post("/api/jobs")
 def create_job():
     uploaded = request.files.getlist("files")
-    if not 1 <= len(uploaded) <= 2:
-        return jsonify({"error": "本轮只支持一个 DOCX，或一组教师版和学生版 DOCX"}), 415
+    if not uploaded:
+        return jsonify({"error": "请选择 DOCX 或 ZIP 文件"}), 415
     try:
-        created = _jobs().create_inputs(
-            [(file.filename or "source.docx", file.read()) for file in uploaded], request.form)
+        files = [(file.filename or "source.docx", file.read()) for file in uploaded]
+        is_batch = len(files) > 2 or any(Path(name).suffix.lower() == ".zip" for name, _data in files)
+        created = (_jobs().create_batch(files, request.form) if is_batch else
+                   _jobs().create_inputs(files, request.form))
     except Exception as exc:
         from input_versions import UnknownInputVersion
+        from batch_inputs import BatchInputError
         if isinstance(exc, UnknownInputVersion):
             return jsonify({"error": str(exc), "error_code": "UNKNOWN_INPUT_VERSION"}), 422
-        if isinstance(exc, UnsupportedInput):
+        if isinstance(exc, (UnsupportedInput, BatchInputError)):
             return jsonify({"error": str(exc)}), 415
         raise
     _submit_job(created["job_id"])
@@ -346,7 +377,7 @@ def download_result(job_id: str):
         archive = BytesIO()
         with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as package:
             for output in outputs:
-                package.write(output, arcname=output.name)
+                package.write(output, arcname=str(output.relative_to(Path(record["result_dir"]))))
         archive.seek(0)
         response = send_file(archive, mimetype="application/zip", as_attachment=True,
                              download_name=Path(record["result_dir"]).name + ".zip")
