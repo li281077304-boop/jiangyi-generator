@@ -25,6 +25,16 @@ def make_docx() -> bytes:
     buf = io.BytesIO()
     document = Document()
     document.add_paragraph("C0 validator fixture")
+    document.add_paragraph("【答案】A")
+    document.add_paragraph("【解析】示例解析")
+    document.save(buf)
+    return buf.getvalue()
+
+
+def make_student_docx() -> bytes:
+    buf = io.BytesIO()
+    document = Document()
+    document.add_paragraph("C1 student fixture")
     document.save(buf)
     return buf.getvalue()
 
@@ -41,6 +51,7 @@ def corrupt_document_xml(path: Path) -> None:
 @pytest.fixture
 def client(tmp_path):
     app.config.update(TESTING=True, RESULT_ROOT=tmp_path / "results",
+                      RUNTIME_ROOT=tmp_path / "runtime-jobs",
                       C0_DISABLE_JOB_SUBMISSION=True,
                       C0_RUN_JOBS_SYNCHRONOUSLY=False,
                       C0_FORCE_FALLBACK_REASON=None)
@@ -58,6 +69,11 @@ def post_one(client, name="课件.docx", content=None):
     return client.post("/api/jobs", data=form, content_type="multipart/form-data")
 
 
+def make_service(root=None):
+    return JobService(root or Path(app.config["RESULT_ROOT"]),
+                      runtime_root=Path(app.config["RUNTIME_ROOT"]))
+
+
 def test_post_persists_single_docx_and_get_recovers_after_service_restart(client, tmp_path):
     source_bytes = make_docx()
     response = post_one(client, content=source_bytes)
@@ -71,30 +87,34 @@ def test_post_persists_single_docx_and_get_recovers_after_service_restart(client
     assert created["has_result"] is False
     assert created["download_available"] is False
     root = tmp_path / "results"
-    record_path = root / created["job_id"] / "job.json"
+    record_path = Path(app.config["RUNTIME_ROOT"]) / created["job_id"] / "job.json"
     record = json.loads(record_path.read_text(encoding="utf-8"))
     assert Path(record["source_path"]).read_bytes() == source_bytes
-    assert Path(record["result_dir"]) == record_path.parent
+    assert Path(record["result_dir"]).is_relative_to(root)
     assert record["options"]["template_type"] == "class"
     assert record["options"]["handoutType"] == "课时讲义"
 
     # A fresh service instance simulates process restart; it reads disk state.
-    restarted = JobService(root)
+    restarted = make_service(root)
     assert restarted.get(created["job_id"])["status"] == "queued"
     assert [item["job_id"] for item in restarted.list()] == [created["job_id"]]
     assert client.get("/api/jobs/" + created["job_id"]).get_json()["status"] == "queued"
 
 
-def test_upload_rejects_multiple_files_zip_and_non_docx(client):
+def test_upload_accepts_one_explicit_pair_and_rejects_unsupported_inputs(client):
     one = make_docx()
-    multi = client.post("/api/jobs", data={"files": [(io.BytesIO(one), "a.docx"),
-                                                        (io.BytesIO(one), "b.docx")]},
+    multi = client.post("/api/jobs", data={"files": [(io.BytesIO(one), "a教师版.docx"),
+                                                        (io.BytesIO(make_student_docx()), "a学生版.docx")]},
                         content_type="multipart/form-data")
-    assert multi.status_code == 415
-    assert "多文件" in multi.get_json()["error"]
+    assert multi.status_code == 202
+    assert multi.get_json()["input_version"] == "TEACHER_AND_STUDENT"
     assert post_one(client, "source.zip", one).status_code == 415
     assert post_one(client, "source.docx", b"not a package").status_code == 415
-    assert list((Path(app.config["RESULT_ROOT"])).glob("*/job.json")) == []
+    three = client.post("/api/jobs", data={"files": [(io.BytesIO(one), "a教师版.docx"),
+                                                        (io.BytesIO(make_student_docx()), "a学生版.docx"),
+                                                        (io.BytesIO(one), "b.docx")]},
+                        content_type="multipart/form-data")
+    assert three.status_code == 415
 
 
 def test_open_route_resolves_and_opens_result_folder(client, tmp_path):
@@ -104,7 +124,7 @@ def test_open_route_resolves_and_opens_result_folder(client, tmp_path):
     response = client.get("/api/open/" + created["job_id"])
     assert response.status_code == 200
     payload = response.get_json()
-    assert payload["result_dir"] == str((tmp_path / "results" / created["job_id"]).resolve())
+    assert payload["result_dir"] == created["result_dir"]
     assert opened == [Path(payload["result_dir"])]
     assert client.get("/api/open/" + "0" * 32).status_code == 404
 
@@ -119,12 +139,11 @@ def test_download_not_ready_is_conflict_and_does_not_change_generation_state(cli
 
 def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(client):
     created = post_one(client).get_json()
-    job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
+    job_dir = Path(created["result_dir"])
     outputs = [job_dir / "教师版.docx", job_dir / "学生版.docx"]
     for path in outputs:
         path.write_bytes(make_docx())
-    service = JobService(Path(app.config["RESULT_ROOT"]))
-    completed = service.complete_job(created["job_id"], outputs[0], outputs[1])
+    completed = make_service().complete_job(created["job_id"], outputs[0], outputs[1])
     assert completed["status"] == "done"
     assert set(completed["package_validation"]) == {"teacher", "student"}
     assert all(report["valid"] for report in completed["package_validation"].values())
@@ -136,7 +155,7 @@ def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(c
     snapshot = client.get("/api/jobs/" + created["job_id"]).get_json()
     assert snapshot["status"] == "done"
     assert snapshot["download_available"] is True
-    restarted = JobService(Path(app.config["RESULT_ROOT"]))
+    restarted = make_service()
     recovered = restarted.get(created["job_id"])
     assert recovered["result_dir"] == str(job_dir)
     assert recovered["output_paths"] == [str(path) for path in outputs]
@@ -147,11 +166,11 @@ def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(c
 
 def test_zip_delivery_failure_does_not_fail_validated_local_generation(client, monkeypatch):
     created = post_one(client).get_json()
-    job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
+    job_dir = Path(created["result_dir"])
     outputs = [job_dir / "教师版.docx", job_dir / "学生版.docx"]
     for path in outputs:
         path.write_bytes(make_docx())
-    JobService(Path(app.config["RESULT_ROOT"])).complete_job(created["job_id"], *outputs)
+    make_service().complete_job(created["job_id"], *outputs)
 
     original_zip = app_module.zipfile.ZipFile
 
@@ -178,7 +197,7 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
         client, tmp_path, monkeypatch):
     import shutil
     import renderer_orchestrator
-    import template_block_plan
+    import slot_router
 
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
@@ -197,11 +216,11 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
             return teacher_plan
         raise template_block_plan.PlanUnsupported("student source unsupported")
 
-    monkeypatch.setattr(template_block_plan, "build_template_block_plan", build_plan)
+    monkeypatch.setattr(slot_router, "build_slot_routing_plan", build_plan)
     fallback_observed = {}
 
     def successful_fallback(job, reason):
-        record = JobService(root).list()[0]
+        record = make_service(root).list()[0]
         fallback_observed.update({
             "renderer": record["renderer"],
             "fallback_reason": record["fallback_reason"],
@@ -219,7 +238,7 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
     response = post_one(client)
     assert response.status_code == 202
     job_id = response.get_json()["job_id"]
-    final = JobService(root).get(job_id)
+    final = make_service(root).get(job_id)
     assert plan_calls == 2
     assert fallback_observed == {
         "renderer": "V0.9",
@@ -252,7 +271,7 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     observed = {}
 
     def fail_fallback(_job, reason):
-        record = JobService(root).list()[0]
+        record = make_service(root).list()[0]
         observed.update({"renderer": record["renderer"],
                          "fallback_reason": record["fallback_reason"],
                          "baseline_sha": record["baseline_sha"],
@@ -262,7 +281,7 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fail_fallback)
     response = post_one(client)
     job_id = response.get_json()["job_id"]
-    final = JobService(root).get(job_id)
+    final = make_service(root).get(job_id)
     expected = renderer_orchestrator.V09_BASELINE_SHA
     assert observed == {"renderer": "V0.9",
                         "fallback_reason": "UNSUPPORTED_REVISION_MARKUP",
@@ -278,8 +297,8 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
         client, tmp_path, monkeypatch):
     import shutil
     import renderer_orchestrator
-    import template_block_plan
-    import renderer_xml_minimal
+    import slot_router
+    import template_slot_composer
 
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
@@ -289,39 +308,44 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
                              DEFAULT_TEMPLATE="unused-1v1-template.docx")
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
     plan = SimpleNamespace(template_sha256="paired-template", template_path="unused-template.docx",
-                           blocks=(), units=(), target=None)
-    monkeypatch.setattr(template_block_plan, "build_template_block_plan",
-                        lambda *_args, **_kwargs: plan)
+                           slots={slot: () for slot in ("knowledge", "immediate", "final")},
+                           slot_labels={"knowledge": "知识精讲&例题讲解", "immediate": "即时训练",
+                                        "final": "六、出门测试"},
+                           units=(), explicit_final_heading=True)
+    monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: plan)
 
-    def render(_source, _template, _blocks, output, _target):
+    def render(_source, _plan, output):
         Path(output).write_bytes(make_docx())
         return SimpleNamespace(output_path=str(output), resource_report={"unsupported": []},
                                package_report={"valid": True, "errors": []})
 
-    monkeypatch.setattr(renderer_xml_minimal, "render_minimal", render)
+    monkeypatch.setattr(template_slot_composer, "render_slots", render)
     response = post_one(client)
     job_id = response.get_json()["job_id"]
-    final = JobService(root).get(job_id)
+    final = make_service(root).get(job_id)
     assert final["status"] == "done", final.get("error")
     assert final["renderer"] == "XML"
     assert final["plan_summary"] == {
-        "destination_slot": "main_content",
+        "destination_slots": {
+            "knowledge": {"label": "知识精讲&例题讲解", "teacher_blocks": 0, "student_blocks": 0},
+            "immediate": {"label": "即时训练", "teacher_blocks": 0, "student_blocks": 0},
+            "final": {"label": "六、出门测试", "teacher_blocks": 0, "student_blocks": 0},
+        },
         "teacher_units": 0,
         "student_units": 0,
-        "teacher_blocks": 0,
-        "student_blocks": 0,
+        "explicit_final_heading": True,
         "template_sha256": "paired-template",
     }
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
     created = post_one(client).get_json()
-    job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
+    job_dir = Path(created["result_dir"])
     teacher = job_dir / "教师版.docx"
     student = job_dir / "学生版.docx"
     teacher.write_bytes(make_docx())
     student.write_bytes(make_docx())
-    service = JobService(Path(app.config["RESULT_ROOT"]))
+    service = make_service()
     service.complete_job(created["job_id"], teacher, student)
     student.unlink()
     recovered = service.get(created["job_id"])
@@ -332,9 +356,9 @@ def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
 
 def test_duplicate_role_path_never_completes_job(client):
     created = post_one(client).get_json()
-    output = Path(app.config["RESULT_ROOT"]) / created["job_id"] / "教师版.docx"
+    output = Path(created["result_dir"]) / "教师版.docx"
     output.write_bytes(make_docx())
-    service = JobService(Path(app.config["RESULT_ROOT"]))
+    service = make_service()
     with pytest.raises(ValueError, match="different files"):
         service.complete_job(created["job_id"], output, output)
     assert service.get(created["job_id"])["status"] == "queued"
@@ -343,11 +367,11 @@ def test_duplicate_role_path_never_completes_job(client):
 
 def test_corrupt_document_xml_is_rejected_on_complete_recovery_and_download(client):
     created = post_one(client).get_json()
-    job_dir = Path(app.config["RESULT_ROOT"]) / created["job_id"]
+    job_dir = Path(created["result_dir"])
     teacher, student = job_dir / "教师版.docx", job_dir / "学生版.docx"
     teacher.write_bytes(make_docx())
     student.write_bytes(make_docx())
-    service = JobService(Path(app.config["RESULT_ROOT"]))
+    service = make_service()
     corrupt_document_xml(student)
     with pytest.raises(ValueError, match="package validation failed"):
         service.complete_job(created["job_id"], teacher, student)
@@ -393,3 +417,129 @@ def test_semantic_facade_hashes_one_source_snapshot_and_returns_same_units():
     assert snapshot.node_index.order_ids
     assert snapshot.units == expected_units
     assert isinstance(snapshot.units, list)
+
+
+def _fake_slot_plan():
+    return SimpleNamespace(
+        template_sha256="fixture-template",
+        slots={slot: () for slot in ("knowledge", "immediate", "final")},
+        slot_labels={"knowledge": "知识精讲&例题讲解", "immediate": "即时训练",
+                     "final": "六、出门测试"},
+        units=(), explicit_final_heading=True,
+    )
+
+
+def _post_files(client, files):
+    data = {
+        "subject": "物理", "grade": "九年级", "handout_type": "复习讲义",
+        "academic_year": "2026-2027学年", "template_type": "class",
+        "split_mode": "smart", "docx_mode": "auto",
+        "files": [(io.BytesIO(content), name) for name, content in files],
+    }
+    return client.post("/api/jobs", data=data, content_type="multipart/form-data")
+
+
+def _fake_render_slots(source, _plan, output):
+    Path(output).write_bytes(make_docx())
+    return SimpleNamespace(output_path=str(output), inserted_nodes=1,
+                           resource_report={"unsupported": []},
+                           package_report={"valid": True, "errors": []})
+
+
+def test_paired_teacher_student_routes_each_input_without_make_student(client, monkeypatch):
+    import renderer_orchestrator
+    import slot_router
+    import template_slot_composer
+
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
+                        lambda: (_ for _ in ()).throw(AssertionError("make_student engine loaded")))
+    monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: _fake_slot_plan())
+    seen_sources = []
+
+    def render(source, plan, output):
+        seen_sources.append(Path(source).read_bytes())
+        return _fake_render_slots(source, plan, output)
+
+    monkeypatch.setattr(template_slot_composer, "render_slots", render)
+    teacher = make_docx()
+    student = make_student_docx()
+    response = _post_files(client, [("Unit 教师版.docx", teacher), ("Unit 学生版.docx", student)])
+    job = response.get_json()
+    final = make_service().get(job["job_id"])
+    assert final["status"] == "done", final.get("error")
+    assert final["input_version"] == "TEACHER_AND_STUDENT"
+    assert final["student_preparation"]["make_student_called"] is False
+    assert seen_sources == [teacher, student]
+    assert final["items"][0]["topic"] == "Unit"
+    result_dir = Path(final["result_dir"])
+    assert {path.name for path in result_dir.iterdir()} == {
+        Path(final["teacher_output_path"]).name, Path(final["student_output_path"]).name}
+    assert all("_" not in path.name for path in result_dir.iterdir())
+    assert not any(path.name in {"work", "job.json"} for path in result_dir.iterdir())
+
+
+def test_student_only_creates_no_teacher_output_and_never_calls_make_student(client, monkeypatch):
+    import renderer_orchestrator
+    import slot_router
+    import template_slot_composer
+
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
+                        lambda: (_ for _ in ()).throw(AssertionError("student-only must not load COM")))
+    monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: _fake_slot_plan())
+    seen = []
+
+    def render(source, plan, output):
+        seen.append(Path(source).read_bytes())
+        return _fake_render_slots(source, plan, output)
+
+    monkeypatch.setattr(template_slot_composer, "render_slots", render)
+    student = make_student_docx()
+    response = _post_files(client, [("Chapter 学生版.docx", student)])
+    job = response.get_json()
+    final = make_service().get(job["job_id"])
+    assert final["status"] == "done", final.get("error")
+    assert final["input_version"] == "STUDENT_ONLY"
+    assert final["output_roles"].keys() == {"student"}
+    assert final["teacher_output_path"] is None
+    assert final["items"][0]["teacher"] == "未提供"
+    assert final["student_preparation"]["make_student_called"] is False
+    assert seen == [student]
+    result_dir = Path(final["result_dir"])
+    assert len(list(result_dir.iterdir())) == 1
+    assert list(result_dir.iterdir())[0].name.endswith("学生版.docx")
+
+
+def test_unknown_input_version_is_explicit_and_does_not_create_result_folder(client):
+    response = _post_files(client, [("Chapter.docx", make_student_docx())])
+    assert response.status_code == 422
+    assert response.get_json()["error_code"] == "UNKNOWN_INPUT_VERSION"
+    assert list(Path(app.config["RESULT_ROOT"]).iterdir()) == []
+
+
+def test_unrelated_teacher_student_pair_is_rejected_without_result_folder(client):
+    response = _post_files(client, [("math 教师版.docx", make_docx()),
+                                    ("chem 学生版.docx", make_student_docx())])
+    assert response.status_code == 422
+    assert response.get_json()["error_code"] == "UNKNOWN_INPUT_VERSION"
+    assert list(Path(app.config["RESULT_ROOT"]).iterdir()) == []
+
+
+def test_failed_make_student_attempt_is_persisted_truthfully(client, monkeypatch):
+    import renderer_orchestrator
+
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
+    engine = SimpleNamespace(
+        make_student=lambda *_args: (_ for _ in ()).throw(RuntimeError("simulated COM failure")),
+        CLASS_TEMPLATE="unused-class-template.docx",
+        DEFAULT_TEMPLATE="unused-1v1-template.docx",
+    )
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
+    response = post_one(client, "Chapter 教师版.docx", make_docx())
+    job_id = response.get_json()["job_id"]
+    final = make_service().get(job_id)
+    assert final["status"] == "error"
+    assert final["student_preparation"]["make_student_called"] is True
+    assert final["student_preparation"]["wps_com_started"] is True
+    assert final["student_preparation"]["elapsed_seconds"] is not None

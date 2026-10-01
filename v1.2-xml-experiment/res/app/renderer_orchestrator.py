@@ -59,6 +59,7 @@ class RenderJob:
     label: str = "教师版"
     student_source_doc: Optional[str] = None
     student_output_doc: Optional[str] = None
+    student_only: bool = False
 
 
 @dataclass(frozen=True)
@@ -244,6 +245,18 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
     output.parent.mkdir(parents=True, exist_ok=True)
     if output.exists():
         raise FileExistsError("V0.9 fallback requires a fresh output path: %s" % output)
+
+    if job.student_only:
+        with contextlib.redirect_stdout(io.StringIO()):
+            _version, log = engine.build_version(
+                "学生版", str(source), str(output), job.topic,
+                template=str(template), template_type=job.template_type,
+                objectives=job.objectives, difficulties=job.difficulties,
+                grade=job.grade, subject=job.subject, handout_type=job.handout_type,
+                fmt=True)
+        _require_v09_output(output, log)
+        return {"output_paths": [str(output)], "fallback_reason": reason_code,
+                "logs": [str(log)], "baseline_sha": V09_BASELINE_SHA, "whole_job": True}
 
     student_output = Path(job.student_output_doc).resolve() if job.student_output_doc else output.with_name(
         output.stem + "-学生版.docx")

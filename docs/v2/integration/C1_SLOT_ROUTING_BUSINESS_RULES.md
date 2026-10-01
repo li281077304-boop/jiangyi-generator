@@ -1,6 +1,6 @@
 # V1.2 C1 Slot Routing Business Rules
 
-Status: proposed for independent Chief review  
+Status: approved by user and independently reviewed by Codex GPT-6.1 Sol (PASS)
 Branch: `feature/v1.2-c1-uat-fixes`  
 Rules source: user-approved C1 decision supplied 2026-10-01
 

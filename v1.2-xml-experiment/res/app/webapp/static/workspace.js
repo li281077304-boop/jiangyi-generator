@@ -14,9 +14,9 @@
     smart: {
       title: "智能分块",
       badge: "推荐",
-      description: "适合有“基础训练、培优训练、能力提升”等标题的常规讲义。系统先读目录和正文标题，再把原讲义按边界放入对应模板区域。",
-      steps: ["目录与正文标题定位", "知识点进入“知识精讲”", "基础训练进入“即时训练”", "培优训练进入“巩固练习”"],
-      note: "只确定复制范围，不改写题目、不重排原文。正文仍由 Word 原样复制到模板。"
+      description: "优先按原文明确的教学栏目分配内容；没有明确栏目时，仅将能够确认完整的练习块整体安排到训练区域。",
+      steps: ["目录与正文标题定位", "知识类栏目进入“知识精讲”", "即时训练类栏目进入“即时训练”", "巩固或测试栏目及完整后部练习块进入“巩固练习”"],
+      note: "每个槽内保持原文顺序；完整练习块、共享材料和不可拆表格不会被强拆。无法安全分配时会切换兼容回退。"
     },
     full: {
       title: "完整保留",
@@ -157,17 +157,24 @@
     updateSplitExplainer();
   }
   function updateFilename() {
-    setText("filenamePreview", $("academicYear").value + "_" + $("gradeSelect").value + "_" + state.selectedSubject + "_专题名_" + $("handoutType").value + "_教师版.docx");
+    setText("filenamePreview", [$("academicYear").value, $("gradeSelect").value, state.selectedSubject, "专题名", $("handoutType").value, "教师版.docx"].filter(Boolean).join(" "));
   }
   function updateSplitExplainer() {
     var help = SPLIT_HELP[$("splitMode").value] || SPLIT_HELP.smart;
-    setText("splitTitle", help.title); setText("splitBadge", help.badge); setText("splitDescription", help.description); setText("splitNote", help.note);
+    var knowledgeSlot = state.templateType === "class" ? "知识精讲&例题讲解" : "知识精讲";
+    var finalSlot = state.templateType === "class" ? "六、出门测试" : "六、巩固练习";
+    function templateText(value) {
+      return value
+        .replace(/知识精讲(?:&例题讲解)?/g, knowledgeSlot)
+        .replace(/(?:六、)?巩固练习/g, finalSlot);
+    }
+    setText("splitTitle", help.title); setText("splitBadge", help.badge); setText("splitDescription", templateText(help.description)); setText("splitNote", templateText(help.note));
     $("splitExplainer").dataset.mode = $("splitMode").value;
     var steps = $("splitSteps"); steps.replaceChildren();
     help.steps.forEach(function (step, index) {
       var item = document.createElement("span");
       var indexNode = document.createElement("b"); indexNode.textContent = index + 1;
-      item.append(indexNode, document.createTextNode(step)); steps.appendChild(item);
+      item.append(indexNode, document.createTextNode(templateText(step))); steps.appendChild(item);
     });
   }
   function applyCompact() { $("fileList").classList.toggle("compact", $("compactFiles").checked); }
@@ -224,9 +231,9 @@
     var docs = state.files.filter(function (file) { return file.name.toLowerCase().endsWith(".docx"); }).length;
     var zips = state.files.length - docs, text = "";
     if (!state.files.length) text = "尚未添加素材";
-    else if ($("docxMode").value === "auto" && docs === 2) text = "2 个 Word 文件将识别为教师版与学生版；" + zips + " 个 ZIP 各自处理";
-    else if (docs === 1) text = "1 个 Word 文件将自动生成学生版；" + zips + " 个 ZIP 各自处理";
-    else text = docs + " 个 Word 文件各自生成教师版与学生版；" + zips + " 个 ZIP 各自处理";
+    else if ($("docxMode").value === "auto" && docs === 2 && !zips) text = "两个 DOCX 按文件名与答案结构配对；已有学生版优先使用，不会再次去答案";
+    else if (docs === 1 && !zips) text = "单个 DOCX 按文件名与答案结构判断：教师版会准备学生版；学生版只生成学生版";
+    else text = "本阶段只支持一个 DOCX，或一组教师版和学生版 DOCX；ZIP 与批量处理尚未开放";
     setText("pairingNote", text);
   }
 
