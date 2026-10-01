@@ -1,0 +1,38 @@
+{
+  "entrypoint": "studentizer.prepare_student",
+  "source_sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+  "approved_expected_document_sha256": "6b93cfc1594afc35bfa7801a4a73768185058fb2101e41e9f3d363173f31e0a2",
+  "approved_expected_draft_sha256": "67e0bc3617dfbf4e282cce4d0036fda61d42fd8192de96b533a60fbf4400ade9",
+  "approved_ledger_questions": 34,
+  "requested_remove_paragraphs": 118,
+  "protected_source_children": 146,
+  "request_owner_kind": "physical_question",
+  "frozen_qg_ids_invented": false,
+  "source_unchanged": true,
+  "expected_draft_unchanged": true,
+  "result": {
+    "status": "STUDENTIZER_FALLBACK_REQUIRED",
+    "engine": null,
+    "source_sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+    "output_path": null,
+    "output_sha256": null,
+    "reason_code": "STUDENTIZER_FIELD_SCOPE_UNSUPPORTED",
+    "reason_detail": "fldChar",
+    "mutations": [],
+    "validation": null,
+    "elapsed_seconds": 0.087998,
+    "com_invocations": 0
+  },
+  "derived_output_exists": false,
+  "performance_benchmark": "NOT_RUN",
+  "derived_wps_uat": "NOT_RUN_NO_STUDENTIZER_OUTPUT",
+  "production_provider_created": false,
+  "gate": "STUDENTIZER_CAPABILITY_BLOCKED",
+  "after_root_comparison": "NOT_RUN_NO_STUDENTIZER_OUTPUT",
+  "first_rejected_structure": {
+    "tag": "fldChar",
+    "xml_path": "/w:document/w:body/w:p[4]/w:r[2]/w:fldChar",
+    "physical_body_index": 3,
+    "approved_decision": "RETAIN"
+  }
+}
