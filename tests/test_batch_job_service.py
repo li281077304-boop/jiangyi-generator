@@ -2,6 +2,7 @@
 import io
 from pathlib import Path
 import sys
+import threading
 from types import SimpleNamespace
 import zipfile
 
@@ -260,3 +261,88 @@ def test_child_creation_failure_does_not_abort_batch(client, renderer, monkeypat
     assert final["status"] == "partial" and final["completed"] == 2 and final["failed"] == 1
     assert [item["status"] for item in final["items"]] == ["done", "error", "done"]
     assert all(Path(path).is_file() for path in final["output_paths"])
+
+
+def test_concurrent_first_submissions_share_one_serial_executor(client, monkeypatch):
+    """Real async queue, deliberately held during first construction and work."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=False)
+    # Isolate this test's executor/pending registry and restore the app afterward.
+    monkeypatch.setattr(app, "extensions", {})
+    barrier = threading.Barrier(9)
+    constructor_started = threading.Event()
+    second_constructor_started = threading.Event()
+    release_constructor = threading.Event()
+    first_callback_started = threading.Event()
+    release_callbacks = threading.Event()
+    guard = threading.Lock()
+    executors, observed, failures = [], [], []
+    active = {"current": 0, "maximum": 0}
+    constructors = {"count": 0}
+
+    def make_executor(**kwargs):
+        with guard:
+            constructors["count"] += 1
+            if constructors["count"] > 1:
+                second_constructor_started.set()
+        constructor_started.set()
+        if not release_constructor.wait(5):
+            raise RuntimeError("test constructor timed out")
+        executor = ThreadPoolExecutor(**kwargs)
+        with guard:
+            executors.append(executor)
+        return executor
+
+    def callback(job_id):
+        with guard:
+            active["current"] += 1
+            active["maximum"] = max(active["maximum"], active["current"])
+        first_callback_started.set()
+        try:
+            if not release_callbacks.wait(5):
+                raise RuntimeError("test callback timed out")
+            with guard:
+                observed.append(job_id)
+        finally:
+            with guard:
+                active["current"] -= 1
+
+    def submit(index):
+        try:
+            barrier.wait(timeout=5)
+            app_module._submit_job(str(index))
+        except Exception as exc:
+            with guard:
+                failures.append(exc)
+
+    monkeypatch.setattr(app_module, "ThreadPoolExecutor", make_executor)
+    monkeypatch.setattr(app_module, "_execute_job", callback)
+    threads = [threading.Thread(target=submit, args=(index,)) for index in range(8)]
+    try:
+        for thread in threads:
+            thread.start()
+        barrier.wait(timeout=5)
+        assert constructor_started.wait(5)
+        # Under the old code, another entrant can begin constructing a second
+        # executor while the first is deliberately held. The fixed lock blocks
+        # all entrants until registration completes.
+        assert not second_constructor_started.wait(0.2)
+        release_constructor.set()
+        for thread in threads:
+            thread.join(timeout=5)
+            assert not thread.is_alive()
+        assert first_callback_started.wait(5)
+        with guard:
+            assert constructors["count"] == 1 and active["maximum"] == 1
+    finally:
+        release_constructor.set()
+        release_callbacks.set()
+        for thread in threads:
+            thread.join(timeout=5)
+        for executor in executors:
+            executor.shutdown(wait=True)
+    assert not failures
+    assert set(observed) == set(map(str, range(8))) and len(observed) == 8
+    assert active["maximum"] == 1 and active["current"] == 0
+    assert app.extensions["c0_job_pending"] == set()

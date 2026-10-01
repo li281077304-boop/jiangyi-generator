@@ -55,10 +55,12 @@ def _submit_job(job_id: str) -> None:
         if job_id in pending:
             return
         pending.add(job_id)
-    executor = app.extensions.get("c0_job_executor")
-    if executor is None:
-        executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="c0-render")
-        app.extensions["c0_job_executor"] = executor
+        # First submissions must share the same one-worker queue. Checking and
+        # registering outside this lock could create competing COM executors.
+        executor = app.extensions.get("c0_job_executor")
+        if executor is None:
+            executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="c0-render")
+            app.extensions["c0_job_executor"] = executor
     executor.submit(_run_scheduled_job, job_id)
 
 

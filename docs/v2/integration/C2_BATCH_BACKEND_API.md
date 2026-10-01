@@ -2,8 +2,9 @@
 
 Worker: GPT-6.1 (`gpt-6.1-sol`). Base:
 `c44b2279fd7e516f770edf8128500d57b9970d16`.
-Round 2 Input Resolver Chief review returned PASS. Round 3 independent Chief
-review is pending. This scoped backend gate is not `C2_BATCH_PASS`.
+Round 2 Input Resolver Chief review returned PASS. Round 3 Chief returned PATCH
+for a concurrent first-submission executor race. Round 4 fixes that race;
+independent review is pending. This scoped backend gate is not `C2_BATCH_PASS`.
 
 ## Production behavior
 
@@ -21,6 +22,10 @@ endpoint to avoid duplicate user tasks.
 Items run **serially**, including teacher-only `make_student` and V0.9 fallback.
 The production job executor has one worker. No concurrent XML optimization is
 introduced in this round, and frozen COM code is untouched.
+
+Round 4 makes executor lookup, creation and registration atomic under the
+existing submission lock. Concurrent first submissions cannot create separate
+one-worker executors and overlap COM jobs.
 
 Each item exposes topic, input version, teacher/student source paths, status,
 renderer, fallback reason/detail, output paths, error, original ZIP provenance,
@@ -54,6 +59,13 @@ download failure cannot turn valid generated files into generation failures.
 
 Result: **109 passed** (11 batch backend API/service cases, 19 existing C0/C1
 service cases, 34 resolver cases, 6 input classification cases, Stage2 39/39).
+
+Round 4 result: **110 passed**, adding an actual asynchronous concurrent-first-
+submission test. Eight simultaneous entrants share one real executor. The test
+holds construction to expose the old race, then holds the first callback while
+all submissions complete. It proves one executor was created, maximum in-flight
+callbacks is one, all eight jobs run, and pending state is cleared. The test
+controls scheduling with barriers/events; it does not invoke COM.
 
 API tests use valid DOCX packages with **synthetic renderer/COM callbacks**.
 They prove persistence and per-item orchestration through the real HTTP/job
