@@ -152,7 +152,7 @@ result is claimed. Evidence: `C:\xml-uat\c3-round4-real-pairs\`; report
 `C3_REAL_GOLDEN_CANDIDATE_GATE.md`. Chief exclusively Codex GPT-6.1 Sol,
 actual independent Round 4 scoped PASS confirmed by the parent.
 
-| C3-R5 | ~2026-10-01 11:28:45 UTC (first original WPS export timestamp; kickoff preceded export, exact kickoff not captured) | 2026-10-01 11:47:50 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 001b3f9856e21dbfff7edb0fd2c890b3fcbadc3b | a819f01f066254ef6cbbec16656de21fd60b6f9a | PASS scoped candidate-packet machine integrity/protected gate: 180 tests in48.53s including Stage2 39/39; live exact-source/body-fingerprint/body_idx/full-semantic-unit/package-member checks for3 packets; X008 all14 original pages and264body blocks Worker reviewed,34 manual physical questions,146 retained/118 proposed complete answer/analysis removals,114 frozenunits incl29QGs/5missing-QG prompts explicitly recorded; independently manually assembled expected draft package valid, all non-document bytes preserved, notStudentizer-generated; X01426pages/X01820pages rendered but only pages1-2 reviewed each, all656/399blocks UNRESOLVED; approvedGold0/productionproviders0/realStudentizercoverageNOT_ESTABLISHED; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7% source8/8; corpus hashes27/27; V0.9assets10/10; source-WPSreadonlyopen/export3/3 with original/snapshot hashes unchanged; compile/diff-checkPASS; frozen+production code unchanged | Codex GPT-6.1 Sol (required; independent Round 5 review pending) | PENDING; no Chief verdict fabricated; candidate integrity is not business approval | Stop Worker edits for independent full physics content/ownership review; keep math/chem unresolved; choose a separately reviewed Studentizer capability scope only after real Golden authority; no C3 completion/realcoverage/zeroCOM claim | Yes: candidate/report/fixtures/verifier/tests a819f01 committed/pushed; this Journal metadata commit/push follows |
+| C3-R5 | ~2026-10-01 11:28:45 UTC (first original WPS export timestamp; kickoff preceded export, exact kickoff not captured) | 2026-10-01 11:47:50 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 001b3f9856e21dbfff7edb0fd2c890b3fcbadc3b | a819f01f066254ef6cbbec16656de21fd60b6f9a | PASS scoped candidate-packet machine integrity/protected gate: 180 tests in48.53s including Stage2 39/39; live exact-source/body-fingerprint/body_idx/full-semantic-unit/package-member checks for3 packets; X008 all14 original pages and264body blocks Worker reviewed,34 manual physical questions,146 retained/118 proposed complete answer/analysis removals,114 frozenunits incl29QGs/5missing-QG prompts explicitly recorded; independently manually assembled expected draft package valid, all non-document bytes preserved, notStudentizer-generated; X01426pages/X01820pages rendered but only pages1-2 reviewed each, all656/399blocks UNRESOLVED; approvedGold0/productionproviders0/realStudentizercoverageNOT_ESTABLISHED; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7% source8/8; corpus hashes27/27; V0.9assets10/10; source-WPSreadonlyopen/export3/3 with original/snapshot hashes unchanged; compile/diff-checkPASS; frozen+production code unchanged | Codex GPT-6.1 Sol (actual independent Round 5 review) | PATCH: report incorrectly claimed Q11 answer/analysis OLE removal; all four OLE are retained Q23 prompt objects | Correct X008 OLE report/packet/script narrative and add exact regression; keep all candidate approvals/providers false; submit corrected evidence for independent Chief re-review | Yes: candidate/report/fixtures/verifier/tests a819f01 committed/pushed; this Journal metadata commit/push follows |
 
 Round 5 authors an independent original-source candidate, not the production
 Studentizer's output or paired-file difference. Physics original14pages were
@@ -162,7 +162,10 @@ proposed removed block has its exact source address/fingerprint/rationale, and
 all nontext structures and frozen units are accounted for. The unapproved expected
 DOCX is an external manual XML-splice draft, package validation only. Five
 physical questions have no frozen QG at their start; no QG IDs are invented.
-Current Studentizer boundary/multi-paragraph/OLE/ownership restrictions remain.
+Current Studentizer boundary/multi-paragraph/missing-QG ownership restrictions remain.
+All four main-body OLE are retained Q23 prompt objects at body[164]; Q11
+body[75..77] proposed removal contains plain text and no nontext/object.
+This source does not exercise answer-OLE deletion; that capability is untested.
 No real production Studentizer or derived-output WPS save/reopen/PDF UAT occurred.
 Math/Chemistry full-source review is incomplete:60pages rendered,18pages viewed
 in total (physics14/math2/chemistry2). All math/chem physical blocks remain
@@ -173,4 +176,18 @@ these are not production Studentizer performance/zeroCOM results. WPS provenance
 is actual KWps/wps.exe despite the compatibilityName reportingMicrosoftWord.
 Report: `C3_INDEPENDENT_SOURCE_GOLDEN_CANDIDATES.md`; external original-page and
 candidate evidence: `C:\xml-uat\c3-round5-source-review\`. Chief exclusively
-Codex GPT-6.1 Sol, independent Round 5 review pending.
+Codex GPT-6.1 Sol: actual independent Round 5 review returned PATCH for the
+incorrect Q11/OLE narrative. Corrected candidate content approval remains pending.
+
+
+| C3-R5-PATCH | Before 2026-10-01 11:55:12 UTC (first inherited patch verification timestamp; exact kickoff not captured) | 2026-10-01 11:58:31 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | f6c5d59ef35a418c227b02a702ce54dfea641deb | 44d8a55a459e1a0b825913a8013d7029a544ca33 | PASS surgical evidence correction: 181 focused tests in49.59s incl Stage2 39/39; exact four-RETAIN-OLE/Q23 body164 and plain-text-Q11 body75-77 regression; live three-source candidate verifiers PASS, approved/provider false; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%, source8/8; V0.9assets10/10; compile/diff-checkPASS; candidate DOCX/hash/manual ranges unchanged; no production/frozen code changed | Codex GPT-6.1 Sol (required; independent correction re-review pending) | PENDING; no new Chief verdict fabricated | Stop Worker edits and submit corrected evidence for independent Chief re-review; keep all candidates unapproved, math/chem unresolved; no real Studentizer coverage/C3 complete/zeroCOM claim | Yes: correction44d8a55 committed/pushed and local/remote full SHA verified; this Journal metadata commit/push follows |
+
+R5 PATCH only corrects the report, packet description and external assembly
+script, and adds the explicit OLE evidence regression. No splice range, candidate
+DOCX bytes, source fingerprint or production policy changed. Original R5 Chief
+PATCH is now recorded above; corrected candidate re-review is PENDING. Answer-OLE
+deletion is untested, and all candidate approval/provider values remain false.
+No new production Studentizer timing, speedup or zero-COM measurement was made;
+prior source-only WPS times remain source preparation measurements. No derived
+WPS save/reopen/PDF UAT or new subject coverage was added. External fresh
+protected evidence: `C:\xml-uat\c3-round5-source-review\patch-ole\`.
