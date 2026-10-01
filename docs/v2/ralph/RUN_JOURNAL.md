@@ -97,9 +97,9 @@ fixture coverage and does not claim an XML Studentizer output or no-over-deletio
 gate. Source files remain unchanged. External fresh evidence is
 `C:\xml-uat\c3-round1-capability\`; existing C1/C2 WPS/browser/performance evidence
 is referenced, not reimplemented or represented as newly executed C3 UAT.
-Chief model for this round is exclusively `Codex GPT-6.1 Sol`, review pending.
+Chief model for this round is exclusively `Codex GPT-6.1 Sol`; actual scoped PASS is recorded in the Round 1 row.
 
-| C3-R2 | ~2026-10-01 10:25 UTC (first implementation file timestamp; exact kickoff/initial design time not captured) | 2026-10-01 10:32:40 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 36636ffbafbf891cff094c3b86558b774f84b00e | f6d058b52f7be85cbfee9dae122238affc6a8b4d | PASS scoped standalone machine gate: 29 synthetic Studentizer fixtures; combined153 tests including existing124/Stage2 39/39; reviewed exact-source/body-address/fingerprint terminal answer removal, supplied-student byte bypass, role/section/stale binding/mixed/table/object/bookmark/revision ambiguity failclosed, adjacent body/next question/duplicate/red knowledge unchanged, preserved image/media/rels/package members; fresh Stage3QG408/408 sections369/369 subquestions328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0; V0.9 assets10/10; compile/staged diff-check PASS; existing frozen files unchanged | Codex GPT-6.1 Sol (required; independent Round 2 review pending) | PENDING; no Chief verdict fabricated | Stop before production routing or real-sample support claims; submit standalone capability/preservation candidate for independent Chief review | Yes: implementation/tests/report f6d058b committed/pushed; Journal metadata commit/push follows |
+| C3-R2 | ~2026-10-01 10:25 UTC (first implementation file timestamp; exact kickoff/initial design time not captured) | 2026-10-01 10:32:40 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 36636ffbafbf891cff094c3b86558b774f84b00e | f6d058b52f7be85cbfee9dae122238affc6a8b4d | PASS scoped standalone machine gate: 29 synthetic Studentizer fixtures; combined153 tests including existing124/Stage2 39/39; reviewed exact-source/body-address/fingerprint terminal answer removal, supplied-student byte bypass, role/section/stale binding/mixed/table/object/bookmark/revision ambiguity failclosed, adjacent body/next question/duplicate/red knowledge unchanged, preserved image/media/rels/package members; fresh Stage3QG408/408 sections369/369 subquestions328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0; V0.9 assets10/10; compile/staged diff-check PASS; existing frozen files unchanged | Codex GPT-6.1 Sol (actual independent review) | PASS scoped standalone preservation; allowlist does not prove complete answer coverage | Round 3: integrate only with complete reviewed Golden coverage; otherwise per-item whole-job V0.9 fallback; real support/performance pending | Yes: implementation/tests/report f6d058b committed/pushed; Journal metadata commit/push follows |
 
 C3 Round 1 actual independent Chief PASS is recorded above. Round 2 is standalone:
 the trusted reviewed ownership allowlist is a caller contract, not newly inferred
@@ -111,3 +111,23 @@ and adjacent content preservation; they are not real-corpus XML Studentizer or
 WPS UAT. No real sample support/performance/zero-COM conclusion or C3 completion
 is claimed. Report: `C3_STUDENTIZER_STANDALONE_GATE.md`; fresh external regression
 evidence: `C:\xml-uat\c3-round2-studentizer\stage3\`.
+
+Round 2 actual independent Chief reviewed candidate `f6d058b` and remote tip
+`dddcd81`, independently reran 29 Studentizer tests and Stage2 (68 total), checked
+8 concurrent publication attempts, fresh protected evidence and frozen assets,
+and returned PASS. Its caveat is mandatory: exact approved deletion/preservation
+is not whole-document answer completeness. No real support or zero COM was proved.
+
+| C3-R3 | ~2026-10-01 10:42:12 UTC (planner file creation; exact kickoff not captured) | 2026-10-01 10:56 UTC (minute rounded) | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | dddcd8185f3de4f42345f577d3f4dad844772608 | deee628047c42ca7dceb332fa8c5134408ff3fdd | PASS scoped integration machine gate: 174 focused tests in49.59s (existing124 + standalone29 + integration21), Stage2 39/39; complete reviewed Golden manifest and frozen semantic/source/body identities; incomplete/stale/candidate/table/textbox/provider-mutation failclosed; supplied student bypass; later XML failure whole-job fallback resets original teacher; observed make_student restoration on success/error; concurrent fallback max active1; mixed batch/restart metadata; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0, exact QG boundaries87.7%, source8/8; V0.9assets10/10; real27-source coverage audit27/27 COVERAGE_UNPROVEN, source hashes unchanged,0 derivatives; compile/diff checks PASS; frozen C2 boundaries unchanged | Codex GPT-6.1 Sol (required; independent Round 3 review pending) | PENDING; no Chief verdict fabricated | Stop Worker edits for independent review; real complete reviewed Golden/WPS/performance gate remains pending; no C3 completion/real XML support/zero COM claim | Yes: implementation/report deee628 committed and pushed; this Journal metadata commit/push follows |
+
+Round 3 changes only orchestration, a complete-evidence planner, focused tests
+and this report/Journal. Human-reviewed Golden authority is trusted server-only
+configuration; no real provider is shipped. Default teacher-only now conservatively
+uses per-item whole-job V0.9 fallback and may be slower than prior eager COM
+preparation plus XML; earlier C2 teacher-only timing is not current C3 performance.
+No new real speed/COM-start measurements were made. Legacy `wps_com_started`
+records observed entry into the COM-capable frozen make_student, with explicit
+`wps_com_evidence=COM_CAPABLE_MAKE_STUDENT_ENTRY_ONLY`; it is not an OS process
+probe or proof of actual process start on failure. Paired/student-only XML is
+preserved. Fresh evidence: `C:\xml-uat\c3-round3-integration\`. Chief exclusively
+Codex GPT-6.1 Sol, review pending.
