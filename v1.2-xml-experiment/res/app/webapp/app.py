@@ -31,6 +31,7 @@ app.config.setdefault("C0_RUN_JOBS_SYNCHRONOUSLY", False)
 app.config.setdefault("C0_FORCE_FALLBACK_REASON", None)  # integration-test hook only
 app.config.setdefault("C0_DISABLE_JOB_SUBMISSION", False)
 app.config.setdefault("STUDENTIZER_EVIDENCE_PROVIDER", None)  # trusted server config only; no upload/UI API
+app.config.setdefault("STUDENTIZER_REVIEWED_MANIFEST_DIR", None)  # None => packaged reviewed evidence
 _V09_FALLBACK_LOCK = threading.RLock()
 
 
@@ -96,6 +97,25 @@ def _visible_output_name(options: dict, topic: str, role: str) -> str:
     return (" ".join(parts) or ("讲义 " + role)) + ".docx"
 
 
+def _reviewed_provider():
+    """Resolve the teacher-only reviewed evidence provider for this process.
+
+    Explicit server configuration wins. Otherwise the packaged reviewed
+    manifest directory is used. A registry that cannot be loaded never
+    authorizes anything: the provider becomes ``None`` and every item fails
+    closed into the V0.9 whole-job fallback.
+    """
+    configured = app.config.get("STUDENTIZER_EVIDENCE_PROVIDER")
+    if configured is not None:
+        return configured, None, None
+    from reviewed_studentizer import ReviewedManifestError, registry
+    try:
+        loaded = registry(app.config.get("STUDENTIZER_REVIEWED_MANIFEST_DIR"))
+    except ReviewedManifestError as exc:
+        return None, None, str(exc)
+    return loaded.evidence_provider(), loaded, None
+
+
 def _execute_job(job_id: str) -> None:
     """Run a classified teacher/student job with isolated runtime staging."""
     service = _jobs()
@@ -150,21 +170,27 @@ def _execute_job(job_id: str) -> None:
                        "elapsed_seconds": 0.0, "wps_com_started": False,
                        "package_valid": None, "output_package_valid": None,
                        "engine": "BYPASS", "status": "STUDENT_SOURCE_BYPASS",
-                       "reason_code": None, "reason_detail": None}
+                       "reason_code": None, "reason_detail": None,
+                       "reviewed_evidence": None, "registry_error": None,
+                       "studentizer_fallback": False}
         studentizer_rejected = False
         if input_version == "TEACHER_ONLY":
             service.update_progress(job_id, 0, "正在从教师版准备学生版")
+            provider, reviewed, registry_error = _reviewed_provider()
+            preparation["registry_error"] = registry_error
             started = time.perf_counter()
-            prepared, coverage = prepare_complete_student(
-                teacher_source, student_source, app.config.get("STUDENTIZER_EVIDENCE_PROVIDER"))
+            prepared, coverage = prepare_complete_student(teacher_source, student_source, provider)
             preparation.update({"engine": prepared.engine, "status": prepared.status,
                                 "reason_code": prepared.reason_code, "reason_detail": prepared.reason_detail,
                                 "source_sha256": prepared.source_sha256, "output_sha256": prepared.output_sha256,
                                 "coverage": coverage, "studentizer_elapsed_seconds": round(time.perf_counter()-started, 6),
                                 "elapsed_seconds": round(time.perf_counter()-started, 6)})
             studentizer_rejected = prepared.status != "XML_PREPARED"
+            preparation["studentizer_fallback"] = studentizer_rejected
             if not studentizer_rejected:
                 preparation["package_valid"] = prepared.validation.get("valid") is True
+                manifest = reviewed.lookup(prepared.source_sha256) if reviewed is not None else None
+                preparation["reviewed_evidence"] = manifest.describe() if manifest is not None else None
         elif student_source is not None:
             preparation["package_valid"] = validate_package(str(student_source)).get("valid") is True
         service.update_student_preparation(job_id, preparation)
@@ -194,6 +220,12 @@ def _execute_job(job_id: str) -> None:
                 fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
+            except Exception as exc:
+                # Any unexpected planning refusal must still persist a reason.
+                plans.clear()
+                fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
+                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
+                        "detail": fallback_detail["value"]}
             return {"supported": True,
                     "template_sha256": next(iter(plans.values())).template_sha256}
 
@@ -207,6 +239,15 @@ def _execute_job(job_id: str) -> None:
             except SlotRoutingError as exc:
                 fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
                 raise FallbackRequired("XML_RENDER_FAILED", fallback_detail["value"]) from exc
+            except FallbackRequired:
+                raise
+            except Exception as exc:
+                # The renderer refused this source (for example an inherited
+                # unresolvable bookmark/hyperlink target). Record the exact
+                # refusal before the orchestrator falls back, so the persisted
+                # fallback reason is never an unexplained blank.
+                fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
+                raise
             reports = [result.package_report for result in results.values()]
             primary = results.get("teacher") or results.get("student")
             return {
@@ -272,6 +313,9 @@ def _execute_job(job_id: str) -> None:
         outcome = render_xml_or_fallback(
             render_job, xml_preflight=xml_preflight, xml_render=xml_render,
             fallback=fallback, package_validator=validate_package)
+        if outcome.renderer == "V0.9":
+            preparation["xml_failure"] = outcome.xml_error
+            service.update_student_preparation(job_id, preparation)
         if outcome.renderer == "XML":
             generated = []
             if teacher_source:

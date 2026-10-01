@@ -1,4 +1,16 @@
-"""Full-scope reviewed evidence gate. No automatic answer-ownership inference."""
+"""Full-scope reviewed evidence gate. No automatic answer-ownership inference.
+
+Two reviewed contracts are accepted, and only these two:
+
+- ``CompleteStudentEvidence``: frozen-A-Line-QG-bound complete Golden evidence.
+- ``PhysicalRangeSemantics``: an exhaustive independently reviewed physical
+  body ledger with exact reviewed prompt/answer ranges and an exact approved
+  after-root digest. This is the capability verified in C3 R7 and is the
+  contract production reviewed manifests use.
+
+Neither contract is inferred from role, colour, marker, filename or upload
+switches. Both fail closed, and neither can create removal authority by itself.
+"""
 from dataclasses import dataclass
 from hashlib import sha256
 from io import BytesIO
@@ -11,6 +23,7 @@ from lxml import etree
 from semantic_facade import analyze_source, read_source_snapshot
 from studentizer import (AnswerBinding, StudentizerSemantics, StudentizerResult,
                          element_sha256, prepare_student, TAG, FALLBACK, _plan)
+from studentizer_ranges import PhysicalRangeSemantics
 
 
 @dataclass(frozen=True)
@@ -46,6 +59,35 @@ def _reject(code, detail):
 def semantic_fingerprint(snapshot):
     return sha256(json.dumps(snapshot.units, ensure_ascii=False, sort_keys=True,
                              separators=(',', ':')).encode('utf-8')).hexdigest()
+
+
+def reviewed_range_plan(data, snapshot, evidence):
+    """Cross-check a reviewed physical-range ledger against the exact source.
+
+    The Studentizer itself revalidates every fingerprint, the complete ledger
+    coverage, the boundary inventory and the exact approved after-root before
+    publishing anything. This gate additionally proves that the evidence binds
+    this exact byte snapshot and that it carries usable review provenance, so a
+    mismatch is reported with a precise ``STUDENTIZER_*`` reason instead of a
+    generic preparation failure.
+    """
+    if evidence is None:
+        _reject("STUDENTIZER_COVERAGE_UNPROVEN", "no reviewed evidence for this exact source")
+    if not isinstance(evidence, PhysicalRangeSemantics):
+        _reject("STUDENTIZER_COVERAGE_UNPROVEN", "unsupported reviewed evidence contract")
+    digest = sha256(data).hexdigest()
+    if evidence.source_sha256 != digest or snapshot.source_sha256 != digest:
+        _reject("STUDENTIZER_SOURCE_IDENTITY_MISMATCH", "source/evidence/semantic digest mismatch")
+    if not evidence.review_id or not re.fullmatch(r"[0-9a-f]{64}", str(evidence.expected_document_sha256)):
+        _reject("STUDENTIZER_COVERAGE_UNPROVEN", "reviewed range provenance or approved after-root missing")
+    if not evidence.body or not evidence.ranges:
+        _reject("STUDENTIZER_COVERAGE_INCOMPLETE", "reviewed range evidence is not exhaustive")
+    return evidence, {"scope_blocks": len(evidence.body), "reviewed_ranges": len(evidence.ranges),
+                      "removed_blocks": sum(1 for row in evidence.body if row.decision == "REMOVE"),
+                      "answer_paragraphs": sum(1 for row in evidence.body if row.decision == "REMOVE"),
+                      "question_groups": len(evidence.ranges),
+                      "review_id": evidence.review_id,
+                      "coverage_basis": "EXACT_REVIEWED_GOLDEN_PHYSICAL_RANGE"}
 
 
 def complete_plan(data, snapshot, evidence):
@@ -130,6 +172,11 @@ def complete_plan(data, snapshot, evidence):
 
 
 def prepare_complete_student(source, output, evidence_provider=None):
+    """Prepare a student source through the reviewed gate, or fail closed.
+
+    Returns ``(StudentizerResult, coverage | None)``. A refusal never leaves a
+    partial derivative behind and never reports ``XML_PREPARED``.
+    """
     started = time.perf_counter(); digest = ''
     try:
         data, _name = read_source_snapshot(source); digest = sha256(data).hexdigest()
@@ -138,7 +185,10 @@ def prepare_complete_student(source, output, evidence_provider=None):
         evidence = evidence_provider(snapshot, data) if evidence_provider else None
         if semantic_fingerprint(snapshot) != frozen_semantics:
             _reject("STUDENTIZER_SOURCE_IDENTITY_MISMATCH", "evidence provider mutated frozen A-Line semantics")
-        semantics, coverage = complete_plan(data, snapshot, evidence)
+        if isinstance(evidence, PhysicalRangeSemantics):
+            semantics, coverage = reviewed_range_plan(data, snapshot, evidence)
+        else:
+            semantics, coverage = complete_plan(data, snapshot, evidence)
         result = prepare_student(data, semantics, output)
         return result, coverage
     except Exception as exc:
