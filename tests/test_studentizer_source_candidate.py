@@ -40,3 +40,16 @@ def test_unreviewed_math_and_chemistry_cannot_have_expected_gold_or_removals():
         assert len(p['body']) == count and not p['questions']
         assert all(r['decision'] == 'UNRESOLVED' for r in p['body'])
         assert 'candidate_docx_path' not in p and 'proposed_removed_indices' not in p
+
+
+def test_physics_all_four_ole_are_retained_in_q23_and_q11_is_plain_text():
+    p = packet('X008')
+    objects = [(r, n) for r in p['body'] for n in r['nontext_and_boundary_structures']
+               if n['tag'] == 'OLEObject']
+    assert len(objects) == 4
+    assert all(r['index'] == 164 and r['owner'] == 'candidate-question-23'
+               and r['decision'] == n['decision'] == 'RETAIN' for r, n in objects)
+    assert all(p['body'][i]['decision'] == 'PROPOSE_REMOVE'
+               and not p['body'][i]['nontext_and_boundary_structures'] for i in (75,76,77))
+    assert 'Answer-OLE deletion is not exercised by this source' in p['unresolved']
+    assert p['approved'] is False and p['production_provider'] is False

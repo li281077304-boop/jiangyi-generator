@@ -8589,7 +8589,8 @@
   "unresolved": [
     "Chief full content approval pending",
     "Five independently reviewed physical prompts have no frozen QG at their start",
-    "Existing Studentizer rejects boundary systems, multi-paragraph and object answer scope"
+    "Existing Studentizer rejects boundary systems, multi-paragraph and missing-QG ownership scope",
+    "Answer-OLE deletion is not exercised by this source"
   ],
   "candidate_expected_document_sha256": "6b93cfc1594afc35bfa7801a4a73768185058fb2101e41e9f3d363173f31e0a2",
   "expected_retained_body_sha256": [

@@ -2,7 +2,8 @@
 
 Base: `001b3f9856e21dbfff7edb0fd2c890b3fcbadc3b`.
 Worker: actual GPT-6.1 (`gpt-6.1-sol`). Chief: **Codex GPT-6.1 Sol**.
-Chief verdict: **PENDING**. This is a candidate-packet gate; **no approved
+Original R5 Chief verdict: **PATCH** (incorrect Q11/OLE narrative).
+Corrected candidate Chief re-review: **PENDING**. This is a candidate-packet gate; **no approved
 Golden, real Studentizer coverage PASS, production provider, zero COM or C3
 completion is claimed**.
 
@@ -96,8 +97,9 @@ deletion. All spans and these discrepancies are visible to Chief.
 
 This is unresolved **production compatibility**, not a reason to modify the
 frozen A-Line. Current planner requires actual QG ownership and cannot consume
-this packet unchanged. Boundary systems, multi-paragraph analysis and answer
-OLE also exceed current approved Studentizer scope. Those restrictions remain.
+this packet unchanged. Boundary systems, multi-paragraph analysis and the
+missing-QG ownership cases exceed current approved Studentizer scope. Those
+restrictions remain. This source does not exercise answer-OLE deletion.
 
 ## Independently authored expected candidate
 
@@ -111,8 +113,10 @@ oracle diff. Its draft DOCX is external:
 The packet binds its full expected document C14N hash and candidate package SHA;
 all 146 retained source child fingerprints/order and every non-document package
 part are exact. Package validation is valid. The source has four main-body OLE
-objects: question-owned content is retained; explanation-owned content is
-proposed for removal in the Q11 range with explicit nontext records. Resources
+objects, all at `body[164]` in the **Q23 prompt**, and all four are **RETAIN**.
+Q11's proposed answer/analysis deletion at `body[75..77]` is **plain text** and
+contains no nontext/object. This sample proves no answer-OLE deletion capability.
+The source packet's exact nontext records establish these locations. Resources
 are retained byte-for-byte, including unused answer resources; none are silently
 rewritten or garbage-collected.
 
@@ -145,6 +149,15 @@ E1–E4/MISS/FP/MERGE/SPLIT **0**, source hashes **8/8**; overall exact QG
 boundaries **87.7%**. Fresh corpus hashes **27/27** and V0.9 assets **10/10**.
 Compilation/diff checks pass. These are candidate integrity/protected gates,
 not independent approval of the Worker content decisions.
+
+R5 PATCH corrects only the OLE narrative/packet description and adds an exact
+regression assertion: all four OLE objects are retained in Q23 `body[164]`;
+Q11 `body[75..77]` has no object/nontext. Fresh focused gate: **181 passed in
+49.59s**, including Stage2 **39/39**. Fresh protected Stage3 retains the metrics
+above, including **87.7%** overall exact QG boundaries; V0.9 assets **10/10**.
+The manual ranges, retained fingerprints and candidate DOCX/hash are unchanged.
+Answer-OLE deletion remains **untested**; approval/provider remain **false**.
+No new production performance measurement or derived-output UAT was run.
 
 `tools/studentizer_audit/verify_source_candidate.py` re-reads identical source
 bytes, verifies every block/hash/body-index mapping, all frozen units and package
