@@ -85,7 +85,7 @@ def test_post_persists_single_docx_and_get_recovers_after_service_restart(client
     assert created["created_at_iso"].endswith("+00:00")
     assert created["total"] == 2
     assert created["has_result"] is False
-    assert created["download_available"] is False
+    assert "download_available" not in created
     root = tmp_path / "results"
     record_path = Path(app.config["RUNTIME_ROOT"]) / created["job_id"] / "job.json"
     record = json.loads(record_path.read_text(encoding="utf-8"))
@@ -131,15 +131,14 @@ def test_open_route_resolves_and_opens_result_folder(client, tmp_path):
     assert client.get("/api/open/" + "0" * 32).status_code == 404
 
 
-def test_download_not_ready_is_conflict_and_does_not_change_generation_state(client):
+def test_output_download_route_is_removed_and_does_not_change_generation_state(client):
     created = post_one(client).get_json()
     response = client.get("/api/download/" + created["job_id"])
-    assert response.status_code == 409
-    assert response.get_json()["generation_status"] == "queued"
+    assert response.status_code == 404
     assert client.get("/api/jobs/" + created["job_id"]).get_json()["status"] == "queued"
 
 
-def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(client):
+def test_complete_job_uses_frozen_package_validator_and_local_role_outputs(client):
     created = post_one(client).get_json()
     job_dir = Path(created["result_dir"])
     outputs = [job_dir / "教师版.docx", job_dir / "学生版.docx"]
@@ -150,49 +149,42 @@ def test_complete_job_uses_frozen_package_validator_and_downloads_role_outputs(c
     assert set(completed["package_validation"]) == {"teacher", "student"}
     assert all(report["valid"] for report in completed["package_validation"].values())
     assert completed["output_roles"] == {"teacher": str(outputs[0]), "student": str(outputs[1])}
-    response = client.get("/api/download/" + created["job_id"])
-    assert response.status_code == 200
-    with zipfile.ZipFile(io.BytesIO(response.data)) as archive:
-        assert set(archive.namelist()) == {"教师版.docx", "学生版.docx"}
+    assert all(path.is_file() and path.stat().st_size > 0 for path in outputs)
     snapshot = client.get("/api/jobs/" + created["job_id"]).get_json()
     assert snapshot["status"] == "done"
-    assert snapshot["download_available"] is True
+    assert "download_available" not in snapshot
     restarted = make_service()
     recovered = restarted.get(created["job_id"])
     assert recovered["result_dir"] == str(job_dir)
     assert recovered["output_paths"] == [str(path) for path in outputs]
-    assert recovered["download_available"] is True
-    assert recovered["delivery_status"] == "zip_ready"
+    assert "download_available" not in recovered
     assert recovered["created_at"] == created["created_at"]
 
 
-def test_zip_delivery_failure_does_not_fail_validated_local_generation(client, monkeypatch):
-    created = post_one(client).get_json()
-    job_dir = Path(created["result_dir"])
-    outputs = [job_dir / "教师版.docx", job_dir / "学生版.docx"]
-    for path in outputs:
-        path.write_bytes(make_docx())
-    make_service().complete_job(created["job_id"], *outputs)
-
-    original_zip = app_module.zipfile.ZipFile
-
-    def fail_zip(file, *args, **kwargs):
-        if hasattr(file, "write"):
-            raise OSError("simulated response archive failure")
-        return original_zip(file, *args, **kwargs)
-
-    monkeypatch.setattr(app_module.zipfile, "ZipFile", fail_zip)
-    response = client.get("/api/download/" + created["job_id"])
-    assert response.status_code == 503
-    assert response.get_json()["error_code"] == "DELIVERY_DOWNLOAD_FAILED"
-    snapshot = client.get("/api/jobs/" + created["job_id"]).get_json()
-    assert snapshot["status"] == "done"
-    assert snapshot["has_result"] is True
-    assert snapshot["result_dir"] == str(job_dir.resolve())
-    assert snapshot["output_paths"] == [str(path.resolve()) for path in outputs]
-    assert snapshot["download_available"] is False
-    assert snapshot["delivery_status"] == "failed"
-    assert snapshot["delivery_error_code"] == "DELIVERY_DOWNLOAD_FAILED"
+@pytest.mark.parametrize("batch", [False, True])
+def test_legacy_download_metadata_is_removed_without_losing_local_outputs(client, batch):
+    if batch:
+        created = client.post("/api/jobs", data={"files": [(io.BytesIO(make_student_docx()), f"专题{i} 学生版.docx") for i in range(3)]}, content_type="multipart/form-data").get_json()
+        child_id = created["items"][0]["child_job_id"]
+        child = make_service().get(child_id)
+        output = Path(child["result_dir"]) / "学生版.docx"
+        output.write_bytes(make_student_docx())
+        make_service().complete_job(child_id, student_output_path=output)
+    else:
+        created = post_one(client).get_json()
+        output = Path(created["result_dir"]) / "教师版.docx"
+        output.write_bytes(make_docx())
+        make_service().complete_job(created["job_id"], output)
+    metadata = Path(app.config["RUNTIME_ROOT"]) / created["job_id"] / "job.json"
+    record = json.loads(metadata.read_text(encoding="utf-8"))
+    legacy = {"download_available": False, "delivery_status": "failed", "delivery_error_code": "DELIVERY_DOWNLOAD_FAILED", "delivery_error": "old failure"}
+    record.update(legacy)
+    metadata.write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    recovered = make_service().get(created["job_id"])
+    assert recovered["has_result"] and output.is_file()
+    assert not set(legacy).intersection(recovered)
+    assert not set(legacy).intersection(json.loads(metadata.read_text(encoding="utf-8")))
+    assert client.get("/api/download/" + created["job_id"]).status_code == 404
 
 
 def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
@@ -352,7 +344,7 @@ def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
     student.unlink()
     recovered = service.get(created["job_id"])
     assert recovered["status"] == "error"
-    assert recovered["download_available"] is False
+    assert "download_available" not in recovered
     assert recovered["has_result"] is False
 
 
@@ -367,7 +359,7 @@ def test_duplicate_role_path_never_completes_job(client):
     assert service.get(created["job_id"])["has_result"] is False
 
 
-def test_corrupt_document_xml_is_rejected_on_complete_recovery_and_download(client):
+def test_corrupt_document_xml_is_rejected_on_complete_and_recovery(client):
     created = post_one(client).get_json()
     job_dir = Path(created["result_dir"])
     teacher, student = job_dir / "教师版.docx", job_dir / "学生版.docx"
@@ -384,10 +376,9 @@ def test_corrupt_document_xml_is_rejected_on_complete_recovery_and_download(clie
     recovered = service.get(created["job_id"])
     assert recovered["status"] == "error"
     assert recovered["has_result"] is False
-    assert recovered["download_available"] is False
+    assert "download_available" not in recovered
     response = client.get("/api/download/" + created["job_id"])
-    assert response.status_code == 409
-    assert response.status_code != 200
+    assert response.status_code == 404
 
 
 def test_workspace_javascript_handles_queued_and_running_states():
@@ -400,7 +391,7 @@ def test_workspace_javascript_handles_queued_and_running_states():
     assert '<option value="queued">排队中</option>' in template
     assert 'id="resultDelivery"' in template
     assert 'id="openResult"' in template and "打开成品文件夹" in template
-    assert "本地输出路径：" in js and "下载 ZIP" in template
+    assert "本地输出路径：" in js and "下载 ZIP" not in template
 
 
 def test_semantic_facade_hashes_one_source_snapshot_and_returns_same_units():

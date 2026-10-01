@@ -75,8 +75,8 @@ async function run() {
     failed: element("batchFailed").textContent, current: element("batchCurrent").textContent,
     rows: element("resultRows").children.map(row => row.children.map(cell => cell.textContent)),
     deliveryHidden: element("resultDelivery").hidden, delivery: element("resultDelivery").textContent,
-    openHidden: element("openResult").hidden, downloadHidden: element("downloadResult").hidden,
-    downloadHref: element("downloadResult").href,
+    openHidden: element("openResult").hidden,
+    downloadElements: [...nodes.values()].filter(node => (node.href || "").startsWith("/api/download/")).length + Number(nodes.has("downloadResult")),
     configDisabled: element("configFields").disabled, startDisabled: element("startButton").disabled,
     pairing: element("pairingNote").textContent,
     historyStatuses: element("historyList").children.filter(row => row.children.length === 4)

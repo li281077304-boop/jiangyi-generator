@@ -221,15 +221,11 @@ class JobService:
             "produced": 0,
             "result_dir": str(result_dir),
             "output_paths": [],
-            "download_available": False,
             "has_result": False,
             "renderer": None,
             "fallback_reason": None,
             "fallback_detail": None,
             "baseline_sha": None,
-            "delivery_status": "not_attempted",
-            "delivery_error_code": None,
-            "delivery_error": None,
             "recovered_after_restart": False,
             "generation_attempts": 0,
             "student_preparation": {"make_student_called": False,
@@ -303,7 +299,6 @@ class JobService:
             "updated_at": now.timestamp(), "updated_at_iso": now.isoformat(timespec="seconds"),
             "stage": "批量任务已接收，等待生成", "result_dir": str(result_dir),
             "output_paths": [], "produced": 0, "has_result": False,
-            "download_available": False, "delivery_status": "not_attempted",
             "generation_attempts": 0, "warnings": [],
         }
         with self._lock:
@@ -349,8 +344,6 @@ class JobService:
                 record["error"] = "GENERATION_FAILED: 所有专题均生成失败"
             if record.get("started_at"):
                 record.setdefault("elapsed_seconds", round(datetime.now(timezone.utc).timestamp() - record["started_at"], 3))
-        record["download_available"] = (record["has_result"] and record["status"] in ("done", "partial")
-                                        and record.get("delivery_status") != "failed")
         now = datetime.now(timezone.utc)
         record["updated_at"], record["updated_at_iso"] = now.timestamp(), now.isoformat(timespec="seconds")
         self._write_json(self._job_dir(record["job_id"]) / "job.json", record)
@@ -428,7 +421,7 @@ class JobService:
             return self.snapshot(record)
 
     def fail_job(self, job_id: str, detail: str) -> dict:
-        """Persist generation failure without conflating it with ZIP delivery."""
+        """Persist failure of the local DOCX generation job."""
         with self._lock:
             record = self._recover(job_id)
             if record.get("status") == "done":
@@ -442,7 +435,6 @@ class JobService:
                 "error": error,
                 "stage": error,
                 "has_result": False,
-                "download_available": False,
                 "progress": 0,
                 "updated_at": now.timestamp(),
                 "updated_at_iso": now.isoformat(timespec="seconds"),
@@ -454,37 +446,16 @@ class JobService:
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
-    def record_download_succeeded(self, job_id: str) -> dict:
-        # The server prepared a ZIP response. This does not claim that the
-        # browser persisted it; local DOCX files remain the source of truth.
-        return self._update_delivery(job_id, "zip_ready", None, None)
-
-    def record_download_failed(self, job_id: str, detail: str) -> dict:
-        return self._update_delivery(job_id, "failed", "DELIVERY_DOWNLOAD_FAILED", str(detail))
-
-    def _update_delivery(self, job_id: str, status: str, code: str | None,
-                         detail: str | None) -> dict:
-        with self._lock:
-            record = self._recover(job_id)
-            if record.get("status") not in ("done", "partial"):
-                return self.snapshot(record)
-            now = datetime.now(timezone.utc)
-            record.update({
-                "delivery_status": status,
-                "download_available": status == "zip_ready",
-                "delivery_error_code": code,
-                "delivery_error": detail,
-                "updated_at": now.timestamp(),
-                "updated_at_iso": now.isoformat(timespec="seconds"),
-            })
-            self._write_json(self._job_dir(job_id) / "job.json", record)
-            return self.snapshot(record)
-
     def _recover(self, job_id: str) -> dict:
         path = self._job_dir(job_id) / "job.json"
         if not path.is_file():
             raise JobNotFound(job_id)
         record = self._read_json(path)
+        # Migrate obsolete output-download metadata without changing generation.
+        legacy_keys = ("download_available", "delivery_status", "delivery_error_code", "delivery_error")
+        legacy_changed = any(key in record for key in legacy_keys)
+        for key in legacy_keys:
+            record.pop(key, None)
         if record.get("is_batch"):
             with self._lock:
                 return self._recover_batch(record)
@@ -503,19 +474,14 @@ class JobService:
             record["error"] = "GENERATION_FAILED: 已记录的成品缺失、为空或未通过包校验"
             record["stage"] = record["error"]
             record["has_result"] = False
-            record["download_available"] = False
             now = datetime.now(timezone.utc)
             record["updated_at"] = now.timestamp()
             record["updated_at_iso"] = now.isoformat(timespec="seconds")
             self._write_json(path, record)
         else:
             has_result = record.get("status") == "done" and valid
-            default_download_available = record.get("delivery_status") not in ("failed", "unavailable")
-            download_available = bool(record.get("download_available", default_download_available)) if has_result else False
-            changed = metadata_changed or validation_changed or (record.get("has_result") != has_result or
-                       record.get("download_available") != download_available)
+            changed = metadata_changed or validation_changed or legacy_changed or record.get("has_result") != has_result
             record["has_result"] = has_result
-            record["download_available"] = download_available
             if changed:
                 self._write_json(path, record)
         return record
@@ -593,10 +559,6 @@ class JobService:
             "student_output_path": output_roles.get("student"),
             "output_roles": output_roles,
             "output_filenames": output_names,
-            "download_available": True,
-            "delivery_status": "available",
-            "delivery_error_code": None,
-            "delivery_error": None,
             "has_result": True,
             "produced": len(paths),
             "renderer": renderer,
@@ -644,16 +606,8 @@ class JobService:
         self.opener(folder)
         return folder
 
-    def outputs_for_download(self, job_id: str) -> tuple[dict, list[Path]]:
-        record = self._recover(job_id)
-        valid, outputs, _reports = self._validate_recorded_outputs(record)
-        if record.get("status") not in ("done", "partial") or not valid:
-            raise ValueError("任务尚无已验证的 DOCX 成品")
-        return record, outputs
-
     @staticmethod
     def snapshot(record: dict) -> dict:
         public = dict(record)
         public["has_result"] = bool(record.get("has_result", False))
-        public["download_available"] = bool(record.get("download_available", False))
         return public

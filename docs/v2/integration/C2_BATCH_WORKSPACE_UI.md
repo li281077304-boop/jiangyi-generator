@@ -1,5 +1,11 @@
 # C2 Round 5 — Minimal Batch Workspace UI
 
+> Historical Round 5 report (Chief subsequently PASS). The user's latest
+> 2026-10-01 decision removed output ZIP UI/API and download state entirely;
+> ZIP input remains. The download descriptions below are historical only.
+> Current rules/evidence: `C2_LOCAL_RESULT_DELIVERY_RULES.md` and
+> `C2_LOCAL_DELIVERY_BROWSER_UAT.md`.
+
 Worker: GPT-6.1 (`gpt-6.1-sol`). Base:
 `cd7264b0c4f0d304a027478849c35e02762fade4`.
 Round 4 Chief returned PASS for the shared serial executor repair. This round's

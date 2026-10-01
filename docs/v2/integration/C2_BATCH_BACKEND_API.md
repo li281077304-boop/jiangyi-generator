@@ -1,5 +1,10 @@
 # C2 Round 3 — Persistent Backend Batch Integration
 
+> Historical Round 3/4 report. On 2026-10-01 the user removed output ZIP
+> delivery. Download availability/routes and ZIP assertions below describe the
+> old implementation only. Current rules/evidence:
+> `C2_LOCAL_RESULT_DELIVERY_RULES.md`, `C2_LOCAL_DELIVERY_BROWSER_UAT.md`.
+
 Worker: GPT-6.1 (`gpt-6.1-sol`). Base:
 `c44b2279fd7e516f770edf8128500d57b9970d16`.
 Round 2 Input Resolver Chief review returned PASS. Round 3 Chief returned PATCH

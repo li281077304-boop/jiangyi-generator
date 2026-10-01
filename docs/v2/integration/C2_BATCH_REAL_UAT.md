@@ -1,5 +1,12 @@
 # C2 Round 6 — Real Batch, WPS Product and Performance Evidence
 
+> Round 6 evidence received independent Codex GPT-6.1 Sol PASS. Its dated
+> output-ZIP observations are historical: the user subsequently removed output
+> ZIP delivery, retaining ZIP input. Current browser/local-delivery rules and
+> evidence are in `C2_LOCAL_RESULT_DELIVERY_RULES.md` and
+> `C2_LOCAL_DELIVERY_BROWSER_UAT.md`; earlier download results are not used as
+> the current product delivery gate.
+
 Worker: GPT-6.1 (`gpt-6.1-sol`, actual invocation). Base:
 `0dd1391ad2e003bef4ac2ab7e00cd4f44bcf494a`.
 Round 5 received independent Codex GPT-6.1 Sol PASS. This evidence candidate
@@ -142,5 +149,6 @@ The combined focused resolver/backend/C1/Stage2/executed-JS gate was rerun:
 The diff from the C1 checkpoint contains only reviewed C2 resolver/backend/UI,
 tests and evidence/journal, with no A-Line/B-Line/V0.9/C1 rules changes.
 
-Remaining approval: independent **Codex GPT-6.1 Sol** review of this evidence
-and overall C2 completion. No EXE, installer, release or updater work is included.
+Round 6 independent **Codex GPT-6.1 Sol** review returned PASS. Overall C2
+completion awaits review of the subsequent user-directed local-delivery revision.
+No EXE, installer, release or updater work is included.

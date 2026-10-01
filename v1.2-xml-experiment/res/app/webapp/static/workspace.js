@@ -290,13 +290,9 @@
     if (job.has_result) {
       var pathText = job.result_dir ? "本地输出路径：" + job.result_dir + "。" : "成品已保存在本地结果目录。";
       var generatedText = job.status === "partial" ? "已成功生成 " + job.completed + " 个专题，" + job.failed + " 个失败。成功成品已通过校验，不受失败项影响。" : isActiveStatus(job.status) ? "已完成专题的成品已保存并通过校验，其余专题正在处理。" : "成品已生成并通过校验。";
-      var deliveryText = job.delivery_error_code === "DELIVERY_DOWNLOAD_FAILED"
-        ? generatedText + pathText + "ZIP 下载暂不可用，可打开成品文件夹获取 DOCX。"
-        : generatedText + pathText + (job.download_available ? "优先打开成品文件夹，也可以下载 ZIP。" : "可打开成品文件夹获取已完成的 DOCX。");
-      delivery.textContent = deliveryText;
+      delivery.textContent = generatedText + pathText + "可打开成品文件夹获取已完成的 DOCX。";
     } else { delivery.textContent = ""; }
-    $("downloadResult").hidden = !job.download_available; $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
-    if (job.has_result) $("downloadResult").href = "/api/download/" + job.job_id;
+    $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
     $("configFields").disabled = isActiveStatus(job.status); $("startButton").disabled = isActiveStatus(job.status) || !state.files.length;
     if (isActiveStatus(job.status)) beginElapsed(job.created_at);
     else { clearInterval(state.elapsedTimer); setText("elapsedLabel", job.produced ? "共 " + job.produced + " 份" : ""); localStorage.removeItem("handout_current_job"); }
@@ -369,9 +365,6 @@
       var actions = document.createElement("div"); actions.className = "history-actions";
       if (job.has_result) {
         var open = document.createElement("button"); open.className = "icon-button"; open.setAttribute("aria-label", "打开成品位置"); open.dataset.tooltip = "成品位置"; open.appendChild(makeIcon("folder-open")); open.addEventListener("click", function () { openJob(job.job_id); }); actions.appendChild(open);
-      }
-      if (job.download_available) {
-        var download = document.createElement("a"); download.className = "icon-button"; download.href = "/api/download/" + job.job_id; download.setAttribute("aria-label", "下载 ZIP"); download.dataset.tooltip = "下载 ZIP"; download.appendChild(makeIcon("download")); actions.appendChild(download);
       }
       row.append(icon, main, status, actions); list.appendChild(row);
     });

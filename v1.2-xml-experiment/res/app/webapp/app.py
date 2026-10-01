@@ -4,14 +4,13 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import redirect_stdout
-from io import BytesIO, StringIO
+from io import StringIO
 from pathlib import Path
 import os
 import sys
 import threading
-import zipfile
 
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, jsonify, render_template, request
 import re
 import time
 
@@ -363,46 +362,6 @@ def open_result(job_id: str):
     except OSError as exc:
         return jsonify({"error": "无法打开本地结果目录：%s" % exc}), 503
     return jsonify({"job_id": job_id, "result_dir": str(folder), "opened": True})
-
-
-@app.get("/api/download/<job_id>")
-def download_result(job_id: str):
-    service = _jobs()
-    try:
-        record, outputs = service.outputs_for_download(job_id)
-    except JobNotFound:
-        return jsonify({"error": "找不到该任务"}), 404
-    except ValueError as exc:
-        return jsonify({"error": str(exc), "job_id": job_id,
-                        "generation_status": record_status(service, job_id)}), 409
-    try:
-        archive = BytesIO()
-        with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as package:
-            for output in outputs:
-                package.write(output, arcname=str(output.relative_to(Path(record["result_dir"]))))
-        archive.seek(0)
-        response = send_file(archive, mimetype="application/zip", as_attachment=True,
-                             download_name=Path(record["result_dir"]).name + ".zip")
-        service.record_download_succeeded(job_id)
-        return response
-    except Exception as exc:
-        # Download is secondary: keep the validated local DOCX job marked done.
-        failed = service.record_download_failed(job_id, "%s: %s" % (type(exc).__name__, exc))
-        return jsonify({
-            "error": "ZIP 下载暂不可用，已生成的 DOCX 仍保存在本地结果目录",
-            "error_code": "DELIVERY_DOWNLOAD_FAILED",
-            "generation_status": failed.get("status"),
-            "result_dir": failed.get("result_dir"),
-            "output_paths": failed.get("output_paths", []),
-        }), 503
-
-
-def record_status(service: JobService, job_id: str) -> str:
-    """Best-effort status for a not-ready delivery response; never mutates it."""
-    try:
-        return service.get(job_id).get("status", "unknown")
-    except JobNotFound:
-        return "unknown"
 
 
 if __name__ == "__main__":

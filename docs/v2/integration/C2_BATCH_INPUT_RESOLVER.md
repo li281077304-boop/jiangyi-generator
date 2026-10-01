@@ -1,5 +1,8 @@
 # C2 Round 1 — Batch Input Resolver
 
+> Delivery clarification, 2026-10-01: ZIP input remains supported. Output ZIP
+> delivery was removed by the user; see `C2_LOCAL_RESULT_DELIVERY_RULES.md`.
+
 Worker: GPT-6.1 (`gpt-6.1-sol`). Round 1 Chief returned PATCH; Round 2 independent
 Chief review returned PASS for the resolver foundation. This report does not
 claim `C2_BATCH_PASS`.

@@ -131,14 +131,10 @@ def test_corrupt_item_does_not_remove_two_successful_outputs(client, renderer):
                           ("正常B 学生版.docx", docx())])
     assert final["status"] == "partial" and final["batch_outcome"] == "PARTIAL_SUCCESS"
     assert (final["completed"], final["failed"], len(final["output_paths"])) == (2, 1, 2)
-    assert final["has_result"] and final["download_available"]
+    assert final["has_result"] and "download_available" not in final
     assert all(Path(path).is_file() for path in final["output_paths"])
     assert client.get("/api/open/" + final["job_id"]).status_code == 200
-    downloaded = client.get("/api/download/" + final["job_id"])
-    assert downloaded.status_code == 200
-    with zipfile.ZipFile(io.BytesIO(downloaded.data)) as package:
-        assert len(package.namelist()) == 2
-        assert all("/" in name for name in package.namelist())
+    assert client.get("/api/download/" + final["job_id"]).status_code == 404
     restarted = JobService(app.config["RESULT_ROOT"], runtime_root=app.config["RUNTIME_ROOT"])
     assert restarted.get(final["job_id"])["status"] == "partial"
     assert len(restarted.list()) == 1
@@ -192,12 +188,12 @@ def test_zip_mixed_input_versions_preserves_user_student(client, renderer):
     assert_clean(final)
 
 
-def test_all_bad_items_are_all_failed_without_download(client, renderer):
+def test_all_bad_items_are_all_failed_without_local_outputs(client, renderer):
     final = post(client, [(f"损坏{i} 教师版.docx", b"broken") for i in range(3)])
     assert final["status"] == "error" and final["batch_outcome"] == "ALL_FAILED"
     assert final["failed"] == 3 and final["completed"] == 0
     assert final["output_paths"] == [] and not final["has_result"]
-    assert client.get("/api/download/" + final["job_id"]).status_code == 409
+    assert client.get("/api/download/" + final["job_id"]).status_code == 404
     assert not renderer["xml"] and not renderer["fallback"]
 
 
@@ -225,13 +221,14 @@ def test_batch_parent_restart_skips_already_completed_child(client, renderer):
     assert len(renderer["xml"]) == 3  # the first child wasn't rendered twice
 
 
-def test_result_zip_has_no_name_collisions_for_same_topic_separate_mode(client, renderer):
+def test_local_outputs_have_no_name_collisions_for_same_topic_separate_mode(client, renderer):
     final = post(client, [("专题 学生版.docx", docx())] * 3, docx_mode="separate")
     assert final["status"] == "done" and final["total"] == 3
-    downloaded = client.get("/api/download/" + final["job_id"])
-    with zipfile.ZipFile(io.BytesIO(downloaded.data)) as package:
-        names = package.namelist()
-        assert len(names) == len(set(names)) == 3
+    paths = [Path(path) for path in final["output_paths"]]
+    assert len(paths) == len(set(paths)) == 3
+    assert len({path.parent for path in paths}) == 3
+    assert all(path.is_file() and path.stat().st_size > 0 for path in paths)
+    assert_clean(final)
 
 
 def test_batch_metadata_exposes_current_topic_and_serial_order(client, renderer, monkeypatch):

@@ -26,7 +26,7 @@ def batch(status="running", **changes):
             "total": 3, "completed": 1, "failed": 1, "progress": 2,
             "current_topic": "专题B", "created_at": 1, "produced": 1,
             "result_dir": "C:/结果/本次任务", "has_result": True,
-            "download_available": False, "filenames": ["专题.zip"],
+            "filenames": ["专题.zip"],
             "items": [
                 {"topic": "专题A", "teacher": "未提供", "student": "完成", "status": "done", "renderer": "XML"},
                 {"topic": "专题B", "teacher": "处理中", "student": "处理中", "status": "running", "renderer": "V0.9", "fallback_reason": "XML_RENDER_FAILED"},
@@ -43,26 +43,26 @@ def test_running_batch_has_counts_current_topic_and_per_item_states():
                               ["专题B", "处理中", "处理中", "fallback（V0.9）", "处理中"],
                               ["专题C", "失败", "失败", "未执行", "失败"]]
     assert result["configDisabled"] and result["startDisabled"]
-    assert not result["openHidden"] and result["downloadHidden"]
+    assert not result["openHidden"]
 
 
-def test_partial_success_keeps_valid_local_delivery_and_auxiliary_download():
+def test_partial_success_keeps_valid_local_delivery():
     result = evaluate(job=batch("partial", completed=2, failed=1, progress=3,
-                                current_topic=None, download_available=True))
+                                current_topic=None))
     assert result["title"] == "部分讲义已生成" and result["percent"] == "100%"
     assert "2 个专题，1 个失败" in result["delivery"]
     assert "C:/结果/本次任务" in result["delivery"] and "不受失败项影响" in result["delivery"]
-    assert not result["deliveryHidden"] and not result["openHidden"] and not result["downloadHidden"]
-    assert result["downloadHref"] == "/api/download/fixture"
+    assert not result["deliveryHidden"] and not result["openHidden"]
+    assert not result["downloadElements"]
     assert result["historyStatuses"] == ["部分完成"]
     assert not result["currentStored"]
 
 
-def test_partial_download_failure_keeps_generated_status_and_folder():
+def test_obsolete_download_failure_is_ignored_by_local_result_ui():
     result = evaluate(job=batch("partial", completed=2, failed=1, progress=3,
                                 delivery_error_code="DELIVERY_DOWNLOAD_FAILED"))
     assert result["title"] == "部分讲义已生成" and not result["openHidden"]
-    assert result["downloadHidden"] and "ZIP 下载暂不可用" in result["delivery"]
+    assert "ZIP" not in result["delivery"] and not result["downloadElements"]
     assert "生成未完成" not in result["delivery"]
 
 
@@ -71,17 +71,17 @@ def test_all_failed_batch_has_no_success_delivery_actions():
                                 current_topic=None, has_result=False, produced=0))
     assert result["title"] == "全部专题生成失败"
     assert result["completed"] == "0" and result["failed"] == "3"
-    assert result["deliveryHidden"] and result["openHidden"] and result["downloadHidden"]
+    assert result["deliveryHidden"] and result["openHidden"]
     assert not result["configDisabled"]
 
 
 def test_single_c1_job_keeps_role_output_and_hides_batch_summary():
     result = evaluate(job={"job_id": "single", "status": "done", "total": 2, "progress": 2,
-                           "has_result": True, "download_available": True, "renderer": "XML",
+                           "has_result": True, "renderer": "XML",
                            "produced": 1, "items": [{"topic": "学生讲义", "teacher": "未提供", "student": "完成"}]})
     assert result["batchHidden"] and result["title"] == "讲义已生成"
     assert result["rows"] == [["学生讲义", "未提供", "完成", "XML", "成功"]]
-    assert not result["openHidden"] and not result["downloadHidden"]
+    assert not result["openHidden"]
 
 
 @pytest.mark.parametrize("mode,needle", [("auto", "可靠配对"), ("separate", "每份 DOCX 各自生成")])
@@ -122,6 +122,6 @@ def test_open_folder_is_primary_and_file_control_supports_batch():
     html = (WEBAPP / "templates" / "index.html").read_text(encoding="utf-8")
     assert 'id="fileInput" accept=".zip,.docx" multiple' in html
     assert 'class="primary-button" id="openResult"' in html
-    assert 'class="secondary-button" id="downloadResult"' in html
-    assert html.index('id="openResult"') < html.index('id="downloadResult"')
+    assert 'id="downloadResult"' not in html
+    assert "下载 ZIP" not in html
     assert all(label in html for label in ("总数", "已完成", "失败数", "当前处理专题", "生成方式"))
