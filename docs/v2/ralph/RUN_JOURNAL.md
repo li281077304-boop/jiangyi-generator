@@ -132,7 +132,7 @@ probe or proof of actual process start on failure. Paired/student-only XML is
 preserved. Fresh evidence: `C:\xml-uat\c3-round3-integration\`. Chief exclusively
 Codex GPT-6.1 Sol; actual Round 3 scoped PASS confirmed by the parent after independent review.
 
-| C3-R4 | ~2026-10-01 11:07:51 UTC (audit tool creation; actual pair inspection began earlier, exact kickoff not captured) | 2026-10-01 11:20:55 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 8a8b1724bc6bdae6506483084973e8b084d5f7fd | 472f90924ca17bb9feb259ad576433a02e4e53aa | PASS truthful audit/gap machine gate: 177 focused tests in49.46s (existing174+exactaudit3), Stage2 39/39; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%, source8/8; V0.9assets10/10; read-only27-source hashes27/27 unchanged; exact-topic14 candidates inspected, full C14N and expanded-name student subsequence embeddings0; existingC2 7/C1 3 legacy derivatives inspected,10/10 source/oracle unchanged; X014/X010 immutable tables exact-positive but other complete answer/inline/boundary gaps remain; approved manifests0, XMLStudentizer outputs0, new derived WPS/PDF UAT NOT_RUN; compile/diff-checkPASS; production/frozen code unchanged | Codex GPT-6.1 Sol (required; independent Round 4 review pending) | PENDING; no Chief verdict fabricated | Stop Worker edits for independent Chief; select narrow manually reviewed exact-location Golden/capability round; 0 existing suitable pairs does not establish C3 completion or prevent independent full source annotation | Yes: audit/report/diagnostic fixture472f909 committed/pushed; this Journal metadata commit/push follows |
+| C3-R4 | ~2026-10-01 11:07:51 UTC (audit tool creation; actual pair inspection began earlier, exact kickoff not captured) | 2026-10-01 11:20:55 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 8a8b1724bc6bdae6506483084973e8b084d5f7fd | 472f90924ca17bb9feb259ad576433a02e4e53aa | PASS truthful audit/gap machine gate: 177 focused tests in49.46s (existing174+exactaudit3), Stage2 39/39; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%, source8/8; V0.9assets10/10; read-only27-source hashes27/27 unchanged; exact-topic14 candidates inspected, full C14N and expanded-name student subsequence embeddings0; existingC2 7/C1 3 legacy derivatives inspected,10/10 source/oracle unchanged; X014/X010 immutable tables exact-positive but other complete answer/inline/boundary gaps remain; approved manifests0, XMLStudentizer outputs0, new derived WPS/PDF UAT NOT_RUN; compile/diff-checkPASS; production/frozen code unchanged | Codex GPT-6.1 Sol (actual independent review) | PASS scoped truthful pair/gap audit; no real Golden or C3 completion | Round 5: independently annotate real source candidates and review original full pages; incomplete subjects stay unresolved; no production provider before Chief approval | Yes: audit/report/diagnostic fixture472f909 committed/pushed; this Journal metadata commit/push follows |
 
 Round 4 produces a small durable read-only structural audit and diagnostic
 summary, not approved Golden or new Studentizer policy. All full-body exact
@@ -150,4 +150,27 @@ bookmark siblings occur. No derivatives exist, so new WPS derivative UAT was not
 run; the environment is not marked unavailable. No new speedup/zeroCOM/performance
 result is claimed. Evidence: `C:\xml-uat\c3-round4-real-pairs\`; report
 `C3_REAL_GOLDEN_CANDIDATE_GATE.md`. Chief exclusively Codex GPT-6.1 Sol,
-independent Round 4 review pending.
+actual independent Round 4 scoped PASS confirmed by the parent.
+
+| C3-R5 | ~2026-10-01 11:28:45 UTC (first original WPS export timestamp; kickoff preceded export, exact kickoff not captured) | 2026-10-01 11:47:50 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | 001b3f9856e21dbfff7edb0fd2c890b3fcbadc3b | a819f01f066254ef6cbbec16656de21fd60b6f9a | PASS scoped candidate-packet machine integrity/protected gate: 180 tests in48.53s including Stage2 39/39; live exact-source/body-fingerprint/body_idx/full-semantic-unit/package-member checks for3 packets; X008 all14 original pages and264body blocks Worker reviewed,34 manual physical questions,146 retained/118 proposed complete answer/analysis removals,114 frozenunits incl29QGs/5missing-QG prompts explicitly recorded; independently manually assembled expected draft package valid, all non-document bytes preserved, notStudentizer-generated; X01426pages/X01820pages rendered but only pages1-2 reviewed each, all656/399blocks UNRESOLVED; approvedGold0/productionproviders0/realStudentizercoverageNOT_ESTABLISHED; fresh Stage3QG408/408 sections369/369 subq328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7% source8/8; corpus hashes27/27; V0.9assets10/10; source-WPSreadonlyopen/export3/3 with original/snapshot hashes unchanged; compile/diff-checkPASS; frozen+production code unchanged | Codex GPT-6.1 Sol (required; independent Round 5 review pending) | PENDING; no Chief verdict fabricated; candidate integrity is not business approval | Stop Worker edits for independent full physics content/ownership review; keep math/chem unresolved; choose a separately reviewed Studentizer capability scope only after real Golden authority; no C3 completion/realcoverage/zeroCOM claim | Yes: candidate/report/fixtures/verifier/tests a819f01 committed/pushed; this Journal metadata commit/push follows |
+
+Round 5 authors an independent original-source candidate, not the production
+Studentizer's output or paired-file difference. Physics original14pages were
+actually viewed, and the entire physical body text was read. Thirty-four manual
+ownership ranges include all multi-paragraph explanations; every retained and
+proposed removed block has its exact source address/fingerprint/rationale, and
+all nontext structures and frozen units are accounted for. The unapproved expected
+DOCX is an external manual XML-splice draft, package validation only. Five
+physical questions have no frozen QG at their start; no QG IDs are invented.
+Current Studentizer boundary/multi-paragraph/OLE/ownership restrictions remain.
+No real production Studentizer or derived-output WPS save/reopen/PDF UAT occurred.
+Math/Chemistry full-source review is incomplete:60pages rendered,18pages viewed
+in total (physics14/math2/chemistry2). All math/chem physical blocks remain
+UNRESOLVED; no deletions/expected Gold for those subjects. Chief approval for
+all packets is pending; zero providers are shipped. Source-only WPS open/export/
+close times were2.542s/2.848s/3.770s, excluding application startup and review;
+these are not production Studentizer performance/zeroCOM results. WPS provenance
+is actual KWps/wps.exe despite the compatibilityName reportingMicrosoftWord.
+Report: `C3_INDEPENDENT_SOURCE_GOLDEN_CANDIDATES.md`; external original-page and
+candidate evidence: `C:\xml-uat\c3-round5-source-review\`. Chief exclusively
+Codex GPT-6.1 Sol, independent Round 5 review pending.
