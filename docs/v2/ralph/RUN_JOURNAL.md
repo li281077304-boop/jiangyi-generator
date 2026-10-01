@@ -204,3 +204,24 @@ Existing draft packets retain `approved=false`/`production_provider=false`;
 this report supplies independent content authority for a separately gated
 capability step. All14pages reviewed does not mean new derived-output WPS UAT:
 none was run. No new performance/zeroCOM result or C3 completion is claimed.
+
+| C3-R6 | Before 2026-10-01 12:14:16 UTC (first recorded Worker clock; API review began earlier, exact kickoff not captured) | 2026-10-01 12:19:28 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | dbcd5a60145a171ca72117b257a1a6e99eba91e2 | be8ff91e3f25f31cf64c099798b03de32d68c1e6 | PASS truthful capability-refusal/protected machine gate:185focused tests in49.26s inclStage2 39/39;4final exact-address probes in0.70s; approved34physical owner ledger/118removals/146protected blocks verified; actual publicprepare_student returnedSTUDENTIZER_FIELD_SCOPE_UNSUPPORTED(fldChar),first RETAIN body3 at/w:document/w:body/w:p[4]/w:r[2]/w:fldChar;0mutations/nooutput/source+expected unchanged; freshStage3source8/8 QG408/408 sections369/369 subq328/328 originalrecall100% E1-E4/MISS/FP/MERGE/SPLIT0 exactboundary87.7%; V09assets10/10 compile/stageddiffchecksPASS; production/frozen unchanged; derivedWPSUAT NOT_RUN_NO_STUDENTIZER_OUTPUT; performancebenchmark NOT_RUN | Codex GPT-6.1 Sol (required; independent Round 6 review pending) | PENDING; no Chief verdict fabricated; STUDENTIZER_CAPABILITY_BLOCKED is the actual Worker capability result | Stop Worker after publication for independent review; separately authorize/review generic exact physical contiguous answer ranges with unchanged-boundary validation; no production provider or C3completion | Yes: probereport/harness/tests/fixture be8ff91 committed/pushed and remote fullSHA verified; this Journal metadata commit/push follows |
+
+Round 6 audits the actual public API against the independently approved X008
+Golden; it does not manufacture an execution capability. Its exact physical
+owner request uses `owner_kind=physical_question`, never invented frozen QG
+identities. Global field rejection occurs before processing these bindings;
+terminal-single-marked-answer/QG-owner restrictions are additional static API
+incompatibilities, not runtime results after stripping source structures.
+This is a product capability boundary, not `REAL_APP_UAT_ENVIRONMENT_BLOCKED`.
+No derivative exists, so derived WPS open/SaveAs/close/reopen/PDF and expected
+after-root comparison are NOT_RUN. The external manual expected draft was not
+substituted for Studentizer output. Four OLE remain in the unchanged source's
+Q23; answer-OLE removal and table support remain untested. Math/chem remain
+unapproved. Performance evidence is NOT_RUN: captured0.087998s measures one
+refused preparation attempt only, and com_invocations=0 is an API field rather
+than an OS process probe or product zeroCOM proof. Report:
+`C3_APPROVED_X008_STUDENTIZER_PROBE.md`; captured actual call:
+`fixtures/c3-r6-approved-probe.json`; external protected evidence:
+`C:\xml-uat\c3-round6-approved-source\`. Minimal future capability proposal is
+documented but not implemented. Chief exclusively Codex GPT-6.1 Sol, PENDING.
