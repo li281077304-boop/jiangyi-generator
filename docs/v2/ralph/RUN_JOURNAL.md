@@ -85,3 +85,16 @@ evidence lives under `C:\xml-uat\c2-browser-round7\delivery-revision`; actual
 Explorer accessibility and headed browser screenshots confirm local delivery.
 Chief identity is exclusively `Codex GPT-6.1 Sol`; Round 7 review has not yet
 been performed. A-Line/B-Line/V0.9/C1 frozen code and Business Rules are unchanged.
+
+| C3-R1 | ~2026-10-01 10:10 UTC (first fresh regression evidence; branch/tag verification preceded it, exact kickoff not captured) | 2026-10-01 10:16:55 UTC | GPT-6.1 (`gpt-6.1-sol`, actual Worker invocation) | f3fc31ab10f32673afc1398c98df124971b0cd13 | 397e7ba002d388f84f5907b1c088b16d63b8749e | PASS audit-only machine gate: C2 annotated tag object887693a and targetf3fc31a verified local/remote; C3 branch created/pushed from tag; frozen V0.9 app assets10/10; read-only27-real-source feature inventory/hash27/27; Stage2 39/39; fresh Stage3 QG408/408 sections369/369 subquestions328/328 original recall100% E1-E4/MISS/FP/MERGE/SPLIT0; existing C1 WPS/C2 batch/browser evidence locations confirmed; staged diff-check PASS; documentation-only diff | Codex GPT-6.1 Sol (required; independent Round 1 review pending) | PENDING; no review or Studentizer capability PASS fabricated | Stop before Studentizer production implementation; submit pushed capability audit for independent Codex GPT-6.1 Sol review | Yes: audit397e7ba committed/pushed; Journal metadata commit/push follows |
+
+C3 Round 1 audits the real frozen red/marker/blank conversion flow. The report
+separates observed behavior from proposed XML capabilities, documents the Python
+docstring/PowerShell deletion-range discrepancy, section-level rather than
+question-level answer parentage, and real table/textbox/object/red-color risks.
+Raw feature presence is not removal authorization. It explicitly records absent
+fixture coverage and does not claim an XML Studentizer output or no-over-deletion
+gate. Source files remain unchanged. External fresh evidence is
+`C:\xml-uat\c3-round1-capability\`; existing C1/C2 WPS/browser/performance evidence
+is referenced, not reimplemented or represented as newly executed C3 UAT.
+Chief model for this round is exclusively `Codex GPT-6.1 Sol`, review pending.
