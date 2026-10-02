@@ -346,7 +346,27 @@ def _execute_job(job_id: str) -> None:
             try:
                 for role, source_path in active_sources.items():
                     staging = xml_job.output_doc if role == "teacher" or "teacher" not in active_sources else str(student_stage)
-                    results[role] = render_slots(str(source_path), plans[role], staging)
+                    metadata = {
+                        "subject": options.get("subject", ""),
+                        "grade": options.get("grade", ""),
+                        "topic": topic,
+                        "handout_type": options.get("handout_type", ""),
+                    }
+                    # Keep the existing three-argument renderer seam usable by
+                    # injected test doubles and compatible integrations. The
+                    # production Slot Composer advertises cover_metadata.
+                    import inspect
+                    parameters = inspect.signature(render_slots).parameters
+                    supports_metadata = ("cover_metadata" in parameters or any(
+                        parameter.kind is inspect.Parameter.VAR_KEYWORD
+                        for parameter in parameters.values()))
+                    if supports_metadata:
+                        results[role] = render_slots(
+                            str(source_path), plans[role], staging,
+                            cover_metadata=metadata,
+                        )
+                    else:
+                        results[role] = render_slots(str(source_path), plans[role], staging)
             except SlotRoutingError as exc:
                 fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
                 raise FallbackRequired("XML_RENDER_FAILED", fallback_detail["value"]) from exc

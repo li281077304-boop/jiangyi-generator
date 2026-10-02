@@ -45,6 +45,76 @@ def _set_paragraph_text(paragraph, value: str) -> None:
         node.text = ""
 
 
+def _set_cover_cell_value(cell, value: str) -> None:
+    """Replace the value portion of a known cover cell while keeping its label.
+
+    Template cover labels and formatting are part of the frozen template. The
+    metadata projection only changes the final non-empty text node in the
+    selected value cell; an empty value cell receives a run using its existing
+    paragraph properties.
+    """
+    value = str(value or "").strip()
+    paragraph = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+    text_nodes = list(paragraph._p.iter(W_T))
+    value_node = next((node for node in reversed(text_nodes)
+                       if (node.text or "").strip()), None)
+    if value_node is None:
+        if text_nodes:
+            value_node = text_nodes[-1]
+        else:
+            paragraph.add_run(value)
+            return
+    old_text = value_node.text or ""
+    separators = [position for mark in (":", "：")
+                  if (position := old_text.rfind(mark)) >= 0]
+    label = old_text[:max(separators) + 1] if separators else ""
+    value_node.text = label + value
+
+
+def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
+    """Project selected job metadata into existing validated template cells."""
+    if template_type not in ("1v1", "class"):
+        raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
+                               "unsupported template type: %s" % template_type)
+    if not document.tables:
+        raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
+                               "template has no cover table")
+    table = document.tables[0]
+    required_rows = 2
+    required_columns = 4 if template_type == "1v1" else 3
+    if len(table.rows) < required_rows or len(table.columns) < required_columns:
+        raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
+                               "template cover table dimensions do not match %s" % template_type)
+
+    if template_type == "1v1":
+        # The one-to-one cover has explicit subject, grade, topic, and course
+        # type cells. Labels remain in their original runs.
+        coordinates = {
+            "subject": (0, 0), "grade": (0, 2), "topic": (1, 1),
+            "handout_type": (1, 3),
+        }
+        values = {key: metadata.get(key, "") for key in coordinates}
+    else:
+        # The class cover has no separate course-type cell. Keep all selected
+        # information visible in its existing class-topic value cell.
+        topic = str(metadata.get("topic") or "").strip()
+        handout_type = str(metadata.get("handout_type") or "").strip()
+        topic_value = topic
+        if handout_type:
+            topic_value = (topic + "（" + handout_type + "）") if topic else handout_type
+        coordinates = {"grade": (0, 0), "subject": (0, 2), "topic": (1, 1)}
+        values = {"grade": metadata.get("grade", ""),
+                  "subject": metadata.get("subject", ""), "topic": topic_value}
+
+    for key, (row, column) in coordinates.items():
+        try:
+            cell = table.cell(row, column)
+        except IndexError as exc:
+            raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
+                                   "cover cell %s is missing for %s" % (key, template_type)) from exc
+        _set_cover_cell_value(cell, values[key])
+
+
 def _find_anchor_paragraphs(document, plan: SlotRoutingPlan) -> dict[str, object]:
     anchors = dict(zip(SLOT_ORDER, plan.template_anchors))
     matches: dict[str, list[object]] = {slot: [] for slot in SLOT_ORDER}
@@ -80,6 +150,7 @@ def render_slots(
     plan: SlotRoutingPlan,
     output_path: str,
     *,
+    cover_metadata: dict | None = None,
     render_minimal_fn: Callable = None,
 ) -> SlotRenderResult:
     """Use the frozen importer, then place each slot stream at its template anchor."""
@@ -104,6 +175,8 @@ def render_slots(
                                  str(output), plan.target)
     try:
         document = Document(str(output))
+        if cover_metadata is not None:
+            _fill_cover_metadata(document, plan.template_type, cover_metadata)
         anchors = _find_anchor_paragraphs(document, plan)
         body = document.element.body
         insert_at = plan.target.body_child_index
