@@ -102,9 +102,16 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
         topic_value = topic
         if handout_type:
             topic_value = (topic + "（" + handout_type + "）") if topic else handout_type
-        coordinates = {"grade": (0, 0), "subject": (0, 2), "topic": (1, 1)}
+        coordinates = {
+            "grade": (0, 0), "subject": (0, 2), "topic": (1, 1),
+            # The frozen class template contains example text from a math
+            # lesson in these fields. No selected-job metadata supplies them,
+            # so blank the stale defaults instead of shipping false content.
+            "objectives": (2, 1), "difficulty": (3, 1),
+        }
         values = {"grade": metadata.get("grade", ""),
                   "subject": metadata.get("subject", ""), "topic": topic_value}
+        values.update({"objectives": "", "difficulty": ""})
 
     for key, (row, column) in coordinates.items():
         try:

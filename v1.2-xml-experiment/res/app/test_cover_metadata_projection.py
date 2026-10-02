@@ -62,6 +62,8 @@ class CoverMetadataProjectionTests(unittest.TestCase):
         self.assertNotIn("数学", table.cell(0, 2).text)
         self.assertEqual(table.cell(1, 1).text.strip(), "复习讲义（专题复习）")
         self.assertNotIn("因数与倍数", table.cell(1, 1).text)
+        self.assertEqual(table.cell(2, 1).text.strip(), "")
+        self.assertEqual(table.cell(3, 1).text.strip(), "")
 
 
 if __name__ == "__main__":
