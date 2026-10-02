@@ -419,6 +419,13 @@
     document.querySelectorAll("[data-view]").forEach(function (button) { button.addEventListener("click", function () { navigate(button.dataset.view); }); });
     $("newTask").addEventListener("click", newTask); $("refreshHistory").addEventListener("click", loadJobs); $("historySearch").addEventListener("input", renderHistory); $("historyFilter").addEventListener("change", renderHistory);
     $("settingsButton").addEventListener("click", function () { $("settingsDialog").showModal(); });
+    var exitApplication = $("exitApplication");
+    if (exitApplication) exitApplication.addEventListener("click", function () {
+      var token = document.querySelector('meta[name="launcher-token"]').content;
+      requestJson("/api/launcher/shutdown", {method: "POST", headers: {"X-Launcher-Token": token}})
+        .then(function () { $("settingsDialog").close(); toast("讲义生成器正在安全退出"); })
+        .catch(function (error) { toast(error.message); });
+    });
     $("themeButton").addEventListener("click", function () { applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); });
     $("themeSelect").addEventListener("change", function () { applyTheme(this.value); });
     $("compactFiles").addEventListener("change", function () { applyCompact(); savePrefs(); });

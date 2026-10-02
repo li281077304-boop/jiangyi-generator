@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
+  <meta name="launcher-token" content="{{ launcher_token|e }}">
   <title>讲义工作台 · Flash</title>
   <link rel="icon" href="{{ url_for('static', filename='vendor/app-icon.svg') }}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ url_for('static', filename='workspace.css') }}">
@@ -137,7 +138,7 @@
     </div>
   </div>
 
-  <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="dialog-heading"><h2>偏好设置</h2><button class="icon-button" aria-label="关闭偏好设置"><i data-lucide="x"></i></button></div><div class="settings-row"><label for="themeSelect">外观</label><select id="themeSelect"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></div><div class="settings-row"><label for="compactFiles">紧凑文件列表</label><input id="compactFiles" type="checkbox" role="switch" class="switch"></div><div class="settings-row"><span>运行模式</span><span class="green">本地 XML 实验</span></div><div class="settings-row"><span>应用版本</span><span class="muted">Flash 1.2</span></div></form></dialog>
+  <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="dialog-heading"><h2>偏好设置</h2><button class="icon-button" aria-label="关闭偏好设置"><i data-lucide="x"></i></button></div><div class="settings-row"><label for="themeSelect">外观</label><select id="themeSelect"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></div><div class="settings-row"><label for="compactFiles">紧凑文件列表</label><input id="compactFiles" type="checkbox" role="switch" class="switch"></div><div class="settings-row"><span>运行模式</span><span class="green">本地 XML 实验</span></div><div class="settings-row"><span>应用版本</span><span class="muted">Flash 1.2</span></div>{% if launcher_token %}<div class="settings-row"><span>本地服务</span><button type="button" class="secondary-button" id="exitApplication">退出讲义生成器</button></div>{% endif %}</form></dialog>
   <dialog id="previewDialog" class="preview-dialog"><div class="dialog-heading"><h2 id="previewTitle">讲义模板</h2><div class="toolbar"><a id="templatePdf" class="icon-button" aria-label="打开完整模板 PDF" data-tooltip="完整模板" target="_blank" rel="noopener"><i data-lucide="external-link"></i></a><button id="closePreview" class="icon-button" aria-label="关闭模板预览"><i data-lucide="x"></i></button></div></div><div class="preview-paper"><img id="previewImage" alt="模板首页"></div><div class="preview-footer"><span class="muted small">模板首页</span><button id="usePreviewTemplate" class="primary-button">使用此模板<i data-lucide="arrow-right"></i></button></div></dialog>
   <div id="toast" class="toast" role="status" hidden></div>
 </body>

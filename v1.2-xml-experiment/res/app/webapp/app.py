@@ -11,6 +11,7 @@ import os
 import sys
 import hashlib
 import threading
+import secrets
 
 from flask import Flask, jsonify, render_template, request
 import re
@@ -25,9 +26,11 @@ from job_service import JobNotFound, JobService, UnsupportedInput  # noqa: E402
 
 
 app = Flask(__name__)
-app.config.setdefault("RESULT_ROOT", Path.home() / "Desktop" / "生成讲义结果")
+app.config.setdefault("RESULT_ROOT", Path(os.environ.get(
+    "JIANGYI_RESULT_ROOT", str(Path.home() / "Desktop" / "生成讲义结果"))))
 _LOCAL_APP_DATA = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
-app.config.setdefault("RUNTIME_ROOT", _LOCAL_APP_DATA / "讲义生成器" / "jobs")
+app.config.setdefault("RUNTIME_ROOT", Path(os.environ.get(
+    "JIANGYI_RUNTIME_ROOT", str(_LOCAL_APP_DATA / "讲义生成器" / "jobs"))))
 app.config.setdefault("C0_RUN_JOBS_SYNCHRONOUSLY", False)
 app.config.setdefault("C0_FORCE_FALLBACK_REASON", None)  # integration-test hook only
 app.config.setdefault("C0_DISABLE_JOB_SUBMISSION", False)
@@ -501,7 +504,28 @@ def _execute_batch(job_id: str) -> None:
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", launcher_token=app.config.get("LAUNCHER_TOKEN", ""))
+
+
+@app.get("/api/launcher/ready")
+def launcher_ready():
+    token = app.config.get("LAUNCHER_TOKEN")
+    if not token or not secrets.compare_digest(
+            request.headers.get("X-Launcher-Token", ""), str(token)):
+        return jsonify({"error": "not found"}), 404
+    identity = hashlib.sha256(str(token).encode("utf-8")).hexdigest()
+    return jsonify({"ready": True, "identity": identity})
+
+
+@app.post("/api/launcher/shutdown")
+def launcher_shutdown():
+    token = app.config.get("LAUNCHER_TOKEN")
+    shutdown = app.config.get("LAUNCHER_SHUTDOWN")
+    if not token or not shutdown or not secrets.compare_digest(
+            request.headers.get("X-Launcher-Token", ""), str(token)):
+        return jsonify({"error": "launcher control unavailable"}), 404
+    threading.Thread(target=shutdown, name="launcher-shutdown", daemon=True).start()
+    return jsonify({"stopping": True})
 
 
 @app.get("/api/jobs")
