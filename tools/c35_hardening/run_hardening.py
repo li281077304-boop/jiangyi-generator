@@ -395,7 +395,7 @@ def case_delivery(work):
 CHILD_PHASES = ("prepare", "resume")
 
 
-def child_prepare(scenario, work):
+def child_prepare(scenario, work, target_stage=None):
     """Create the job state, then stay alive so the driver can kill this process."""
     run_root = work / ("restart-%s-%s" % (scenario.lower(), stamp()))
     shell = configure(run_root / "results", run_root / "runtime")
@@ -413,6 +413,16 @@ def child_prepare(scenario, work):
         state["statuses_before_kill"] = [created["status"]]
         state["is_batch"] = bool(created.get("is_batch"))
         shell.app.config["C0_DISABLE_JOB_SUBMISSION"] = False
+        if target_stage:
+            marker_path = Path(run_root) / "stage-hit.json"
+
+            def hold_at_target(_job_id, stage):
+                if stage == target_stage:
+                    marker_path.write_text(json.dumps({"stage": stage, "utc": utc()},
+                                                      ensure_ascii=False), encoding="utf-8")
+                    time.sleep(600)
+
+            shell.app.config["C35_TEST_STAGE_HOOK"] = hold_at_target
         import threading
         worker = threading.Thread(target=shell._execute_job, args=(created["job_id"],), daemon=True)
         worker.start()
@@ -505,13 +515,14 @@ def child_resume(scenario, work_dir):
             "started_utc": utc(), "ended_utc": utc()}
 
 
-def case_restart(scenario, work, wait_seconds=None):
+def case_restart(scenario, work, wait_seconds=None, target_stage=None):
     """Driver: start a child, kill it, then start a fresh process to resume."""
     here = Path(__file__).resolve()
     python = sys.executable
     child_out = work / "child-state.json"
     prepare = subprocess.Popen([python, str(here), "--case", "_child", "--out", str(child_out),
-                                "--scenario", scenario, "--work", str(work), "--phase", "prepare"],
+                                "--scenario", scenario, "--work", str(work), "--phase", "prepare",
+                                "--target-stage", target_stage or ""],
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     state = None
     deadline = time.time() + 120
@@ -527,7 +538,26 @@ def case_restart(scenario, work, wait_seconds=None):
         prepare.wait(timeout=30)
         raise SystemExit("restart-%s: prepare child produced no state: %s"
                          % (scenario, (prepare.stdout.read() or "").strip()[:400]))
-    if scenario == "C" and wait_seconds is None:
+    stage_marker = None
+    if target_stage:
+        marker_path = Path(state["work_dir"]) / "stage-hit.json"
+        deadline = time.time() + 240.0
+        while time.time() < deadline and prepare.poll() is None:
+            try:
+                stage_marker = json.loads(marker_path.read_text(encoding="utf-8"))
+                if stage_marker.get("stage") == target_stage:
+                    break
+                stage_marker = None
+            except (OSError, ValueError):
+                pass
+            time.sleep(0.05)
+        if not stage_marker:
+            prepare.kill()
+            prepare.wait(timeout=30)
+            raise SystemExit("restart-%s: target stage was not reached: %s"
+                             % (scenario, target_stage))
+        wait_seconds = round(time.time() - (deadline - 240.0), 3)
+    elif scenario == "C" and wait_seconds is None:
         # Stop at the first real partial-progress boundary: a completed sibling
         # is published and the parent has advanced to another item.
         deadline = time.time() + 240.0
@@ -584,7 +614,8 @@ def case_restart(scenario, work, wait_seconds=None):
         if line.strip().startswith("{"):
             payload = json.loads(line)
     return {"case": "restart-%s" % scenario.upper(), "killed_at_utc": killed_at,
-            "wait_seconds": wait_seconds,
+            "wait_seconds": wait_seconds, "target_stage": target_stage,
+            "stage_marker": stage_marker,
             "killed_while": (persisted_at_kill[0].get("status") if persisted_at_kill else None),
             "persisted_at_kill": persisted_at_kill,
             "private_scratch_at_kill": scratch_at_kill,
@@ -604,11 +635,12 @@ def main(argv=None):
     parser.add_argument("--phase", default=None)
     parser.add_argument("--work-dir", default=None)
     parser.add_argument("--wait-seconds", type=float, default=None)
+    parser.add_argument("--target-stage", default=None)
     args = parser.parse_args(argv)
 
     if args.case == "_child":
         if args.phase == "prepare":
-            raise SystemExit(child_prepare(args.scenario, args.work))
+            raise SystemExit(child_prepare(args.scenario, args.work, args.target_stage))
         if args.phase == "resume":
             payload = child_resume(args.scenario, Path(args.work_dir))
             print(json.dumps(payload, ensure_ascii=False), flush=True)
@@ -619,7 +651,7 @@ def main(argv=None):
         "batch20": lambda: case_batch(20, args.work),
         "consecutive": lambda: case_consecutive(args.jobs, args.items, args.work),
         "restart-a": lambda: case_restart("A", args.work, args.wait_seconds),
-        "restart-b": lambda: case_restart("B", args.work, args.wait_seconds),
+        "restart-b": lambda: case_restart("B", args.work, args.wait_seconds, args.target_stage),
         "restart-c": lambda: case_restart("C", args.work, args.wait_seconds),
         "abnormal": lambda: case_abnormal(args.work),
         "collision": lambda: case_collision(args.work),

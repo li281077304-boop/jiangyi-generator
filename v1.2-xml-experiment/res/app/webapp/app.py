@@ -84,6 +84,14 @@ def _resume_queued_jobs(records) -> None:
             _submit_job(record["job_id"])
 
 
+def _persist_job_stage(service: JobService, job_id: str, progress: int, stage: str) -> None:
+    """Persist an observable stage before entering a potentially long phase."""
+    service.update_progress(job_id, progress, stage)
+    hook = app.config.get("C35_TEST_STAGE_HOOK")
+    if app.testing and callable(hook):
+        hook(job_id, stage)
+
+
 def _visible_output_name(options: dict, topic: str, role: str) -> str:
     fields = [options.get("academic_year"), options.get("grade"), options.get("subject"),
               topic, options.get("handout_type"), role]
@@ -175,7 +183,7 @@ def _execute_job(job_id: str) -> None:
                        "studentizer_fallback": False}
         studentizer_rejected = False
         if input_version == "TEACHER_ONLY":
-            service.update_progress(job_id, 0, "正在从教师版准备学生版")
+            _persist_job_stage(service, job_id, 0, "Studentizer preparation")
             provider, reviewed, registry_error = _reviewed_provider()
             preparation["registry_error"] = registry_error
             started = time.perf_counter()
@@ -284,7 +292,17 @@ def _execute_job(job_id: str) -> None:
             with _V09_FALLBACK_LOCK:
                 engine = _load_v09_engine() if input_version == "TEACHER_ONLY" else None
                 original_make_student = engine.make_student if engine else None
+                original_build_version = getattr(engine, "build_version", None) if engine else None
+
+                def observed_build_version(label, *args, **kwargs):
+                    role = "student" if str(label).lower().startswith("学生") else "teacher"
+                    _persist_job_stage(service, job_id, 1,
+                                       "V0.9 %s renderer" % role)
+                    return original_build_version(label, *args, **kwargs)
+
                 def observed_make_student(*args, **kwargs):
+                    _persist_job_stage(service, job_id, 1,
+                                       "V0.9 make_student preparation")
                     stamp = time.perf_counter()
                     preparation.update({"make_student_called": True, "wps_com_started": True,
                                         "wps_com_evidence": "COM_CAPABLE_MAKE_STUDENT_ENTRY_ONLY"})
@@ -299,12 +317,16 @@ def _execute_job(job_id: str) -> None:
                 service.update_student_preparation(job_id, preparation)
                 if engine:
                     engine.make_student = observed_make_student
+                    if original_build_version is not None:
+                        engine.build_version = observed_build_version
                 try:
                     with redirect_stdout(StringIO()):
                         return render_v09_whole_job(original_job, reason_code)
                 finally:
                     if engine:
                         engine.make_student = original_make_student
+                        if original_build_version is not None:
+                            engine.build_version = original_build_version
                     preparation["fallback_elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
                     preparation["elapsed_seconds"] = (preparation.get("studentizer_elapsed_seconds", 0)
                                                       + preparation.get("make_student_elapsed_seconds", 0))
@@ -329,6 +351,7 @@ def _execute_job(job_id: str) -> None:
             if len(outcome.output_paths) != len(targets):
                 raise RuntimeError("Renderer outputs do not match classified input roles")
             generated = list(zip(outcome.output_paths, targets))
+        _persist_job_stage(service, job_id, 1, "outputs ready; before publication")
         for source_path, target_path in generated:
             if target_path is None or not Path(source_path).is_file() or Path(source_path).stat().st_size == 0:
                 raise RuntimeError("Renderer did not produce a non-empty classified output")

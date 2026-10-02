@@ -1,0 +1,97 @@
+{
+  "case": "restart-B",
+  "killed_at_utc": "2026-10-02T02:16:05+00:00",
+  "wait_seconds": 82.579,
+  "target_stage": "outputs ready; before publication",
+  "stage_marker": {
+    "stage": "outputs ready; before publication",
+    "utc": "2026-10-02T02:16:05+00:00"
+  },
+  "killed_while": "running",
+  "persisted_at_kill": [
+    {
+      "job_id": "70759acd2ca149348ec9107bab07f67c",
+      "status": "running",
+      "stage": "outputs ready; before publication",
+      "progress": 1,
+      "current_topic": null,
+      "completed": null,
+      "items": [
+        {
+          "topic": "专题01",
+          "status": null,
+          "outputs": []
+        }
+      ]
+    }
+  ],
+  "private_scratch_at_kill": [
+    "student-output-70759acd2ca149348ec9107bab07f67c.docx",
+    "teacher-output-70759acd2ca149348ec9107bab07f67c.docx"
+  ],
+  "prepare_state": {
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-b-20261002T021441813845",
+    "phase": "prepare",
+    "scenario": "B",
+    "job_ids": [
+      "70759acd2ca149348ec9107bab07f67c"
+    ],
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "is_batch": false,
+    "worker_started": true
+  },
+  "resume": {
+    "case": "restart-b",
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-b-20261002T021441813845",
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "queued_after_recovery": [
+      "70759acd2ca149348ec9107bab07f67c"
+    ],
+    "recovered_statuses": [
+      "queued"
+    ],
+    "final_status": [
+      "done"
+    ],
+    "batch_outcome": [
+      null
+    ],
+    "items": [
+      {
+        "topic": "专题01",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2,
+        "output_paths": [
+          "C:\\xml-uat\\c35-hardening\\restart-b-20261002T021441813845\\results\\专题01\\专题01 教师版.docx",
+          "C:\\xml-uat\\c35-hardening\\restart-b-20261002T021441813845\\results\\专题01\\专题01 学生版.docx"
+        ]
+      }
+    ],
+    "done_items": 1,
+    "failed_items": 0,
+    "outputs": 2,
+    "completed_outputs_before_resume": {},
+    "completed_outputs_after_resume": {},
+    "completed_outputs_preserved": true,
+    "result_files": {
+      "file_count": 2,
+      "docx_count": 2,
+      "non_docx": [],
+      "internal_artifacts": [],
+      "underscore_names": [],
+      "folder_names": [
+        "专题01"
+      ]
+    },
+    "started_utc": "2026-10-02T02:17:25+00:00",
+    "ended_utc": "2026-10-02T02:17:25+00:00"
+  },
+  "resume_returncode": 0,
+  "started_utc": "2026-10-02T02:17:25+00:00",
+  "ended_utc": "2026-10-02T02:17:25+00:00"
+}

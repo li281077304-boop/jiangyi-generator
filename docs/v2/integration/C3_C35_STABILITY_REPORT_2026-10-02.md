@@ -43,6 +43,31 @@ interrupted job remained `running` and no job transitioned directly to
 `error` on recovery. Batch C retained its completed sibling and generated the
 remaining items.
 
+## PATCH follow-up: distinct production stages
+
+Chief PATCH correctly rejected the earlier B@5/20/30 evidence as proof of
+distinct phases: all three persisted the same whole-job fallback stage at
+progress 0. Those elapsed-time runs remain archived as historical evidence but
+do not count toward the distinct-stage gate.
+
+Production now persists a stage immediately before V0.9 `make_student`, before
+each V0.9 teacher/student renderer call, and after outputs are complete but
+before publishing them into the user result folder. The restart harness can
+hold only in test mode at a selected persisted stage; the driver reads the
+marker and kills that process at that boundary.
+
+| Interruption | Persisted stage and state at kill | Recovery |
+|---|---|---|
+| Preparation | `V0.9 make_student preparation`; `running`, progress 1; teacher renderer scratch existed | `done`, 2 DOCX, clean result folder |
+| Renderer | `V0.9 teacher renderer`; `running`, progress 1; killed before entering the writer call | `done`, 2 DOCX, clean result folder |
+| Before publication | `outputs ready; before publication`; `running`, progress 1; both private renderer outputs existed, user result folder still unpublished | `done`, 2 DOCX, clean result folder |
+
+The exact stage marker is present in each fixture under
+`fixtures/c3-c35/restart-b-{preparation,renderer,before-publication}.json`.
+The pause hook is gated by Flask testing mode and absent in ordinary production
+configuration. This follow-up changes observability only; Studentizer,
+fallback routing, and frozen renderer behavior are unchanged.
+
 ## Recovery implementation and machine gate
 
 On service startup, each persisted running single-job record is requeued after
@@ -54,8 +79,9 @@ work directory.
 
 Machine gate: `tests/test_c35_hardening_harness.py` plus
 `tests/test_batch_job_service.py` — **19 passed**; focused concurrent fallback
-gate — **1 passed** with max-active=1. Python compilation and `git diff --check`
-passed for the scoped changes.
+gate — **1 passed** with max-active=1. After adding stage persistence and the
+test-only hold hook, the same focused selection passed **20 tests**. Python
+compilation and `git diff --check` passed for the scoped changes.
 
 ## Remaining limits
 
