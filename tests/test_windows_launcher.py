@@ -259,6 +259,11 @@ def test_explicit_exit_control_route_is_token_gated_and_shuts_down():
 
     page = client.get("/")
     assert b'<meta name="launcher-token" content="secret">' in page.data
+    page_text = page.get_data(as_text=True)
+    assert '<title>讲义生成器 V1.2</title>' in page_text
+    assert '讲义生成器<small>V1.2</small>' in page_text
+    assert '应用版本</span><span class="muted">讲义生成器 V1.2</span>' in page_text
+    assert 'Flash 1.2' not in page_text
 
 
 def test_server_child_starts_with_isolated_runtime_and_exits_via_control_api():
