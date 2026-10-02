@@ -11,7 +11,7 @@ BASELINE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
 sys.path.insert(0, os.path.abspath(APP_DIR))
 sys.path.insert(0, os.path.abspath(BASELINE_DIR))
 
-from run_baseline import predict  # noqa: E402
+from run_baseline import predict, schedule_e2_examples  # noqa: E402
 from struct_doc import Block, Cell, OleRef, StructDoc, TableBlock  # noqa: E402
 from gold_compare import compare  # noqa: E402
 
@@ -304,6 +304,18 @@ def test_e2_dispatch_is_module_local_and_preserves_example_one():
                       "经典例题2 计算2+2等于多少？",
                       "经典例题3 计算3+3等于多少？"]
     assert all(not text.startswith("经典例题1") for text in starts)
+
+
+def test_e2_dispatch_ignores_unindexed_toc_container_candidates():
+    index, _ = predict(_fixture(["知识精讲", "经典例题1 计算1+1等于多少？"]))
+    candidates = [
+        {"node": "b0", "role": "section", "zone": "knowledge"},
+        {"node": "b2.r5c0.n8", "role": "toc", "toc_container": "b2.r5c0.n8"},
+    ]
+
+    scheduled = schedule_e2_examples(index, candidates)
+
+    assert scheduled == candidates
 
 
 def test_numbered_learning_objectives_are_filtered_before_weak_question_cues():

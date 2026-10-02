@@ -883,8 +883,12 @@ def _in_formal_practice_context(index, order, candidates):
 
 def schedule_e2_examples(index, candidates):
     """Top up each knowledge module locally with complete extra examples."""
-    ordered = sorted(candidates, key=lambda c: index.order_of(c["node"])
-                     if index.order_of(c["node"]) is not None else 10 ** 9)
+    # Structural containers such as a TOC table can appear as candidates even
+    # though they are not content nodes in NodeIndex. They have no document
+    # ordinal, so they cannot participate in a local module range.
+    ordered = sorted((c for c in candidates
+                      if index.order_of(c["node"]) is not None),
+                     key=lambda c: index.order_of(c["node"]))
     modules = [c for c in ordered if _is_e2_knowledge_module(index, c)]
     explicit_examples = [c for c in ordered
                          if c.get("role") == "question_group"
