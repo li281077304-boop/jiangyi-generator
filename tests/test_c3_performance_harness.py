@@ -37,6 +37,8 @@ def test_synthetic_wiring_proof_reaches_xml_without_com(tmp_path):
     assert record["xml_items"] == 1 and record["fallback_items"] == 0
     assert record["fallback_reasons"] == []
     assert record["studentizer_statuses"] == ["XML_PREPARED"]
+    assert record["student_preparation_modes"] == ["XML_STUDENTIZER"]
+    assert record["renderer_routes"] == ["XML"]
     assert record["studentizer_reason_codes"] == []
     assert record["make_student_called_items"] == 0
     assert record["wps_com_started_items"] == 0
@@ -83,4 +85,4 @@ def test_report_carries_baselines_and_per_case_metrics(tmp_path):
                      "| COM script invocations | 0 |", "| newly started office processes | 0 |",
                      "| studentizer status | XML_PREPARED |"):
         assert required in report
-    assert report.count("# C3 R11") == 1
+    assert report.count("# C3 R13") == 1

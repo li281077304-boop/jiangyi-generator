@@ -85,19 +85,19 @@ def unreviewed_candidate(e):
     (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
     (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
 ])
-def test_incomplete_or_stale_evidence_invokes_whole_job_fallback(client, renderer, mutation, reason):
+def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
     app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
     final = post(client, [("专题 教师版.docx", source())])
     assert final['status'] == 'done', final.get('error')
-    assert final['renderer'] == 'V0.9' and final['fallback_reason'] == 'XML_RENDER_FAILED'
+    assert final['renderer'] == 'XML' and final['fallback_reason'] is None
     prep = final['student_preparation']
-    assert prep['reason_code'] == reason and reason in final['fallback_detail']
-    assert prep['make_student_called'] and prep['wps_com_started']
-    assert prep['fallback_engine'] == 'V0.9_WHOLE_JOB'
-    assert prep['make_student_elapsed_seconds'] >= 0 and prep['fallback_elapsed_seconds'] >= 0
-    assert len(renderer['make_student']) == 1 and not renderer['xml']
+    assert prep['reason_code'] == reason and prep['student_preparation'] == 'V09_MAKE_STUDENT'
+    assert prep['make_student_called'] and prep['wps_com_started'] and prep['com_used'] is True
+    assert prep['make_student_elapsed_seconds'] >= 0
+    assert len(renderer['make_student']) == 1 and len(renderer['xml']) == 2
+    assert not renderer['fallback']
     assert len(final['output_paths']) == 2
-    assert not list(Path(app.config['RUNTIME_ROOT']).rglob('derived-student-source.docx'))
+    assert list(Path(app.config['RUNTIME_ROOT']).rglob('derived-student-source.docx'))
 
 
 def test_default_missing_evidence_is_explicit_and_nonmutating(tmp_path):
@@ -128,8 +128,9 @@ def test_mixed_batch_keeps_xml_and_fallback_independent_and_persistent(client, r
     final = post(client, [('A 教师版.docx', original), ('B 教师版.docx', docx('unknown')),
                           ('C 学生版.docx', docx('supplied'))])
     assert final['status'] == 'done' and final['produced'] == 5
-    assert [i['renderer'] for i in final['items']] == ['XML', 'V0.9', 'XML']
-    assert len(renderer['make_student']) == 1 and len(renderer['fallback']) == 1
+    assert [i['renderer'] for i in final['items']] == ['XML', 'XML', 'XML']
+    assert len(renderer['make_student']) == 1 and len(renderer['fallback']) == 0
+    assert final['items'][1]['student_preparation']['student_preparation'] == 'V09_MAKE_STUDENT'
     recovered = JobService(app.config['RESULT_ROOT'], runtime_root=app.config['RUNTIME_ROOT']).get(final['job_id'])
     assert [i['student_preparation'] for i in recovered['items']] == [i['student_preparation'] for i in final['items']]
 
@@ -220,7 +221,7 @@ def test_provider_cannot_mutate_semantic_snapshot_to_authorize_plan(tmp_path):
     assert not (tmp_path / 'student.docx').exists()
 
 
-def test_concurrent_teacher_fallbacks_are_serial_and_observer_is_restored(client, renderer, monkeypatch):
+def test_concurrent_teacher_preparation_is_serial_and_observer_is_restored(client, renderer, monkeypatch):
     from concurrent.futures import ThreadPoolExecutor
     import threading
     import time
@@ -229,23 +230,24 @@ def test_concurrent_teacher_fallbacks_are_serial_and_observer_is_restored(client
     app.config['C0_DISABLE_JOB_SUBMISSION'] = True
     jobs = [post(client, [(f'专题{i} 教师版.docx', docx('unknown'))]) for i in range(3)]
     engine = renderer_orchestrator._load_v09_engine()
-    initial = engine.make_student
-    fallback = renderer_orchestrator.render_v09_whole_job
     guard = threading.Lock(); counts = {'active': 0, 'maximum': 0}
-    def observe(job, reason):
+    original_make_student = engine.make_student
+    def observe_make_student(*args, **kwargs):
         with guard:
             counts['active'] += 1
             counts['maximum'] = max(counts['maximum'], counts['active'])
         try:
             time.sleep(.02)
-            return fallback(job, reason)
+            return original_make_student(*args, **kwargs)
         finally:
             with guard:
                 counts['active'] -= 1
-    monkeypatch.setattr(renderer_orchestrator, 'render_v09_whole_job', observe)
+    engine.make_student = observe_make_student
+    monkeypatch.setattr(renderer_orchestrator, '_load_v09_engine', lambda: engine)
     with ThreadPoolExecutor(max_workers=3) as workers:
         list(workers.map(app_module._execute_job, [j['job_id'] for j in jobs]))
     assert counts == {'active': 0, 'maximum': 1}
-    assert engine.make_student is initial and len(renderer['make_student']) == 3
+    assert len(renderer['make_student']) == 3
+    assert engine.make_student == observe_make_student
     assert all(service().get(j['job_id'])['student_preparation']['make_student_called'] for j in jobs)
     assert all(service().get(j['job_id'])['status'] == 'done' for j in jobs)

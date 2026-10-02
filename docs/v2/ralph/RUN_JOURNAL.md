@@ -392,7 +392,7 @@ the prior candidate and preserved in `integration/fixtures/c3-c35/`; no large
 load was repeated. No layered fallback or Studentizer production route changes
 were made. C3 final gates and Chief review are still pending.
 
-| C3-R12-PATCH | 2026-10-02 02:01 UTC (Chief PATCH follow-up) | 2026-10-02 02:20 UTC | GPT-6 Luna | 24477e2ddb6dc7e6915d3af2970381343d7d2e99 | 024f75b35c609a714cf6a632fa83f4b2921ba3ee | PASS scoped machine gate: replaced elapsed-only restart-B evidence with three persisted stage checkpoints. Killed while `V0.9 make_student preparation`, `V0.9 teacher renderer`, and `outputs ready; before publication`; all three recovered to done with two DOCX and clean user result folders. The before-publication case had both private outputs present at kill. Test-only hold hook is enabled only with Flask TESTING. Focused selection 20 passed; py_compile and diff-check clean. A, C, and prior load evidence reused. | Codex GPT-6.1 Sol | PATCH received: sole blocker was that prior B@5/20/30 all recorded the same V0.9 fallback stage at progress 0; distinct-stage correction is pushed and awaits review | Review only the corrected stage evidence, then proceed with the remaining final gates; no scope expansion | Yes: implementation/report/evidence commit `024f75b` pushed; this row records the PATCH follow-up |
+| C3-R12-PATCH | 2026-10-02 02:01 UTC (Chief PATCH follow-up) | 2026-10-02 02:20 UTC | GPT-6 Luna | 24477e2ddb6dc7e6915d3af2970381343d7d2e99 | 024f75b35c609a714cf6a632fa83f4b2921ba3ee | PASS scoped machine gate: replaced elapsed-only restart-B evidence with three persisted stage checkpoints. Killed while `V0.9 make_student preparation`, `V0.9 teacher renderer`, and `outputs ready; before publication`; all three recovered to done with two DOCX and clean user result folders. The before-publication case had both private outputs present at kill. Test-only hold hook is enabled only with Flask TESTING. Focused selection 20 passed; py_compile and diff-check clean. A, C, and prior load evidence reused. | Codex GPT-6.1 Sol | Initial PATCH; re-review PASS after the distinct-stage correction | Proceed with remaining final gates; no scope expansion | Yes: implementation/report/evidence commit `024f75b` pushed; this row records the PATCH follow-up |
 
 The elapsed-only B@5/20/30 records remain archived but do not satisfy the
 distinct-phase requirement. This follow-up adds persisted renderer/preparation/
@@ -400,3 +400,16 @@ publication stage names and a test-only checkpoint hook so the real process can
 be killed at each phase after the job record is written. No generation or
 fallback decision changed. No batch10, batch20, or consecutive stress case was
 rerun. Do not repeat completed R1–R8 audits or Golden work.
+
+R12 PATCH re-review: **Codex GPT-6.1 Sol — PASS**, scoped to the distinct-stage
+restart-B evidence and recovery patch above. The initial R12 review remains
+recorded as PATCH; this is the follow-up verdict, not a C3 final review.
+
+| C3-R13 | ~2026-10-02 02:20 UTC (first implementation action; exact kickoff not captured) | 2026-10-02 02:57 UTC | GPT-6 Luna Goal Mode | 76ff54d3ce21b98c7d272c56a1276f632d7ced91 | PENDING (implementation commit to be written) | PASS: layered-route focus 51 passed; full suite current 394 passed + 7 subtests, with 4 V1.1 API failures matching baseline exactly (baseline 393 + 7 and same 4); real C2 Case A 5 teacher-only items 122.553s vs 121.330s baseline (+1.01%), V09_MAKE_STUDENT 5/5 → XML Renderer 5/5, whole-job fallback 0, 10/10 packages valid; Case B 13.809s vs 13.975s (−1.2%), XML 3/3, COM/WPS 0; X008 same-source 1/3/5 27.960/82.630/137.585s and frozen bookmark whole-job fallback; inherited capability scan 1 supported / 26 unsupported, no new corpus sweep; py_compile/diff-check PASS; Stage2/Stage3 and C2 full regression deferred to final gate | Codex GPT-6.1 Sol | PENDING | Record implementation SHA, commit + push, remote verify; independent Chief review | No commit/push yet |
+
+R13 preserves the frozen Studentizer scope. Unsupported Studentizer sources now
+use V0.9 `make_student` only to produce the student source, then share A-Line,
+Slot Router, and XML Renderer. Whole-job V0.9 remains reserved for renderer / package
+refusal. Per-source renderer totals across all 27 are not fully established by
+the existing non-mutating capability scan. The R13 detailed performance report
+separates student preparation mode from renderer route and states this limit.

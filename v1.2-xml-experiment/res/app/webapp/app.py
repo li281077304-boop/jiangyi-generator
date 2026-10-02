@@ -176,6 +176,7 @@ def _execute_job(job_id: str) -> None:
 
         preparation = {"make_student_called": False, "input_version": input_version,
                        "elapsed_seconds": 0.0, "wps_com_started": False,
+                       "student_preparation": "BYPASS", "com_used": False,
                        "package_valid": None, "output_package_valid": None,
                        "engine": "BYPASS", "status": "STUDENT_SOURCE_BYPASS",
                        "reason_code": None, "reason_detail": None,
@@ -195,8 +196,38 @@ def _execute_job(job_id: str) -> None:
                                 "elapsed_seconds": round(time.perf_counter()-started, 6)})
             studentizer_rejected = prepared.status != "XML_PREPARED"
             preparation["studentizer_fallback"] = studentizer_rejected
-            if not studentizer_rejected:
+            if studentizer_rejected:
+                # Studentizer capability refusal is a preparation decision,
+                # not a renderer decision. Use the frozen V0.9 preparation
+                # step to create a student source, then continue through the
+                # shared A-Line / Slot Router / XML Renderer route.
+                _persist_job_stage(service, job_id, 0, "V0.9 make_student preparation")
+                make_started = time.perf_counter()
+                preparation.update({"student_preparation": "V09_MAKE_STUDENT",
+                                    "make_student_called": True, "com_used": True,
+                                    "wps_com_started": True})
+                service.update_student_preparation(job_id, preparation)
+                try:
+                    with _V09_FALLBACK_LOCK:
+                        engine = _load_v09_engine()
+                        engine.make_student(str(teacher_source), str(student_source))
+                finally:
+                    make_elapsed = round(time.perf_counter() - make_started, 6)
+                    preparation.update({"make_student_elapsed_seconds": make_elapsed,
+                                        "elapsed_seconds": round(
+                                            preparation["studentizer_elapsed_seconds"] + make_elapsed, 6)})
+                    service.update_student_preparation(job_id, preparation)
+                if not student_source.is_file() or student_source.stat().st_size == 0:
+                    raise RuntimeError("V0.9 make_student did not produce a non-empty student source")
+                validation = validate_package(str(student_source))
+                if validation.get("valid") is not True:
+                    raise RuntimeError("V0.9 make_student produced an invalid student source: %s" %
+                                       "; ".join(validation.get("errors", [])[:5]))
+                preparation["student_source_package_valid"] = True
+            else:
                 preparation["package_valid"] = prepared.validation.get("valid") is True
+                preparation["student_preparation"] = "XML_STUDENTIZER"
+                preparation["com_used"] = False
                 manifest = reviewed.lookup(prepared.source_sha256) if reviewed is not None else None
                 preparation["reviewed_evidence"] = manifest.describe() if manifest is not None else None
         elif student_source is not None:
@@ -215,10 +246,6 @@ def _execute_job(job_id: str) -> None:
             if forced_reason:
                 return {"supported": False, "reason_code": forced_reason,
                         "detail": "forced unsupported integration fixture"}
-            if studentizer_rejected:
-                fallback_detail["value"] = "%s: %s" % (preparation["reason_code"], preparation["reason_detail"])
-                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
-                        "detail": fallback_detail["value"]}
             try:
                 for role, source_path in active_sources.items():
                     plans[role] = build_slot_routing_plan(source_path, template_type,
@@ -277,7 +304,7 @@ def _execute_job(job_id: str) -> None:
             template_type=template_type, topic=topic,
             grade=options.get("grade", ""), subject=options.get("subject", ""),
             handout_type=options.get("handout_type", ""),
-            student_source_doc=(str(student_source) if teacher_source and student_source and not studentizer_rejected else None),
+            student_source_doc=(str(student_source) if teacher_source and student_source else None),
             student_output_doc=(str(internal_student) if teacher_source and internal_student else None),
             student_only=teacher_source is None, label=("学生版" if teacher_source is None else "教师版"),
         )

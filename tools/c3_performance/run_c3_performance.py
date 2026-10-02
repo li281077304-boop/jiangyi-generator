@@ -331,6 +331,9 @@ def run_case(case, files, template, out_root, provider=None, note=""):
         "fallback_details": sorted({(unit.get("fallback_detail") or "")[:200] for unit in units
                                     if unit.get("fallback_detail")}),
         "studentizer_statuses": sorted({prep.get("status") for prep in preparations}),
+        "student_preparation_modes": sorted({prep.get("student_preparation") for prep in preparations
+                                               if prep.get("student_preparation")}),
+        "renderer_routes": sorted({unit.get("renderer") for unit in units if unit.get("renderer")}),
         "studentizer_reason_codes": sorted({prep.get("reason_code") for prep in preparations
                                             if prep.get("reason_code")}),
         "studentizer_seconds": round(sum(prep.get("studentizer_elapsed_seconds") or 0
@@ -408,7 +411,7 @@ def main(argv=None):
 
 
 def render_report(payload):
-    lines = ["# C3 R11 — real teacher-only and XML batch performance", "",
+    lines = ["# C3 R13 — layered fallback real performance", "",
              "All cases run the production HTTP path with the real A-Line, C1 Slot Router, B-Line",
              "renderer, templates and frozen V0.9 runtime. Only observation wrappers are installed.", ""]
     for record in payload["records"]:
@@ -421,6 +424,8 @@ def render_report(payload):
                   "| per item | %s s |" % record.get("seconds_per_item", "-"),
                   "| XML items | %s |" % record["xml_items"],
                   "| fallback items | %s |" % record["fallback_items"],
+                  "| renderer routes | %s |" % (", ".join(record.get("renderer_routes", [])) or "-"),
+                  "| student preparation modes | %s |" % (", ".join(record.get("student_preparation_modes", [])) or "-"),
                   "| fallback reasons | %s |" % (", ".join(record["fallback_reasons"]) or "none"),
                   "| Studentizer time | %s s |" % record["studentizer_seconds"],
                   "| A-Line time | %s s |" % seconds.get("aline_seconds", 0.0),
@@ -448,7 +453,7 @@ def render_report(payload):
             lines.append("| 3 teacher+student XML items (identical sources, class) | %s s | %s s |"
                          % (payload["c2_baselines"]["case_b_teacher_student_3"], record["elapsed_seconds"]))
     lines += ["", "Same-source X008 timings are a workload measurement, not a coverage statement.",
-              "Machine-readable detail: `fixtures/c3-r11-performance.json`."]
+              "Machine-readable detail: `fixtures/c3-r13-layered-performance.json`."]
     return "\n".join(lines) + "\n"
 
 

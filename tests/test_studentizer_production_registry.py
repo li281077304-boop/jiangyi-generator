@@ -168,7 +168,9 @@ def test_unloadable_registry_falls_back_and_reports_the_reason(client, renderer,
         assert preparation["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
         assert preparation["registry_error"]
         assert preparation["reviewed_evidence"] is None
-        assert final["renderer"] == "V0.9" and final["fallback_reason"] == "XML_RENDER_FAILED"
+        assert final["renderer"] == "XML" and final["fallback_reason"] is None
+        assert preparation["student_preparation"] == "V09_MAKE_STUDENT"
+        assert preparation["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
     finally:
         app_module.app.config["STUDENTIZER_REVIEWED_MANIFEST_DIR"] = None
 
@@ -194,17 +196,37 @@ def test_production_teacher_only_supported_path_never_calls_make_student(client,
     assert renderer["xml"][1] != data  # the student source is the derived one
 
 
-def test_unreviewed_source_falls_back_without_producing_a_half_student(client, renderer):  # noqa: F811
+def test_unreviewed_source_uses_v09_student_preparation_then_xml_renderer(client, renderer):  # noqa: F811
     final = post(client, [("专题 教师版.docx", docx("知识点：加法", "1．求 2+3？", "【答案】5"))])
     assert final["status"] == "done", final.get("error")
     preparation = final["student_preparation"]
     assert preparation["status"] == "STUDENTIZER_FALLBACK_REQUIRED"
     assert preparation["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
     assert preparation["reviewed_evidence"] is None
-    assert final["renderer"] == "V0.9" and final["produced"] == 2
+    assert final["renderer"] == "XML" and final["produced"] == 2
+    assert preparation["student_preparation"] == "V09_MAKE_STUDENT"
     assert preparation["make_student_called"] and preparation["wps_com_started"]
+    assert preparation["com_used"] is True
     assert len(renderer["make_student"]) == 1
-    assert not renderer["xml"]
+    assert not renderer["fallback"] and len(renderer["xml"]) == 2
+
+
+def test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback(
+        client, renderer, monkeypatch):
+    import template_slot_composer
+
+    def fail_render(*_args):
+        raise RuntimeError("renderer fixture refusal")
+
+    monkeypatch.setattr(template_slot_composer, "render_slots", fail_render)
+    final = post(client, [("专题 教师版.docx", docx("知识点"))])
+    assert final["status"] == "done" and final["renderer"] == "V0.9"
+    assert final["fallback_reason"] == "XML_RENDER_FAILED"
+    prep = final["student_preparation"]
+    assert prep["student_preparation"] == "V09_MAKE_STUDENT"
+    assert prep["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
+    assert prep["com_used"] is True
+    assert len(renderer["fallback"]) == 1 and len(final["output_paths"]) == 2
 
 
 def test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher(
