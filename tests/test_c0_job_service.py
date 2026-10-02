@@ -242,7 +242,7 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
         "reason_arg": "XML_RENDER_FAILED",
         "plan_summary": None,
     }
-    assert final["status"] == "done"
+    assert final["status"] == "done", final.get("error")
     assert final["renderer"] == "V0.9"
     assert final["fallback_reason"] == "XML_RENDER_FAILED"
     assert final["baseline_sha"] == renderer_orchestrator.V09_BASELINE_SHA

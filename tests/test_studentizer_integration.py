@@ -264,6 +264,68 @@ def test_concurrent_teacher_preparation_is_serial_and_observer_is_restored(clien
     assert all(service().get(j['job_id'])['status'] == 'done' for j in jobs)
 
 
+@pytest.mark.parametrize('role', ['teacher', 'student'])
+def test_publication_uses_target_volume_temp_for_cross_volume_safe_replace(
+        tmp_path, monkeypatch, role):
+    import app as app_module
+
+    staging = tmp_path / 'staging'
+    results = tmp_path / 'redirected-desktop'
+    staging.mkdir(); results.mkdir()
+    source_path = staging / (role + '-stage.docx')
+    source_path.write_bytes(docx('cross-volume publication fixture'))
+    target_path = results / (role + '-final.docx')
+    expected = sha256(source_path.read_bytes()).hexdigest()
+    real_replace = app_module.os.replace
+    replacements = []
+
+    def reject_cross_volume(source, target):
+        source, target = Path(source), Path(target)
+        if source == source_path:
+            raise OSError(17, 'simulated cross-volume rename')
+        assert source.parent == target.parent == results
+        assert source.name.startswith('.jiangyi-publish-job-%s-' % role)
+        replacements.append((source, target))
+        return real_replace(source, target)
+
+    monkeypatch.setattr(app_module.os, 'replace', reject_cross_volume)
+    from package_validator import validate_package
+    digest = app_module._publish_staged_output(
+        source_path, target_path, job_id='job-%s' % role, role=role,
+        expected_sha256=expected, package_validator=validate_package)
+
+    assert digest == expected
+    assert len(replacements) == 1
+    assert replacements[0][1] == target_path
+    assert target_path.read_bytes() == source_path.read_bytes()
+    assert list(results.iterdir()) == [target_path]
+
+
+def test_failed_publication_validation_cleans_temp_and_preserves_successful_sibling(tmp_path):
+    import app as app_module
+
+    results = tmp_path / 'results'; results.mkdir()
+    staging = tmp_path / 'staging'; staging.mkdir()
+    source_path = staging / 'student.docx'
+    source_path.write_bytes(docx('invalid copy fixture'))
+    target_path = results / 'student.docx'
+    sibling = results / 'teacher.docx'
+    sibling.write_bytes(docx('previously published teacher'))
+
+    def reject_package(_path):
+        return {'valid': False, 'errors': ['simulated package validation failure']}
+
+    with pytest.raises(RuntimeError, match='package validation failed'):
+        app_module._publish_staged_output(
+            source_path, target_path, job_id='failed-job', role='student',
+            expected_sha256=sha256(source_path.read_bytes()).hexdigest(),
+            package_validator=reject_package)
+
+    assert not target_path.exists()
+    assert sibling.is_file() and sibling.stat().st_size > 0
+    assert list(results.iterdir()) == [sibling]
+
+
 @pytest.mark.parametrize('crash_after', ['teacher', 'student'])
 def test_publication_restart_reuses_valid_final_roles_without_deleting_them(
         tmp_path, client, renderer, monkeypatch, crash_after):
@@ -301,7 +363,11 @@ def test_publication_restart_reuses_valid_final_roles_without_deleting_them(
     assert recovered_service.get(job_id)['status'] == 'queued'
     app.extensions.pop('c0_job_services', None)
     app.config['C35_TEST_STAGE_HOOK'] = None
+    result_dir = Path(interrupted['result_dir'])
+    orphan = result_dir / ('.jiangyi-publish-%s-orphan.tmp' % job_id)
+    orphan.write_bytes(b'abandoned partial publication copy')
     app_module._execute_job(job_id)
+    assert not orphan.exists()
     final = service().get(job_id)
     assert final['status'] == 'done', final.get('error')
     assert len(final['output_paths']) == 2

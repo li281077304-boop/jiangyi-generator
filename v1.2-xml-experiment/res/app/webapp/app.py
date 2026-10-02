@@ -8,10 +8,13 @@ from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
 import os
+import shutil
 import sys
 import hashlib
+import tempfile
 import threading
 import secrets
+import uuid
 
 from flask import Flask, jsonify, render_template, request
 import re
@@ -109,6 +112,54 @@ def _visible_output_name(options: dict, topic: str, role: str) -> str:
     return (" ".join(parts) or ("讲义 " + role)) + ".docx"
 
 
+def _publication_temp_pattern(job_id: str) -> str:
+    return ".jiangyi-publish-%s-*.tmp" % job_id
+
+
+def _cleanup_publication_temps(result_dir: Path, job_id: str) -> None:
+    """Remove only this job's abandoned same-volume publication copies."""
+    prefix = ".jiangyi-publish-%s-" % job_id
+    for candidate in result_dir.glob(_publication_temp_pattern(job_id)):
+        if candidate.name.startswith(prefix) and candidate.is_file():
+            candidate.unlink(missing_ok=True)
+
+
+def _publish_staged_output(source_path: str | Path, target_path: str | Path, *,
+                           job_id: str, role: str, expected_sha256: str,
+                           package_validator) -> str:
+    """Copy, validate, then atomically publish from a temp on the target volume.
+
+    Staging may live under LocalAppData while the user's Desktop is redirected
+    to another volume. Only the target-local temporary file is passed to
+    ``os.replace`` so Windows never attempts a cross-volume rename.
+    """
+    source = Path(source_path).resolve()
+    target = Path(target_path).resolve()
+    if not source.is_file() or source.stat().st_size <= 0:
+        raise RuntimeError("Renderer staged an empty %s artifact" % role)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp_name = tempfile.mkstemp(
+        prefix=".jiangyi-publish-%s-%s-%s-" % (job_id, role, uuid.uuid4().hex),
+        suffix=".tmp", dir=str(target.parent))
+    os.close(fd)
+    temp = Path(temp_name)
+    try:
+        shutil.copyfile(source, temp)
+        if not temp.is_file() or temp.stat().st_size != source.stat().st_size:
+            raise RuntimeError("Copied %s artifact size does not match staging" % role)
+        digest = hashlib.sha256(temp.read_bytes()).hexdigest()
+        if not expected_sha256 or digest != expected_sha256:
+            raise RuntimeError("Copied %s artifact SHA-256 does not match publication plan" % role)
+        validation = package_validator(str(temp))
+        if validation.get("valid") is not True:
+            raise RuntimeError("Copied %s artifact package validation failed: %s" %
+                               (role, "; ".join(validation.get("errors", [])[:5])))
+        os.replace(temp, target)
+        return digest
+    finally:
+        temp.unlink(missing_ok=True)
+
+
 def _reviewed_provider():
     """Resolve the teacher-only reviewed evidence provider for this process.
 
@@ -151,6 +202,7 @@ def _execute_job(job_id: str) -> None:
             return
         runtime_dir = service._job_dir(job_id)
         result_dir = Path(record["result_dir"]).resolve()
+        _cleanup_publication_temps(result_dir, job_id)
         work_dir = runtime_dir / "work"
         work_dir.mkdir(parents=True, exist_ok=True)
         options = record.get("options", {})
@@ -412,6 +464,8 @@ def _execute_job(job_id: str) -> None:
         staged_hashes = {role: hashlib.sha256(Path(source).read_bytes()).hexdigest()
                          for role, source, _target in generated}
         service.record_publication_plan(job_id, planned_paths, staged_hashes)
+        publication = service.get(job_id).get("publication") or {}
+        expected_hashes = publication.get("expected_sha256", {})
         # Validate every staged artifact before publishing any role.
         for role, source_path, target_path in generated:
             source = Path(source_path)
@@ -433,14 +487,17 @@ def _execute_job(job_id: str) -> None:
                 if existing_validation.get("valid") is not True:
                     raise RuntimeError("Interrupted publication target failed validation")
                 existing_hash = hashlib.sha256(target.read_bytes()).hexdigest()
-                publication = service.get(job_id).get("publication") or {}
                 published_record = publication.get("published", {}).get(role)
-                expected_hash = (published_record or {}).get("sha256") or publication.get(
-                    "expected_sha256", {}).get(role)
+                expected_hash = (published_record or {}).get("sha256") or expected_hashes.get(role)
                 if not expected_hash or existing_hash != expected_hash:
                     raise RuntimeError("Existing result path is not the persisted publication artifact")
             else:
-                os.replace(source_path, target)
+                expected_hash = expected_hashes.get(role) or staged_hashes.get(role)
+                if not expected_hash:
+                    raise RuntimeError("Publication plan is missing the expected %s artifact hash" % role)
+                _publish_staged_output(source_path, target, job_id=job_id, role=role,
+                                       expected_sha256=expected_hash,
+                                       package_validator=validate_package)
             final_validation = validate_package(str(target))
             if final_validation.get("valid") is not True:
                 raise RuntimeError("Published %s package failed validation" % role)
