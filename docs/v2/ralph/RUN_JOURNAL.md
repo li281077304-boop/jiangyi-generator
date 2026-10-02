@@ -413,3 +413,12 @@ Slot Router, and XML Renderer. Whole-job V0.9 remains reserved for renderer / pa
 refusal. Per-source renderer totals across all 27 are not fully established by
 the existing non-mutating capability scan. The R13 detailed performance report
 separates student preparation mode from renderer route and states this limit.
+
+| C3-R13-PATCH | 2026-10-02 03:05 UTC (approximate; scoped Chief PATCH repair start) | 2026-10-02 03:13 UTC | GPT-6 Luna Goal Mode | e20256837fe9f747665f5958ffdb4920d59314bc | 5fe77b68cfeb05bd174117e59a15bb4bd4aeed44 | PASS scoped metadata gate: production-registry, Studentizer integration, batch job and C0 job-service selections 80 passed; added engine-loader failure and pre-COM callable-entry failure coverage; app/job_service py_compile and diff-check clean. No performance, stress, broad corpus or OOXML work rerun. | Codex GPT-6.1 Sol | Original R13 PATCH; scoped re-review PENDING | Submit only the metadata truthfulness patch for independent review; no further Worker edits pending verdict | Yes: implementation `5fe77b6` committed/pushed; Journal metadata commit follows |
+
+R13 PATCH distinguishes the selected `V09_MAKE_STUDENT` route from actual
+`make_student` callable entry. A loader failure records the selected route while
+leaving callable and COM/WPS flags false. After callable entry, COM/WPS is recorded
+as unknown because entry can precede a failing non-COM `strip_red` phase; the
+Studentizer refusal reason and elapsed timing remain persisted on exceptions.
+No claim of observed COM/WPS startup is made by this patch.
