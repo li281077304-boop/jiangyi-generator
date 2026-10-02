@@ -1,0 +1,267 @@
+{
+  "corpus_root": "C:\\xml-uat\\c4-product-recovery\\corpus",
+  "notes": "All bytes are original 学科网 downloads or the documented original X012. Cross-checked against every DOCX under D:\\Documents\\生成讲义结果 and C:\\xml-uat: no corpus SHA-256 collides with a generated result file.",
+  "samples": [
+    {
+      "sample_id": "S01",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\X012真实数学讲义.docx",
+      "corpus_filename": "X012真实数学讲义.docx",
+      "original_filename": "X012真实数学讲义.docx",
+      "absolute_source_path": "C:\\xml-uat\\c4-final-rc-final\\inputs\\X012真实数学讲义.docx",
+      "sha256": "79d925a724da75fbb7aee78b2add7fa390390f44eca46b346495e9437cd6e779",
+      "bytes": 1059256,
+      "subject": "X012 数学（核心回归）",
+      "template_type": "1v1",
+      "input_roles": "teacher-only",
+      "includes_answers": true,
+      "complex_layout": true,
+      "used_as_pair": false,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "P0 事故核心样本；来源为 P0 证据中记录的原始 X012真实数学讲义.docx",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 952,
+          "top_level_blocks": 4,
+          "text_chars": 14768,
+          "template_title_count": 1,
+          "template_cycles": 1,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S02T",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\专题02：数的运算 2026年数学小升初毕业备考真题汇编-教师版.docx",
+      "corpus_filename": "专题02：数的运算 2026年数学小升初毕业备考真题汇编-教师版.docx",
+      "original_filename": "专题02：数的运算 2026年数学小升初毕业备考真题汇编-教师版.docx",
+      "absolute_source_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\做讲义\\专题02：数的运算 2026年数学小升初毕业备考真题汇编-教师版.docx",
+      "sha256": "16b2c90c623952d57449e76f5286482b1269a082b3205cb8ef4b1a41f6dfd2ab",
+      "bytes": 723638,
+      "subject": "数学 小升初",
+      "template_type": "1v1",
+      "input_roles": "teacher+student",
+      "includes_answers": true,
+      "complex_layout": false,
+      "used_as_pair": true,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载：2026 年数学小升初毕业备考真题汇编 教师版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 819,
+          "top_level_blocks": 4,
+          "text_chars": 21178,
+          "template_title_count": 1,
+          "template_cycles": 1,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S02S",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\专题02：数的运算 2026年数学小升初毕业备考真题汇编-学生版.docx",
+      "corpus_filename": "专题02：数的运算 2026年数学小升初毕业备考真题汇编-学生版.docx",
+      "original_filename": "专题02：数的运算 2026年数学小升初毕业备考真题汇编-学生版.docx",
+      "absolute_source_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\做讲义\\专题02：数的运算 2026年数学小升初毕业备考真题汇编-学生版.docx",
+      "sha256": "2c48eef9c1030aaf48f2f28b4706fc923b44d39b4b3c9cb7f0a559425ea40508",
+      "bytes": 397933,
+      "subject": "数学 小升初",
+      "template_type": "1v1",
+      "input_roles": "teacher+student",
+      "includes_answers": false,
+      "complex_layout": false,
+      "used_as_pair": true,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载：2026 年数学小升初毕业备考真题汇编 学生版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 313,
+          "top_level_blocks": 4,
+          "text_chars": 6723,
+          "template_title_count": 1,
+          "template_cycles": 1,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S03",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\专题02 计数原理与二项式定理（题型清单）（解析版）.docx",
+      "corpus_filename": "专题02 计数原理与二项式定理（题型清单）（解析版）.docx",
+      "original_filename": "专题02 计数原理与二项式定理（题型清单）（解析版）.docx",
+      "absolute_source_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\做讲义\\专题02 计数原理与二项式定理（题型清单）（解析版）.docx",
+      "sha256": "bfcec1ef64ec9d6d3ade8a319cff2e0f0167aebc96a60d8fa760b4c4cab7559b",
+      "bytes": 3069338,
+      "subject": "数学 高中（计数原理）",
+      "template_type": "class",
+      "input_roles": "teacher-only",
+      "includes_answers": true,
+      "complex_layout": true,
+      "used_as_pair": false,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载：专题02 计数原理与二项式定理（题型清单）解析版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 1038,
+          "top_level_blocks": 952,
+          "text_chars": 23186,
+          "template_title_count": 0,
+          "template_cycles": 0,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S04T",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+      "corpus_filename": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+      "original_filename": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+      "absolute_source_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip!13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip!2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+      "sha256": "b5e217e9a2311d398af5be97446b86b84992bd541683f83c7773cde22885419e",
+      "bytes": 4296971,
+      "subject": "物理 九年级",
+      "template_type": "1v1",
+      "input_roles": "teacher+student",
+      "includes_answers": true,
+      "complex_layout": false,
+      "used_as_pair": true,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载（嵌套 zip）：人教版物理九年级 热量 比热容 讲义 解析版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 399,
+          "top_level_blocks": 350,
+          "text_chars": 11609,
+          "template_title_count": 0,
+          "template_cycles": 0,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S04S",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+      "corpus_filename": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+      "original_filename": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+      "absolute_source_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip!13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip!2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+      "sha256": "755f20a000e5bfa9638bc279318fc0753d54019096e250b959bd0522b4dc1b71",
+      "bytes": 4111329,
+      "subject": "物理 九年级",
+      "template_type": "1v1",
+      "input_roles": "teacher+student",
+      "includes_answers": false,
+      "complex_layout": false,
+      "used_as_pair": true,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载（嵌套 zip）：人教版物理九年级 热量 比热容 讲义 原卷版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 211,
+          "top_level_blocks": 162,
+          "text_chars": 5718,
+          "template_title_count": 0,
+          "template_cycles": 0,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S05S",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\化学实验与科学探究 原卷.docx",
+      "corpus_filename": "化学实验与科学探究 原卷.docx",
+      "original_filename": "化学实验与科学探究 原卷.docx",
+      "absolute_source_path": "C:\\xml-uat\\c4-final-rc-final\\inputs\\化学实验与科学探究 原卷.docx",
+      "sha256": "e10818f40e99da4234051b1beeac852f4e8090475cdb96283fbf1bcb5b44a6f4",
+      "bytes": 2475617,
+      "subject": "化学 高一",
+      "template_type": "class",
+      "input_roles": "teacher+student",
+      "includes_answers": false,
+      "complex_layout": false,
+      "used_as_pair": true,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载：化学实验与科学探究（题型专练）原卷版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 475,
+          "top_level_blocks": 333,
+          "text_chars": 10781,
+          "template_title_count": 0,
+          "template_cycles": 0,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S05T",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\化学实验与科学探究 解析版.docx",
+      "corpus_filename": "化学实验与科学探究 解析版.docx",
+      "original_filename": "化学实验与科学探究 解析版.docx",
+      "absolute_source_path": "C:\\xml-uat\\c4-final-rc-final\\inputs\\化学实验与科学探究 解析版.docx",
+      "sha256": "19fe81bd43f19e9acb2170b2d431452690c179cbecb4e4ee773f8e024eef0163",
+      "bytes": 2496871,
+      "subject": "化学 高一",
+      "template_type": "class",
+      "input_roles": "teacher+student",
+      "includes_answers": true,
+      "complex_layout": false,
+      "used_as_pair": true,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载：化学实验与科学探究（题型专练）解析版",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 770,
+          "top_level_blocks": 629,
+          "text_chars": 20389,
+          "template_title_count": 0,
+          "template_cycles": 0,
+          "repeated_sequences": []
+        }
+      }
+    },
+    {
+      "sample_id": "S06",
+      "corpus_path": "C:\\xml-uat\\c4-product-recovery\\corpus\\人教PEP英语四年级下册-期末复习讲义.docx",
+      "corpus_filename": "人教PEP英语四年级下册-期末复习讲义.docx",
+      "original_filename": "人教PEP英语四年级下册-期末复习讲义.docx",
+      "absolute_source_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\做讲义\\人教PEP英语四年级下册-期末复习讲义.docx",
+      "sha256": "6f034c306fd52eeb5707fc53d724aa4ba634fab3899858e87eacf0f511ae5bde",
+      "bytes": 48131,
+      "subject": "英语 四年级",
+      "template_type": "1v1",
+      "input_roles": "teacher-only",
+      "includes_answers": true,
+      "complex_layout": true,
+      "used_as_pair": false,
+      "provenance": "ORIGINAL_SOURCE",
+      "notes": "学科网原始下载：人教PEP英语四年级下册期末复习讲义（文件名无教师/学生标记）",
+      "input_provenance_inspection": {
+        "accepted": true,
+        "errors": [],
+        "metrics": {
+          "main_story_paragraphs": 323,
+          "top_level_blocks": 4,
+          "text_chars": 6162,
+          "template_title_count": 1,
+          "template_cycles": 1,
+          "repeated_sequences": []
+        }
+      }
+    }
+  ]
+}

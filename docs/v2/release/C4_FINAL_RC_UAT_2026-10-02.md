@@ -296,9 +296,10 @@ path on D: with runtime/staging on C: and results on D:.
 * The fresh EXE reached Flask ready; root, CSS, and JS returned HTTP 200, the
   product title was correct, and the browser opened. Evidence:
   `C:\xml-uat\c4-final-rc-final\evidence\startup-d3511a0.json`.
-* Ten consecutive launch → ready → normal-exit cycles passed. Each cycle
-  recorded port release and no surviving application process; a fresh
-  instance identity prevented reuse of an old service.
+* A prior 10-cycle run used a different EXE hash (`16fccf...`) and does not
+  certify this candidate. A fresh 10-cycle run against the d3511a0 EXE is in
+  progress; keep the gate pending until its retained result confirms all 10
+  cycles ready and clean.
 * The final archive is
   `C:\xml-uat\c4-final-rc-final\release-candidate\讲义生成器_V1.2_RC1_Windows_x64_d3511a0_FINAL.zip`,
   19,017,363 bytes, SHA-256
@@ -320,18 +321,18 @@ no publication temporary files remained. No `WinError 17` recurred.
 
 | Scenario | Outcome |
 |---|---|
-| Teacher + student pair | Job completed; both outputs published and validated. |
-| Teacher-only | Job completed; teacher output and prepared student output published and validated. |
-| Student-only | Job completed through the recorded renderer route; student output published and validated. |
-| Multi-DOCX batch | Three logical items completed with six final DOCX outputs; item routes recorded XML and V0.9 fallback. |
-| Chinese ZIP with nested folders | Two valid items completed from Chinese multi-level paths. |
-| Partial success with corrupt item | The corrupt input item failed validation while two good siblings completed and remained published; final state was legitimate partial. |
-| Real V0.9 fallback | A known unsupported/render-failure case invoked the frozen whole-job route and published validated output. |
+| Teacher + student pair | Job `7b37b9189a62423ea78cbf2a03720714`; class template; `TEACHER_AND_STUDENT`; `done`; student preparation `BYPASS`; renderer `XML`; two validated outputs. |
+| Teacher-only | Jobs `da52bdb019234ee786983f7ff0aa3cf0` (1v1) and `c339896f2e4c47598a8bb65de1e3d6a6` (class); `done`; student preparation `V09_MAKE_STUDENT` / `STUDENTIZER_COVERAGE_UNPROVEN`; renderer `XML`; two validated outputs each. |
+| Student-only | Job `4bb7f9a1f923442ead31da13238aa9d1`; class template; `STUDENT_ONLY`; `done`; student preparation `BYPASS`; renderer `XML`; one validated student output. |
+| Multi-DOCX batch | Job `1a7ea9f2f08143478ef269fd001ca56a`; `done`, 2/2 items, four final DOCX outputs; no unexpected result-directory files. |
+| Chinese ZIP with nested folders + corrupt item | Job `413a8390408e4c6395d20c81b519bc65`; `partial`, 1/2 done and 1/2 failed; good item outputs remain and the damaged item is isolated. This same submission covers Chinese nested ZIP input and partial success. |
+| Real V0.9 fallback | Job `c98ca78dba3f458db1a40db519bc65`; class template; `TEACHER_ONLY`; student preparation `V09_MAKE_STUDENT` / `STUDENTIZER_COVERAGE_UNPROVEN`; renderer `V0.9`, reason `XML_RENDER_FAILED`; outputs validated. |
 
 Job ids, input classification, Studentizer/renderer routes, fallback reasons,
-and package results are in the persisted job records under
-`C:\xml-uat\c4-final-rc-final\localappdata\讲义生成器\jobs` and the associated
-browser UAT evidence. ZIP was tested as an input format only; the product
+and package results are in persisted records at
+`%LOCALAPPDATA%\讲义生成器\jobs\<job_id>\job.json` and the condensed audit
+`evidence\latest-candidate-job-audit-d3511a0.json`. Browser snapshots are in
+`playwright-cli-artifacts`. ZIP was tested as an input format only; the product
 delivery remains the local result folder.
 
 ### Restart recovery
@@ -342,20 +343,29 @@ The retained interruption snapshot
 (attempt 0), then confirmed both candidate processes stopped and port 5128
 was released. After restart, `restart-AB-final-d3511a0.json` records both jobs
 done: the interrupted running job recovered on attempt 2; the queued job
-completed on attempt 1. The separate batch restart evidence completed all
-4/4 items while preserving completed siblings. No duplicate output or
-publication temp was found. DOCX package validation passed. Restart evidence
-files are under `C:\xml-uat\c4-final-rc-final\evidence`.
+completed on attempt 1. The separate batch parent job
+`fadaadcbebbd46259a0a3660ea171593` ended 4/4 done, recovered, attempts=2,
+with eight validated outputs and zero unexpected files. Persisted child
+records show a child completed before its sibling resumed; the completed
+child's initial published hashes match the latest audited teacher/student
+hashes. A raw batch snapshot at the instant of process termination is not
+retained, so Restart C is **not fully proven** by this evidence alone. A fresh
+repeat with a retained pre-stop snapshot is required to close this gate.
+Restart A/B evidence is under `C:\xml-uat\c4-final-rc-final\evidence`; Restart
+C parent/child records are under `%LOCALAPPDATA%\讲义生成器\jobs`.
 
 ### WPS output acceptance
 
 The latest candidate outputs passed WPS Open → SaveAs → Close → Reopen → PDF
 for 1v1 teacher/student, class teacher/student, and a real V0.9 fallback
 teacher output. All five roundtrips completed; files and PDFs were non-empty.
-The content audit found all three expected slots, correct physics/high-school
-headers on the X006 outputs, and correct mathematics/high-school headers on
-the X012 fallback. Images and tables remained present; formula-bearing
-fallback content was detected after reopen. Evidence is in
+The audit confirmed the three template headings and correct physics/high-school
+headers on X006, plus correct mathematics/high-school headers on the X012
+fallback. The X006 route plan records all content in the first slot and zero
+units in slots two and three; those samples therefore do **not** prove that
+each slot is populated with correctly routed body content. X012 fallback has
+body content after the slot headings. Images and tables remained present, and
+formula-bearing fallback content was detected after reopen. Evidence is in
 `evidence\wps-final-d3511a0\report.json`, `class-roundtrip.json`,
 `fallback-x012-roundtrip.json`, and `wps-slot-content-d3511a0.json`.
 This supersedes the prior candidate's stale-header failure for the tested
