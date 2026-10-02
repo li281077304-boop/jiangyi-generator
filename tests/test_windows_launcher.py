@@ -137,6 +137,13 @@ def test_runtime_environment_redirects_temp_bytecode_and_result_root():
         assert (runtime / "jobs").is_dir()
 
 
+def test_frozen_resource_directory_preserves_repo_relative_tree(monkeypatch, tmp_path):
+    monkeypatch.setattr(launcher.sys, "frozen", True, raising=False)
+    monkeypatch.setattr(launcher.sys, "_MEIPASS", str(tmp_path), raising=False)
+    assert launcher.application_resource_directory() == (
+        tmp_path / "v1.2-xml-experiment" / "res" / "app")
+
+
 def test_desktop_known_folder_resolver_uses_redirected_location():
     redirected = Path("R:/OneDrive/Desktop")
     assert launcher.windows_desktop_path(lambda: redirected) == redirected.resolve()

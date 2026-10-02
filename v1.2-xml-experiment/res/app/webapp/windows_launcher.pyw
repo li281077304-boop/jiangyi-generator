@@ -87,6 +87,14 @@ def prepare_runtime_environment(env: dict[str, str] | None = None,
     return child_env, runtime
 
 
+def application_resource_directory() -> Path:
+    """Return the audited resource root in source and PyInstaller layouts."""
+    if getattr(sys, "frozen", False):
+        bundle_root = Path(getattr(sys, "_MEIPASS"))
+        return bundle_root / "v1.2-xml-experiment" / "res" / "app"
+    return Path(__file__).resolve().parents[1]
+
+
 def _create_instance_mutex():
     if os.name != "nt":
         return None, False
@@ -272,7 +280,7 @@ def run_server() -> int:
     # Child process variables are set before importing the app and its dynamic loaders.
     os.environ.update(env)
     sys.dont_write_bytecode = True
-    app_dir = Path(__file__).resolve().parents[1]
+    app_dir = application_resource_directory()
     webapp_dir = app_dir / "webapp"
     if str(webapp_dir) not in sys.path:
         sys.path.insert(0, str(webapp_dir))
