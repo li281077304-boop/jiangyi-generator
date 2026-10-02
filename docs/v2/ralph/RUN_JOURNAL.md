@@ -468,3 +468,16 @@ presented as part of the ten-entry V0.9 asset manifest. The audit now records
 both facts and requires disabling Python bytecode writes before app imports or
 dynamic loads. Chief re-review is pending; no implementation, build, or test
 work was authorized or performed in this PATCH follow-up.
+
+| C4-R2 Launcher/runtime boundary | 2026-10-02 04:57 UTC (launcher implementation file created) | 2026-10-02 05:04 UTC | GPT-6 Luna Goal Mode | b423a783ce42d573762e5081e96b9c7cd5486101 | 616c352a51f22e9ff19f6199ff82989f457522cf (implementation; journal metadata commit follows) | PASS focused gate: 8 launcher tests passed, including actual server child startup/identity probe/ready/explicit shutdown; mutex single-instance on Windows; occupied-port fallback selects the actual bound alternate port; Known Folder redirect path; LOCALAPPDATA TEMP/TMP/TMPDIR, result/jobs roots, bytecode disabled before app import; py_compile, JS syntax, staged diff-check pass. No EXE build, full package, RC UAT, WPS test, or C4 PASS. | Codex GPT-6.1 Sol | PENDING — independent C4-R2 review required | After Chief PASS, continue release-engineering work within reviewed boundaries; do not claim package/RC readiness from source smoke | Yes: implementation commit `616c352` pushed and remote verified; Journal metadata commit follows |
+
+C4-R2 adds a `.pyw` GUI-mode bootstrap suitable as a future windowed/onedir
+entry, with single-instance mutex, loopback bind at 5128 or the server's actual
+OS-assigned fallback port, nonce-authenticated ready identity, browser open,
+and a token-gated Settings exit action that gracefully stops the backend.
+Before importing the Flask app or dynamic loaders, the server process redirects
+TEMP/TMP/TMPDIR and runtime roots to `%LOCALAPPDATA%\讲义生成器`, disables
+bytecode writes, and resolves the actual Desktop Known Folder for final results.
+The server-child smoke starts without requiring WPS; it does not exercise a
+WPS-dependent fallback job. No A/B/C3 or V0.9 asset was changed. The Journal
+metadata commit follows implementation `616c352`.
