@@ -379,3 +379,15 @@ clean runs (356 and 360 passed) did not reproduce it, and this environment's
 bulk-delete guard was observed to fail closed during pytest temporary-directory
 cleanup, which is the most likely cause. No `C3_STUDENTIZER_PERFORMANCE_PASS`,
 no tag, no EXE/installer/release work.
+
+| C3-R12 | ~2026-10-02 01:25 UTC (restart-recovery repair; exact kickoff not captured) | 2026-10-02 01:54 UTC | GPT-6 Luna | 9fe4002c4dcf4a6da3be5781bc1afd13ff3a768e | PENDING | PASS scoped restart/C3.5 gate: startup recovery clears only renderer intermediates inside an interrupted job's private work directory and requeues it; preserves uploaded inputs and published sibling results. Focused hardening + batch-service tests 19 passed; concurrent fallback max-active=1 gate 1 passed; py_compile and diff-check clean. Existing batch10, batch20, 10-job consecutive, abnormal-input, serial-fallback and queued restart-A evidence reused. Fresh restart-B killed 3 times at 5/20/30 seconds while persisted running; all resumed to done with 2 DOCX and clean output; the 30s interruption captured stale `teacher-output-<job_id>.docx` and resumed successfully after cleanup. Fresh batch restart-C killed with item 1 done and item 2 active/item 3 queued; all 3 completed, and item 1's two DOCX hashes were byte-identical before/after. No batch10/20 rerun. Independent Chief review pending; full final regression remains pending. | Codex GPT-6.1 Sol (required; PENDING) | PENDING | Continue full candidate gates and independent final review; no C3 final PASS/tag | Yes: scoped recovery/harness/report/evidence changes to be committed and pushed in this round; verify remote SHA after push |
+
+Round 12 fixes the reproduced restart-B failure. The job service now removes
+known generated renderer scratch from that interrupted job's private workspace
+before requeue; it never targets uploaded inputs or published user results.
+The restart harness records the persisted job state at kill time rather than
+reusing the initial queued API response. The concurrent fallback gate observed
+max-active=1 and restored the instrumented callable. C3.5 load evidence is inherited from
+the prior candidate and preserved in `integration/fixtures/c3-c35/`; no large
+load was repeated. No layered fallback or Studentizer production route changes
+were made. C3 final gates and Chief review are still pending.

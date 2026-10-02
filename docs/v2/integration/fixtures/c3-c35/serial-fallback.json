@@ -1,0 +1,183 @@
+{
+  "status": "done",
+  "batch_outcome": "ALL_SUCCESS",
+  "total_items": 5,
+  "done": 5,
+  "failed": 0,
+  "xml_items": 3,
+  "fallback_items": 2,
+  "fallback_reasons": [
+    "UNSUPPORTED_BOOKMARK_SCOPE"
+  ],
+  "elapsed_seconds": 65.697,
+  "seconds_per_item": 13.139,
+  "outputs": 10,
+  "items": [
+    {
+      "item_id": "1",
+      "topic": "专题02 电压 电阻＆欧姆定律（期末复习讲义）",
+      "status": "done",
+      "renderer": "XML",
+      "fallback_reason": null,
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "STUDENT_SOURCE_BYPASS",
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 2
+    },
+    {
+      "item_id": "2",
+      "topic": "1.1 物质的变化和性质 第2课时（讲义）",
+      "status": "done",
+      "renderer": "XML",
+      "fallback_reason": null,
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "STUDENT_SOURCE_BYPASS",
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 2
+    },
+    {
+      "item_id": "3",
+      "topic": "1.2 化学实验与科学探究（题型专练）",
+      "status": "done",
+      "renderer": "XML",
+      "fallback_reason": null,
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "STUDENT_SOURCE_BYPASS",
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 2
+    },
+    {
+      "item_id": "4",
+      "topic": "专题01",
+      "status": "done",
+      "renderer": "V0.9",
+      "fallback_reason": "UNSUPPORTED_BOOKMARK_SCOPE",
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "XML_PREPARED",
+      "studentizer_reason": null,
+      "make_student_called": true,
+      "outputs": 2
+    },
+    {
+      "item_id": "5",
+      "topic": "专题02",
+      "status": "done",
+      "renderer": "V0.9",
+      "fallback_reason": "UNSUPPORTED_BOOKMARK_SCOPE",
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "XML_PREPARED",
+      "studentizer_reason": null,
+      "make_student_called": true,
+      "outputs": 2
+    }
+  ],
+  "process_monitor": {
+    "new_instances": 24,
+    "by_name": {
+      "wps.exe": 24
+    },
+    "preexisting_instances": 4,
+    "observed_instances": 28,
+    "peak_live_instances": 6,
+    "baseline_live": [
+      "wps.exe#12880",
+      "wps.exe#28284",
+      "wps.exe#8548",
+      "wps.exe#8824"
+    ],
+    "started": [
+      "wps.exe#11788",
+      "wps.exe#12416",
+      "wps.exe#12416",
+      "wps.exe#16988",
+      "wps.exe#18040",
+      "wps.exe#18320",
+      "wps.exe#19400",
+      "wps.exe#20352",
+      "wps.exe#21964",
+      "wps.exe#22556",
+      "wps.exe#23260",
+      "wps.exe#24860",
+      "wps.exe#25700",
+      "wps.exe#25736",
+      "wps.exe#25928",
+      "wps.exe#26180",
+      "wps.exe#27592",
+      "wps.exe#28256",
+      "wps.exe#5628",
+      "wps.exe#6092",
+      "wps.exe#7208",
+      "wps.exe#8064",
+      "wps.exe#9308",
+      "wps.exe#9364"
+    ],
+    "availability_error": null
+  },
+  "instrumentation": {
+    "com_script_invocations": 12,
+    "make_student_calls": 2,
+    "aline_calls": 12,
+    "slot_router_total_calls": 10,
+    "slot_router_aline_calls": 10,
+    "xml_renderer_calls": 8,
+    "package_validation_calls": 109,
+    "seconds": {
+      "aline_seconds": 1.08506,
+      "slot_router_aline_seconds": 0.962721,
+      "slot_router_total_seconds": 1.101077,
+      "xml_renderer_seconds": 6.216067,
+      "package_validation_seconds": 9.721565,
+      "make_student_seconds": 14.801605,
+      "com_script_seconds": 45.949128
+    },
+    "slot_router_seconds": 0.138356
+  },
+  "case": "serial-fallback",
+  "note": "混合批次：多个 XML 支持的教师+学生对 + 两个必须走 COM 回退的 teacher-only item。",
+  "template": "class",
+  "started_utc": "2026-10-01T18:04:21+00:00",
+  "ended_utc": "2026-10-01T18:05:27+00:00",
+  "work_dir": "C:\\xml-uat\\c35-hardening\\run-20261001T180421070416",
+  "result_dir": "C:\\xml-uat\\c35-hardening\\run-20261001T180421070416\\results\\批量讲义",
+  "rss_bytes_before": 71032832,
+  "rss_bytes_after": 109010944,
+  "result_files": {
+    "file_count": 10,
+    "docx_count": 10,
+    "non_docx": [],
+    "underscore_names": [],
+    "folder_names": [
+      "1.1 物质的变化和性质 第2课时（讲义）",
+      "1.2 化学实验与科学探究（题型专练）",
+      "专题01",
+      "专题02",
+      "专题02 电压 电阻＆欧姆定律（期末复习讲义）"
+    ]
+  },
+  "residual_after_settle": {
+    "seconds": 10.0,
+    "live_instances": 4,
+    "baseline_instances": 4,
+    "residual_instances": 0,
+    "residual": []
+  },
+  "fallback_detail": {
+    "fallback_items": 2,
+    "xml_items": 3,
+    "failed": 0,
+    "all_successful_items_done": true
+  }
+}

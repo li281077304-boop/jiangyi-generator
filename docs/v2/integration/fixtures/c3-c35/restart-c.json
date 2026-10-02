@@ -1,0 +1,162 @@
+{
+  "case": "restart-C",
+  "killed_at_utc": "2026-10-02T01:49:06+00:00",
+  "wait_seconds": 31.554,
+  "killed_while": "running",
+  "persisted_at_kill": [
+    {
+      "job_id": "4ef02aad59b643d49e522db82f9ec847",
+      "status": "running",
+      "stage": "正在处理专题：专题02",
+      "progress": 1,
+      "current_topic": "专题02",
+      "completed": 1,
+      "items": [
+        {
+          "topic": "专题01",
+          "status": "done",
+          "outputs": [
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题01\\专题01 教师版.docx",
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题01\\专题01 学生版.docx"
+          ]
+        },
+        {
+          "topic": "专题02",
+          "status": "queued",
+          "outputs": []
+        },
+        {
+          "topic": "专题03",
+          "status": "queued",
+          "outputs": []
+        }
+      ]
+    }
+  ],
+  "private_scratch_at_kill": [],
+  "prepare_state": {
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778",
+    "phase": "prepare",
+    "scenario": "C",
+    "job_ids": [
+      "4ef02aad59b643d49e522db82f9ec847"
+    ],
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "is_batch": true,
+    "worker_started": true
+  },
+  "resume": {
+    "case": "restart-c",
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778",
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "queued_after_recovery": [
+      "4ef02aad59b643d49e522db82f9ec847"
+    ],
+    "recovered_statuses": [
+      "queued"
+    ],
+    "final_status": [
+      "done"
+    ],
+    "batch_outcome": [
+      "ALL_SUCCESS"
+    ],
+    "items": [
+      {
+        "topic": "专题01",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2
+      },
+      {
+        "topic": "专题02",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2
+      },
+      {
+        "topic": "专题03",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2
+      }
+    ],
+    "done_items": 3,
+    "failed_items": 0,
+    "outputs": 6,
+    "completed_outputs_before_resume": {
+      "4ef02aad59b643d49e522db82f9ec847": [
+        {
+          "topic": "专题01",
+          "output_paths": [
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题01\\专题01 教师版.docx",
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题01\\专题01 学生版.docx"
+          ],
+          "sha256": [
+            "43018bb56845c20de1091f0f9ac06edc0318fb700208ed28ebf5da8e984a2ae4",
+            "5dfd3ccf9cdc38f333f46f2439ada5e0984e2830509c9df5d89956efb577b475"
+          ]
+        }
+      ]
+    },
+    "completed_outputs_after_resume": {
+      "4ef02aad59b643d49e522db82f9ec847": [
+        {
+          "topic": "专题01",
+          "output_paths": [
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题01\\专题01 教师版.docx",
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题01\\专题01 学生版.docx"
+          ],
+          "sha256": [
+            "43018bb56845c20de1091f0f9ac06edc0318fb700208ed28ebf5da8e984a2ae4",
+            "5dfd3ccf9cdc38f333f46f2439ada5e0984e2830509c9df5d89956efb577b475"
+          ]
+        },
+        {
+          "topic": "专题02",
+          "output_paths": [
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题02\\专题02 教师版.docx",
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题02\\专题02 学生版.docx"
+          ],
+          "sha256": [
+            "ed4285c697f82aa21148d0b027132f17131ac6ef5f3dccc940666c6a618a59f8",
+            "8165a359fb7dda5f537cd52052969547cc3119c0737481625fb4930366e35acc"
+          ]
+        },
+        {
+          "topic": "专题03",
+          "output_paths": [
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题03\\专题03 教师版.docx",
+            "C:\\xml-uat\\c35-hardening\\restart-c-20261002T014831629778\\results\\批量讲义\\专题03\\专题03 学生版.docx"
+          ],
+          "sha256": [
+            "3bc0693cbad18ae9db6283d50b7d98eaf0715a8a0d03f1beeee40e3144384378",
+            "54b570fb909acf101e88f26771825a35aa0adb8c8c33bd4ffc4c7a6808b1ec3d"
+          ]
+        }
+      ]
+    },
+    "completed_outputs_preserved": true,
+    "result_files": {
+      "file_count": 6,
+      "docx_count": 6,
+      "non_docx": [],
+      "internal_artifacts": [],
+      "underscore_names": [],
+      "folder_names": [
+        "专题01",
+        "专题02",
+        "专题03"
+      ]
+    },
+    "started_utc": "2026-10-02T01:51:38+00:00",
+    "ended_utc": "2026-10-02T01:51:38+00:00"
+  },
+  "resume_returncode": 0,
+  "started_utc": "2026-10-02T01:51:38+00:00",
+  "ended_utc": "2026-10-02T01:51:38+00:00"
+}

@@ -52,6 +52,7 @@ class JobService:
                     record = self._read_json(metadata)
                     if record.get("status") != "running":
                         continue
+                    self._clear_interrupted_work(metadata.parent, record.get("job_id"))
                     now = datetime.now(timezone.utc)
                     record.update({
                         "status": "queued",
@@ -64,6 +65,36 @@ class JobService:
                     self._write_json(metadata, record)
                 except (OSError, ValueError, KeyError, json.JSONDecodeError):
                     continue
+
+    @staticmethod
+    def _clear_interrupted_work(job_dir: Path, job_id: str | None) -> None:
+        """Remove only renderer intermediates from a job that will be rerun.
+
+        Uploaded inputs and published result files are outside this private
+        workspace and are deliberately preserved.  V0.9 can leave an output
+        behind if the host process is killed between generation and publish;
+        the next attempt needs fresh renderer paths.
+        """
+        if not job_id or not re.fullmatch(r"[0-9a-f]{32}", str(job_id)):
+            return
+        root = job_dir.resolve()
+        work_dir = (root / "work").resolve()
+        if not work_dir.is_relative_to(root) or not work_dir.is_dir():
+            return
+
+        candidates = [work_dir / "derived-student-source.docx"]
+        candidates.extend(work_dir.glob("*-%s.docx" % job_id))
+        candidates.extend(work_dir.glob(".*.v09-student-*.docx"))
+        candidates.extend(work_dir.glob(".*.xml-stage-*.docx"))
+        for candidate in candidates:
+            try:
+                resolved = candidate.resolve(strict=True)
+                if (candidate.is_symlink() or not resolved.is_relative_to(work_dir)
+                        or not resolved.is_file()):
+                    continue
+                resolved.unlink()
+            except OSError:
+                continue
 
     def queued_jobs(self) -> list[dict]:
         return [record for record in self.list() if record.get("status") == "queued"]

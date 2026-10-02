@@ -1,0 +1,74 @@
+{
+  "case": "restart-A",
+  "killed_at_utc": "2026-10-01T18:07:36+00:00",
+  "killed_while": "queued",
+  "prepare_state": {
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-a-20261001T180728197829",
+    "phase": "prepare",
+    "scenario": "A",
+    "job_ids": [
+      "85b8f964ace94a2e86c85767cdc37b70"
+    ],
+    "statuses_before_kill": [
+      "queued"
+    ]
+  },
+  "resume": {
+    "case": "restart-a",
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-a-20261001T180728197829",
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "queued_after_recovery": [
+      "85b8f964ace94a2e86c85767cdc37b70"
+    ],
+    "recovered_statuses": [
+      "queued"
+    ],
+    "final_status": [
+      "done"
+    ],
+    "batch_outcome": [
+      "ALL_SUCCESS"
+    ],
+    "items": [
+      {
+        "topic": "专题01",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2
+      },
+      {
+        "topic": "专题02",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2
+      },
+      {
+        "topic": "专题03",
+        "status": "done",
+        "renderer": "V0.9",
+        "outputs": 2
+      }
+    ],
+    "done_items": 3,
+    "failed_items": 0,
+    "outputs": 6,
+    "result_files": {
+      "file_count": 6,
+      "docx_count": 6,
+      "non_docx": [],
+      "underscore_names": [],
+      "folder_names": [
+        "专题01",
+        "专题02",
+        "专题03"
+      ]
+    },
+    "started_utc": "2026-10-01T18:10:15+00:00",
+    "ended_utc": "2026-10-01T18:10:15+00:00"
+  },
+  "resume_returncode": 0,
+  "started_utc": "2026-10-01T18:10:15+00:00",
+  "ended_utc": "2026-10-01T18:10:15+00:00"
+}

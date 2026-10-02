@@ -1,0 +1,171 @@
+{
+  "status": "partial",
+  "batch_outcome": "PARTIAL_SUCCESS",
+  "total_items": 6,
+  "done": 2,
+  "failed": 4,
+  "xml_items": 1,
+  "fallback_items": 1,
+  "fallback_reasons": [
+    "XML_RENDER_FAILED"
+  ],
+  "elapsed_seconds": 19.132,
+  "seconds_per_item": 3.189,
+  "outputs": 4,
+  "items": [
+    {
+      "item_id": "1",
+      "topic": "损坏",
+      "status": "error",
+      "renderer": null,
+      "fallback_reason": null,
+      "teacher": "失败",
+      "student": "失败",
+      "error": "无效或损坏的 DOCX",
+      "studentizer_status": null,
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 0
+    },
+    {
+      "item_id": "2",
+      "topic": "空文档",
+      "status": "error",
+      "renderer": null,
+      "fallback_reason": null,
+      "teacher": "失败",
+      "student": "失败",
+      "error": "缺少 DOCX 主文档部件",
+      "studentizer_status": null,
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 0
+    },
+    {
+      "item_id": "3",
+      "topic": "专题02 电压 电阻＆欧姆定律（期末复习讲义）",
+      "status": "error",
+      "renderer": null,
+      "fallback_reason": null,
+      "teacher": "失败",
+      "student": "失败",
+      "error": "同专题存在多个来源，无法唯一配对",
+      "studentizer_status": null,
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 0
+    },
+    {
+      "item_id": "4",
+      "topic": "这是一个非常非常长的中文文件名称用于验证超长中文路径在批量解析与结果目录命名中的行为这是一个非常非常长的中文文件名称用于验证超长中文路径在批量解析与结果目录命名中的行为这是一个非常非常长的中文文件名称用于验证超长中文路径在批量解析与结果目录命名中的行为",
+      "status": "done",
+      "renderer": "V0.9",
+      "fallback_reason": "XML_RENDER_FAILED",
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "STUDENTIZER_FALLBACK_REQUIRED",
+      "studentizer_reason": "STUDENTIZER_COVERAGE_UNPROVEN",
+      "make_student_called": true,
+      "outputs": 2
+    },
+    {
+      "item_id": "5",
+      "topic": "重复名称",
+      "status": "error",
+      "renderer": null,
+      "fallback_reason": null,
+      "teacher": "失败",
+      "student": "失败",
+      "error": "教师版和学生版无法可靠配对；不会按文件大小猜测",
+      "studentizer_status": null,
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 0
+    },
+    {
+      "item_id": "6",
+      "topic": "同名",
+      "status": "done",
+      "renderer": "XML",
+      "fallback_reason": null,
+      "teacher": "完成",
+      "student": "完成",
+      "error": null,
+      "studentizer_status": "STUDENT_SOURCE_BYPASS",
+      "studentizer_reason": null,
+      "make_student_called": false,
+      "outputs": 2
+    }
+  ],
+  "process_monitor": {
+    "new_instances": 12,
+    "by_name": {
+      "wps.exe": 12
+    },
+    "preexisting_instances": 4,
+    "observed_instances": 16,
+    "peak_live_instances": 6,
+    "started": [
+      "wps.exe#12524",
+      "wps.exe#14596",
+      "wps.exe#16284",
+      "wps.exe#17544",
+      "wps.exe#1800",
+      "wps.exe#18500",
+      "wps.exe#19032",
+      "wps.exe#21100",
+      "wps.exe#22244",
+      "wps.exe#23180",
+      "wps.exe#27260",
+      "wps.exe#9880"
+    ],
+    "availability_error": null
+  },
+  "instrumentation": {
+    "com_script_invocations": 6,
+    "make_student_calls": 1,
+    "aline_calls": 3,
+    "slot_router_total_calls": 2,
+    "slot_router_aline_calls": 2,
+    "xml_renderer_calls": 2,
+    "package_validation_calls": 26,
+    "seconds": {
+      "aline_seconds": 0.063817,
+      "slot_router_aline_seconds": 0.034943,
+      "slot_router_total_seconds": 0.04598,
+      "xml_renderer_seconds": 0.168178,
+      "package_validation_seconds": 0.315628,
+      "make_student_seconds": 5.314858,
+      "com_script_seconds": 17.063757
+    },
+    "slot_router_seconds": 0.011037
+  },
+  "case": "abnormal",
+  "note": "异常输入批次：损坏、空包、~$、超长中文名、重复名、同名师生、嵌套中文 ZIP、ZIP 内部分损坏。",
+  "template": "1v1",
+  "started_utc": "2026-10-01T17:01:07+00:00",
+  "ended_utc": "2026-10-01T17:01:26+00:00",
+  "work_dir": "C:\\xml-uat\\c35-hardening\\run-20261001T170106963313",
+  "result_dir": "C:\\xml-uat\\c35-hardening\\run-20261001T170106963313\\results\\批量讲义",
+  "rss_bytes_before": null,
+  "rss_bytes_after": null,
+  "result_files": {
+    "file_count": 4,
+    "docx_count": 4,
+    "non_docx": [],
+    "underscore_names": [],
+    "folder_names": [
+      "同名",
+      "这是一个非常非常长的中文文件名称用于验证超长中文路径在批量解析与结果目录命名中的行为这是一个非常非常长的中文文件名称用于验证超长中文路径在批量解析与结果目录命名中的行为这是一个非常非常长的中文文件名称用于验证超长中文路径在批量解析与结果目录命名中的行为"
+    ]
+  },
+  "zip_path_traversal": {
+    "http_status": 415,
+    "json": {
+      "error": "UNSAFE_ZIP_PATH: ../../c35-path-traversal-evil.docx"
+    },
+    "work_dir": "C:\\xml-uat\\c35-hardening\\traversal-20261001T170126512614",
+    "files_written_outside": []
+  }
+}

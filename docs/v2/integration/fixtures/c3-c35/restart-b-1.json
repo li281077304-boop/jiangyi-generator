@@ -1,0 +1,81 @@
+{
+  "case": "restart-B",
+  "killed_at_utc": "2026-10-02T01:39:52+00:00",
+  "wait_seconds": 5.0,
+  "killed_while": "running",
+  "persisted_at_kill": [
+    {
+      "job_id": "a323402ebde142ea912fa808307d170d",
+      "status": "running",
+      "stage": "XML 不支持（XML_RENDER_FAILED），正在调用 V0.9 全任务回退",
+      "progress": 0,
+      "current_topic": null,
+      "completed": null,
+      "items": [
+        {
+          "topic": "专题01",
+          "status": null,
+          "outputs": []
+        }
+      ]
+    }
+  ],
+  "prepare_state": {
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-b-20261002T013946370485",
+    "phase": "prepare",
+    "scenario": "B",
+    "job_ids": [
+      "a323402ebde142ea912fa808307d170d"
+    ],
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "is_batch": false,
+    "worker_started": true
+  },
+  "resume": {
+    "case": "restart-b",
+    "work_dir": "C:\\xml-uat\\c35-hardening\\restart-b-20261002T013946370485",
+    "statuses_before_kill": [
+      "queued"
+    ],
+    "queued_after_recovery": [
+      "a323402ebde142ea912fa808307d170d"
+    ],
+    "recovered_statuses": [
+      "queued"
+    ],
+    "final_status": [
+      "done"
+    ],
+    "batch_outcome": [
+      null
+    ],
+    "items": [
+      {
+        "topic": "专题01",
+        "status": null,
+        "renderer": null,
+        "outputs": 0
+      }
+    ],
+    "done_items": 0,
+    "failed_items": 0,
+    "outputs": 0,
+    "result_files": {
+      "file_count": 2,
+      "docx_count": 2,
+      "non_docx": [],
+      "internal_artifacts": [],
+      "underscore_names": [],
+      "folder_names": [
+        "专题01"
+      ]
+    },
+    "started_utc": "2026-10-02T01:41:33+00:00",
+    "ended_utc": "2026-10-02T01:41:33+00:00"
+  },
+  "resume_returncode": 0,
+  "started_utc": "2026-10-02T01:41:33+00:00",
+  "ended_utc": "2026-10-02T01:41:33+00:00"
+}
