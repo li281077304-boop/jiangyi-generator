@@ -433,3 +433,10 @@ Final evidence is in `docs/v2/integration/C3_FINAL_MACHINE_GATE_2026-10-02.md`.
 X008 Studentizer-stage counters are separated there from later whole-job V0.9
 renderer fallback counters. Final Chief review remains pending; no C3 tag or
 completion claim is made.
+
+| C3-R15 Chief PATCH follow-up | ~2026-10-02 03:40 UTC (exact kickoff not captured) | 2026-10-02 03:56 UTC | GPT-6 Luna Goal Mode | 4a8ea86aeb95313e54cac74121c240dacbaa5d05 | effa4f56859a53b808736561ea0ad9c18ef9b74f | PASS scoped machine gate: Studentizer integration + restart harness 30 passed, including interruption after teacher publication and after both finals before done; X008-like XML Studentizer/refusal test proves preparation telemetry immutable and renderer fallback telemetry separate; `py_compile` and `git diff --check` PASS. No broad final gate, large stress, capability scan, Golden, or OOXML audit rerun. Existing exact-ID renderer participation deduplicated as XML 9 / V0.9 1 / unmeasured 17 across 27 source IDs; 8 XML logical items and 9 repeated X008 V0.9 item executions are separately identified | Codex GPT-6.1 Sol | PATCH follow-up re-review PENDING | Submit only scoped PATCH evidence for independent review; do not begin final gate until verdict | Yes: implementation commit `effa4f5` pushed and remote SHA verified; report/Journal metadata commit follows |
+
+C3-R15 follow-up report: `docs/v2/integration/C3_R15_CHIEF_PATCH_2026-10-02.md`. The
+renderer source denominator is derived only from previously measured C2 Case A/B
+and X008 exact IDs; the C2 Case B denominator remains three logical pairs, not
+six jobs. No broad gate was repeated and no final C3 PASS/tag is claimed.

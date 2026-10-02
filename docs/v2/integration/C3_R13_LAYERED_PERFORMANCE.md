@@ -17,11 +17,25 @@ five XML Studentizer preparations for the same approved X008 source used at
 1/3/5 item sizes. X008 then reaches the separately measured whole-job renderer
 fallback because of the known frozen bookmark-anchor refusal.
 
-Renderer route totals for all 27 sources are **not fully established**: the
-capability scan is not a full renderer preflight for each source. In these
-actual R13 workloads, C2 Case A was XML 5/5, C2 Case B was XML 3/3, and X008
-was whole-job V0.9 5/5. No renderer denominator is inferred for the remaining
-corpus sources.
+Renderer routing is a logical-item decision, so the report keeps both the
+observed job denominator and the unique source-participation denominator. The
+existing exact-ID cases establish 8 XML logical items (C2 Case A: 5; C2 Case B:
+3 teacher+student pairs) and 9 whole-job V0.9 executions from the repeated
+X008 1/3/5 workload. Deduplicated against the 27-source corpus, the observed
+unique source participation is:
+
+| Renderer route among the 27 exact source IDs | Count | IDs / basis |
+|---|---:|---|
+| XML observed | 9 | X001, X002, X004, X006, X019, X020, X021, X023, X025; Case B's 3 XML logical pairs cover six IDs, overlapping Case A at X001/X023 |
+| V0.9 whole-job observed | 1 | X008; repeated 1/3/5 measurements are one unique corpus source |
+| Renderer unmeasured | 17 | Remaining exact source IDs; no route is inferred from the capability scan |
+| **Total** | **27** | Unique source IDs, not logical-item executions |
+
+This is observed participation through routed logical items, not 27
+independent renderer preflights. The capability scan remains a separate
+Studentizer measure: 1/27 supported, 26/27 unsupported; its production
+preparation policy is 1 XML Studentizer and 26 V0.9 `make_student`. These
+three denominators and decisions must not be conflated.
 
 All cases run the production HTTP path with the real A-Line, C1 Slot Router, B-Line
 renderer, templates and frozen V0.9 runtime. Only observation wrappers are installed.

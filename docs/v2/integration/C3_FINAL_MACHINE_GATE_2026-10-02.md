@@ -51,9 +51,13 @@ The already-reviewed exact-digest scan remains **1/27 Studentizer-supported**
 and **26/27 fail closed** with `STUDENTIZER_COVERAGE_UNPROVEN`. This is the
 Studentizer capability rate; it is not a renderer-route rate. The existing
 boundary diagnostic is 15 clear / 12 unsupported (8 `txbxContent`, 2
-`clrChange`, 2 unsupported field parameters). Exact renderer routes for all 27
-sources remain **not fully established**; the prior capability scan was not a
-full renderer preflight.
+`clrChange`, 2 unsupported field parameters). Renderer routes are measured for 8 logical XML items and 9 repeated X008
+whole-job V0.9 item executions. On the distinct 27-source denominator, those
+existing exact-ID workloads involve 9 XML-routed source IDs, 1 V0.9-routed
+source ID (X008, repeated workload counted once), and 17 source IDs whose
+renderer route remains unmeasured. This is observed participation through the
+listed logical items, not a 27-source renderer preflight. Exact IDs and the
+source-vs-item denominator are detailed in `C3_R13_LAYERED_PERFORMANCE.md`.
 
 R13 production measurements remain the comparable performance evidence:
 
