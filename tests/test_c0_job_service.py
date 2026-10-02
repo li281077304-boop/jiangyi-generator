@@ -539,5 +539,5 @@ def test_failed_make_student_attempt_is_persisted_truthfully(client, monkeypatch
     final = make_service().get(job_id)
     assert final["status"] == "error"
     assert final["student_preparation"]["make_student_called"] is True
-    assert final["student_preparation"]["wps_com_started"] is True
+    assert final["student_preparation"]["wps_com_started"] is None
     assert final["student_preparation"]["elapsed_seconds"] is not None

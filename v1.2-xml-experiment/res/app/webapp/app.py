@@ -176,7 +176,8 @@ def _execute_job(job_id: str) -> None:
 
         preparation = {"make_student_called": False, "input_version": input_version,
                        "elapsed_seconds": 0.0, "wps_com_started": False,
-                       "student_preparation": "BYPASS", "com_used": False,
+                       "student_preparation": "BYPASS", "student_preparation_route": None,
+                       "com_used": False, "com_observation": "NOT_ENTERED",
                        "package_valid": None, "output_package_valid": None,
                        "engine": "BYPASS", "status": "STUDENT_SOURCE_BYPASS",
                        "reason_code": None, "reason_detail": None,
@@ -204,13 +205,36 @@ def _execute_job(job_id: str) -> None:
                 _persist_job_stage(service, job_id, 0, "V0.9 make_student preparation")
                 make_started = time.perf_counter()
                 preparation.update({"student_preparation": "V09_MAKE_STUDENT",
-                                    "make_student_called": True, "com_used": True,
-                                    "wps_com_started": True})
+                                    "student_preparation_route": "V09_MAKE_STUDENT",
+                                    "preparation_error_code": None,
+                                    "preparation_error_detail": None})
                 service.update_student_preparation(job_id, preparation)
                 try:
                     with _V09_FALLBACK_LOCK:
                         engine = _load_v09_engine()
-                        engine.make_student(str(teacher_source), str(student_source))
+                        original_make_student = engine.make_student
+
+                        def observed_make_student(*args, **kwargs):
+                            # The frozen callable can fail in its python-docx
+                            # phase before attempting a PowerShell/COM script.
+                            preparation.update({
+                                "make_student_called": True,
+                                "com_used": None,
+                                "wps_com_started": None,
+                                "com_observation": "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY",
+                            })
+                            service.update_student_preparation(job_id, preparation)
+                            return original_make_student(*args, **kwargs)
+
+                        engine.make_student = observed_make_student
+                        try:
+                            engine.make_student(str(teacher_source), str(student_source))
+                        finally:
+                            engine.make_student = original_make_student
+                except Exception as exc:
+                    preparation["preparation_error_code"] = "V09_MAKE_STUDENT_FAILED"
+                    preparation["preparation_error_detail"] = "%s: %s" % (type(exc).__name__, exc)
+                    raise
                 finally:
                     make_elapsed = round(time.perf_counter() - make_started, 6)
                     preparation.update({"make_student_elapsed_seconds": make_elapsed,
@@ -331,8 +355,9 @@ def _execute_job(job_id: str) -> None:
                     _persist_job_stage(service, job_id, 1,
                                        "V0.9 make_student preparation")
                     stamp = time.perf_counter()
-                    preparation.update({"make_student_called": True, "wps_com_started": True,
-                                        "wps_com_evidence": "COM_CAPABLE_MAKE_STUDENT_ENTRY_ONLY"})
+                    preparation.update({"make_student_called": True, "com_used": None,
+                                        "wps_com_started": None,
+                                        "com_observation": "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY"})
                     service.update_student_preparation(job_id, preparation)
                     try:
                         return original_make_student(*args, **kwargs)

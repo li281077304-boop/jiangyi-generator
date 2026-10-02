@@ -92,7 +92,9 @@ def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, rend
     assert final['renderer'] == 'XML' and final['fallback_reason'] is None
     prep = final['student_preparation']
     assert prep['reason_code'] == reason and prep['student_preparation'] == 'V09_MAKE_STUDENT'
-    assert prep['make_student_called'] and prep['wps_com_started'] and prep['com_used'] is True
+    assert prep['make_student_called']
+    assert prep['wps_com_started'] is None and prep['com_used'] is None
+    assert prep['com_observation'] == 'UNKNOWN_AFTER_MAKE_STUDENT_ENTRY'
     assert prep['make_student_elapsed_seconds'] >= 0
     assert len(renderer['make_student']) == 1 and len(renderer['xml']) == 2
     assert not renderer['fallback']

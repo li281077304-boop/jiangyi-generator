@@ -263,6 +263,9 @@ class JobService:
                                      "input_version": version,
                                      "elapsed_seconds": None,
                                      "wps_com_started": False,
+                                     "student_preparation_route": None,
+                                     "com_used": False,
+                                     "com_observation": "NOT_ENTERED",
                                      "package_valid": None},
         }
         with self._lock:

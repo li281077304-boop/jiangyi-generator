@@ -186,7 +186,7 @@ def test_zip_mixed_input_versions_preserves_user_student(client, renderer):
     assert final["produced"] == 5 and len(renderer["make_student"]) == 1
     assert final["items"][0]["student_preparation"]["elapsed_seconds"] >= 0
     assert final["items"][0]["student_preparation"]["make_student_called"] is True
-    assert final["items"][0]["student_preparation"]["wps_com_started"] is True
+    assert final["items"][0]["student_preparation"]["wps_com_started"] is None
     assert all(not item["student_preparation"]["make_student_called"] for item in final["items"][1:])
     assert renderer["xml"].count(student) == 2
     assert_clean(final)

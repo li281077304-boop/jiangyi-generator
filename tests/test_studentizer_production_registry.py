@@ -205,10 +205,57 @@ def test_unreviewed_source_uses_v09_student_preparation_then_xml_renderer(client
     assert preparation["reviewed_evidence"] is None
     assert final["renderer"] == "XML" and final["produced"] == 2
     assert preparation["student_preparation"] == "V09_MAKE_STUDENT"
-    assert preparation["make_student_called"] and preparation["wps_com_started"]
-    assert preparation["com_used"] is True
+    assert preparation["student_preparation_route"] == "V09_MAKE_STUDENT"
+    assert preparation["make_student_called"]
+    assert preparation["wps_com_started"] is None
+    assert preparation["com_used"] is None
+    assert preparation["com_observation"] == "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY"
     assert len(renderer["make_student"]) == 1
     assert not renderer["fallback"] and len(renderer["xml"]) == 2
+
+
+def test_v09_engine_loader_failure_records_selected_route_without_claiming_call_or_com(
+        client, renderer, monkeypatch):  # noqa: F811
+    import renderer_orchestrator
+
+    def fail_loader():
+        raise ImportError("fixture engine loader failure")
+
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", fail_loader)
+    final = post(client, [("专题 教师版.docx", docx("知识点"))])
+    assert final["status"] == "error"
+    preparation = final["student_preparation"]
+    assert preparation["student_preparation_route"] == "V09_MAKE_STUDENT"
+    assert preparation["make_student_called"] is False
+    assert preparation["com_used"] is False and preparation["wps_com_started"] is False
+    assert preparation["com_observation"] == "NOT_ENTERED"
+    assert preparation["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
+    assert preparation["preparation_error_code"] == "V09_MAKE_STUDENT_FAILED"
+    assert "fixture engine loader failure" in preparation["preparation_error_detail"]
+    assert preparation["make_student_elapsed_seconds"] >= 0
+
+
+def test_v09_make_student_entry_failure_marks_call_but_not_observed_com(
+        client, renderer, monkeypatch):  # noqa: F811
+    from types import SimpleNamespace
+    import renderer_orchestrator
+
+    def fail_before_com(*_args, **_kwargs):
+        raise ValueError("fixture strip_red failed before COM")
+
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
+                        lambda: SimpleNamespace(make_student=fail_before_com))
+    final = post(client, [("专题 教师版.docx", docx("知识点"))])
+    assert final["status"] == "error"
+    preparation = final["student_preparation"]
+    assert preparation["student_preparation_route"] == "V09_MAKE_STUDENT"
+    assert preparation["make_student_called"] is True, repr(preparation)
+    assert preparation["com_used"] is None and preparation["wps_com_started"] is None
+    assert preparation["com_observation"] == "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY"
+    assert preparation["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
+    assert preparation["preparation_error_code"] == "V09_MAKE_STUDENT_FAILED"
+    assert "fixture strip_red failed before COM" in preparation["preparation_error_detail"]
+    assert preparation["make_student_elapsed_seconds"] >= 0
 
 
 def test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback(
@@ -225,7 +272,8 @@ def test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback(
     prep = final["student_preparation"]
     assert prep["student_preparation"] == "V09_MAKE_STUDENT"
     assert prep["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
-    assert prep["com_used"] is True
+    assert prep["com_used"] is None
+    assert prep["wps_com_started"] is None
     assert len(renderer["fallback"]) == 1 and len(final["output_paths"]) == 2
 
 
