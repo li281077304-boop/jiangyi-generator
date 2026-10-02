@@ -458,7 +458,7 @@ class JobService:
 
     def record_publication_plan(self, job_id: str, role_paths: dict[str, str],
                                 expected_sha256: dict[str, str]) -> dict:
-        """Persist the exact per-job final paths before publishing any output."""
+        """Persist final paths and safely rebind hashes for unpublished retries."""
         with self._lock:
             record = self._recover(job_id)
             if record.get("status") != "running":
@@ -474,8 +474,20 @@ class JobService:
             if existing and existing.get("role_paths") != normalized:
                 raise ValueError("publication plan changed across an interrupted retry")
             now = datetime.now(timezone.utc)
-            publication = existing or {"role_paths": normalized, "expected_sha256": expected_hashes,
-                                       "published": {}}
+            publication = existing or {"role_paths": normalized,
+                                       "expected_sha256": expected_hashes, "published": {}}
+            if existing:
+                bound_hashes = dict(publication.get("expected_sha256", {}))
+                published = publication.get("published", {})
+                for role, final_path in normalized.items():
+                    # A restart may regenerate byte-equivalent DOCX content
+                    # with different ZIP metadata after private work files
+                    # were cleared. Rebind only an unpublished role whose
+                    # final path is absent. Existing outputs and published
+                    # hashes stay immutable and use strict adoption checks.
+                    if role not in published and not Path(final_path).exists():
+                        bound_hashes[role] = expected_hashes[role]
+                publication["expected_sha256"] = bound_hashes
             record["publication"] = publication
             record["updated_at"], record["updated_at_iso"] = now.timestamp(), now.isoformat(timespec="seconds")
             self._write_json(self._job_dir(job_id) / "job.json", record)

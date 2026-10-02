@@ -376,3 +376,72 @@ def test_publication_restart_reuses_valid_final_roles_without_deleting_them(
     assert all(sha256(path.read_bytes()).hexdigest() == digest for path, digest in original_hashes.items())
     assert set(Path(final['result_dir']).iterdir()) == set(Path(path) for path in final['output_paths'])
     assert final['publication']['published'].keys() == {'teacher', 'student'}
+
+
+def test_restart_rebinds_only_unpublished_role_after_valid_docx_zip_metadata_changes(
+        client, renderer, monkeypatch):
+    import app as app_module
+    import template_slot_composer
+
+    app.config['C0_DISABLE_JOB_SUBMISSION'] = True
+    created = post(client, [('专题 教师版.docx', docx('teacher fixture')),
+                           ('专题 学生版.docx', docx('student fixture'))])
+    job_id = created['job_id']
+    interrupted_once = {'done': False}
+
+    def interrupt_after_teacher(_job_id, stage):
+        if stage == 'published teacher; before next role' and not interrupted_once['done']:
+            interrupted_once['done'] = True
+            raise SystemExit('simulated abrupt process termination')
+
+    app.config['C35_TEST_STAGE_HOOK'] = interrupt_after_teacher
+    with pytest.raises(SystemExit, match='simulated abrupt process termination'):
+        app_module._execute_job(job_id)
+    interrupted = service().get(job_id)
+    assert interrupted['status'] == 'running'
+    published_teacher = Path(interrupted['publication']['role_paths']['teacher'])
+    teacher_bytes_before = published_teacher.read_bytes()
+    teacher_hash_before = sha256(teacher_bytes_before).hexdigest()
+    old_expected = dict(interrupted['publication']['expected_sha256'])
+    assert interrupted['publication']['published']['teacher']['sha256'] == teacher_hash_before
+    assert not Path(interrupted['publication']['role_paths']['student']).exists()
+
+    # Startup recovery clears staging; the renderer then regenerates valid DOCX
+    # packages with different ZIP timestamps and therefore different byte hashes.
+    JobService(app.config['RESULT_ROOT'], runtime_root=app.config['RUNTIME_ROOT'])
+    app.extensions.pop('c0_job_services', None)
+    app.config['C35_TEST_STAGE_HOOK'] = None
+    original_render = template_slot_composer.render_slots
+    regenerate = {'with_new_zip_metadata': True}
+    regenerated_hashes = {}
+
+    def render_with_new_zip_metadata(source_path, plan, output_path):
+        result = original_render(source_path, plan, output_path)
+        if regenerate['with_new_zip_metadata']:
+            output = Path(output_path)
+            temp = output.with_suffix('.rewritten.docx')
+            with zipfile.ZipFile(output, 'r') as source_package:
+                entries = [(info.filename, source_package.read(info.filename), info.compress_type)
+                           for info in source_package.infolist()]
+            with zipfile.ZipFile(temp, 'w') as target_package:
+                for name, data, compression in entries:
+                    info = zipfile.ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0))
+                    info.compress_type = compression
+                    target_package.writestr(info, data)
+            temp.replace(output)
+            role = 'student' if output.name.startswith('student-stage-') else 'teacher'
+            regenerated_hashes[role] = sha256(output.read_bytes()).hexdigest()
+        return result
+
+    monkeypatch.setattr(template_slot_composer, 'render_slots', render_with_new_zip_metadata)
+    app_module._execute_job(job_id)
+
+    final = service().get(job_id)
+    assert final['status'] == 'done', final.get('error')
+    assert old_expected['student'] != regenerated_hashes['student']
+    assert final['publication']['expected_sha256']['student'] == regenerated_hashes['student']
+    assert final['publication']['expected_sha256']['teacher'] == old_expected['teacher']
+    assert sha256(published_teacher.read_bytes()).hexdigest() == teacher_hash_before
+    assert published_teacher.read_bytes() == teacher_bytes_before
+    assert set(Path(final['result_dir']).iterdir()) == set(Path(path) for path in final['output_paths'])
+    assert final['publication']['published'].keys() == {'teacher', 'student'}
