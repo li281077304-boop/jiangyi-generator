@@ -108,6 +108,7 @@ def _template_heading(value: str, heading: str) -> bool:
 
 
 def _count_template_cycles(paragraphs: list[str]) -> tuple[int, int]:
+    title_count = sum(_normalize_heading(text).count(TEMPLATE_TITLE) for text in paragraphs)
     titles = [index for index, text in enumerate(paragraphs) if _template_title(text)]
     cycles = 0
     for title_index in titles:
@@ -122,7 +123,7 @@ def _count_template_cycles(paragraphs: list[str]) -> tuple[int, int]:
             cursor = match + 1
         if complete:
             cycles += 1
-    return len(titles), cycles
+    return title_count, cycles
 
 
 def _repeated_sequences(paragraphs: list[str]) -> tuple[dict[str, Any], ...]:
@@ -218,19 +219,16 @@ def _slot_overlaps(plan: Any) -> list[dict[str, str]]:
         for span in spans:
             first = str(getattr(span, "start", ""))
             last = str(getattr(span, "end", ""))
-            if first == last:
-                blocks = [first]
-            else:
-                # StructDoc intervals use top-level bN block identifiers. If
-                # they cannot be expanded deterministically, fail closed.
-                match_first = re.fullmatch(r"b(\d+)", first)
-                match_last = re.fullmatch(r"b(\d+)", last)
-                if not match_first or not match_last or int(match_first.group(1)) > int(match_last.group(1)):
-                    overlaps.append({"block_id": first + ".." + last, "first_slot": slot,
-                                     "second_slot": "UNRESOLVED_RANGE"})
-                    continue
-                blocks = ["b%d" % index for index in
-                          range(int(match_first.group(1)), int(match_last.group(1)) + 1)]
+            # Slot Router currently emits top-level bN leaf spans. Any other
+            # coordinate must be resolved before this product gate can certify it.
+            match_first = re.fullmatch(r"b(\d+)", first)
+            match_last = re.fullmatch(r"b(\d+)", last)
+            if not match_first or not match_last or int(match_first.group(1)) > int(match_last.group(1)):
+                overlaps.append({"block_id": first + ".." + last, "first_slot": slot,
+                                 "second_slot": "UNRESOLVED_RANGE"})
+                continue
+            blocks = ["b%d" % index for index in
+                      range(int(match_first.group(1)), int(match_last.group(1)) + 1)]
             for block_id in blocks:
                 prior = owners.get(block_id)
                 if prior is not None and prior != slot:

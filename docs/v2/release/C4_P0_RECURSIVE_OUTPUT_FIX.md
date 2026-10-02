@@ -34,3 +34,14 @@ Result: **66 passed**. Coverage includes one-template source acceptance, recursi
 - This fix blocks the confirmed recursive-template signatures from being published. It does not establish that V0.9 whole-job output is otherwise semantically correct.
 - C1/C2/C3 package, batching, recovery, or XML mechanics evidence remains within its prior technical scope. Their evidence does not certify product-content integrity/release readiness until this gate is reviewed and applicable outputs are revalidated.
 - C4 remains blocked pending independent Codex GPT-6.1 Sol review and later specifically authorized release work. No EXE, tag, WPS UAT, or Release PASS is claimed.
+
+## Chief PATCH follow-up
+
+The first implementation commit `d1a1cf60bdfa996dd5a86af44d404952386a0b4a` received a scoped Chief PATCH. The follow-up closes its four blockers:
+
+- At execution start, the current input SHA-256 must equal the upload snapshot SHA-256. A missing or changed binding is persisted as `INPUT_PROVENANCE_HASH_MISMATCH` and rejected before Studentizer or rendering.
+- Template title count is based on literal normalized occurrences, including multiple occurrences inside one paragraph.
+- Every slot endpoint, including a single-point span, must resolve to the supported `bN` block coordinate; unresolved single points fail with `PRODUCT_SLOT_OVERLAP`.
+- The actual final result file, including an interrupted publication target being adopted, is checked by `PRODUCT_INTEGRITY_GATE` after package/hash checks and before its publication record is accepted. If it fails, only a result file under this job's result directory whose bytes match the hash-bound publication candidate is removed.
+
+New regressions cover input SHA mismatch, two title occurrences in one paragraph, unresolved single-point endpoint, and rejection/removal of an invalid pre-existing publication target. The scoped suites now report **70 passed**. `py_compile` and `git diff --check` pass. No WPS, restart pressure, release/package, or full repository suite was run.

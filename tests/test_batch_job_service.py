@@ -1,5 +1,7 @@
 """Synthetic backend batch integration; these tests do not claim real COM UAT."""
 import io
+import hashlib
+import json
 from pathlib import Path
 import sys
 import threading
@@ -170,6 +172,53 @@ def test_recursive_generated_input_is_rejected_before_any_renderer(client, rende
     assert result["product_integrity"]["accepted"] is False
     assert not renderer["xml"] and not renderer["fallback"] and not renderer["make_student"]
     assert result["output_paths"] == []
+
+
+def _student_job_options():
+    return {"subject": "数学", "grade": "高一", "handout_type": "复习讲义",
+            "academic_year": "2026-2027学年", "template_type": "1v1",
+            "split_mode": "smart", "docx_mode": "auto"}
+
+
+def test_runtime_input_hash_must_match_upload_provenance(client, renderer):
+    source = docx("accepted upload bytes")
+    created = service().create_inputs([("专题 学生版.docx", source)], _student_job_options())
+    runtime_source = Path(created["student_source_path"])
+    runtime_source.write_bytes(docx("mutated runtime bytes"))
+    app_module._execute_job(created["job_id"])
+    result = service().get(created["job_id"])
+    assert result["status"] == "error"
+    assert "INPUT_PROVENANCE_HASH_MISMATCH" in result["error"]
+    assert result["product_integrity"]["accepted"] is False
+    assert not renderer["xml"] and not renderer["fallback"]
+
+
+def test_existing_publication_target_is_rechecked_by_product_gate(client, renderer):
+    sections = ("课堂启动", "知识回顾", "知识精讲", "即时训练", "归纳总结", "巩固练习")
+    bad_output = docx(*( ["学科教师辅导讲义"] + ["数学" + heading for heading in sections] ) * 2)
+    created = service().create_inputs([("专题 学生版.docx", docx("single clean input"))],
+                                      _student_job_options())
+    job_id = created["job_id"]
+    record = service().get(job_id)
+    target = Path(record["result_dir"]) / app_module._visible_output_name(
+        record["options"], record["items"][0]["topic"], "学生版")
+    target.write_bytes(bad_output)
+    bad_sha = hashlib.sha256(bad_output).hexdigest()
+    record_path = service()._job_dir(job_id) / "job.json"
+    record["publication"] = {
+        "role_paths": {"student": str(target.resolve())},
+        "expected_sha256": {"student": bad_sha},
+        "published": {"student": {"path": str(target.resolve()), "sha256": bad_sha}},
+    }
+    JobService._write_json(record_path, record)
+
+    app_module._execute_job(job_id)
+    final = service().get(job_id)
+    assert final["status"] == "error"
+    assert "PRODUCT_INTEGRITY_GATE_FINAL" in final["error"]
+    assert final["product_integrity"]["accepted"] is False
+    assert final["product_integrity"]["final_outputs"][0]["accepted"] is False
+    assert not target.exists()
 
 
 def test_corrupt_item_does_not_remove_two_successful_outputs(client, renderer):

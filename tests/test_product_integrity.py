@@ -39,6 +39,12 @@ def test_input_provenance_rejects_recursive_generated_output(tmp_path):
     assert result["metrics"]["template_cycles"] == 2
 
 
+def test_template_titles_are_counted_as_occurrences_even_in_one_paragraph(tmp_path):
+    source = make_docx(tmp_path / "same-paragraph.docx", [TITLE + " / " + TITLE])
+    metrics = inspect_product_docx(source)
+    assert metrics.template_title_count == 2
+
+
 def test_single_template_source_is_not_rejected_as_recursive(tmp_path):
     source = make_docx(tmp_path / "original.docx", template_cycle("高一数学 "))
     result = inspect_input_provenance(source)
@@ -57,6 +63,17 @@ def test_product_gate_rejects_second_template_and_repeated_long_sequence(tmp_pat
     assert "PRODUCT_REPEATED_BLOCK_SEQUENCE" in codes
     assert report["output"]["main_story_paragraphs"] > 0
     assert report["output"]["text_chars"] > report["source"]["text_chars"]
+
+
+def test_unresolved_single_slot_endpoint_fails_closed(tmp_path):
+    source = make_docx(tmp_path / "source.docx", ["source"])
+    output = make_docx(tmp_path / "output.docx", ["output"])
+    plan = type("Plan", (), {"slots": {
+        "knowledge": (type("Span", (), {"start": "not-a-block-id", "end": "not-a-block-id"})(),),
+    }})()
+    report = validate_product_integrity(source, output, plan=plan)
+    assert report["accepted"] is False
+    assert report["errors"][0]["reason_code"] == "PRODUCT_SLOT_OVERLAP"
 
 
 def test_expansion_is_reported_and_slot_overlap_fails_closed(tmp_path):

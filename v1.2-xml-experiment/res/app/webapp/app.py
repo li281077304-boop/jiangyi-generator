@@ -232,13 +232,19 @@ def _execute_job(job_id: str) -> None:
                 **metadata, "role": role, "runtime_path": str(source_path),
                 "inspection": inspection,
             }
+            recorded_sha = metadata.get("sha256")
+            if not recorded_sha or recorded_sha != inspection.get("sha256"):
+                inspection["accepted"] = False
+                inspection["errors"] = list(inspection.get("errors", []))
+                inspection["errors"].append("INPUT_PROVENANCE_HASH_MISMATCH")
+                inspection["detail"] = "runtime input bytes do not match the accepted upload snapshot SHA-256"
             if not inspection["accepted"]:
                 service.update_product_integrity(job_id, {
                     "gate": "PRODUCT_INTEGRITY_GATE", "accepted": False,
                     "input_sources": source_inspections,
                     "errors": [{"reason_code": reason,
-                                "detail": (source_inspections[role]["inspection"].get("detail") or
-                                           "input may be a previously generated lecture output")}
+                                "detail": inspection.get("detail") or
+                                "input may be a previously generated lecture output"}
                                for reason in inspection["errors"]],
                 })
                 raise ValueError("PRODUCT_INTEGRITY_GATE: %s" % ", ".join(inspection["errors"]))
@@ -588,6 +594,31 @@ def _execute_job(job_id: str) -> None:
             if final_validation.get("valid") is not True:
                 raise RuntimeError("Published %s package failed validation" % role)
             digest = hashlib.sha256(target.read_bytes()).hexdigest()
+            try:
+                final_integrity = validate_product_integrity(
+                    active_sources[role], target,
+                    plan=plans.get(role) if outcome.renderer == "XML" else None,
+                )
+            except ProductIntegrityError as exc:
+                final_integrity = {
+                    "gate": "PRODUCT_INTEGRITY_GATE", "accepted": False,
+                    "errors": [{"reason_code": exc.reason_code, "detail": exc.detail}],
+                    "warnings": [], "output_sha256": digest,
+                }
+            final_record = {"role": role, **final_integrity}
+            integrity_record.setdefault("final_outputs", []).append(final_record)
+            if not final_integrity["accepted"]:
+                integrity_record["accepted"] = False
+                integrity_record["errors"].extend(final_integrity["errors"])
+                service.update_product_integrity(job_id, integrity_record)
+                # Remove only this job's hash-bound publication candidate. An
+                # unrelated or modified result file is never deleted here.
+                if digest == expected_hash and target.is_relative_to(result_dir):
+                    target.unlink(missing_ok=True)
+                codes = sorted({item["reason_code"] for item in final_integrity["errors"]})
+                raise ValueError("PRODUCT_INTEGRITY_GATE_FINAL: " + ", ".join(codes))
+            integrity_record["warnings"].extend(final_integrity.get("warnings", []))
+            service.update_product_integrity(job_id, integrity_record)
             service.mark_publication_role(job_id, role, target, digest)
             _persist_job_stage(service, job_id, 1, "published %s; before next role" % role)
 
