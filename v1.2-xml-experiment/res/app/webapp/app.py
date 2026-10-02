@@ -9,6 +9,7 @@ from io import StringIO
 from pathlib import Path
 import os
 import sys
+import hashlib
 import threading
 
 from flask import Flask, jsonify, render_template, request
@@ -165,10 +166,6 @@ def _execute_job(job_id: str) -> None:
                           if teacher_source else None)
         student_output = (result_dir / _visible_output_name(options, topic, "学生版")
                           if student_source else None)
-        for candidate in (teacher_output, student_output):
-            if candidate is not None and candidate.exists():
-                raise FileExistsError("任务结果路径已存在，拒绝覆盖")
-
         template_type = options.get("template_type") or "1v1"
         split_mode = options.get("split_mode") or "smart"
         if template_type not in ("1v1", "class"):
@@ -336,6 +333,13 @@ def _execute_job(job_id: str) -> None:
         def fallback(original_job, reason_code):
             service.record_fallback_attempt(job_id, reason_code, V09_BASELINE_SHA,
                                              detail=fallback_detail["value"])
+            renderer_fallback_preparation = {
+                "route": "V09_WHOLE_JOB", "make_student_called": False,
+                "reason_code": reason_code, "reason_detail": fallback_detail["value"],
+                "com_used": None, "wps_com_started": None,
+                "com_observation": "NOT_ENTERED", "elapsed_seconds": None,
+            }
+            service.update_renderer_fallback_preparation(job_id, renderer_fallback_preparation)
             # Teacher-only fallback always starts from the original teacher,
             # even if a later renderer gate rejected a validated XML derivative.
             if input_version == "TEACHER_ONLY":
@@ -355,18 +359,19 @@ def _execute_job(job_id: str) -> None:
                     _persist_job_stage(service, job_id, 1,
                                        "V0.9 make_student preparation")
                     stamp = time.perf_counter()
-                    preparation.update({"make_student_called": True, "com_used": None,
-                                        "wps_com_started": None,
-                                        "com_observation": "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY"})
-                    service.update_student_preparation(job_id, preparation)
+                    renderer_fallback_preparation.update({
+                        "make_student_called": True, "com_used": None,
+                        "wps_com_started": None,
+                        "com_observation": "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY",
+                    })
+                    service.update_renderer_fallback_preparation(job_id, renderer_fallback_preparation)
                     try:
                         return original_make_student(*args, **kwargs)
                     finally:
-                        preparation["make_student_elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
-                        service.update_student_preparation(job_id, preparation)
+                        renderer_fallback_preparation["make_student_elapsed_seconds"] = round(
+                            time.perf_counter()-stamp, 6)
+                        service.update_renderer_fallback_preparation(job_id, renderer_fallback_preparation)
                 stamp = time.perf_counter()
-                preparation["fallback_engine"] = "V0.9_WHOLE_JOB"
-                service.update_student_preparation(job_id, preparation)
                 if engine:
                     engine.make_student = observed_make_student
                     if original_build_version is not None:
@@ -379,35 +384,66 @@ def _execute_job(job_id: str) -> None:
                         engine.make_student = original_make_student
                         if original_build_version is not None:
                             engine.build_version = original_build_version
-                    preparation["fallback_elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
-                    preparation["elapsed_seconds"] = (preparation.get("studentizer_elapsed_seconds", 0)
-                                                      + preparation.get("make_student_elapsed_seconds", 0))
-                    service.update_student_preparation(job_id, preparation)
+                    renderer_fallback_preparation["elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
+                    service.update_renderer_fallback_preparation(job_id, renderer_fallback_preparation)
 
         outcome = render_xml_or_fallback(
             render_job, xml_preflight=xml_preflight, xml_render=xml_render,
             fallback=fallback, package_validator=validate_package)
-        if outcome.renderer == "V0.9":
-            preparation["xml_failure"] = outcome.xml_error
-            service.update_student_preparation(job_id, preparation)
         if outcome.renderer == "XML":
             generated = []
             if teacher_source:
-                generated.append((outcome.output_paths[0], teacher_output))
+                generated.append(("teacher", outcome.output_paths[0], teacher_output))
                 if student_source:
-                    generated.append((str(student_stage), student_output))
+                    generated.append(("student", str(student_stage), student_output))
             else:
-                generated.append((outcome.output_paths[0], student_output))
+                generated.append(("student", outcome.output_paths[0], student_output))
         else:
             targets = ([teacher_output, student_output] if teacher_source else [student_output])
             if len(outcome.output_paths) != len(targets):
                 raise RuntimeError("Renderer outputs do not match classified input roles")
-            generated = list(zip(outcome.output_paths, targets))
+            roles = (["teacher", "student"] if teacher_source else ["student"])
+            generated = [(role, source, target) for role, source, target in zip(roles, outcome.output_paths, targets)]
         _persist_job_stage(service, job_id, 1, "outputs ready; before publication")
-        for source_path, target_path in generated:
-            if target_path is None or not Path(source_path).is_file() or Path(source_path).stat().st_size == 0:
+        planned_paths = {role: str(Path(target).resolve()) for role, _source, target in generated}
+        staged_hashes = {role: hashlib.sha256(Path(source).read_bytes()).hexdigest()
+                         for role, source, _target in generated}
+        service.record_publication_plan(job_id, planned_paths, staged_hashes)
+        # Validate every staged artifact before publishing any role.
+        for role, source_path, target_path in generated:
+            source = Path(source_path)
+            if target_path is None or not source.is_file() or source.stat().st_size == 0:
                 raise RuntimeError("Renderer did not produce a non-empty classified output")
-            os.replace(source_path, target_path)
+            validation = validate_package(str(source))
+            if validation.get("valid") is not True:
+                raise RuntimeError("Renderer staged an invalid %s package: %s" %
+                                   (role, "; ".join(validation.get("errors", [])[:5])))
+        for role, source_path, target_path in generated:
+            target = Path(target_path).resolve()
+            if target.exists():
+                # The unique job directory and persisted publication plan make
+                # this an interrupted retry. Adopt only a complete valid DOCX;
+                # never overwrite or delete an already published role.
+                if not target.is_file() or target.stat().st_size == 0:
+                    raise RuntimeError("Interrupted publication target is not a non-empty file")
+                existing_validation = validate_package(str(target))
+                if existing_validation.get("valid") is not True:
+                    raise RuntimeError("Interrupted publication target failed validation")
+                existing_hash = hashlib.sha256(target.read_bytes()).hexdigest()
+                publication = service.get(job_id).get("publication") or {}
+                published_record = publication.get("published", {}).get(role)
+                expected_hash = (published_record or {}).get("sha256") or publication.get(
+                    "expected_sha256", {}).get(role)
+                if not expected_hash or existing_hash != expected_hash:
+                    raise RuntimeError("Existing result path is not the persisted publication artifact")
+            else:
+                os.replace(source_path, target)
+            final_validation = validate_package(str(target))
+            if final_validation.get("valid") is not True:
+                raise RuntimeError("Published %s package failed validation" % role)
+            digest = hashlib.sha256(target.read_bytes()).hexdigest()
+            service.mark_publication_role(job_id, role, target, digest)
+            _persist_job_stage(service, job_id, 1, "published %s; before next role" % role)
 
         if student_output:
             preparation["output_package_valid"] = validate_package(str(student_output)).get("valid") is True
@@ -432,11 +468,9 @@ def _execute_job(job_id: str) -> None:
             baseline_sha=V09_BASELINE_SHA if outcome.renderer == "V0.9" else None,
             plan_summary=plan_summary, student_preparation=preparation)
     except Exception as exc:
-        for candidate in result_dir.glob("*.docx") if result_dir is not None else ():
-            try:
-                candidate.unlink(missing_ok=True)
-            except OSError:
-                pass
+        # Published role DOCX files are durable progress. A failed/restarted
+        # item may resume against its recorded publication plan; never clean
+        # successful finals as a side effect of a later stage error.
         service.fail_job(job_id, "%s: %s" % (type(exc).__name__, exc))
 
 

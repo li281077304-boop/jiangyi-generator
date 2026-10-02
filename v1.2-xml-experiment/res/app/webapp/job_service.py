@@ -267,6 +267,8 @@ class JobService:
                                      "com_used": False,
                                      "com_observation": "NOT_ENTERED",
                                      "package_valid": None},
+            "renderer_fallback_preparation": None,
+            "publication": None,
         }
         with self._lock:
             self._write_json(job_dir / "job.json", record)
@@ -451,6 +453,62 @@ class JobService:
             if record.get("status") != "running":
                 return self.snapshot(record)
             record["student_preparation"] = dict(details)
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def record_publication_plan(self, job_id: str, role_paths: dict[str, str],
+                                expected_sha256: dict[str, str]) -> dict:
+        """Persist the exact per-job final paths before publishing any output."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            normalized = {str(role): str(Path(path).resolve())
+                          for role, path in role_paths.items() if path is not None}
+            if not normalized or not set(normalized).issubset({"teacher", "student"}):
+                raise ValueError("publication plan must contain a classified output role")
+            expected_hashes = {str(role): str(value) for role, value in expected_sha256.items()}
+            if set(expected_hashes) != set(normalized):
+                raise ValueError("publication plan must bind every role to staged output bytes")
+            existing = record.get("publication")
+            if existing and existing.get("role_paths") != normalized:
+                raise ValueError("publication plan changed across an interrupted retry")
+            now = datetime.now(timezone.utc)
+            publication = existing or {"role_paths": normalized, "expected_sha256": expected_hashes,
+                                       "published": {}}
+            record["publication"] = publication
+            record["updated_at"], record["updated_at_iso"] = now.timestamp(), now.isoformat(timespec="seconds")
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def mark_publication_role(self, job_id: str, role: str, path: str | Path, sha256: str) -> dict:
+        """Record a final file only after it exists and package validation passed."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            publication = record.get("publication") or {}
+            expected = publication.get("role_paths", {}).get(role)
+            resolved = str(Path(path).resolve())
+            if expected != resolved:
+                raise ValueError("published path does not match the persisted role plan")
+            published = dict(publication.get("published", {}))
+            prior = published.get(role)
+            if prior and prior.get("sha256") != sha256:
+                raise ValueError("published role changed across an interrupted retry")
+            published[role] = {"path": resolved, "sha256": str(sha256)}
+            publication["published"] = published
+            record["publication"] = publication
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def update_renderer_fallback_preparation(self, job_id: str, details: dict) -> dict:
+        """Store make_student observations caused by renderer fallback separately."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            record["renderer_fallback_preparation"] = dict(details)
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 

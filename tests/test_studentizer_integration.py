@@ -162,10 +162,19 @@ def test_later_xml_failure_fallback_starts_original_and_restores_observer(client
     assert final['status'] == ('error' if fail else 'done')
     assert seen and Path(seen[0].source_doc).read_bytes() == original
     assert engine.make_student is original_callable
-    assert final['student_preparation']['make_student_called']
+    assert not final['student_preparation']['make_student_called']
     assert final['student_preparation']['status'] == 'XML_PREPARED'
     assert final['student_preparation']['reason_code'] is None
+    assert final['student_preparation']['com_used'] is False
     assert final['fallback_reason'] == 'XML_RENDER_FAILED'
+    fallback_prep = final['renderer_fallback_preparation']
+    assert fallback_prep['route'] == 'V09_WHOLE_JOB'
+    assert fallback_prep['make_student_called'] is True
+    assert fallback_prep['com_used'] is None
+    assert fallback_prep['wps_com_started'] is None
+    assert fallback_prep['com_observation'] == 'UNKNOWN_AFTER_MAKE_STUDENT_ENTRY'
+    assert fallback_prep['reason_code'] == 'XML_RENDER_FAILED'
+    assert fallback_prep['elapsed_seconds'] >= fallback_prep['make_student_elapsed_seconds']
 
 
 def rewrite(data, change):
@@ -253,3 +262,51 @@ def test_concurrent_teacher_preparation_is_serial_and_observer_is_restored(clien
     assert engine.make_student == observe_make_student
     assert all(service().get(j['job_id'])['student_preparation']['make_student_called'] for j in jobs)
     assert all(service().get(j['job_id'])['status'] == 'done' for j in jobs)
+
+
+@pytest.mark.parametrize('crash_after', ['teacher', 'student'])
+def test_publication_restart_reuses_valid_final_roles_without_deleting_them(
+        tmp_path, client, renderer, monkeypatch, crash_after):
+    from package_validator import validate_package
+    import app as app_module
+
+    app.config['C0_DISABLE_JOB_SUBMISSION'] = True
+    teacher = docx('X008-like retained teacher source')
+    student = docx('X008-like already supplied student source')
+    created = post(client, [('专题 教师版.docx', teacher), ('专题 学生版.docx', student)])
+    job_id = created['job_id']
+    fired = {'done': False}
+
+    def interrupt(_job_id, stage):
+        expected = 'published %s; before next role' % crash_after
+        if stage == expected and not fired['done']:
+            fired['done'] = True
+            raise SystemExit('simulated abrupt process termination')
+
+    app.config['C35_TEST_STAGE_HOOK'] = interrupt
+    with pytest.raises(SystemExit, match='simulated abrupt process termination'):
+        app_module._execute_job(job_id)
+    assert fired['done']
+    interrupted = service().get(job_id)
+    assert interrupted['status'] == 'running'
+    first_paths = [Path(path) for path in interrupted['publication']['role_paths'].values()]
+    persisted = [p for p in first_paths if p.exists()]
+    expected_count = 1 if crash_after == 'teacher' else 2
+    assert len(persisted) == expected_count
+    original_hashes = {p: sha256(p.read_bytes()).hexdigest() for p in persisted}
+    assert all(validate_package(str(p)).get('valid') is True for p in persisted)
+
+    # Constructing a fresh service exercises the actual startup recovery path.
+    recovered_service = JobService(app.config['RESULT_ROOT'], runtime_root=app.config['RUNTIME_ROOT'])
+    assert recovered_service.get(job_id)['status'] == 'queued'
+    app.extensions.pop('c0_job_services', None)
+    app.config['C35_TEST_STAGE_HOOK'] = None
+    app_module._execute_job(job_id)
+    final = service().get(job_id)
+    assert final['status'] == 'done', final.get('error')
+    assert len(final['output_paths']) == 2
+    assert all(Path(path).is_file() and Path(path).stat().st_size > 0 for path in final['output_paths'])
+    assert all(validate_package(path).get('valid') is True for path in final['output_paths'])
+    assert all(sha256(path.read_bytes()).hexdigest() == digest for path, digest in original_hashes.items())
+    assert set(Path(final['result_dir']).iterdir()) == set(Path(path) for path in final['output_paths'])
+    assert final['publication']['published'].keys() == {'teacher', 'student'}
