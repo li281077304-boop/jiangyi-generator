@@ -422,3 +422,14 @@ leaving callable and COM/WPS flags false. After callable entry, COM/WPS is recor
 as unknown because entry can precede a failing non-COM `strip_red` phase; the
 Studentizer refusal reason and elapsed timing remain persisted on exceptions.
 No claim of observed COM/WPS startup is made by this patch.
+
+| C3-R14 Final Machine Gates | ~2026-10-02 03:00 UTC (initial validation; exact kickoff not captured) | 2026-10-02 03:37 UTC | GPT-6 Luna Goal Mode | 99c243cfd05790d2ab640d9ea93e1a5e87a8449b | 021d98903707eb022650acf961047f373c20e552 | Scoped Stage2 runner fix: skip unindexed TOC container from local E2 ordinal scheduling; Stage2 focused 40/40; full four-source run completed with source hashes valid; Studentizer 143 passed; C2 batch/ZIP-input/partial/local delivery 85 passed; restart 7 passed; Stage3 QG 408/408, sections 369/369, subquestions 328/328, Recall 100%, E1-E4/MISS/FP/MERGE/SPLIT=0; V0.9 assets 10/10; corpus hashes 27/27; compile/JS/diff-check pass. Full suite 397 passed + 7 subtests with the same 4 known V1.1 legacy API failures recorded on R13 base/current; not full-suite PASS. C3.5 large stress/restart evidence reused from `C3_C35_STABILITY_REPORT_2026-10-02.md`; no rerun | Codex GPT-6.1 Sol | PENDING — submit machine evidence for final independent review | Review final gates and decide; no tag unless Chief PASS | Yes: scoped Stage2 evaluation-runner/test commit `021d989` pushed and remote SHA verified; machine report and Journal metadata commit follow |
+
+R14 diagnosis: the S11 Stage2 runner crash also reproduced at R12 base
+`71b50740ebb785d77f2db01b15d5db4e42ffaed2`; it was an unindexed TOC table
+container candidate (`b2.r5c0.n8`) with no content-node ordinal, not a new C3
+Splitter regression. Only the Stage2 evaluation runner and its test changed.
+Final evidence is in `docs/v2/integration/C3_FINAL_MACHINE_GATE_2026-10-02.md`.
+X008 Studentizer-stage counters are separated there from later whole-job V0.9
+renderer fallback counters. Final Chief review remains pending; no C3 tag or
+completion claim is made.
