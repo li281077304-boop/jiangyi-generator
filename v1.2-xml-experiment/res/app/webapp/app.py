@@ -606,6 +606,18 @@ def _execute_job(job_id: str) -> None:
                     "warnings": [], "output_sha256": digest,
                 }
             final_record = {"role": role, **final_integrity}
+            integrity_output_sha = (final_integrity.get("output") or {}).get("sha256") or \
+                final_integrity.get("output_sha256")
+            current_output_sha = hashlib.sha256(target.read_bytes()).hexdigest()
+            hash_binding_matches = (digest == expected_hash == integrity_output_sha == current_output_sha)
+            if not hash_binding_matches:
+                final_integrity["accepted"] = False
+                final_integrity.setdefault("errors", []).append({
+                    "reason_code": "PRODUCT_OUTPUT_HASH_CHANGED",
+                    "detail": "publication candidate, integrity inspection, and current result bytes differ",
+                })
+                final_record["accepted"] = False
+                final_record["errors"] = final_integrity["errors"]
             integrity_record.setdefault("final_outputs", []).append(final_record)
             if not final_integrity["accepted"]:
                 integrity_record["accepted"] = False
@@ -613,13 +625,16 @@ def _execute_job(job_id: str) -> None:
                 service.update_product_integrity(job_id, integrity_record)
                 # Remove only this job's hash-bound publication candidate. An
                 # unrelated or modified result file is never deleted here.
-                if digest == expected_hash and target.is_relative_to(result_dir):
+                immediate_sha = (hashlib.sha256(target.read_bytes()).hexdigest()
+                                 if target.is_file() else None)
+                if (hash_binding_matches and immediate_sha == expected_hash
+                        and target.is_relative_to(result_dir)):
                     target.unlink(missing_ok=True)
                 codes = sorted({item["reason_code"] for item in final_integrity["errors"]})
                 raise ValueError("PRODUCT_INTEGRITY_GATE_FINAL: " + ", ".join(codes))
             integrity_record["warnings"].extend(final_integrity.get("warnings", []))
             service.update_product_integrity(job_id, integrity_record)
-            service.mark_publication_role(job_id, role, target, digest)
+            service.mark_publication_role(job_id, role, target, current_output_sha)
             _persist_job_stage(service, job_id, 1, "published %s; before next role" % role)
 
         if student_output:

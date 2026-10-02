@@ -221,6 +221,51 @@ def test_existing_publication_target_is_rechecked_by_product_gate(client, render
     assert not target.exists()
 
 
+@pytest.mark.parametrize("start_with_bad_target", [False, True])
+def test_final_gate_rechecks_hash_before_acceptance_or_cleanup(
+        client, renderer, monkeypatch, start_with_bad_target):
+    import product_integrity
+
+    clean_source = docx("single clean source")
+    bad_template = docx(*(( ["学科教师辅导讲义"] +
+                           ["数学" + heading for heading in
+                            ("课堂启动", "知识回顾", "知识精讲", "即时训练", "归纳总结", "巩固练习")] ) * 2))
+    created = service().create_inputs([("专题 学生版.docx", clean_source)], _student_job_options())
+    job_id = created["job_id"]
+    record = service().get(job_id)
+    target = Path(record["result_dir"]) / app_module._visible_output_name(
+        record["options"], record["items"][0]["topic"], "学生版")
+    if start_with_bad_target:
+        target.write_bytes(bad_template)
+        bad_sha = hashlib.sha256(bad_template).hexdigest()
+        record["publication"] = {
+            "role_paths": {"student": str(target.resolve())},
+            "expected_sha256": {"student": bad_sha},
+            "published": {"student": {"path": str(target.resolve()), "sha256": bad_sha}},
+        }
+        JobService._write_json(service()._job_dir(job_id) / "job.json", record)
+
+    replacement = bad_template if not start_with_bad_target else docx("replaced after inspection")
+    original_validator = product_integrity.validate_product_integrity
+    replaced = {"value": False}
+
+    def replace_final_after_inspection(source_path, output_path, *, plan=None):
+        report = original_validator(source_path, output_path, plan=plan)
+        if Path(output_path).resolve() == target.resolve() and not replaced["value"]:
+            target.write_bytes(replacement)
+            replaced["value"] = True
+        return report
+
+    monkeypatch.setattr(product_integrity, "validate_product_integrity", replace_final_after_inspection)
+    app_module._execute_job(job_id)
+    final = service().get(job_id)
+    assert replaced["value"] is True
+    assert final["status"] == "error"
+    assert "PRODUCT_OUTPUT_HASH_CHANGED" in final["error"]
+    assert final["product_integrity"]["accepted"] is False
+    assert target.is_file() and hashlib.sha256(target.read_bytes()).digest() == hashlib.sha256(replacement).digest()
+
+
 def test_corrupt_item_does_not_remove_two_successful_outputs(client, renderer):
     final = post(client, [("正常A 学生版.docx", docx()), ("损坏 教师版.docx", b"broken"),
                           ("正常B 学生版.docx", docx())])
