@@ -1,7 +1,8 @@
 # C3 final machine gates — 2026-10-02
 
-**Candidate:** `021d98903707eb022650acf961047f373c20e552`  
-**Base:** `99c243cfd05790d2ab640d9ea93e1a5e87a8449b`  
+**Candidate:** `021d98903707eb022650acf961047f373c20e552`
+
+**Base:** `99c243cfd05790d2ab640d9ea93e1a5e87a8449b`
 **Branch:** `feature/v1.2-c3-studentizer-performance`
 
 This is a machine-gate handoff, not the C3 final verdict. No R1–R8 audits,
