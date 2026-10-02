@@ -45,7 +45,7 @@ parent and child publication records exactly.
 | Child job | `1e66041e74df4a6085f0e0601a314cd5` |
 | Generation attempt | `1` |
 | Classification | `TEACHER_ONLY`, evidence `teacher_filename` |
-| Teacher input used by child | `%LOCALAPPDATA%\讲义生成器\jobs\1e66041e74df4a6085f0e0601a314cd5\work\input-1.docx` |
+| Teacher input used by child | `C:\Users\Administrator\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local\讲义生成器\jobs\1e66041e74df4a6085f0e0601a314cd5\work\input-1.docx` |
 | Student input | None; student source was prepared by `V09_MAKE_STUDENT` |
 | Upload origin | `中文两项批次.zip:专题批次/恢复单元1 数学专题A 教师版.docx` |
 | Uploaded ZIP SHA-256 | `8547428ac7aee90641989eeec527461f24c591f520b528f69036ed3c0ad196d5` |
@@ -156,6 +156,6 @@ Evidence files read (no new generation, WPS UAT, or regression was run):
 
 - `C:\xml-uat\c4-final-rc-final\evidence\restart-C-d3511a0\prekill-parent.job.json`
 - `C:\xml-uat\c4-final-rc-final\evidence\restart-C-d3511a0\prekill-child-1.job.json`
-- `%LOCALAPPDATA%\講義生成器\jobs\302596d864a2455b8cfd44da048fca8a\job.json`
+- `C:\Users\Administrator\AppData\Local\Packages\OpenAI.Codex_2p2nqsd0c76g0\LocalCache\Local\讲义生成器\jobs\302596d864a2455b8cfd44da048fca8a\job.json`
 - `C:\xml-uat\c4-final-rc-final\evidence\wps-final\fallback-math-roundtrip.json`
 - `C:\xml-uat\c4-final-rc-final\inputs\restart-C-minimal\中文两项批次.zip`
