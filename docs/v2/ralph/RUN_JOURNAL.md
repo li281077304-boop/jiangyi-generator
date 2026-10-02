@@ -391,3 +391,12 @@ max-active=1 and restored the instrumented callable. C3.5 load evidence is inher
 the prior candidate and preserved in `integration/fixtures/c3-c35/`; no large
 load was repeated. No layered fallback or Studentizer production route changes
 were made. C3 final gates and Chief review are still pending.
+
+| C3-R12-PATCH | 2026-10-02 02:01 UTC (Chief PATCH follow-up) | 2026-10-02 02:20 UTC | GPT-6 Luna | 24477e2ddb6dc7e6915d3af2970381343d7d2e99 | 024f75b35c609a714cf6a632fa83f4b2921ba3ee | PASS scoped machine gate: replaced elapsed-only restart-B evidence with three persisted stage checkpoints. Killed while `V0.9 make_student preparation`, `V0.9 teacher renderer`, and `outputs ready; before publication`; all three recovered to done with two DOCX and clean user result folders. The before-publication case had both private outputs present at kill. Test-only hold hook is enabled only with Flask TESTING. Focused selection 20 passed; py_compile and diff-check clean. A, C, and prior load evidence reused. | Codex GPT-6.1 Sol | PATCH received: sole blocker was that prior B@5/20/30 all recorded the same V0.9 fallback stage at progress 0; distinct-stage correction is pushed and awaits review | Review only the corrected stage evidence, then proceed with the remaining final gates; no scope expansion | Yes: implementation/report/evidence commit `024f75b` pushed; this row records the PATCH follow-up |
+
+The elapsed-only B@5/20/30 records remain archived but do not satisfy the
+distinct-phase requirement. This follow-up adds persisted renderer/preparation/
+publication stage names and a test-only checkpoint hook so the real process can
+be killed at each phase after the job record is written. No generation or
+fallback decision changed. No batch10, batch20, or consecutive stress case was
+rerun. Do not repeat completed R1–R8 audits or Golden work.
