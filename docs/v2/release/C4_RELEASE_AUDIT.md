@@ -150,15 +150,16 @@ manifest-listed runtime snapshot byte-identical; use
 `tools/verify_v09_fallback_assets.py` as a build-time provenance check, not as
 a production dependency.
 
-Files required by the checked manifest/runtime are `handout.py`, `toc_split.py`,
-`2025+1v1讲义模板(2).docx`, `2025班课模板.doc`, `_fill_com.ps1`,
-`_fill_class.ps1`, `_scan_com.ps1`, `_strip_answer_com.ps1`,
-`_add_blanks_com.ps1`, plus `ASSET_MANIFEST.json`, the pinned requirements
-lock, and `.gitattributes` if retaining the exact ten-entry manifest layout.
-The `.gitattributes` file is provenance metadata rather than an application
-runtime dependency. `_doc2docx.ps1` from `v1.1-stable` is not referenced by the
-current frozen fallback runtime and is not in its manifest; do not copy the
-entire old application directory into the RC.
+The ten entries in the checked `ASSET_MANIFEST.json` are the nine runtime
+files (`handout.py`, `toc_split.py`, `2025+1v1讲义模板(2).docx`,
+`2025班课模板.doc`, `_fill_com.ps1`, `_fill_class.ps1`, `_scan_com.ps1`,
+`_strip_answer_com.ps1`, and `_add_blanks_com.ps1`) plus
+`KNOWN_GOOD_V0.9_RUNTIME_REQUIREMENTS.lock`. The manifest file itself is the
+index, not one of its ten asset entries. `.gitattributes` is not an entry in
+that manifest and is provenance metadata rather than an application runtime
+dependency. `_doc2docx.ps1` from `v1.1-stable` is not referenced by the current
+frozen fallback runtime and is not in its manifest; do not copy the entire old
+application directory into the RC.
 
 ## 8. PowerShell / WPS COM boundary
 
@@ -188,7 +189,10 @@ item/job error and must not prevent app startup.
 **Verified current defaults:**
 
 - Application code/resources: sibling files beneath the package resource
-  tree (read-only at runtime).
+  tree. Most are read-only at runtime, but the dynamic source-file loaders
+  `semantic_facade._load_predictor()` and
+  `renderer_orchestrator._load_v09_engine()` use Python source-file loading
+  that can write `__pycache__` bytecode beside packaged sources.
 - Reviewed manifest: `res/app/reviewed_studentizer/` (read-only).
 - Durable job state: `%LOCALAPPDATA%\讲义生成器\jobs\<job-id>\job.json`.
 - Uploaded source snapshots and staging: each job's `work/` directory under
@@ -210,7 +214,14 @@ reviewed change must route these scratch files there. Do not write job records,
 logs, temp files, source inputs, or runtime state into the portable install
 directory; it may be read-only or moved. The source app currently has no
 separate durable logs/diagnostics roots, so those should only be introduced
-under LocalAppData if later required.
+under LocalAppData if later required. Independently, the launcher must disable
+Python bytecode writes before importing the app or performing either dynamic
+source-file load (for example, set `PYTHONDONTWRITEBYTECODE=1` in the child
+environment before process start, or set `sys.dont_write_bytecode = True`
+before any app imports). Otherwise those loaders can create `__pycache__` in
+the packaged resource tree even when the app's explicit state/temp paths are
+redirected. This behavior is verified in the loader code; the launcher fix is
+not implemented or tested in this audit.
 
 `Path.home()/Desktop` assumes a conventional Desktop path. Known Folder
 redirection/OneDrive Desktop behavior is not verified; RC UAT must test the
