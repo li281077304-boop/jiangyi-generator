@@ -1,6 +1,8 @@
 # C3 final machine gates — 2026-10-02
 
-**Candidate:** `021d98903707eb022650acf961047f373c20e552`
+**Post-PATCH validation candidate:** `216a280a0bd0a3cc5d4da34f561d3e9f5005bcad`
+
+**Report update:** documentation-only checkpoint follows the validation candidate.
 
 **Base:** `99c243cfd05790d2ab640d9ea93e1a5e87a8449b`
 **Branch:** `feature/v1.2-c3-studentizer-performance`
@@ -105,3 +107,30 @@ Stage3, source/asset integrity, compile, syntax, and diff checks pass. The
 repository-wide suite still has the same four recorded V1.1 legacy API failures,
 so this report is **not** a full-suite PASS and does not authorize the C3 tag.
 Final verdict remains with the independent Codex GPT-6.1 Sol Chief.
+
+## Post-PATCH revalidation on 2026-10-02
+
+The scoped R15 publication/telemetry patch was independently re-reviewed and
+passed before this revalidation. The following gates were rerun on candidate
+`216a280a0bd0a3cc5d4da34f561d3e9f5005bcad`; no production logic changed after
+that candidate:
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Full test suite | **399 passed, 7 subtests passed, 4 failed** in 235.24 s. These are the same four V1.1 legacy API expectation failures seen on the pre-R13 base/candidate: `test_job_list_hides_server_path` expects `has_result=false`; `test_rejects_invalid_files_and_duplicate_names` expects 400 rather than 415; `test_running_job_is_returned_instead_of_starting_another` expects 409 rather than 415; `test_two_docx_can_be_paired_or_processed_separately` expects 200 rather than 415. The suite is not all-green. | Full pytest on post-PATCH candidate |
+| Studentizer focused | **145 passed** | All `tests/test_studentizer*.py` |
+| C2 batch / ZIP input / partial / local delivery | **85 passed** | `test_c0_job_service`, `test_batch_inputs`, `test_batch_workspace`, `test_batch_job_service`, `test_input_versions` |
+| Restart recovery focused | **7 passed** | `tests/test_c35_hardening_harness.py`, including publication interruption cases |
+| Stage2 tests | **40 passed** | `tests/test_stage2_baseline.py` |
+| Stage2 four-source run | Completed; all source hashes validated. QG Gold/predicted/correct = **191/204/179**, missed 12, erroneous 25, boundary errors 2; issue counts GROUP_SPLIT 3, MERGE 4, MISSED_STRUCTURE 27, ROLE_MISMATCH 2. This is an observed comparison, not an accuracy PASS. | `C:\xml-uat\c3-post-patch-stage2-20261002` |
+| Stage3 protected comparison | **PASS:** QG **408/408**, P/R **100%**, exact 87.7%; sections **369/369**; subquestions **328/328**; errors `{}`; MISS/FP/MERGE/SPLIT all 0. The comparator used the frozen full-candidate prediction directory. | `C:\xml-uat\c3-post-patch-stage3-20261002\compare.md` and `compare.json` |
+| V0.9 frozen assets | **10/10 match**, no failures | `tools/verify_v09_fallback_assets.py` |
+| 27 source hashes | **27/27 match**, no failures | Read-only SHA256 verification against `baseline_inputs.json` |
+| Python compilation / JS syntax / diff check | **PASS / PASS / PASS** | Candidate validation |
+
+The R13 comparable performance results and committed C3.5 batch10/batch20,
+consecutive-job, abnormal-input, serial-fallback, and restart A/B/C evidence
+were reused as instructed; these large runs were not repeated. The complete
+results were appended to `docs/v2/ralph/RUN_JOURNAL.md`. This report records
+machine evidence only; it does not provide a final Chief verdict or authorize
+a C3 tag.
