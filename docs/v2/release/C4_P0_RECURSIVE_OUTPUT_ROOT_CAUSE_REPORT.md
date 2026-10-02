@@ -35,8 +35,9 @@ User-confirmed outputs:
 | Teacher | `D:\Documents\生成讲义结果\2026-2027学年 高一 数学 批量讲义 复习讲义（2）\恢复单元1 数学专题A\2026-2027学年 高一 数学 恢复单元1 数学专题A 复习讲义 教师版.docx` | 1,144,362 bytes | `642410d183aada285c6f9aaffcf5a4ec55c1a1e1aae1074732c7210238ed694e` |
 | Student | `D:\Documents\生成讲义结果\2026-2027学年 高一 数学 批量讲义 复习讲义（2）\恢复单元1 数学专题A\2026-2027学年 高一 数学 恢复单元1 数学专题A 复习讲义 学生版.docx` | 610,485 bytes | `375ab0e646daef7510fd6d0a0a514e4782ae56c5753da33ed85247b4bc1620bc` |
 
-The paths, sizes, timestamps and SHA-256 values match the persisted Restart C
-parent and child publication records exactly.
+The published paths and SHA-256 values match the Restart C child publication
+record. Sizes and modification times below were read from the existing local
+files; they are not fields in the persisted publication record.
 
 | Field | Evidence |
 |---|---|
@@ -85,15 +86,17 @@ the new output 高一. The Restart C fixture was made from a file under
 ## First observed contamination and per-stage counts
 
 Counts below use main-story `word/document.xml` paragraphs, retaining empty
-paragraphs. Text lengths count extracted `w:t` text. The section/template
-fingerprints are evidence of repeated content, not the sole identity proof.
+paragraphs. Text length is the sum of each paragraph's concatenated `w:t`
+text, with one LF inserted between every adjacent paragraph (including empty
+paragraphs). The section/template fingerprints are evidence of repeated
+content, not the sole identity proof.
 
 | Stage | SHA-256 | Main-story paragraphs | Text chars | Template title | 课堂启动 | 知识回顾 | 知识精讲 | 即时训练 | 归纳总结 | 巩固练习 |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Earlier job 302596 input | `79d925a724da75fbb7aee78b2add7fa390390f44eca46b346495e9437cd6e779` | 952 | 14,768 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 | Earlier job 302596 teacher output / Restart C source | `8c3561df2bb560cb12aaf5c76a39bc1b517cfa6580413cd576211d2c1806cca4` | 1,411 | 22,787 | 2 | 2 | 2 | 2 | 3 | 3 | 3 |
 | Restart C teacher output | `642410d183aada285c6f9aaffcf5a4ec55c1a1e1aae1074732c7210238ed694e` | 1,870 | 30,800 | 3 | 3 | 3 | 3 | 5 | 5 | 5 |
-| Restart C student output | `375ab0e646daef7510fd6d0a0a514e4782ae56c5753da33ed85247b4bc1620bc` | 478 | 5,957 | 0 | 3 | 3 | 3 | 2 | 5 | 5 |
+| Restart C student output | `375ab0e646daef7510fd6d0a0a514e4782ae56c5753da33ed85247b4bc1620bc` | 478 | 5,957 | 3 | 3 | 3 | 3 | 2 | 5 | 5 |
 
 The first observed extra full sequence is already present at the earlier
 job's published output: its input has one complete section sequence and its
