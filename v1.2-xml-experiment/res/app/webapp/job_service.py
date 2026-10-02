@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
+import hashlib
 import json
 import os
 import re
@@ -184,7 +185,8 @@ class JobService:
     def create_inputs(self, files: list[tuple[str, bytes]], options: dict, *,
                       _classification: InputClassification | None = None,
                       _topic: str | None = None, _result_dir: Path | None = None,
-                      _parent_job_id: str | None = None) -> dict:
+                      _parent_job_id: str | None = None,
+                      _source_origins: list[str] | None = None) -> dict:
         if not files or len(files) > 2:
             raise UnsupportedInput("本轮只支持一个 DOCX，或一组教师版和学生版 DOCX")
         validated = [(filename or "source.docx", self.validate_docx(filename or "source.docx", data), data)
@@ -200,12 +202,21 @@ class JobService:
         work_dir = job_dir / "work"
         work_dir.mkdir(parents=True)
         input_paths = []
+        source_provenance = {}
         for index, (original_name, safe_name, data) in enumerate(validated):
             # Internal snapshots use opaque fixed names; original names remain
             # metadata and are not exposed in the user result directory.
             source_path = work_dir / ("input-%d.docx" % (index + 1))
             source_path.write_bytes(data)
             input_paths.append((original_name, source_path))
+            source_provenance[str(index)] = {
+                "original_filename": Path(original_name).name,
+                "origin": (_source_origins[index] if _source_origins and index < len(_source_origins)
+                           else "direct_upload:%s" % Path(original_name).name),
+                "runtime_path": str(source_path.resolve()),
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "bytes": len(data),
+            }
         now = datetime.now(timezone.utc)
         created_at = now.timestamp()
         # workspace.js history currently reads the camelCase spellings below.
@@ -241,6 +252,7 @@ class JobService:
             "input_classification_evidence": classification.evidence if classification else "ambiguous",
             "input_paths": {key: value for key, value in (
                 ("teacher_source", teacher_source), ("student_source", student_source)) if value},
+            "source_provenance": source_provenance,
             "source_path": teacher_source or student_source,
             "teacher_source_path": teacher_source,
             "student_source_path": student_source,
@@ -313,7 +325,8 @@ class JobService:
                     child = self.create_inputs([(source.name, source.data) for source in item.sources],
                                                form_options, _classification=classification,
                                                _topic=item.topic, _result_dir=folder,
-                                               _parent_job_id=job_id)
+                                               _parent_job_id=job_id,
+                                               _source_origins=[source.origin for source in item.sources])
                     entry.update({"child_job_id": child["job_id"],
                                   "teacher_source": child["teacher_source_path"],
                                   "student_source": child["student_source_path"],
@@ -453,6 +466,16 @@ class JobService:
             if record.get("status") != "running":
                 return self.snapshot(record)
             record["student_preparation"] = dict(details)
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def update_product_integrity(self, job_id: str, details: dict) -> dict:
+        """Persist input lineage and staged/final product integrity evidence."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            record["product_integrity"] = details
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 

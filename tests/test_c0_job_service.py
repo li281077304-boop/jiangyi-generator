@@ -90,6 +90,10 @@ def test_post_persists_single_docx_and_get_recovers_after_service_restart(client
     record_path = Path(app.config["RUNTIME_ROOT"]) / created["job_id"] / "job.json"
     record = json.loads(record_path.read_text(encoding="utf-8"))
     assert Path(record["source_path"]).read_bytes() == source_bytes
+    provenance = record["source_provenance"]["0"]
+    assert provenance["origin"] == "direct_upload:课件.docx"
+    assert provenance["sha256"]
+    assert Path(provenance["runtime_path"]).read_bytes() == source_bytes
     assert Path(record["result_dir"]).is_relative_to(root)
     assert record["options"]["template_type"] == "class"
     assert record["options"]["handoutType"] == "课时讲义"

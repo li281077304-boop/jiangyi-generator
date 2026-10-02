@@ -130,6 +130,48 @@ def test_three_supplied_pairs_are_independent_xml_items(client, renderer):
     assert_clean(final)
 
 
+def test_product_integrity_gate_blocks_duplicate_staged_output_before_publication(
+        client, renderer, monkeypatch):
+    import template_slot_composer
+
+    source = docx(*["block-%02d %s" % (index, "长题干内容" * 18) for index in range(14)])
+
+    def duplicate_all_blocks(source_path, _plan, output_path):
+        original = Document(source_path)
+        paragraphs = [paragraph.text for paragraph in original.paragraphs]
+        generated = Document()
+        for _ in range(2):
+            for text in paragraphs:
+                generated.add_paragraph(text)
+        generated.save(output_path)
+        return SimpleNamespace(output_path=str(output_path), resource_report={"unsupported": []},
+                               package_report={"valid": True, "errors": []})
+
+    monkeypatch.setattr(template_slot_composer, "render_slots", duplicate_all_blocks)
+    result = post(client, [("专题 教师版.docx", source)])
+    assert result["status"] == "error"
+    assert "PRODUCT_INTEGRITY_GATE" in result["error"]
+    assert result["product_integrity"]["accepted"] is False
+    assert any(error["reason_code"] == "PRODUCT_REPEATED_BLOCK_SEQUENCE"
+               for error in result["product_integrity"]["errors"])
+    assert result["output_paths"] == []
+    assert list(Path(result["result_dir"]).glob("*.docx")) == []
+
+
+def test_recursive_generated_input_is_rejected_before_any_renderer(client, renderer):
+    sections = ("课堂启动", "知识回顾", "知识精讲", "即时训练", "归纳总结", "巩固练习")
+    paragraphs = []
+    for _ in range(2):
+        paragraphs.append("学科教师辅导讲义")
+        paragraphs.extend("数学" + heading for heading in sections)
+    result = post(client, [("疑似生成成品 教师版.docx", docx(*paragraphs))])
+    assert result["status"] == "error"
+    assert "POSSIBLE_GENERATED_OUTPUT_REINGESTION" in result["error"]
+    assert result["product_integrity"]["accepted"] is False
+    assert not renderer["xml"] and not renderer["fallback"] and not renderer["make_student"]
+    assert result["output_paths"] == []
+
+
 def test_corrupt_item_does_not_remove_two_successful_outputs(client, renderer):
     final = post(client, [("正常A 学生版.docx", docx()), ("损坏 教师版.docx", b"broken"),
                           ("正常B 学生版.docx", docx())])
@@ -189,6 +231,9 @@ def test_zip_mixed_input_versions_preserves_user_student(client, renderer):
     assert final["items"][0]["student_preparation"]["wps_com_started"] is None
     assert all(not item["student_preparation"]["make_student_called"] for item in final["items"][1:])
     assert renderer["xml"].count(student) == 2
+    child = service().get(final["items"][0]["child_job_id"])
+    assert child["source_provenance"]["0"]["origin"].startswith(
+        "中文混合输入.zip:第一层/专题A 教师用.docx")
     assert_clean(final)
 
 

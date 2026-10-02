@@ -212,6 +212,39 @@ def _execute_job(job_id: str) -> None:
         topic = (record.get("items") or [{}])[0].get("topic") or Path(record["filenames"][0]).stem or "讲义"
         teacher_source = Path(record["teacher_source_path"]).resolve() if record.get("teacher_source_path") else None
         student_source = Path(record["student_source_path"]).resolve() if record.get("student_source_path") else None
+        from product_integrity import (ProductIntegrityError, inspect_input_provenance,
+                                       validate_product_integrity)
+        source_metadata = record.get("source_provenance") or {}
+        source_inspections = {}
+        for role, source_path in (("teacher", teacher_source), ("student", student_source)):
+            if source_path is None:
+                continue
+            metadata = next((value for value in source_metadata.values()
+                             if Path(value.get("runtime_path", "")).resolve() == source_path), {})
+            try:
+                inspection = inspect_input_provenance(source_path)
+            except ProductIntegrityError as exc:
+                inspection = {"path": str(source_path),
+                              "sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+                              "metrics": None, "errors": [exc.reason_code], "accepted": False,
+                              "detail": exc.detail}
+            source_inspections[role] = {
+                **metadata, "role": role, "runtime_path": str(source_path),
+                "inspection": inspection,
+            }
+            if not inspection["accepted"]:
+                service.update_product_integrity(job_id, {
+                    "gate": "PRODUCT_INTEGRITY_GATE", "accepted": False,
+                    "input_sources": source_inspections,
+                    "errors": [{"reason_code": reason,
+                                "detail": (source_inspections[role]["inspection"].get("detail") or
+                                           "input may be a previously generated lecture output")}
+                               for reason in inspection["errors"]],
+                })
+                raise ValueError("PRODUCT_INTEGRITY_GATE: %s" % ", ".join(inspection["errors"]))
+        integrity_record = {"gate": "PRODUCT_INTEGRITY_GATE", "accepted": True,
+                            "input_sources": source_inspections, "staged_outputs": [], "errors": []}
+        service.update_product_integrity(job_id, integrity_record)
         if input_version == "TEACHER_ONLY":
             derived_name = ("derived-student-source.docx" if attempt <= 1 else
                             "derived-student-source-attempt-%d-%s.docx" % (attempt, job_id))
@@ -490,6 +523,29 @@ def _execute_job(job_id: str) -> None:
             roles = (["teacher", "student"] if teacher_source else ["student"])
             generated = [(role, source, target) for role, source, target in zip(roles, outcome.output_paths, targets)]
         _persist_job_stage(service, job_id, 1, "outputs ready; before publication")
+        integrity_reports = []
+        for role, staged_path, _target in generated:
+            source_for_role = active_sources[role]
+            try:
+                report = validate_product_integrity(
+                    source_for_role, staged_path,
+                    plan=plans.get(role) if outcome.renderer == "XML" else None,
+                )
+            except ProductIntegrityError as exc:
+                report = {"gate": "PRODUCT_INTEGRITY_GATE", "accepted": False,
+                          "errors": [{"reason_code": exc.reason_code, "detail": exc.detail}],
+                          "warnings": [], "source_sha256": hashlib.sha256(
+                              Path(source_for_role).read_bytes()).hexdigest(),
+                          "output_sha256": hashlib.sha256(Path(staged_path).read_bytes()).hexdigest()}
+            integrity_reports.append({"role": role, **report})
+        integrity_record["staged_outputs"] = integrity_reports
+        integrity_record["accepted"] = all(item["accepted"] for item in integrity_reports)
+        integrity_record["errors"] = [error for item in integrity_reports for error in item["errors"]]
+        integrity_record["warnings"] = [warning for item in integrity_reports for warning in item["warnings"]]
+        service.update_product_integrity(job_id, integrity_record)
+        if not integrity_record["accepted"]:
+            codes = sorted({item["reason_code"] for item in integrity_record["errors"]})
+            raise ValueError("PRODUCT_INTEGRITY_GATE: " + ", ".join(codes))
         planned_paths = {role: str(Path(target).resolve()) for role, _source, target in generated}
         staged_hashes = {role: hashlib.sha256(Path(source).read_bytes()).hexdigest()
                          for role, source, _target in generated}
