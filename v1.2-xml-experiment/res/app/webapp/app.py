@@ -205,13 +205,17 @@ def _execute_job(job_id: str) -> None:
         _cleanup_publication_temps(result_dir, job_id)
         work_dir = runtime_dir / "work"
         work_dir.mkdir(parents=True, exist_ok=True)
+        attempt = int(record.get("generation_attempts", 1))
+        attempt_suffix = "" if attempt <= 1 else "-attempt-%d" % attempt
         options = record.get("options", {})
         input_version = record.get("input_version")
         topic = (record.get("items") or [{}])[0].get("topic") or Path(record["filenames"][0]).stem or "讲义"
         teacher_source = Path(record["teacher_source_path"]).resolve() if record.get("teacher_source_path") else None
         student_source = Path(record["student_source_path"]).resolve() if record.get("student_source_path") else None
         if input_version == "TEACHER_ONLY":
-            student_source = work_dir / "derived-student-source.docx"
+            derived_name = ("derived-student-source.docx" if attempt <= 1 else
+                            "derived-student-source-attempt-%d-%s.docx" % (attempt, job_id))
+            student_source = work_dir / derived_name
         elif input_version not in ("TEACHER_AND_STUDENT", "STUDENT_ONLY"):
             raise ValueError("UNKNOWN_INPUT_VERSION: 不允许生成")
         if teacher_source is None and student_source is None:
@@ -314,8 +318,8 @@ def _execute_job(job_id: str) -> None:
                                                         ("student", student_source)) if path is not None}
         plans = {}
         fallback_detail = {"value": None}
-        student_stage = work_dir / ("student-stage-%s.docx" % job_id)
-        teacher_stage = work_dir / ("teacher-stage-%s.docx" % job_id)
+        student_stage = work_dir / ("student-stage%s-%s.docx" % (attempt_suffix, job_id))
+        teacher_stage = work_dir / ("teacher-stage%s-%s.docx" % (attempt_suffix, job_id))
 
         def xml_preflight(_job):
             forced_reason = app.config.get("C0_FORCE_FALLBACK_REASON")
@@ -391,8 +395,14 @@ def _execute_job(job_id: str) -> None:
                                               for error in report.get("errors", [])]},
             }
 
-        internal_teacher = teacher_output and work_dir / ("teacher-output-%s.docx" % job_id)
-        internal_student = student_output and work_dir / ("student-output-%s.docx" % job_id)
+        # A process can stop after writing an internal renderer output but
+        # before publication metadata is persisted.  Recovery cleanup is
+        # best-effort (for example, a crashed COM host may still hold a file),
+        # so every retry must render to a fresh, attempt-scoped private path.
+        internal_teacher = teacher_output and work_dir / (
+            "teacher-output%s-%s.docx" % (attempt_suffix, job_id))
+        internal_student = student_output and work_dir / (
+            "student-output%s-%s.docx" % (attempt_suffix, job_id))
         primary_source = teacher_source or student_source
         primary_output = internal_teacher or internal_student
         render_job = RenderJob(

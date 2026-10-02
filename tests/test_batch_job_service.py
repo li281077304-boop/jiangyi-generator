@@ -225,6 +225,50 @@ def test_batch_parent_restart_skips_already_completed_child(client, renderer):
     assert len(renderer["xml"]) == 3  # the first child wasn't rendered twice
 
 
+def test_batch_restart_reruns_incomplete_child_with_fresh_private_paths(client, renderer, monkeypatch):
+    """A leftover internal renderer file must not block a resumed child."""
+    app.config["C0_DISABLE_JOB_SUBMISSION"] = True
+    final = post(client, [("恢复专题%d 教师版.docx" % i, docx("题目%d" % i)) for i in range(1, 4)])
+    parent = service().start_job(final["job_id"])
+    first_child = parent["items"][0]["child_job_id"]
+    interrupted_child = parent["items"][1]["child_job_id"]
+
+    app_module._execute_job(first_child)
+    first_outputs = service().get(first_child)["output_paths"]
+    first_bytes = [Path(path).read_bytes() for path in first_outputs]
+    service().start_job(interrupted_child)  # persist the running state before interruption
+
+    # Simulate an output written before the hard stop, with recovery unable to
+    # remove it.  The retry must use another private path, never overwrite it.
+    work = Path(service()._job_dir(interrupted_child)) / "work"
+    stale = {
+        work / ("teacher-output-%s.docx" % interrupted_child): docx("partial teacher"),
+        work / ("student-output-%s.docx" % interrupted_child): docx("partial student"),
+        work / "derived-student-source.docx": docx("partial student source"),
+    }
+    for path, content in stale.items():
+        path.write_bytes(content)
+    monkeypatch.setattr(JobService, "_clear_interrupted_work", staticmethod(lambda *_args: None))
+
+    restarted = JobService(app.config["RESULT_ROOT"], runtime_root=app.config["RUNTIME_ROOT"])
+    monkeypatch.setattr(app_module, "_jobs", lambda: restarted)
+    recovered = restarted.get(final["job_id"])
+    assert recovered["status"] == "queued" and recovered["completed"] == 1
+    assert restarted.get(first_child)["status"] == "done"
+
+    app_module._execute_batch(final["job_id"])
+
+    finished = restarted.get(final["job_id"])
+    assert finished["status"] == "done" and finished["completed"] == 3
+    assert [Path(path).read_bytes() for path in first_outputs] == first_bytes
+    assert all(path.is_file() and path.read_bytes() == content for path, content in stale.items())
+    assert len(renderer["make_student"]) == 3  # completed child was not prepared again
+    assert len(renderer["xml"]) == 6  # two role renders per child, including only one retry
+    resumed_work = Path(restarted._job_dir(interrupted_child)) / "work"
+    assert (resumed_work / ("teacher-output-attempt-2-%s.docx" % interrupted_child)).is_file()
+    assert (resumed_work / ("derived-student-source-attempt-2-%s.docx" % interrupted_child)).is_file()
+
+
 def test_local_outputs_have_no_name_collisions_for_same_topic_separate_mode(client, renderer):
     final = post(client, [("专题 学生版.docx", docx())] * 3, docx_mode="separate")
     assert final["status"] == "done" and final["total"] == 3
