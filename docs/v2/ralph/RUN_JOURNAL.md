@@ -448,3 +448,12 @@ The four full-suite failures are the same V1.1 legacy API expectations seen on
 the R13 base/candidate; the repository-wide suite is not reported as all-green.
 This round made no production change and did not repeat R1-R8, any Golden,
 performance workload, or C3.5 large stability workload.
+
+| C4-R1 Release Audit | ~2026-10-02 04:40 UTC (audit start approximate) | 2026-10-02 04:44:30 UTC | GPT-6 Luna Goal Mode | 8009f9a40afdce912647e8ed391d2d4fe381bc72 | 3ceb3a4dd9337530faa25885ae405fba5ae112cb | PASS (documentation/static consistency only): `git diff --check`; 11/11 cited source paths exist; V0.9 manifest parses and lists 10 assets; no build or tests run. Audit identified unresolved onedir resource-root and `%TEMP%` redirection requirements. | Codex GPT-6.1 Sol | PENDING — not invoked in this Worker round; audit requires independent review before packaging | Submit `docs/v2/release/C4_RELEASE_AUDIT.md` for Chief review; do not build/package before PASS | Yes: audit report commit `3ceb3a4` pushed and remote verified; Journal metadata commit follows |
+
+C4-R1 is a read-only source/runtime audit. Current Python shell resolved to a
+Hermes-managed CPython 3.11.15 with no Flask installed; PyInstaller was not
+available. These are environment observations, not a release package result.
+The report distinguishes verified code paths from packaging recommendations
+and records that no EXE/package, launch, port-conflict, Chinese-path, or RC UAT
+gate has yet run.
