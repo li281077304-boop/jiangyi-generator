@@ -15,6 +15,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import socket
 import subprocess
 import sys
 import time
@@ -131,8 +132,132 @@ def bind_local_server(flask_app, server_factory=None):
         server_factory = make_server
     try:
         return server_factory("127.0.0.1", DEFAULT_PORT, flask_app, threaded=True)
-    except OSError:
+    except (OSError, SystemExit):
+        # Werkzeug's BaseWSGIServer turns an address-in-use OSError into
+        # SystemExit(1). Only fall back when a real bind probe confirms that
+        # the requested port is unavailable; preserve unrelated startup errors.
+        if not _loopback_port_unavailable(DEFAULT_PORT):
+            raise
         return server_factory("127.0.0.1", 0, flask_app, threaded=True)
+
+
+def _loopback_port_unavailable(port: int) -> bool:
+    probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        probe.bind(("127.0.0.1", int(port)))
+    except OSError:
+        return True
+    finally:
+        probe.close()
+    return False
+
+
+def _current_instance_path(runtime: Path) -> Path:
+    return runtime / "recovery" / "current-instance.json"
+
+
+def _write_current_instance(path: Path, *, token: str, ready_path: Path,
+                           pid: int | None = None) -> dict:
+    """Atomically publish the active launch identity under this user's runtime."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    record = {"pid": int(pid if pid is not None else os.getpid()),
+              "token": token, "ready_path": str(ready_path.resolve()),
+              "instance_id": uuid.uuid4().hex}
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    temp_path.write_text(json.dumps(record), encoding="utf-8")
+    try:
+        os.chmod(temp_path, 0o600)
+    except OSError:
+        pass  # LocalAppData inherits the current user's profile ACL on Windows.
+    temp_path.replace(path)
+    return record
+
+
+def _remove_current_instance(path: Path, token: str) -> None:
+    """Remove only the record written by this launcher instance."""
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+        if secrets.compare_digest(str(record.get("token", "")), token):
+            path.unlink(missing_ok=True)
+    except (OSError, ValueError, TypeError):
+        pass
+
+
+def _read_current_instance(path: Path) -> dict | None:
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+        pid = record.get("pid")
+        token = record.get("token")
+        ready_path = Path(record.get("ready_path", "")).resolve()
+        if (type(pid) is not int or pid <= 0 or not isinstance(token, str) or
+                len(token) < 32 or ready_path.parent != path.parent.resolve() or
+                not ready_path.name.startswith("launcher-") or
+                ready_path.suffix != ".json"):
+            return None
+        return {"pid": pid, "token": token, "ready_path": ready_path,
+                "instance_id": str(record.get("instance_id", ""))}
+    except (OSError, ValueError, TypeError):
+        return None
+
+
+def _process_is_running(pid: int) -> bool:
+    if pid == os.getpid():
+        return True
+    if os.name == "nt":
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.argtypes = (ctypes.c_ulong, ctypes.c_int, ctypes.c_ulong)
+        kernel32.OpenProcess.restype = ctypes.c_void_p
+        kernel32.GetExitCodeProcess.argtypes = (ctypes.c_void_p,
+                                                ctypes.POINTER(ctypes.c_ulong))
+        kernel32.GetExitCodeProcess.restype = ctypes.c_int
+        kernel32.CloseHandle.argtypes = (ctypes.c_void_p,)
+        process = kernel32.OpenProcess(0x1000, False, int(pid))  # QUERY_LIMITED_INFORMATION
+        if not process:
+            return False
+        try:
+            exit_code = ctypes.c_ulong()
+            return bool(kernel32.GetExitCodeProcess(process, ctypes.byref(exit_code)) and
+                        exit_code.value == 259)  # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(process)
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def _wait_for_existing_instance(runtime: Path, timeout: float = 45.0,
+                                 opener=urllib.request.urlopen,
+                                 process_is_running=_process_is_running) -> str:
+    """Return only the authenticated URL published by the mutex owner."""
+    path = _current_instance_path(runtime)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        record = _read_current_instance(path)
+        if record is None:
+            time.sleep(0.15)
+            continue
+        if not process_is_running(record["pid"]):
+            raise RuntimeError("现有启动实例已退出，服务尚未就绪；请重新启动讲义生成器")
+        try:
+            ready = json.loads(record["ready_path"].read_text(encoding="utf-8"))
+            port = int(ready["port"])
+            if ready.get("ready") is True and 1 <= port <= 65535:
+                url = "http://127.0.0.1:%d" % port
+                if owns_server_identity(url, record["token"], opener=opener):
+                    return url
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+        time.sleep(0.15)
+    raise TimeoutError("讲义生成器正在启动，但暂未就绪；请稍后重试")
+
+
+def _show_launch_error(message: str) -> None:
+    try:
+        ctypes.windll.user32.MessageBoxW(None, message, APP_NAME, 0x10)
+    except Exception:
+        pass
 
 
 def _write_ready_file(path: Path, port: int) -> None:
@@ -198,10 +323,19 @@ def run_gui() -> int:
     handle, already_running = _create_instance_mutex()
     if already_running:
         _close_instance_mutex(handle, owned=False)
-        return 0
+        try:
+            runtime = local_runtime_root()
+            url = _wait_for_existing_instance(runtime)
+            import webbrowser
+            webbrowser.open(url, new=2, autoraise=True)
+            return 0
+        except Exception as exc:
+            _show_launch_error(str(exc))
+            return 1
     child_env, runtime = prepare_runtime_environment()
     token = secrets.token_urlsafe(32)
     ready_path = runtime / "recovery" / ("launcher-" + uuid.uuid4().hex + ".json")
+    current_instance_path = _current_instance_path(runtime)
     child_env[TOKEN_ENV] = token
     child_env[READY_PATH_ENV] = str(ready_path)
     if getattr(sys, "frozen", False):
@@ -211,6 +345,7 @@ def run_gui() -> int:
     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
     process = None
     try:
+        _write_current_instance(current_instance_path, token=token, ready_path=ready_path)
         process = subprocess.Popen(command, env=child_env, creationflags=flags,
                                    stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL)
@@ -223,10 +358,7 @@ def run_gui() -> int:
     except Exception as exc:
         # Keep the .pyw / windowed build free of a persistent console while still
         # reporting launch failures to the user.
-        try:
-            ctypes.windll.user32.MessageBoxW(None, str(exc), APP_NAME, 0x10)
-        except Exception:
-            pass
+        _show_launch_error(str(exc))
         if process is not None and process.poll() is None:
             process.terminate()
             process.wait(timeout=5)
@@ -236,6 +368,7 @@ def run_gui() -> int:
             ready_path.unlink(missing_ok=True)
         except OSError:
             pass
+        _remove_current_instance(current_instance_path, token)
         _close_instance_mutex(handle)
 
 

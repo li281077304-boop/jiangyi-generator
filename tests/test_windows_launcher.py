@@ -6,12 +6,14 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import socket
 import subprocess
 import sys
 import tempfile
 import time
 import urllib.request
 import uuid
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 
 LAUNCHER_PATH = (Path(__file__).resolve().parents[1] /
@@ -51,23 +53,60 @@ def test_occupied_unrelated_port_is_not_mistaken_for_our_app():
     assert not launcher.owns_server_identity("http://127.0.0.1:5128", "ours", opener=unrelated)
 
 
-def test_busy_default_port_binds_an_actual_alternate_port():
-    calls = []
+def test_real_werkzeug_bind_failure_uses_its_actual_alternate_port():
+    import threading
+    from flask import Flask
+    from werkzeug.serving import make_server
 
-    class Server:
-        server_port = 49332
+    occupied = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    occupied.bind(("127.0.0.1", 0))
+    occupied.listen(2)
+    occupied_port = occupied.getsockname()[1]
+    occupied.settimeout(0.2)
+    original_default = launcher.DEFAULT_PORT
+    launcher.DEFAULT_PORT = occupied_port
+    app = Flask("launcher_bind_test")
+    app.add_url_rule("/identity", view_func=lambda: "our alternate server")
+    server = None
+    thread = None
+    try:
+        # Werkzeug's BaseWSGIServer reports this real bind error via SystemExit.
+        server = launcher.bind_local_server(app, server_factory=make_server)
+        assert server.server_port != occupied_port
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        with urllib.request.urlopen(
+                "http://127.0.0.1:%d/identity" % server.server_port, timeout=3) as response:
+            assert response.read() == b"our alternate server"
+        # The occupied unrelated listener must not receive a probe or browser request.
+        try:
+            occupied.accept()
+        except TimeoutError:
+            pass
+        else:
+            raise AssertionError("launcher connected to the unrelated listener")
+    finally:
+        launcher.DEFAULT_PORT = original_default
+        if server is not None:
+            server.shutdown()
+            server.server_close()
+        if thread is not None:
+            thread.join(timeout=3)
+        occupied.close()
 
-    def factory(host, port, app, **kwargs):
-        calls.append((host, port, kwargs))
-        if port == 5128:
-            raise OSError("address already in use")
-        assert port == 0
-        return Server()
 
-    server = launcher.bind_local_server(object(), server_factory=factory)
-    assert server.server_port == 49332
-    assert [call[1] for call in calls] == [5128, 0]
-    assert all(call[0] == "127.0.0.1" for call in calls)
+def test_factory_startup_system_exit_is_not_misclassified_as_busy_port(monkeypatch):
+    monkeypatch.setattr(launcher, "DEFAULT_PORT", 0)
+
+    def factory(_host, _port, _app, **_kwargs):
+        raise SystemExit(2)
+
+    try:
+        launcher.bind_local_server(object(), server_factory=factory)
+    except SystemExit as exc:
+        assert exc.code == 2
+    else:
+        raise AssertionError("non-bind SystemExit must be preserved")
 
 
 def test_named_mutex_enforces_single_instance_on_windows():
@@ -108,6 +147,85 @@ def test_ready_file_and_identity_probe_use_bound_port():
         ready_path = Path(folder) / "runtime" / "ready.json"
         launcher._write_ready_file(ready_path, 49177)
         assert json.loads(ready_path.read_text(encoding="utf-8")) == {"port": 49177, "ready": True}
+
+
+def test_second_launcher_reuses_authenticated_current_instance_url(monkeypatch):
+    with tempfile.TemporaryDirectory(prefix="jiangyi-second-launch-") as folder:
+        runtime = Path(folder) / "讲义生成器"
+        recovery = runtime / "recovery"
+        ready_path = recovery / "launcher-current.json"
+        token = "authenticated-launcher-token-0123456789"
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                if (self.path != "/api/launcher/ready" or
+                        self.headers.get("X-Launcher-Token") != token):
+                    self.send_error(404)
+                    return
+                payload = json.dumps({
+                    "ready": True,
+                    "identity": hashlib.sha256(token.encode("utf-8")).hexdigest(),
+                }).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
+            def log_message(self, *_args):
+                pass
+
+        service = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        import threading
+        service_thread = threading.Thread(target=service.serve_forever, daemon=True)
+        service_thread.start()
+        port = service.server_address[1]
+        recovery.mkdir(parents=True)
+        launcher._write_ready_file(ready_path, port)
+        launcher._write_current_instance(
+            launcher._current_instance_path(runtime), token=token, ready_path=ready_path)
+        opened = []
+        import webbrowser
+        monkeypatch.setattr(launcher, "_create_instance_mutex", lambda: (object(), True))
+        monkeypatch.setattr(launcher, "_close_instance_mutex", lambda *_a, **_k: None)
+        monkeypatch.setattr(launcher, "local_runtime_root", lambda: runtime)
+        monkeypatch.setattr(webbrowser, "open", lambda url, **_kw: opened.append(url) or True)
+        monkeypatch.setattr(subprocess, "Popen", lambda *_a, **_k: (_ for _ in ()).throw(
+            AssertionError("second launch must not create a server")))
+        try:
+            assert launcher.run_gui() == 0
+            assert opened == ["http://127.0.0.1:%d" % port]
+        finally:
+            service.shutdown()
+            service.server_close()
+            service_thread.join(timeout=3)
+
+
+def test_stale_or_unavailable_instance_reports_actionable_feedback():
+    with tempfile.TemporaryDirectory(prefix="jiangyi-stale-launch-") as folder:
+        runtime = Path(folder) / "runtime"
+        recovery = runtime / "recovery"
+        ready_path = recovery / "launcher-stale.json"
+        recovery.mkdir(parents=True)
+        launcher._write_ready_file(ready_path, 5128)
+        launcher._write_current_instance(
+            launcher._current_instance_path(runtime),
+            token="stale-" + ("x" * 40), ready_path=ready_path, pid=987654321)
+        try:
+            launcher._wait_for_existing_instance(
+                runtime, timeout=0.3, process_is_running=lambda _pid: False)
+        except RuntimeError as exc:
+            assert "现有启动实例已退出" in str(exc)
+        else:
+            raise AssertionError("stale instance metadata must not be reused")
+
+        (launcher._current_instance_path(runtime)).unlink()
+        try:
+            launcher._wait_for_existing_instance(runtime, timeout=0.2)
+        except TimeoutError as exc:
+            assert "暂未就绪" in str(exc)
+        else:
+            raise AssertionError("missing instance state must not open a guessed URL")
 
 
 def test_explicit_exit_control_route_is_token_gated_and_shuts_down():
