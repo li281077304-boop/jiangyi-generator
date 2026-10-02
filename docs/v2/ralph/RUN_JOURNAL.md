@@ -457,3 +457,14 @@ available. These are environment observations, not a release package result.
 The report distinguishes verified code paths from packaging recommendations
 and records that no EXE/package, launch, port-conflict, Chinese-path, or RC UAT
 gate has yet run.
+
+| C4-R1 PATCH follow-up | 2026-10-02 04:49 UTC | 2026-10-02 04:50 UTC | GPT-6 Luna Goal Mode | 1c0e31111484ecf71f44ff271825517af3c5dff5 | 2e1a37a3faeeaf6db9e45cf3fccef22f103eade4 | PASS scoped documentation gate: `git diff --check`; corrected bytecode-cache write risk for both dynamic source-file loaders and exact V0.9 manifest provenance. No code, build, or tests changed/run. | Codex GPT-6.1 Sol | Initial PATCH; correction pushed; re-review PENDING | Submit corrected audit for GPT-6.1 Sol re-review; do not package until verdict | Yes: audit correction commit `2e1a37a` pushed and remote verified; Journal metadata commit follows |
+
+C4-R1 initial Chief verdict was PATCH on two audit inaccuracies: packaged
+resources were described as unconditionally read-only despite `.pyc` cache
+writes possible from `semantic_facade._load_predictor()` and
+`renderer_orchestrator._load_v09_engine()`, and `.gitattributes` was incorrectly
+presented as part of the ten-entry V0.9 asset manifest. The audit now records
+both facts and requires disabling Python bytecode writes before app imports or
+dynamic loads. Chief re-review is pending; no implementation, build, or test
+work was authorized or performed in this PATCH follow-up.
