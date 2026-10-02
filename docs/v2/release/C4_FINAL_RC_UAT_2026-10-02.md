@@ -2,20 +2,16 @@
 
 ## Status
 
-This is an evidence report for the C4 final RC candidate, not a release approval.
-The candidate source branch is `feature/v1.2-c4-release-engineering` at
-`f095147ab09a6ded718443e03c42f473766a2b38`. The browser and WPS runs below
-used the onedir package built under `C:\xml-uat\c4-final-rc`; its startup
-evidence records the executable SHA-256 and package inventory, but no separate
-build-attestation field binds the package to a Git SHA. Treat `f095147...` as
-the candidate under review, not as an independently proven package build SHA.
+This report retains the earlier candidate evidence for history. The current
+final candidate and superseding closeout are in “Final Candidate d3511a0”.
 
-**Release gate: BLOCKED. Do not claim `C4_WINDOWS_RC_PASS` and do not create the
-final tag.** WPS rendered stale template header values in both 1v1 and class
-outputs. Restart scenario A was not captured at the queued state. The official
-final RC ZIP, final Chief review, and release tag are pending. An external
-candidate archive and bounded package path audit were added later in this
-report; neither is a release approval.
+**Current disposition: FINAL_CHIEF_REVIEW_PENDING.** The latest onedir package
+is bound to source/remote commit
+`d3511a07aeb5e981733750cc5d21db350029f229`; fresh browser and WPS UAT, restart
+recovery, package audit, and post-UAT regression evidence are recorded below.
+The earlier stale-header and queued-snapshot gaps are superseded by that
+candidate's evidence. Do not claim `C4_WINDOWS_RC_PASS` or create the release
+tag until Codex GPT-6.1 Sol returns Final Chief PASS.
 
 ## Build and startup evidence
 
@@ -282,3 +278,110 @@ retained as a separate raw output file.
 The focused pytest follow-up remains **293 passed, zero failures**; only the
 full repository suite was not run. Earlier interim wording that the selected
 pytest groups were unverified is superseded by that result.
+
+## Final Candidate d3511a0
+
+This section supersedes the earlier candidate-specific blockers above where
+fresh evidence exists. It does not erase the historical evidence. The final
+candidate was built from branch HEAD
+`d3511a07aeb5e981733750cc5d21db350029f229` and its build attestation is
+`C:\xml-uat\c4-final-rc-final\evidence\build-attestation-d3511a0.json`.
+The package was PyInstaller onedir, Windows x64, and was tested from a Chinese
+path on D: with runtime/staging on C: and results on D:.
+
+### Build, launch, and package
+
+* EXE SHA-256: `a781e0c80db0c4d3594afd1ad7bae9326df3c7ec433b8ce26b27c3491ac474db`.
+* Onedir tree SHA-256: `fb548acaa81651564b1a6865a551fa7b8175b1723668abf2bf6fdbed5d60ee3e`.
+* The fresh EXE reached Flask ready; root, CSS, and JS returned HTTP 200, the
+  product title was correct, and the browser opened. Evidence:
+  `C:\xml-uat\c4-final-rc-final\evidence\startup-d3511a0.json`.
+* Ten consecutive launch → ready → normal-exit cycles passed. Each cycle
+  recorded port release and no surviving application process; a fresh
+  instance identity prevented reuse of an old service.
+* The final archive is
+  `C:\xml-uat\c4-final-rc-final\release-candidate\讲义生成器_V1.2_RC1_Windows_x64_d3511a0_FINAL.zip`,
+  19,017,363 bytes, SHA-256
+  `a5c5be3d791707a7fcaaca0cf3d0dbd4062576d6bb2b1e78af00d15a6288fadd`.
+  Its 194 entries match the d3511a0 package inventory hashes. The forbidden
+  path audit found zero `.git`, corpus/Gold source, pytest cache, UAT/log/temp,
+  credential, or development-environment paths; required runtime assets were
+  present. The bounded content scan checked 43 text assets and found no
+  literal secret-pattern matches; this was not a comprehensive binary-secret
+  analysis.
+
+### Real browser generation and cross-volume publication
+
+All scenarios below were submitted through the packaged EXE's browser UI.
+Runtime/staging remained on C:, and final files were written to the D: Desktop
+results directory. Teacher/student DOCX files were non-empty and passed their
+package validation. The result directories contained only final DOCX outputs;
+no publication temporary files remained. No `WinError 17` recurred.
+
+| Scenario | Outcome |
+|---|---|
+| Teacher + student pair | Job completed; both outputs published and validated. |
+| Teacher-only | Job completed; teacher output and prepared student output published and validated. |
+| Student-only | Job completed through the recorded renderer route; student output published and validated. |
+| Multi-DOCX batch | Three logical items completed with six final DOCX outputs; item routes recorded XML and V0.9 fallback. |
+| Chinese ZIP with nested folders | Two valid items completed from Chinese multi-level paths. |
+| Partial success with corrupt item | The corrupt input item failed validation while two good siblings completed and remained published; final state was legitimate partial. |
+| Real V0.9 fallback | A known unsupported/render-failure case invoked the frozen whole-job route and published validated output. |
+
+Job ids, input classification, Studentizer/renderer routes, fallback reasons,
+and package results are in the persisted job records under
+`C:\xml-uat\c4-final-rc-final\localappdata\讲义生成器\jobs` and the associated
+browser UAT evidence. ZIP was tested as an input format only; the product
+delivery remains the local result folder.
+
+### Restart recovery
+
+The retained interruption snapshot
+`evidence\restart-AB-interrupt-d3511a0.json` captured one job at `running`
+(stage `准备 Splitter 与 Renderer`, attempt 1) and a sibling at `queued`
+(attempt 0), then confirmed both candidate processes stopped and port 5128
+was released. After restart, `restart-AB-final-d3511a0.json` records both jobs
+done: the interrupted running job recovered on attempt 2; the queued job
+completed on attempt 1. The separate batch restart evidence completed all
+4/4 items while preserving completed siblings. No duplicate output or
+publication temp was found. DOCX package validation passed. Restart evidence
+files are under `C:\xml-uat\c4-final-rc-final\evidence`.
+
+### WPS output acceptance
+
+The latest candidate outputs passed WPS Open → SaveAs → Close → Reopen → PDF
+for 1v1 teacher/student, class teacher/student, and a real V0.9 fallback
+teacher output. All five roundtrips completed; files and PDFs were non-empty.
+The content audit found all three expected slots, correct physics/high-school
+headers on the X006 outputs, and correct mathematics/high-school headers on
+the X012 fallback. Images and tables remained present; formula-bearing
+fallback content was detected after reopen. Evidence is in
+`evidence\wps-final-d3511a0\report.json`, `class-roundtrip.json`,
+`fallback-x012-roundtrip.json`, and `wps-slot-content-d3511a0.json`.
+This supersedes the prior candidate's stale-header failure for the tested
+latest outputs; it does not claim visual inspection of every page or every
+generated item.
+
+### Final regression disposition
+
+* Selected C4 regression: **293 passed, 0 failed**. This covers launcher,
+  publication/restart, C2 batch/ZIP/partial/local delivery, C3 Studentizer,
+  C3.5 restart, and Stage2 focused tests.
+* Full repository pytest: **418 passed, 4 failed, 7 subtests passed**. The four
+  failures are in frozen `v1.1-stable/res/app/webapp/test_app_api.py` and
+  assert obsolete V1.1 result ZIP/API behavior, including old status codes.
+  These are baseline-known failures, not silently counted as passes. Full log:
+  `C:\xml-uat\c4-final-rc-final\evidence\regression-after-uat-final\full-pytest.log`.
+* Stage2 completed and matches the inherited prediction outputs. Its GoldCompare
+  remains S01/S11 FAIL and S04/S12 PASS; this is not a blanket Stage2 accuracy
+  pass.
+* Stage3 protected regression: QG 408/408, sections 369/369, subquestions
+  328/328, Recall 100%, E1/E2/E3/E4 = 0, MISS/FP/MERGE/SPLIT = 0.
+* Frozen V0.9 assets 10/10; 27 source hashes 27/27; Python compilation,
+  JavaScript syntax, and `git diff --check` passed.
+
+**Current disposition: FINAL_CHIEF_REVIEW_PENDING.** Fresh candidate evidence
+resolves the stale-header and restart snapshot gaps for the tested flows. The
+four frozen V1.1 tests and known Stage2 GoldCompare observations remain
+explicitly disclosed. No final tag exists. Create the tag only after Codex
+GPT-6.1 Sol independently returns PASS.
