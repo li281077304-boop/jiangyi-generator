@@ -76,9 +76,17 @@ capacity rather than on a page-break edge.
 
 Changed: `v1.2-xml-experiment/res/app/template_slot_composer.py`
 (`KNOWLEDGE_REVIEW_TARGET_Y`, `KNOWLEDGE_REVIEW_SPACER_PT`,
-`_anchor_knowledge_review`, `_set_exact_interval`, plus a
-`knowledge_anchor` field on `SlotRenderResult`) and
-`v1.2-xml-experiment/res/app/test_final_polish.py`.
+`_resolve_content_carrier`, `_anchor_knowledge_review`,
+`_set_exact_interval`, plus a `knowledge_anchor` field on
+`SlotRenderResult`) and `v1.2-xml-experiment/res/app/test_final_polish.py`.
+
+`_resolve_content_carrier` exists because `render_slots` runs on the *rendered
+output*, which already carries the imported source blocks at the body tail. A
+"exactly one table" test therefore fails closed on every source that contains a
+table. The frozen template carrier is identified by its own structure instead:
+row 5 is one merged cell whose first paragraph is `一、课堂启动` and whose sixth
+paragraph is `二、知识回顾`. Imported tables are ignored and a moved template
+still fails closed with `TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED`.
 
 The anchor runs on the **output copy only**, before the slot payload is
 inserted, and:
@@ -123,12 +131,21 @@ with a persisted reason. See `POST_V1.2_BACKLOG`.
 
 ## TESTS
 
-- Focused: `test_final_polish.py` **15 passed** (5 new anchor tests).
-- Full relevant regression: **458 passed, 2 failed, 7 subtests passed**.
-- The 2 failures are **PRE_EXISTING**: both were reproduced on the unmodified
-  `ddfab91` tree (verified with `git stash`).
-  - `test_studentizer_production_registry.py::test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher`
-  - `test_windows_launcher.py::test_server_child_starts_with_isolated_runtime_and_exits_via_control_api`
+- Focused: `test_final_polish.py` **16 passed** (6 new anchor tests, including
+  one that appends an imported table to the body and asserts the anchor still
+  resolves the frozen carrier).
+- Full regression at the repository root: **460 passed, 6 failed, 7 subtests
+  passed**.
+- All 6 failures are **PRE_EXISTING**: a detached worktree at the unmodified
+  `ddfab91` tree produces **the same 6 failures** (454 passed).
+  - `tests/test_studentizer_production_registry.py::test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher`
+  - `tests/test_windows_launcher.py::test_server_child_starts_with_isolated_runtime_and_exits_via_control_api`
+  - `v1.1-stable/res/app/webapp/test_app_api.py` (4 tests; this tree is never
+    touched by this change, and the file passes 5/5 when run in isolation)
+- XML coverage sweep over the release corpus (`X001`–`X027`, 1v1, production
+  `render_slots` path): **22/27 XML_OK before and 22/27 after**, with an
+  identical failing set (`X005`, `X006`, `X011`, `X026`, `X027`). No XML
+  coverage regression.
 - `py_compile` clean for both changed files; `git diff --check` clean.
 
 ## EVIDENCE

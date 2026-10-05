@@ -1,0 +1,677 @@
+{
+  "schema": "V1_2_RELEASE_CANDIDATE_2026-10-06",
+  "source_head": "c2691632480d1c7b681fd3cb02d09e2a43b3d1f2",
+  "branch": "feature/v1.2-c4-release-engineering",
+  "build": {
+    "spec": "packaging/windows/v1.2_onedir.spec",
+    "package_tree_sha256": "a09214619799960e311621b74f1914841fd539a194a3ebc7a57228e49506916a",
+    "exe_sha256": "cc13931a15041e92a307ec32fe6b41feb16367b09a67157529ed7229467309ff",
+    "file_count": 192,
+    "total_bytes": 36147708,
+    "zip": {
+      "name": "讲义生成器-V1.2-RC-c269163.zip",
+      "bytes": 18829332,
+      "sha256": "d9716071e2e6bc2fe73a5655a51bbc5a288ba5a37a8c673407f1f135fff0e0b3"
+    },
+    "interpreter": "CPython 3.12.10 x64 AMD64",
+    "v09_manifest_assets_verified": 10
+  },
+  "knowledge_anchor": {
+    "target_y": {
+      "1v1": 768.219,
+      "class": 745.899
+    },
+    "spacer_pt": {
+      "1v1": 120.5,
+      "class": 100.8
+    },
+    "footer_band_top": {
+      "1v1": 792.25,
+      "class": 769.9
+    }
+  },
+  "source_gate": [
+    {
+      "case": "training-1v1",
+      "template": "1v1",
+      "source": "C:\\xml-uat\\stage3-expansion\\sources\\X008.docx",
+      "role": "teacher",
+      "knowledge_point_status": "NO_KNOWLEDGE_POINT",
+      "training_split_strategy": "GROUPED_VERTICAL",
+      "template_sha256": "1318fceabaa957b12e371310902fd81a0db08be09cee2121f6cd2606d8fd6a1a",
+      "output": "C:\\xml-uat\\v12-closeout-20261006\\source-gate\\training-1v1-1v1.docx",
+      "knowledge_anchor": {
+        "target_y": 768.219,
+        "spacer_pt": 120.5,
+        "spacer_intervals": 4,
+        "heading_text_height_pt": 14.05
+      },
+      "package_valid": true,
+      "slot_nodes": {
+        "knowledge": 77,
+        "immediate": 62,
+        "final": 121
+      },
+      "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+      "status": "XML_OK"
+    },
+    {
+      "case": "training-class",
+      "template": "class",
+      "source": "C:\\xml-uat\\stage3-expansion\\sources\\X008.docx",
+      "role": "teacher",
+      "knowledge_point_status": "NO_KNOWLEDGE_POINT",
+      "training_split_strategy": "GROUPED_VERTICAL",
+      "template_sha256": "f51046d841699645b1b49f49f481c559e8502b98589d20b0c7e97cf2f7ba8f13",
+      "output": "C:\\xml-uat\\v12-closeout-20261006\\source-gate\\training-class-class.docx",
+      "knowledge_anchor": {
+        "target_y": 745.899,
+        "spacer_pt": 100.8,
+        "spacer_intervals": 4,
+        "heading_text_height_pt": 14.05
+      },
+      "package_valid": true,
+      "slot_nodes": {
+        "knowledge": 77,
+        "immediate": 62,
+        "final": 121
+      },
+      "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+      "status": "XML_OK"
+    },
+    {
+      "case": "physics-class",
+      "template": "class",
+      "source": "C:\\xml-uat\\c4-product-recovery\\corpus\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+      "role": "teacher",
+      "status": "FAILED",
+      "error": "SlotRoutingError: unclassified section at b192: 【巩固训练】"
+    },
+    {
+      "case": "math-x012",
+      "template": "1v1",
+      "source": "C:\\xml-uat\\c4-product-recovery\\corpus\\X012真实数学讲义.docx",
+      "role": "teacher",
+      "status": "FAILED",
+      "error": "SlotRoutingError: generic heading and practice content share atomic table b2"
+    }
+  ],
+  "source_gate_layout": [
+    {
+      "file": "training-1v1-1v1.pdf",
+      "template": "1v1",
+      "pages": 17,
+      "heading": {
+        "y0": 754.169,
+        "y1": 768.219,
+        "x0": 28.32
+      },
+      "expected_y1": 768.219,
+      "footer_band_top": 792.25,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.031,
+      "on_page_one": true
+    },
+    {
+      "file": "training-class-class.pdf",
+      "template": "class",
+      "pages": 20,
+      "heading": {
+        "y0": 731.849,
+        "y1": 745.899,
+        "x0": 48.72
+      },
+      "expected_y1": 745.899,
+      "footer_band_top": 769.9,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.001,
+      "on_page_one": true
+    }
+  ],
+  "source_gate_product": [
+    {
+      "file": "training-1v1-1v1.docx",
+      "template": "1v1",
+      "sections_present": {
+        "一、课堂启动": true,
+        "二、知识回顾": true,
+        "知识精讲": true,
+        "即时训练": true,
+        "五、归纳总结": true,
+        "六、巩固练习": true
+      },
+      "six_modules": true,
+      "product_integrity_accepted": true,
+      "product_integrity_errors": [],
+      "blank_placeholder_run_lengths": {
+        "一、课堂启动": 3,
+        "二、知识回顾": 13,
+        "五、归纳总结": 8
+      }
+    },
+    {
+      "file": "training-class-class.docx",
+      "template": "class",
+      "sections_present": {
+        "一、课堂启动": true,
+        "二、知识回顾": true,
+        "知识精讲&例题讲解": true,
+        "即时训练": true,
+        "五、归纳总结": true,
+        "六、出门测试": true
+      },
+      "six_modules": true,
+      "product_integrity_accepted": true,
+      "product_integrity_errors": [],
+      "blank_placeholder_run_lengths": {
+        "一、课堂启动": 3,
+        "二、知识回顾": 10,
+        "五、归纳总结": 23
+      }
+    }
+  ],
+  "renumber": {
+    "1v1": {
+      "template": "1v1",
+      "status": "DISPLAY_RENUMBER_APPLIED",
+      "applied": true,
+      "slot_display_ranges": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "slot_source_numbers_source_order": {
+        "knowledge": [
+          1,
+          5,
+          10,
+          15,
+          18,
+          22,
+          26,
+          31
+        ],
+        "immediate": [
+          2,
+          6,
+          11,
+          16,
+          19,
+          23,
+          27,
+          32
+        ],
+        "final": [
+          3,
+          4,
+          7,
+          8,
+          9,
+          12,
+          13,
+          14,
+          17,
+          20,
+          21,
+          24,
+          25,
+          28,
+          29,
+          30,
+          33,
+          34
+        ]
+      },
+      "total_questions": 34,
+      "teacher_student_source_nodes_match": true,
+      "outputs": {
+        "teacher": {
+          "path": "C:\\xml-uat\\v12-closeout-20261006\\renumber\\1v1-teacher.docx",
+          "package_valid": true,
+          "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+          "knowledge_anchor": {
+            "target_y": 768.219,
+            "spacer_pt": 120.5,
+            "spacer_intervals": 4,
+            "heading_text_height_pt": 14.05
+          }
+        },
+        "student": {
+          "path": "C:\\xml-uat\\v12-closeout-20261006\\renumber\\1v1-student.docx",
+          "package_valid": true,
+          "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+          "knowledge_anchor": {
+            "target_y": 768.219,
+            "spacer_pt": 120.5,
+            "spacer_intervals": 4,
+            "heading_text_height_pt": 14.05
+          }
+        }
+      }
+    },
+    "class": {
+      "template": "class",
+      "status": "DISPLAY_RENUMBER_APPLIED",
+      "applied": true,
+      "slot_display_ranges": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "slot_source_numbers_source_order": {
+        "knowledge": [
+          1,
+          5,
+          10,
+          15,
+          18,
+          22,
+          26,
+          31
+        ],
+        "immediate": [
+          2,
+          6,
+          11,
+          16,
+          19,
+          23,
+          27,
+          32
+        ],
+        "final": [
+          3,
+          4,
+          7,
+          8,
+          9,
+          12,
+          13,
+          14,
+          17,
+          20,
+          21,
+          24,
+          25,
+          28,
+          29,
+          30,
+          33,
+          34
+        ]
+      },
+      "total_questions": 34,
+      "teacher_student_source_nodes_match": true,
+      "outputs": {
+        "teacher": {
+          "path": "C:\\xml-uat\\v12-closeout-20261006\\renumber\\class-teacher.docx",
+          "package_valid": true,
+          "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+          "knowledge_anchor": {
+            "target_y": 745.899,
+            "spacer_pt": 100.8,
+            "spacer_intervals": 4,
+            "heading_text_height_pt": 14.05
+          }
+        },
+        "student": {
+          "path": "C:\\xml-uat\\v12-closeout-20261006\\renumber\\class-student.docx",
+          "package_valid": true,
+          "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+          "knowledge_anchor": {
+            "target_y": 745.899,
+            "spacer_pt": 100.8,
+            "spacer_intervals": 4,
+            "heading_text_height_pt": 14.05
+          }
+        }
+      }
+    }
+  },
+  "coverage_current": null,
+  "coverage_baseline": null,
+  "exe_uat": {
+    "cases": [
+      {
+        "case": "LAUNCH",
+        "status": "OK"
+      },
+      {
+        "case": "Case1-training-only-physics-1v1",
+        "template_type": "1v1",
+        "files": [
+          "X008.docx"
+        ],
+        "input_version": "TEACHER_ONLY",
+        "status": "done",
+        "result_dir": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义",
+        "renderer_route": "XML",
+        "student_preparation_route": "BYPASS",
+        "fallback_phase": "NONE",
+        "fallback_reason_code": null,
+        "fallback_detail_reason_code": null,
+        "error": null,
+        "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+        "renderer_expectation_met": true,
+        "open_result": {
+          "result_dir": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义",
+          "opened": true
+        },
+        "outputs": [
+          "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义\\九年级 物理 X008 复习讲义 学生版.docx",
+          "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义\\九年级 物理 X008 复习讲义 教师版.docx"
+        ]
+      },
+      {
+        "case": "Case2-ordinary-knowledge-lesson-1v1",
+        "template_type": "1v1",
+        "files": [
+          "X001.docx"
+        ],
+        "input_version": "TEACHER_ONLY",
+        "status": "done",
+        "result_dir": "D:\\Documents\\生成讲义结果\\高三 数学 X001 专题复习（2）",
+        "renderer_route": "XML",
+        "student_preparation_route": "V09_MAKE_STUDENT",
+        "fallback_phase": "NONE",
+        "fallback_reason_code": null,
+        "fallback_detail_reason_code": null,
+        "error": null,
+        "display_renumbering_status": "NOT_APPLICABLE",
+        "renderer_expectation_met": true,
+        "open_result": {
+          "result_dir": "D:\\Documents\\生成讲义结果\\高三 数学 X001 专题复习（2）",
+          "opened": true
+        },
+        "outputs": [
+          "D:\\Documents\\生成讲义结果\\高三 数学 X001 专题复习（2）\\高三 数学 X001 专题复习 学生版.docx",
+          "D:\\Documents\\生成讲义结果\\高三 数学 X001 专题复习（2）\\高三 数学 X001 专题复习 教师版.docx"
+        ]
+      },
+      {
+        "case": "Case3-training-only-physics-class",
+        "template_type": "class",
+        "files": [
+          "X008.docx"
+        ],
+        "input_version": "TEACHER_ONLY",
+        "status": "done",
+        "result_dir": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义（2）",
+        "renderer_route": "XML",
+        "student_preparation_route": "BYPASS",
+        "fallback_phase": "NONE",
+        "fallback_reason_code": null,
+        "fallback_detail_reason_code": null,
+        "error": null,
+        "display_renumbering_status": "DISPLAY_RENUMBER_APPLIED",
+        "renderer_expectation_met": true,
+        "open_result": {
+          "result_dir": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义（2）",
+          "opened": true
+        },
+        "outputs": [
+          "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义（2）\\九年级 物理 X008 复习讲义 学生版.docx",
+          "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义（2）\\九年级 物理 X008 复习讲义 教师版.docx"
+        ]
+      }
+    ]
+  },
+  "exe_wps_gate": [
+    {
+      "case": "Case1-training-only-physics-1v1",
+      "source": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义\\九年级 物理 X008 复习讲义 学生版.docx",
+      "role": "学生版",
+      "opened": true,
+      "paragraphs": 198,
+      "pages": 11,
+      "saveas_docx": true,
+      "reopened": true,
+      "exported_pdf": true,
+      "status": "PASS",
+      "saved_docx": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps\\Case1__九年级 物理 X008 复习讲义 学生版.wps-saved.docx",
+      "pdf": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps-pdf\\Case1__九年级 物理 X008 复习讲义 学生版.pdf"
+    },
+    {
+      "case": "Case1-training-only-physics-1v1",
+      "source": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义\\九年级 物理 X008 复习讲义 教师版.docx",
+      "role": "教师版",
+      "opened": true,
+      "paragraphs": 316,
+      "pages": 17,
+      "saveas_docx": true,
+      "reopened": true,
+      "exported_pdf": true,
+      "status": "PASS",
+      "saved_docx": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps\\Case1__九年级 物理 X008 复习讲义 教师版.wps-saved.docx",
+      "pdf": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps-pdf\\Case1__九年级 物理 X008 复习讲义 教师版.pdf"
+    },
+    {
+      "case": "Case2-ordinary-knowledge-lesson-1v1",
+      "source": "D:\\Documents\\生成讲义结果\\高三 数学 X001 专题复习（2）\\高三 数学 X001 专题复习 学生版.docx",
+      "role": "学生版",
+      "opened": true,
+      "paragraphs": 2092,
+      "pages": 77,
+      "saveas_docx": true,
+      "reopened": true,
+      "exported_pdf": true,
+      "status": "PASS",
+      "saved_docx": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps\\Case2__高三 数学 X001 专题复习 学生版.wps-saved.docx",
+      "pdf": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps-pdf\\Case2__高三 数学 X001 专题复习 学生版.pdf"
+    },
+    {
+      "case": "Case2-ordinary-knowledge-lesson-1v1",
+      "source": "D:\\Documents\\生成讲义结果\\高三 数学 X001 专题复习（2）\\高三 数学 X001 专题复习 教师版.docx",
+      "role": "教师版",
+      "opened": true,
+      "paragraphs": 1219,
+      "pages": 62,
+      "saveas_docx": true,
+      "reopened": true,
+      "exported_pdf": true,
+      "status": "PASS",
+      "saved_docx": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps\\Case2__高三 数学 X001 专题复习 教师版.wps-saved.docx",
+      "pdf": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps-pdf\\Case2__高三 数学 X001 专题复习 教师版.pdf"
+    },
+    {
+      "case": "Case3-training-only-physics-class",
+      "source": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义（2）\\九年级 物理 X008 复习讲义 学生版.docx",
+      "role": "学生版",
+      "opened": true,
+      "paragraphs": 207,
+      "pages": 13,
+      "saveas_docx": true,
+      "reopened": true,
+      "exported_pdf": true,
+      "status": "PASS",
+      "saved_docx": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps\\Case3__九年级 物理 X008 复习讲义 学生版.wps-saved.docx",
+      "pdf": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps-pdf\\Case3__九年级 物理 X008 复习讲义 学生版.pdf"
+    },
+    {
+      "case": "Case3-training-only-physics-class",
+      "source": "D:\\Documents\\生成讲义结果\\九年级 物理 X008 复习讲义（2）\\九年级 物理 X008 复习讲义 教师版.docx",
+      "role": "教师版",
+      "opened": true,
+      "paragraphs": 325,
+      "pages": 20,
+      "saveas_docx": true,
+      "reopened": true,
+      "exported_pdf": true,
+      "status": "PASS",
+      "saved_docx": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps\\Case3__九年级 物理 X008 复习讲义 教师版.wps-saved.docx",
+      "pdf": "C:\\xml-uat\\v12-closeout-20261006\\exe-wps-pdf\\Case3__九年级 物理 X008 复习讲义 教师版.pdf"
+    }
+  ],
+  "exe_layout": [
+    {
+      "case": "Case1",
+      "file": "Case1__九年级 物理 X008 复习讲义 学生版.pdf",
+      "template": "1v1",
+      "pages": 11,
+      "heading": {
+        "y0": 754.169,
+        "y1": 768.219
+      },
+      "target_y1": 768.219,
+      "footer_band_top": 792.25,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.031,
+      "on_page_one": true
+    },
+    {
+      "case": "Case1",
+      "file": "Case1__九年级 物理 X008 复习讲义 教师版.pdf",
+      "template": "1v1",
+      "pages": 17,
+      "heading": {
+        "y0": 754.169,
+        "y1": 768.219
+      },
+      "target_y1": 768.219,
+      "footer_band_top": 792.25,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.031,
+      "on_page_one": true
+    },
+    {
+      "case": "Case2",
+      "file": "Case2__高三 数学 X001 专题复习 学生版.pdf",
+      "template": "1v1",
+      "pages": 77,
+      "heading": {
+        "y0": 754.169,
+        "y1": 768.219
+      },
+      "target_y1": 768.219,
+      "footer_band_top": 792.25,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.031,
+      "on_page_one": true
+    },
+    {
+      "case": "Case2",
+      "file": "Case2__高三 数学 X001 专题复习 教师版.pdf",
+      "template": "1v1",
+      "pages": 62,
+      "heading": {
+        "y0": 754.169,
+        "y1": 768.219
+      },
+      "target_y1": 768.219,
+      "footer_band_top": 792.25,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.031,
+      "on_page_one": true
+    },
+    {
+      "case": "Case3",
+      "file": "Case3__九年级 物理 X008 复习讲义 学生版.pdf",
+      "template": "class",
+      "pages": 13,
+      "heading": {
+        "y0": 731.849,
+        "y1": 745.899
+      },
+      "target_y1": 745.899,
+      "footer_band_top": 769.9,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.001,
+      "on_page_one": true
+    },
+    {
+      "case": "Case3",
+      "file": "Case3__九年级 物理 X008 复习讲义 教师版.pdf",
+      "template": "class",
+      "pages": 20,
+      "heading": {
+        "y0": 731.849,
+        "y1": 745.899
+      },
+      "target_y1": 745.899,
+      "footer_band_top": 769.9,
+      "deviation_from_target": 0.0,
+      "clearance_to_footer_band": 24.001,
+      "on_page_one": true
+    }
+  ],
+  "tests": {
+    "focused": "test_final_polish.py 16 passed",
+    "full_current": "460 passed, 6 failed, 7 subtests passed",
+    "full_baseline_ddfab91": "454 passed, 6 failed, 7 subtests passed",
+    "verdict": "identical failure set => all PRE_EXISTING; no new regression"
+  }
+}

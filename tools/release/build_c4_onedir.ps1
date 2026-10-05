@@ -72,7 +72,12 @@ try {
     [long]$totalBytes = 0
     foreach ($file in $files) { $totalBytes += [long]$file.size_bytes }
     $canonical = ($files | ForEach-Object { '{0}`t{1}`t{2}' -f $_.path,$_.size_bytes,$_.sha256 }) -join "`n"
-    $treeHash = [Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($canonical))).ToLowerInvariant()
+    # SHA256.HashData / Convert.ToHexString require .NET 5+; Windows PowerShell
+    # 5.1 runs on .NET Framework 4.x, so compute the same digest with APIs that
+    # exist there. Algorithm and output are unchanged.
+    $treeSha = [Security.Cryptography.SHA256]::Create()
+    $treeHash = -join ($treeSha.ComputeHash([Text.Encoding]::UTF8.GetBytes($canonical)) |
+        ForEach-Object { $_.ToString('x2') })
     $summary = [ordered]@{
         package_name='讲义生成器 onedir'
         build_interpreter='CPython 3.12.10 x64 (Windows AMD64)'
