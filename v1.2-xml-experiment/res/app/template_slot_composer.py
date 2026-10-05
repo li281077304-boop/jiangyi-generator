@@ -10,16 +10,23 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import os
+import re
+from hashlib import sha256
 from pathlib import Path
 import tempfile
 from typing import Callable
 
 from docx import Document
 from docx.oxml import OxmlElement
+from docx.enum.table import WD_ROW_HEIGHT_RULE
+from docx.shared import Pt
 
+from lesson_metadata import (LessonMetadata, build_cover_display, display_width_units,
+                             COVER_DISPLAY_BUDGET)
 from package_validator import validate_package
 from renderer_xml_minimal import BlockSpan, ProjectionError, RenderResult
-from slot_router import SLOT_ORDER, SlotRoutingError, SlotRoutingPlan
+from slot_router import (SLOT_ORDER, SlotRoutingError, SlotRoutingPlan,
+                         _visible_question_number, validate_training_pair_routes)
 from struct_doc import W_P, W_SECTPR, W_T, W_TBL, W_TC
 
 
@@ -30,10 +37,111 @@ class SlotRenderResult:
     slot_nodes: dict[str, int]
     resource_report: dict
     package_report: dict
+    display_renumbering: dict | None = None
 
 
 def _paragraph_text(paragraph) -> str:
     return "".join(node.text or "" for node in paragraph.iter(W_T)).strip()
+
+
+_CROSS_REFERENCE = re.compile(r"第\s*(?:\d+|[一二三四五六七八九十百]+)\s*题")
+_DISPLAY_PREFIX = re.compile(r"^\s*(\d{1,3})\s*[.．、)）]\s*\S")
+_UNSAFE_NUMBER_TAGS = {
+    "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}" + name
+    for name in ("txbxContent", "fldChar", "instrText", "ins", "del", "hyperlink")
+}
+_COVER_ROW_HEIGHTS_PT = {"1v1": (23.9, 23.9), "class": (25.7, 27.8)}
+
+
+def _editable_number_nodes(paragraph) -> tuple[list, re.Match | None]:
+    if any(node.tag in _UNSAFE_NUMBER_TAGS for node in paragraph.iter()):
+        return [], None
+    nodes = paragraph.xpath("./w:r/w:t")
+    text = "".join(node.text or "" for node in nodes)
+    match = _DISPLAY_PREFIX.match(text)
+    if match is None or _visible_question_number(_paragraph_text(paragraph)) != int(match.group(1)):
+        return [], None
+    return nodes, match
+
+
+def build_display_renumbering(plans: dict[str, SlotRoutingPlan]) -> dict:
+    """One canonical source-occurrence map, shared by all paired presentations.
+
+    Source question numbers and routing remain untouched. Any cross-reference,
+    table-contained start or unsupported prefix structure disables the whole
+    paired display transformation instead of guessing partial correspondence.
+    """
+    if not plans or any(getattr(plan, "knowledge_point_status", "UNKNOWN") != "NO_KNOWLEDGE_POINT"
+                        or getattr(plan, "training_split_strategy", "NOT_APPLICABLE") == "NOT_APPLICABLE" for plan in plans.values()):
+        return {"status": "NOT_APPLICABLE", "slots": {}}
+    validate_training_pair_routes(plans)
+    signature = next(iter(plans.values())).training_question_routes
+    if not signature:
+        return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
+                "reason": "source occurrence signature unavailable", "slots": {}}
+    nodes_by_role = {}
+    for role, plan in plans.items():
+        if sha256(plan.source_path.read_bytes()).hexdigest() != plan.source_sha256:
+            raise SlotRoutingError("DISPLAY_RENUMBER_SOURCE_CHANGED", "source changed after routing")
+        document = Document(str(plan.source_path))
+        if _CROSS_REFERENCE.search(_paragraph_text(document.element.body)):
+            return {"status": "DISPLAY_RENUMBER_SKIPPED_CROSS_REFERENCE", "applied": False,
+                    "reason": "main-story cross-question reference found in " + role, "slots": {}}
+        slot_by_node = {span.start: slot for slot, spans in plan.slots.items() for span in spans}
+        starts = []
+        observed_signature = []
+        for seq, block in enumerate(child for child in document.element.body if child.tag in (W_P, W_TBL)):
+            paragraphs = [block] if block.tag == W_P else list(block.iter(W_P))
+            for paragraph in paragraphs:
+                number = _visible_question_number(_paragraph_text(paragraph))
+                if number is None:
+                    continue
+                nodes, match = _editable_number_nodes(paragraph) if block.tag == W_P else ([], None)
+                if not nodes or match is None:
+                    return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
+                            "reason": "non-editable question prefix at %s:b%d" % (role, seq), "slots": {}}
+                starts.append("b%d" % seq)
+                observed_signature.append((number, slot_by_node.get("b%d" % seq)))
+        if tuple(observed_signature) != tuple(signature):
+            return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
+                    "reason": "physical question starts do not match routed source occurrences in " + role,
+                    "slots": {}}
+        nodes_by_role[role] = starts
+    slots = {slot: [] for slot in SLOT_ORDER}
+    for occurrence, (number, slot) in enumerate(signature, 1):
+        slots[slot].append({"source_occurrence": occurrence,
+                            "source_question_number": number,
+                            "source_order": occurrence,
+                            "destination_slot": slot,
+                            "new_number": len(slots[slot]) + 1,
+                            "source_nodes": {role: ids[occurrence - 1] for role, ids in nodes_by_role.items()}})
+    return {"status": "DISPLAY_RENUMBER_APPLIED", "applied": True, "slots": slots}
+
+
+def _apply_display_renumbering(offsets: dict, blocks_by_slot: dict, evidence: dict, role: str) -> None:
+    if evidence.get("status") != "DISPLAY_RENUMBER_APPLIED":
+        return
+    for slot in SLOT_ORDER:
+        elements = dict(zip((span.start for span in blocks_by_slot[slot]), offsets[slot]))
+        for item in evidence["slots"][slot]:
+            node_id = item["source_nodes"][role]
+            element = elements.get(node_id)
+            nodes, match = _editable_number_nodes(element) if element is not None and element.tag == W_P else ([], None)
+            if match is None or int(match.group(1)) != item["source_question_number"]:
+                raise SlotRoutingError("DISPLAY_RENUMBER_PROJECTION_MISMATCH", "imported prefix changed at " + node_id)
+            # Change only digit characters, preserving every other text node,
+            # run property, picture, OMML/OLE and punctuation byte-for-byte.
+            start, end = match.span(1)
+            cursor = 0
+            inserted = False
+            for node in nodes:
+                text = node.text or ""
+                node_end = cursor + len(text)
+                if cursor < end and node_end > start:
+                    a, b = max(0, start - cursor), min(len(text), end - cursor)
+                    node.text = text[:a] + (str(item["new_number"]) if not inserted else "") + text[b:]
+                    inserted = True
+                cursor = node_end
 
 
 def _set_paragraph_text(paragraph, value: str) -> None:
@@ -107,6 +215,23 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
         raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
                                "template has no cover table")
     table = document.tables[0]
+    display = metadata.get("cover_display") or build_cover_display(
+        LessonMetadata(metadata.get("objectives", ""), metadata.get("difficulties", ""),
+                       "SOURCE", "UNKNOWN"), template_type)
+    limit = COVER_DISPLAY_BUDGET[template_type]["max_display_width_units"]
+    for key in ("objectives", "difficulties"):
+        if any(mark in display[key] for mark in ("\n", "\r", "\t")) or display_width_units(display[key]) > limit:
+            raise SlotRoutingError("COVER_DISPLAY_BUDGET_EXCEEDED", "cover display is outside the fixed budget")
+    metadata = {**metadata, "objectives": display["objectives"], "difficulties": display["difficulties"]}
+    # PDF row borders of the original frozen templates, measured through WPS.
+    # Their atLeast minima are smaller than the actual rendered geometry.
+    # Lock the original rendered heights, rather than shrinking to the minima.
+    for row_index, height in zip((2, 3), _COVER_ROW_HEIGHTS_PT[template_type]):
+        row = table.rows[row_index]
+        if row.height is None:
+            raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED", "cover row lacks fixed height")
+        row.height = Pt(height)
+        row.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
     required_rows = 2
     required_columns = 4 if template_type == "1v1" else 3
     if len(table.rows) < required_rows or len(table.columns) < required_columns:
@@ -188,6 +313,8 @@ def render_slots(
     output_path: str,
     *,
     cover_metadata: dict | None = None,
+    display_renumbering: dict | None = None,
+    source_role: str = "source",
     render_minimal_fn: Callable = None,
 ) -> SlotRenderResult:
     """Use the frozen importer, then place each slot stream at its template anchor."""
@@ -198,6 +325,8 @@ def render_slots(
     if output.exists():
         raise FileExistsError("slot composer requires a fresh staging output")
     blocks_by_slot = {slot: tuple(plan.slots[slot]) for slot in SLOT_ORDER}
+    if display_renumbering is None:
+        display_renumbering = build_display_renumbering({source_role: plan})
     flat_blocks: list[BlockSpan] = [span for slot in SLOT_ORDER for span in blocks_by_slot[slot]]
     total = sum(len(items) for items in blocks_by_slot.values())
     if not total or total != len(plan.block_records):
@@ -235,6 +364,8 @@ def render_slots(
             raise SlotRoutingError("TEMPLATE_SLOT_PAYLOAD_UNRESOLVED",
                                    "renderer imported a different number of physical blocks")
 
+        _apply_display_renumbering(offsets, blocks_by_slot, display_renumbering, source_role)
+
         for element in payloads:
             body.remove(element)
         for slot in SLOT_ORDER:
@@ -270,6 +401,7 @@ def render_slots(
             slot_nodes={slot: len(offsets[slot]) for slot in SLOT_ORDER},
             resource_report=rendered.resource_report,
             package_report=package_report,
+            display_renumbering=display_renumbering,
         )
     except Exception:
         try:

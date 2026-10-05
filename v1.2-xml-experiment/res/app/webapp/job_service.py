@@ -275,6 +275,7 @@ class JobService:
             "student_preparation_route": None,
             "training_split_strategy": "NOT_APPLICABLE",
             "training_question_routes": [],
+            "display_renumbering": {"status": "NOT_APPLICABLE", "slots": {}},
             "xml_renderer_attempted": False,
             "baseline_sha": None,
             "recovered_after_restart": False,
@@ -471,6 +472,14 @@ class JobService:
                 "updated_at": now.timestamp(),
                 "updated_at_iso": now.isoformat(timespec="seconds"),
             })
+            numbering = record.get("display_renumbering", {})
+            if numbering.get("applied"):
+                record["display_renumbering"] = {
+                    **numbering,
+                    "planned_status": numbering.get("status"),
+                    "status": "DISPLAY_RENUMBER_NOT_APPLIED_FALLBACK",
+                    "applied": False,
+                }
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
@@ -491,7 +500,7 @@ class JobService:
             if record.get("status") != "running":
                 return self.snapshot(record)
             for key in ("training_split_strategy", "training_question_routes",
-                        "renderer_route", "xml_renderer_attempted"):
+                        "renderer_route", "xml_renderer_attempted", "display_renumbering"):
                 if key in details:
                     record[key] = details[key]
             self._write_json(self._job_dir(job_id) / "job.json", record)

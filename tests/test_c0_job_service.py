@@ -367,6 +367,10 @@ def test_whole_job_fallback_preserves_training_route_evidence(client):
             {"question_number": 3, "slot": "final"},
         ],
         "xml_renderer_attempted": True,
+        "display_renumbering": {
+            "status": "DISPLAY_RENUMBER_APPLIED", "applied": True,
+            "slots": {"knowledge": [{"source_occurrence": 1, "new_number": 1}]},
+        },
     })
     service.record_fallback_attempt(created["job_id"], "XML_RENDER_FAILED", "frozen-sha",
                                     detail="ProjectionError: unsupported test fixture", phase="RENDER")
@@ -380,6 +384,11 @@ def test_whole_job_fallback_preserves_training_route_evidence(client):
         {"question_number": 3, "slot": "final"},
     ]
     assert record["xml_renderer_attempted"] is True
+    assert record["display_renumbering"] == {
+        "planned_status": "DISPLAY_RENUMBER_APPLIED",
+        "status": "DISPLAY_RENUMBER_NOT_APPLIED_FALLBACK", "applied": False,
+        "slots": {"knowledge": [{"source_occurrence": 1, "new_number": 1}]},
+    }
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
@@ -520,6 +529,11 @@ def test_paired_teacher_student_routes_each_input_without_make_student(client, m
     assert all(item and item["objectives"] and item["difficulties"]
                for item in seen_cover_metadata)
     assert seen_cover_metadata[0] == seen_cover_metadata[1]
+    metadata = final["lesson_metadata"]
+    assert metadata["full_objectives"] == metadata["objectives"]
+    assert metadata["full_difficulties"] == metadata["difficulties"]
+    assert metadata["cover_display"] == seen_cover_metadata[0]["cover_display"]
+    assert final["display_renumbering"]["status"] == "NOT_APPLICABLE"
     assert final["items"][0]["topic"] == "Unit"
     result_dir = Path(final["result_dir"])
     assert {path.name for path in result_dir.iterdir()} == {

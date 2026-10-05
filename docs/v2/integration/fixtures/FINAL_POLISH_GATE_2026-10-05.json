@@ -1,0 +1,2044 @@
+{
+  "status": "FINAL_POLISH_PRODUCT_GATE_PASS",
+  "base_sha": "687fd9d650533edbc320227cdd6934f8d6a6abc9",
+  "branch": "feature/v1.2-c4-release-engineering",
+  "budget": {
+    "template_1v1": {
+      "max_logical_lines": 1,
+      "max_display_width_units": 76
+    },
+    "template_class": {
+      "max_logical_lines": 1,
+      "max_display_width_units": 68
+    }
+  },
+  "WPS_provider": "KWPS.Application",
+  "WPS_version": "12.0",
+  "WPS_completed": 12,
+  "tests": {
+    "focused_passed": 60
+  },
+  "production_jobs": [
+    {
+      "job_id": "8b6884578b9b44cda4b3cbdabde8d31f",
+      "status": "done",
+      "options": {
+        "subject": "物理",
+        "grade": "九年级",
+        "handout_type": "复习讲义",
+        "academic_year": "2026-2027学年",
+        "template_type": "1v1",
+        "split_mode": "smart",
+        "docx_mode": "auto",
+        "handoutType": "复习讲义",
+        "academicYear": "2026-2027学年",
+        "templateType": "1v1",
+        "splitMode": "smart",
+        "docxMode": "auto"
+      },
+      "source_provenance": {
+        "0": {
+          "original_filename": "分子动理论训练 教师版.docx",
+          "origin": "direct_upload:分子动理论训练 教师版.docx",
+          "runtime_path": "C:\\xml-uat\\final-polish-20261005\\final\\runtime\\8b6884578b9b44cda4b3cbdabde8d31f\\work\\input-1.docx",
+          "sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+          "bytes": 6794169
+        },
+        "1": {
+          "original_filename": "分子动理论训练 学生版.docx",
+          "origin": "direct_upload:分子动理论训练 学生版.docx",
+          "runtime_path": "C:\\xml-uat\\final-polish-20261005\\final\\runtime\\8b6884578b9b44cda4b3cbdabde8d31f\\work\\input-2.docx",
+          "sha256": "fb08ccae04b5140607a67d3e80526efa7d9a96f787c9c558b1c9b6bd3ab26e2a",
+          "bytes": 6762790
+        }
+      },
+      "renderer_route": "XML",
+      "student_preparation_route": "BYPASS",
+      "training_question_routes": [
+        {
+          "question_number": 1,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 2,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 3,
+          "slot": "final"
+        },
+        {
+          "question_number": 4,
+          "slot": "final"
+        },
+        {
+          "question_number": 5,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 6,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 7,
+          "slot": "final"
+        },
+        {
+          "question_number": 8,
+          "slot": "final"
+        },
+        {
+          "question_number": 9,
+          "slot": "final"
+        },
+        {
+          "question_number": 10,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 11,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 12,
+          "slot": "final"
+        },
+        {
+          "question_number": 13,
+          "slot": "final"
+        },
+        {
+          "question_number": 14,
+          "slot": "final"
+        },
+        {
+          "question_number": 15,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 16,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 17,
+          "slot": "final"
+        },
+        {
+          "question_number": 18,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 19,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 20,
+          "slot": "final"
+        },
+        {
+          "question_number": 21,
+          "slot": "final"
+        },
+        {
+          "question_number": 22,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 23,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 24,
+          "slot": "final"
+        },
+        {
+          "question_number": 25,
+          "slot": "final"
+        },
+        {
+          "question_number": 26,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 27,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 28,
+          "slot": "final"
+        },
+        {
+          "question_number": 29,
+          "slot": "final"
+        },
+        {
+          "question_number": 30,
+          "slot": "final"
+        },
+        {
+          "question_number": 31,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 32,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 33,
+          "slot": "final"
+        },
+        {
+          "question_number": 34,
+          "slot": "final"
+        }
+      ],
+      "display_renumbering": {
+        "status": "DISPLAY_RENUMBER_APPLIED",
+        "applied": true,
+        "slots": {
+          "knowledge": [
+            {
+              "source_occurrence": 1,
+              "source_question_number": 1,
+              "source_order": 1,
+              "destination_slot": "knowledge",
+              "new_number": 1,
+              "source_nodes": {
+                "teacher": "b17",
+                "student": "b17"
+              }
+            },
+            {
+              "source_occurrence": 5,
+              "source_question_number": 5,
+              "source_order": 5,
+              "destination_slot": "knowledge",
+              "new_number": 2,
+              "source_nodes": {
+                "teacher": "b40",
+                "student": "b27"
+              }
+            },
+            {
+              "source_occurrence": 10,
+              "source_question_number": 10,
+              "source_order": 10,
+              "destination_slot": "knowledge",
+              "new_number": 3,
+              "source_nodes": {
+                "teacher": "b65",
+                "student": "b41"
+              }
+            },
+            {
+              "source_occurrence": 15,
+              "source_question_number": 15,
+              "source_order": 15,
+              "destination_slot": "knowledge",
+              "new_number": 4,
+              "source_nodes": {
+                "teacher": "b100",
+                "student": "b60"
+              }
+            },
+            {
+              "source_occurrence": 18,
+              "source_question_number": 18,
+              "source_order": 18,
+              "destination_slot": "knowledge",
+              "new_number": 5,
+              "source_nodes": {
+                "teacher": "b124",
+                "student": "b72"
+              }
+            },
+            {
+              "source_occurrence": 22,
+              "source_question_number": 22,
+              "source_order": 22,
+              "destination_slot": "knowledge",
+              "new_number": 6,
+              "source_nodes": {
+                "teacher": "b156",
+                "student": "b88"
+              }
+            },
+            {
+              "source_occurrence": 26,
+              "source_question_number": 26,
+              "source_order": 26,
+              "destination_slot": "knowledge",
+              "new_number": 7,
+              "source_nodes": {
+                "teacher": "b188",
+                "student": "b104"
+              }
+            },
+            {
+              "source_occurrence": 31,
+              "source_question_number": 31,
+              "source_order": 31,
+              "destination_slot": "knowledge",
+              "new_number": 8,
+              "source_nodes": {
+                "teacher": "b221",
+                "student": "b117"
+              }
+            }
+          ],
+          "immediate": [
+            {
+              "source_occurrence": 2,
+              "source_question_number": 2,
+              "source_order": 2,
+              "destination_slot": "immediate",
+              "new_number": 1,
+              "source_nodes": {
+                "teacher": "b28",
+                "student": "b22"
+              }
+            },
+            {
+              "source_occurrence": 6,
+              "source_question_number": 6,
+              "source_order": 6,
+              "destination_slot": "immediate",
+              "new_number": 2,
+              "source_nodes": {
+                "teacher": "b44",
+                "student": "b29"
+              }
+            },
+            {
+              "source_occurrence": 11,
+              "source_question_number": 11,
+              "source_order": 11,
+              "destination_slot": "immediate",
+              "new_number": 3,
+              "source_nodes": {
+                "teacher": "b68",
+                "student": "b42"
+              }
+            },
+            {
+              "source_occurrence": 16,
+              "source_question_number": 16,
+              "source_order": 16,
+              "destination_slot": "immediate",
+              "new_number": 4,
+              "source_nodes": {
+                "teacher": "b113",
+                "student": "b66"
+              }
+            },
+            {
+              "source_occurrence": 19,
+              "source_question_number": 19,
+              "source_order": 19,
+              "destination_slot": "immediate",
+              "new_number": 5,
+              "source_nodes": {
+                "teacher": "b129",
+                "student": "b75"
+              }
+            },
+            {
+              "source_occurrence": 23,
+              "source_question_number": 23,
+              "source_order": 23,
+              "destination_slot": "immediate",
+              "new_number": 6,
+              "source_nodes": {
+                "teacher": "b161",
+                "student": "b90"
+              }
+            },
+            {
+              "source_occurrence": 27,
+              "source_question_number": 27,
+              "source_order": 27,
+              "destination_slot": "immediate",
+              "new_number": 7,
+              "source_nodes": {
+                "teacher": "b192",
+                "student": "b106"
+              }
+            },
+            {
+              "source_occurrence": 32,
+              "source_question_number": 32,
+              "source_order": 32,
+              "destination_slot": "immediate",
+              "new_number": 8,
+              "source_nodes": {
+                "teacher": "b229",
+                "student": "b122"
+              }
+            }
+          ],
+          "final": [
+            {
+              "source_occurrence": 3,
+              "source_question_number": 3,
+              "source_order": 3,
+              "destination_slot": "final",
+              "new_number": 1,
+              "source_nodes": {
+                "teacher": "b32",
+                "student": "b24"
+              }
+            },
+            {
+              "source_occurrence": 4,
+              "source_question_number": 4,
+              "source_order": 4,
+              "destination_slot": "final",
+              "new_number": 2,
+              "source_nodes": {
+                "teacher": "b36",
+                "student": "b25"
+              }
+            },
+            {
+              "source_occurrence": 7,
+              "source_question_number": 7,
+              "source_order": 7,
+              "destination_slot": "final",
+              "new_number": 3,
+              "source_nodes": {
+                "teacher": "b50",
+                "student": "b33"
+              }
+            },
+            {
+              "source_occurrence": 8,
+              "source_question_number": 8,
+              "source_order": 8,
+              "destination_slot": "final",
+              "new_number": 4,
+              "source_nodes": {
+                "teacher": "b55",
+                "student": "b36"
+              }
+            },
+            {
+              "source_occurrence": 9,
+              "source_question_number": 9,
+              "source_order": 9,
+              "destination_slot": "final",
+              "new_number": 5,
+              "source_nodes": {
+                "teacher": "b60",
+                "student": "b38"
+              }
+            },
+            {
+              "source_occurrence": 12,
+              "source_question_number": 12,
+              "source_order": 12,
+              "destination_slot": "final",
+              "new_number": 6,
+              "source_nodes": {
+                "teacher": "b75",
+                "student": "b45"
+              }
+            },
+            {
+              "source_occurrence": 13,
+              "source_question_number": 13,
+              "source_order": 13,
+              "destination_slot": "final",
+              "new_number": 7,
+              "source_nodes": {
+                "teacher": "b81",
+                "student": "b49"
+              }
+            },
+            {
+              "source_occurrence": 14,
+              "source_question_number": 14,
+              "source_order": 14,
+              "destination_slot": "final",
+              "new_number": 8,
+              "source_nodes": {
+                "teacher": "b86",
+                "student": "b52"
+              }
+            },
+            {
+              "source_occurrence": 17,
+              "source_question_number": 17,
+              "source_order": 17,
+              "destination_slot": "final",
+              "new_number": 9,
+              "source_nodes": {
+                "teacher": "b117",
+                "student": "b68"
+              }
+            },
+            {
+              "source_occurrence": 20,
+              "source_question_number": 20,
+              "source_order": 20,
+              "destination_slot": "final",
+              "new_number": 10,
+              "source_nodes": {
+                "teacher": "b140",
+                "student": "b80"
+              }
+            },
+            {
+              "source_occurrence": 21,
+              "source_question_number": 21,
+              "source_order": 21,
+              "destination_slot": "final",
+              "new_number": 11,
+              "source_nodes": {
+                "teacher": "b149",
+                "student": "b83"
+              }
+            },
+            {
+              "source_occurrence": 24,
+              "source_question_number": 24,
+              "source_order": 24,
+              "destination_slot": "final",
+              "new_number": 12,
+              "source_nodes": {
+                "teacher": "b168",
+                "student": "b92"
+              }
+            },
+            {
+              "source_occurrence": 25,
+              "source_question_number": 25,
+              "source_order": 25,
+              "destination_slot": "final",
+              "new_number": 13,
+              "source_nodes": {
+                "teacher": "b175",
+                "student": "b96"
+              }
+            },
+            {
+              "source_occurrence": 28,
+              "source_question_number": 28,
+              "source_order": 28,
+              "destination_slot": "final",
+              "new_number": 14,
+              "source_nodes": {
+                "teacher": "b203",
+                "student": "b111"
+              }
+            },
+            {
+              "source_occurrence": 29,
+              "source_question_number": 29,
+              "source_order": 29,
+              "destination_slot": "final",
+              "new_number": 15,
+              "source_nodes": {
+                "teacher": "b208",
+                "student": "b113"
+              }
+            },
+            {
+              "source_occurrence": 30,
+              "source_question_number": 30,
+              "source_order": 30,
+              "destination_slot": "final",
+              "new_number": 16,
+              "source_nodes": {
+                "teacher": "b216",
+                "student": "b115"
+              }
+            },
+            {
+              "source_occurrence": 33,
+              "source_question_number": 33,
+              "source_order": 33,
+              "destination_slot": "final",
+              "new_number": 17,
+              "source_nodes": {
+                "teacher": "b241",
+                "student": "b128"
+              }
+            },
+            {
+              "source_occurrence": 34,
+              "source_question_number": 34,
+              "source_order": 34,
+              "destination_slot": "final",
+              "new_number": 18,
+              "source_nodes": {
+                "teacher": "b246",
+                "student": "b131"
+              }
+            }
+          ]
+        }
+      },
+      "lesson_metadata": {
+        "status": "RESOLVED",
+        "objectives": "①识别并掌握物质的构成、分子热运动、分子间的作用力等题型的解题方法；\n②能依据题目条件完成“分子动理论训练”专题训练，并规范表达解题过程。",
+        "difficulties": "重点：物质的构成、分子热运动、分子间的作用力等题型的识别与相应方法运用。\n难点：题目条件分析、方法选择与易错点辨析。",
+        "full_objectives": "①识别并掌握物质的构成、分子热运动、分子间的作用力等题型的解题方法；\n②能依据题目条件完成“分子动理论训练”专题训练，并规范表达解题过程。",
+        "full_difficulties": "重点：物质的构成、分子热运动、分子间的作用力等题型的识别与相应方法运用。\n难点：题目条件分析、方法选择与易错点辨析。",
+        "cover_display": {
+          "objectives": "掌握物质的构成题型方法；规范分析与解答。",
+          "difficulties": "重点：物质的构成题型与方法；难点：条件分析与易错辨析。",
+          "budget": {
+            "max_logical_lines": 1,
+            "max_display_width_units": 76
+          },
+          "cover_metadata_compacted": true,
+          "compaction_methods": {
+            "objectives": "SHORT_OFFLINE_RULE",
+            "difficulties": "SHORT_OFFLINE_RULE"
+          }
+        },
+        "source": "TRAINING_TYPE_HEADINGS",
+        "knowledge_point_status": "NO_KNOWLEDGE_POINT",
+        "training_titles": [
+          "物质的构成",
+          "分子热运动",
+          "分子间的作用力",
+          "物质三态的宏观特性和微观特性",
+          "分子动理论解释生活现象"
+        ]
+      },
+      "output_roles": {
+        "teacher": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 教师版.docx",
+        "student": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 学生版.docx"
+      }
+    },
+    {
+      "job_id": "712d44b306474bb483946268300bd705",
+      "status": "done",
+      "options": {
+        "subject": "物理",
+        "grade": "九年级",
+        "handout_type": "复习讲义",
+        "academic_year": "2026-2027学年",
+        "template_type": "class",
+        "split_mode": "smart",
+        "docx_mode": "auto",
+        "handoutType": "复习讲义",
+        "academicYear": "2026-2027学年",
+        "templateType": "class",
+        "splitMode": "smart",
+        "docxMode": "auto"
+      },
+      "source_provenance": {
+        "0": {
+          "original_filename": "分子动理论训练 教师版.docx",
+          "origin": "direct_upload:分子动理论训练 教师版.docx",
+          "runtime_path": "C:\\xml-uat\\final-polish-20261005\\final\\runtime\\712d44b306474bb483946268300bd705\\work\\input-1.docx",
+          "sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+          "bytes": 6794169
+        },
+        "1": {
+          "original_filename": "分子动理论训练 学生版.docx",
+          "origin": "direct_upload:分子动理论训练 学生版.docx",
+          "runtime_path": "C:\\xml-uat\\final-polish-20261005\\final\\runtime\\712d44b306474bb483946268300bd705\\work\\input-2.docx",
+          "sha256": "fb08ccae04b5140607a67d3e80526efa7d9a96f787c9c558b1c9b6bd3ab26e2a",
+          "bytes": 6762790
+        }
+      },
+      "renderer_route": "XML",
+      "student_preparation_route": "BYPASS",
+      "training_question_routes": [
+        {
+          "question_number": 1,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 2,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 3,
+          "slot": "final"
+        },
+        {
+          "question_number": 4,
+          "slot": "final"
+        },
+        {
+          "question_number": 5,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 6,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 7,
+          "slot": "final"
+        },
+        {
+          "question_number": 8,
+          "slot": "final"
+        },
+        {
+          "question_number": 9,
+          "slot": "final"
+        },
+        {
+          "question_number": 10,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 11,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 12,
+          "slot": "final"
+        },
+        {
+          "question_number": 13,
+          "slot": "final"
+        },
+        {
+          "question_number": 14,
+          "slot": "final"
+        },
+        {
+          "question_number": 15,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 16,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 17,
+          "slot": "final"
+        },
+        {
+          "question_number": 18,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 19,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 20,
+          "slot": "final"
+        },
+        {
+          "question_number": 21,
+          "slot": "final"
+        },
+        {
+          "question_number": 22,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 23,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 24,
+          "slot": "final"
+        },
+        {
+          "question_number": 25,
+          "slot": "final"
+        },
+        {
+          "question_number": 26,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 27,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 28,
+          "slot": "final"
+        },
+        {
+          "question_number": 29,
+          "slot": "final"
+        },
+        {
+          "question_number": 30,
+          "slot": "final"
+        },
+        {
+          "question_number": 31,
+          "slot": "knowledge"
+        },
+        {
+          "question_number": 32,
+          "slot": "immediate"
+        },
+        {
+          "question_number": 33,
+          "slot": "final"
+        },
+        {
+          "question_number": 34,
+          "slot": "final"
+        }
+      ],
+      "display_renumbering": {
+        "status": "DISPLAY_RENUMBER_APPLIED",
+        "applied": true,
+        "slots": {
+          "knowledge": [
+            {
+              "source_occurrence": 1,
+              "source_question_number": 1,
+              "source_order": 1,
+              "destination_slot": "knowledge",
+              "new_number": 1,
+              "source_nodes": {
+                "teacher": "b17",
+                "student": "b17"
+              }
+            },
+            {
+              "source_occurrence": 5,
+              "source_question_number": 5,
+              "source_order": 5,
+              "destination_slot": "knowledge",
+              "new_number": 2,
+              "source_nodes": {
+                "teacher": "b40",
+                "student": "b27"
+              }
+            },
+            {
+              "source_occurrence": 10,
+              "source_question_number": 10,
+              "source_order": 10,
+              "destination_slot": "knowledge",
+              "new_number": 3,
+              "source_nodes": {
+                "teacher": "b65",
+                "student": "b41"
+              }
+            },
+            {
+              "source_occurrence": 15,
+              "source_question_number": 15,
+              "source_order": 15,
+              "destination_slot": "knowledge",
+              "new_number": 4,
+              "source_nodes": {
+                "teacher": "b100",
+                "student": "b60"
+              }
+            },
+            {
+              "source_occurrence": 18,
+              "source_question_number": 18,
+              "source_order": 18,
+              "destination_slot": "knowledge",
+              "new_number": 5,
+              "source_nodes": {
+                "teacher": "b124",
+                "student": "b72"
+              }
+            },
+            {
+              "source_occurrence": 22,
+              "source_question_number": 22,
+              "source_order": 22,
+              "destination_slot": "knowledge",
+              "new_number": 6,
+              "source_nodes": {
+                "teacher": "b156",
+                "student": "b88"
+              }
+            },
+            {
+              "source_occurrence": 26,
+              "source_question_number": 26,
+              "source_order": 26,
+              "destination_slot": "knowledge",
+              "new_number": 7,
+              "source_nodes": {
+                "teacher": "b188",
+                "student": "b104"
+              }
+            },
+            {
+              "source_occurrence": 31,
+              "source_question_number": 31,
+              "source_order": 31,
+              "destination_slot": "knowledge",
+              "new_number": 8,
+              "source_nodes": {
+                "teacher": "b221",
+                "student": "b117"
+              }
+            }
+          ],
+          "immediate": [
+            {
+              "source_occurrence": 2,
+              "source_question_number": 2,
+              "source_order": 2,
+              "destination_slot": "immediate",
+              "new_number": 1,
+              "source_nodes": {
+                "teacher": "b28",
+                "student": "b22"
+              }
+            },
+            {
+              "source_occurrence": 6,
+              "source_question_number": 6,
+              "source_order": 6,
+              "destination_slot": "immediate",
+              "new_number": 2,
+              "source_nodes": {
+                "teacher": "b44",
+                "student": "b29"
+              }
+            },
+            {
+              "source_occurrence": 11,
+              "source_question_number": 11,
+              "source_order": 11,
+              "destination_slot": "immediate",
+              "new_number": 3,
+              "source_nodes": {
+                "teacher": "b68",
+                "student": "b42"
+              }
+            },
+            {
+              "source_occurrence": 16,
+              "source_question_number": 16,
+              "source_order": 16,
+              "destination_slot": "immediate",
+              "new_number": 4,
+              "source_nodes": {
+                "teacher": "b113",
+                "student": "b66"
+              }
+            },
+            {
+              "source_occurrence": 19,
+              "source_question_number": 19,
+              "source_order": 19,
+              "destination_slot": "immediate",
+              "new_number": 5,
+              "source_nodes": {
+                "teacher": "b129",
+                "student": "b75"
+              }
+            },
+            {
+              "source_occurrence": 23,
+              "source_question_number": 23,
+              "source_order": 23,
+              "destination_slot": "immediate",
+              "new_number": 6,
+              "source_nodes": {
+                "teacher": "b161",
+                "student": "b90"
+              }
+            },
+            {
+              "source_occurrence": 27,
+              "source_question_number": 27,
+              "source_order": 27,
+              "destination_slot": "immediate",
+              "new_number": 7,
+              "source_nodes": {
+                "teacher": "b192",
+                "student": "b106"
+              }
+            },
+            {
+              "source_occurrence": 32,
+              "source_question_number": 32,
+              "source_order": 32,
+              "destination_slot": "immediate",
+              "new_number": 8,
+              "source_nodes": {
+                "teacher": "b229",
+                "student": "b122"
+              }
+            }
+          ],
+          "final": [
+            {
+              "source_occurrence": 3,
+              "source_question_number": 3,
+              "source_order": 3,
+              "destination_slot": "final",
+              "new_number": 1,
+              "source_nodes": {
+                "teacher": "b32",
+                "student": "b24"
+              }
+            },
+            {
+              "source_occurrence": 4,
+              "source_question_number": 4,
+              "source_order": 4,
+              "destination_slot": "final",
+              "new_number": 2,
+              "source_nodes": {
+                "teacher": "b36",
+                "student": "b25"
+              }
+            },
+            {
+              "source_occurrence": 7,
+              "source_question_number": 7,
+              "source_order": 7,
+              "destination_slot": "final",
+              "new_number": 3,
+              "source_nodes": {
+                "teacher": "b50",
+                "student": "b33"
+              }
+            },
+            {
+              "source_occurrence": 8,
+              "source_question_number": 8,
+              "source_order": 8,
+              "destination_slot": "final",
+              "new_number": 4,
+              "source_nodes": {
+                "teacher": "b55",
+                "student": "b36"
+              }
+            },
+            {
+              "source_occurrence": 9,
+              "source_question_number": 9,
+              "source_order": 9,
+              "destination_slot": "final",
+              "new_number": 5,
+              "source_nodes": {
+                "teacher": "b60",
+                "student": "b38"
+              }
+            },
+            {
+              "source_occurrence": 12,
+              "source_question_number": 12,
+              "source_order": 12,
+              "destination_slot": "final",
+              "new_number": 6,
+              "source_nodes": {
+                "teacher": "b75",
+                "student": "b45"
+              }
+            },
+            {
+              "source_occurrence": 13,
+              "source_question_number": 13,
+              "source_order": 13,
+              "destination_slot": "final",
+              "new_number": 7,
+              "source_nodes": {
+                "teacher": "b81",
+                "student": "b49"
+              }
+            },
+            {
+              "source_occurrence": 14,
+              "source_question_number": 14,
+              "source_order": 14,
+              "destination_slot": "final",
+              "new_number": 8,
+              "source_nodes": {
+                "teacher": "b86",
+                "student": "b52"
+              }
+            },
+            {
+              "source_occurrence": 17,
+              "source_question_number": 17,
+              "source_order": 17,
+              "destination_slot": "final",
+              "new_number": 9,
+              "source_nodes": {
+                "teacher": "b117",
+                "student": "b68"
+              }
+            },
+            {
+              "source_occurrence": 20,
+              "source_question_number": 20,
+              "source_order": 20,
+              "destination_slot": "final",
+              "new_number": 10,
+              "source_nodes": {
+                "teacher": "b140",
+                "student": "b80"
+              }
+            },
+            {
+              "source_occurrence": 21,
+              "source_question_number": 21,
+              "source_order": 21,
+              "destination_slot": "final",
+              "new_number": 11,
+              "source_nodes": {
+                "teacher": "b149",
+                "student": "b83"
+              }
+            },
+            {
+              "source_occurrence": 24,
+              "source_question_number": 24,
+              "source_order": 24,
+              "destination_slot": "final",
+              "new_number": 12,
+              "source_nodes": {
+                "teacher": "b168",
+                "student": "b92"
+              }
+            },
+            {
+              "source_occurrence": 25,
+              "source_question_number": 25,
+              "source_order": 25,
+              "destination_slot": "final",
+              "new_number": 13,
+              "source_nodes": {
+                "teacher": "b175",
+                "student": "b96"
+              }
+            },
+            {
+              "source_occurrence": 28,
+              "source_question_number": 28,
+              "source_order": 28,
+              "destination_slot": "final",
+              "new_number": 14,
+              "source_nodes": {
+                "teacher": "b203",
+                "student": "b111"
+              }
+            },
+            {
+              "source_occurrence": 29,
+              "source_question_number": 29,
+              "source_order": 29,
+              "destination_slot": "final",
+              "new_number": 15,
+              "source_nodes": {
+                "teacher": "b208",
+                "student": "b113"
+              }
+            },
+            {
+              "source_occurrence": 30,
+              "source_question_number": 30,
+              "source_order": 30,
+              "destination_slot": "final",
+              "new_number": 16,
+              "source_nodes": {
+                "teacher": "b216",
+                "student": "b115"
+              }
+            },
+            {
+              "source_occurrence": 33,
+              "source_question_number": 33,
+              "source_order": 33,
+              "destination_slot": "final",
+              "new_number": 17,
+              "source_nodes": {
+                "teacher": "b241",
+                "student": "b128"
+              }
+            },
+            {
+              "source_occurrence": 34,
+              "source_question_number": 34,
+              "source_order": 34,
+              "destination_slot": "final",
+              "new_number": 18,
+              "source_nodes": {
+                "teacher": "b246",
+                "student": "b131"
+              }
+            }
+          ]
+        }
+      },
+      "lesson_metadata": {
+        "status": "RESOLVED",
+        "objectives": "①识别并掌握物质的构成、分子热运动、分子间的作用力等题型的解题方法；\n②能依据题目条件完成“分子动理论训练”专题训练，并规范表达解题过程。",
+        "difficulties": "重点：物质的构成、分子热运动、分子间的作用力等题型的识别与相应方法运用。\n难点：题目条件分析、方法选择与易错点辨析。",
+        "full_objectives": "①识别并掌握物质的构成、分子热运动、分子间的作用力等题型的解题方法；\n②能依据题目条件完成“分子动理论训练”专题训练，并规范表达解题过程。",
+        "full_difficulties": "重点：物质的构成、分子热运动、分子间的作用力等题型的识别与相应方法运用。\n难点：题目条件分析、方法选择与易错点辨析。",
+        "cover_display": {
+          "objectives": "掌握物质的构成题型方法；规范分析与解答。",
+          "difficulties": "重点：物质的构成题型与方法；难点：条件分析与易错辨析。",
+          "budget": {
+            "max_logical_lines": 1,
+            "max_display_width_units": 68
+          },
+          "cover_metadata_compacted": true,
+          "compaction_methods": {
+            "objectives": "SHORT_OFFLINE_RULE",
+            "difficulties": "SHORT_OFFLINE_RULE"
+          }
+        },
+        "source": "TRAINING_TYPE_HEADINGS",
+        "knowledge_point_status": "NO_KNOWLEDGE_POINT",
+        "training_titles": [
+          "物质的构成",
+          "分子热运动",
+          "分子间的作用力",
+          "物质三态的宏观特性和微观特性",
+          "分子动理论解释生活现象"
+        ]
+      },
+      "output_roles": {
+        "teacher": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义（2）\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 教师版.docx",
+        "student": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义（2）\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 学生版.docx"
+      }
+    }
+  ],
+  "page1_positions": [
+    {
+      "id": "real-1v1-teacher",
+      "page": 1,
+      "baseline_y": 396.927978515625,
+      "generated_y": 396.927978515625,
+      "delta": 0.0,
+      "pdf_bytes": 825121
+    },
+    {
+      "id": "real-1v1-student",
+      "page": 1,
+      "baseline_y": 396.927978515625,
+      "generated_y": 396.927978515625,
+      "delta": 0.0,
+      "pdf_bytes": 763074
+    },
+    {
+      "id": "real-class-teacher",
+      "page": 1,
+      "baseline_y": 453.448974609375,
+      "generated_y": 453.448974609375,
+      "delta": 0.0,
+      "pdf_bytes": 2154016
+    },
+    {
+      "id": "real-class-student",
+      "page": 1,
+      "baseline_y": 453.448974609375,
+      "generated_y": 453.448974609375,
+      "delta": 0.0,
+      "pdf_bytes": 2094326
+    },
+    {
+      "id": "page1-1v1-short",
+      "page": 1,
+      "baseline_y": 396.927978515625,
+      "generated_y": 396.927978515625,
+      "delta": 0.0,
+      "pdf_bytes": 66046
+    },
+    {
+      "id": "page1-class-short",
+      "page": 1,
+      "baseline_y": 453.448974609375,
+      "generated_y": 453.448974609375,
+      "delta": 0.0,
+      "pdf_bytes": 212965
+    },
+    {
+      "id": "page1-1v1-long-objectives",
+      "page": 1,
+      "baseline_y": 396.927978515625,
+      "generated_y": 396.927978515625,
+      "delta": 0.0,
+      "pdf_bytes": 69489
+    },
+    {
+      "id": "page1-class-long-objectives",
+      "page": 1,
+      "baseline_y": 453.448974609375,
+      "generated_y": 453.448974609375,
+      "delta": 0.0,
+      "pdf_bytes": 215982
+    },
+    {
+      "id": "page1-1v1-long-difficulties",
+      "page": 1,
+      "baseline_y": 396.927978515625,
+      "generated_y": 396.927978515625,
+      "delta": 0.0,
+      "pdf_bytes": 69543
+    },
+    {
+      "id": "page1-class-long-difficulties",
+      "page": 1,
+      "baseline_y": 453.448974609375,
+      "generated_y": 453.448974609375,
+      "delta": 0.0,
+      "pdf_bytes": 216028
+    },
+    {
+      "id": "page1-1v1-knowledge",
+      "page": 1,
+      "baseline_y": 396.927978515625,
+      "generated_y": 398.3689880371094,
+      "delta": 1.441009521484375,
+      "pdf_bytes": 1808364
+    },
+    {
+      "id": "page1-class-knowledge",
+      "page": 1,
+      "baseline_y": 453.448974609375,
+      "generated_y": 453.448974609375,
+      "delta": 0.0,
+      "pdf_bytes": 1921177
+    }
+  ],
+  "content_conservation": [
+    {
+      "id": "real-1v1-teacher",
+      "variant": "published",
+      "sha256": "69d315712726ca7d940bf5506cd300abdd13d72e17d3e63a7650ee8a03245e93",
+      "source_blocks": 260,
+      "verified_payload_blocks": 260,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 34,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": true,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 30,
+      "ole_reference_count": 4,
+      "resource_comparison": "raw bytes",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-1v1-teacher",
+      "variant": "WPS_SaveAs",
+      "sha256": "122d373b7cdcfcf14f5012cea0ceea5eb7d4d5890cf06d6d05447768255172db",
+      "source_blocks": 260,
+      "verified_payload_blocks": 260,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 34,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": false,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 30,
+      "ole_reference_count": 4,
+      "resource_comparison": "original OLE bytes / picture and OLE reference counts; WPS re-encodes some PNGs",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-1v1-student",
+      "variant": "published",
+      "sha256": "e754343fc88297b752ecdd6c6004abafe7249d484ce582004592c7f2eeb58675",
+      "source_blocks": 141,
+      "verified_payload_blocks": 141,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 0,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": true,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 30,
+      "ole_reference_count": 4,
+      "resource_comparison": "raw bytes",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-1v1-student",
+      "variant": "WPS_SaveAs",
+      "sha256": "8d8fb4f33a8a6cb2e7a17998572159830c409f7cc3a151aa0cc441879a265242",
+      "source_blocks": 141,
+      "verified_payload_blocks": 141,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 0,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": false,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 30,
+      "ole_reference_count": 4,
+      "resource_comparison": "original OLE bytes / picture and OLE reference counts; WPS re-encodes some PNGs",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-class-teacher",
+      "variant": "published",
+      "sha256": "9ad2e0de0742cda443055b4a6c832170f5093415f6420777a6c488bb352f6521",
+      "source_blocks": 260,
+      "verified_payload_blocks": 260,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 34,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": true,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 24,
+      "ole_reference_count": 4,
+      "resource_comparison": "raw bytes",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-class-teacher",
+      "variant": "WPS_SaveAs",
+      "sha256": "76dfeacc7f10cf2c24093ea776e38f4ff6f86525e1d43539c140d661b5fde042",
+      "source_blocks": 260,
+      "verified_payload_blocks": 260,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 34,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": true,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 24,
+      "ole_reference_count": 4,
+      "resource_comparison": "original OLE bytes / picture and OLE reference counts; WPS re-encodes some PNGs",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-class-student",
+      "variant": "published",
+      "sha256": "3cd995a9475315796448854a3c28e698b95b659d69a359964c665e9e61e91e3e",
+      "source_blocks": 141,
+      "verified_payload_blocks": 141,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 0,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": true,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 24,
+      "ole_reference_count": 4,
+      "resource_comparison": "raw bytes",
+      "source_main_story_resource_count": 32
+    },
+    {
+      "id": "real-class-student",
+      "variant": "WPS_SaveAs",
+      "sha256": "3cc71e228da2a754b947ff10ff11e84b1eec9cc30b328dd438196edadf5b70a5",
+      "source_blocks": 141,
+      "verified_payload_blocks": 141,
+      "slot_numbers": {
+        "knowledge": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "immediate": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "final": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "answer_labels": 0,
+      "package_valid": true,
+      "source_main_story_resource_bytes_preserved": true,
+      "original_OLE_bytes_preserved": true,
+      "picture_reference_count": 24,
+      "ole_reference_count": 4,
+      "resource_comparison": "original OLE bytes / picture and OLE reference counts; WPS re-encodes some PNGs",
+      "source_main_story_resource_count": 32
+    }
+  ],
+  "artifact_hashes": [
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\baseline-wps.json",
+      "bytes": 1486,
+      "sha256": "cc13ca0ae258179efb93adaf0881635ae193acff815bbdf4e1c22c6f5bd1aa62"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\baseline-layout.json",
+      "bytes": 11480,
+      "sha256": "30a16adcd18538bee27788c2d4de8a315a745f115491c026072d2f919af458d9"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\budget-wps.json",
+      "bytes": 12269,
+      "sha256": "16c8c67c9018929da15af273cdb11138c4dcfd488eaedcfda1f660679d19081d"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\budget-layout.json",
+      "bytes": 124099,
+      "sha256": "b434a41964fdafdc7cdd020a5db379d3881a6490053b1298300954c8b0e25fd4"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\wps_probe.ps1",
+      "bytes": 1945,
+      "sha256": "22d68c413e944ecccd72048ae4a668b7420a7347be853f91335b0257d268433d"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\baseline-1v1.pdf",
+      "bytes": 77679,
+      "sha256": "d56539b4a1c7a08f4dc79fd178879df75069a3eb7abbbdc9b280552452326859"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\baseline-class.pdf",
+      "bytes": 208886,
+      "sha256": "5b34d015db4a34239abf4c5b9e469561d1881e67120d058160f8c407cf77e434"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\production-jobs.json",
+      "bytes": 68591,
+      "sha256": "42f3ea6444d132209d25a836a19645b09373799014fe041d07e2a686be2822a0"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\all-wps.json",
+      "bytes": 9019,
+      "sha256": "8510925efb56d9a5ff2a913735a3cd86ba1a03b7b15df9f960fbe21228a56eed"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\content-conservation.json",
+      "bytes": 8773,
+      "sha256": "a571d7d0ab587320786b23ab69b15795bf5fc50ccee61e998d72c738991ef1c4"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-positions.json",
+      "bytes": 2199,
+      "sha256": "94194099e8102d6436d02ab83bc539787d5a31a5100f0252637240ed4ce2daeb"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\cover-bounds.json",
+      "bytes": 10782,
+      "sha256": "380787004f77c5f2ba9bb519aa6b8f75ca6233614dc6d1151e8679a6eb4ba625"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\before-page1.json",
+      "bytes": 443,
+      "sha256": "454548b9f1b98fa8e6b3f73fc2a38a2dc860806a99f6f3a232bf09a72657e1ba"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-evidence.json",
+      "bytes": 22809,
+      "sha256": "f9d082cdd9efd0f19dc10377b5c58b99a5df06a2f7cfad6f5f892db71414a202"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 教师版.docx",
+      "bytes": 6602768,
+      "sha256": "69d315712726ca7d940bf5506cd300abdd13d72e17d3e63a7650ee8a03245e93"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-1v1-teacher-saved.docx",
+      "bytes": 1705691,
+      "sha256": "122d373b7cdcfcf14f5012cea0ceea5eb7d4d5890cf06d6d05447768255172db"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-1v1-teacher.pdf",
+      "bytes": 825121,
+      "sha256": "614028cc4497028c236e0ebd2f5badbae580210b4b3af92bf4c36e4834490206"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 学生版.docx",
+      "bytes": 6593736,
+      "sha256": "e754343fc88297b752ecdd6c6004abafe7249d484ce582004592c7f2eeb58675"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-1v1-student-saved.docx",
+      "bytes": 1662293,
+      "sha256": "8d8fb4f33a8a6cb2e7a17998572159830c409f7cc3a151aa0cc441879a265242"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-1v1-student.pdf",
+      "bytes": 763074,
+      "sha256": "9007c21e305aaf5a84a1c655f337c0bb9ddfaaa0b27f4190298037a24d212433"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义（2）\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 教师版.docx",
+      "bytes": 7140277,
+      "sha256": "9ad2e0de0742cda443055b4a6c832170f5093415f6420777a6c488bb352f6521"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-class-teacher-saved.docx",
+      "bytes": 7402929,
+      "sha256": "76dfeacc7f10cf2c24093ea776e38f4ff6f86525e1d43539c140d661b5fde042"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-class-teacher.pdf",
+      "bytes": 2154016,
+      "sha256": "8d29b6f8204f68e894a5e8b430d530d9fb47f28c52fdede02e88fe3458ce4079"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\results\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义（2）\\2026-2027学年 九年级 物理 分子动理论训练 复习讲义 学生版.docx",
+      "bytes": 7130855,
+      "sha256": "3cd995a9475315796448854a3c28e698b95b659d69a359964c665e9e61e91e3e"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-class-student-saved.docx",
+      "bytes": 7394548,
+      "sha256": "3cc71e228da2a754b947ff10ff11e84b1eec9cc30b328dd438196edadf5b70a5"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\real-class-student.pdf",
+      "bytes": 2094326,
+      "sha256": "78f1bf67924e46eeccf6d85538bf3d93a2b0f9ac20d478bc2ced56a72f42ce76"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-short.docx",
+      "bytes": 23120,
+      "sha256": "7b93ff0a5da16087ec9712c8f59c582996908147d16e8511bd7b5997f2e5f27c"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-short-saved.docx",
+      "bytes": 27121,
+      "sha256": "e95217c0fcdc6c27a6377bee8b3e7926988da8fbb8cd952dc6ec253ef217c073"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-short.pdf",
+      "bytes": 66046,
+      "sha256": "b4f99fdf3f736b9ec98281f68e2909a9e4ad9ce9e60799400639759e5561fd46"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-short.docx",
+      "bytes": 559640,
+      "sha256": "bb5eeae640c9bd015f3ab051d2482ab5c3d292fb55f14aebc164c01cc13f66b2"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-short-saved.docx",
+      "bytes": 568391,
+      "sha256": "01291ec2ed2de9051cfd6e2ea8f73381a5c0f975dcf809aa3460608779f34f25"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-short.pdf",
+      "bytes": 212965,
+      "sha256": "83628554149c0f836da996e085b7dfbc35dcd57deb06bd741b7d2239472ede79"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-long-objectives.docx",
+      "bytes": 23210,
+      "sha256": "343bcef7df1b2d3d3561d98b1e0ef824ec4f7bf16a7a90bc7175028943fb5a28"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-long-objectives-saved.docx",
+      "bytes": 27219,
+      "sha256": "2bc842d1fc63cc3797dfa5f360d5593618794c3ddd51bb716ab0d7bdfe7a0823"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-long-objectives.pdf",
+      "bytes": 69489,
+      "sha256": "61ca6f60c0e24017d77b26a1685062483d14554ef95bbe83b510aa3e8b63a08c"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-long-objectives.docx",
+      "bytes": 559731,
+      "sha256": "a55f0930bf113f27e984a3fb345b58247ee023f6c20bc0665457bd4501b5fc33"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-long-objectives-saved.docx",
+      "bytes": 568500,
+      "sha256": "245741b126ba689e32d5a48cfb7f8fe03253acd6bebd55cf898bda8c004a5f66"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-long-objectives.pdf",
+      "bytes": 215982,
+      "sha256": "14becbf70f7ee1d9219439f3cfeb93b8b79994c7ba29c262954e7830477e64e4"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-long-difficulties.docx",
+      "bytes": 23196,
+      "sha256": "8853a7eabfa93d2c4b0abc1e8c1ffd3d46cc72b3778ce67b2b33d3bddae1bfdb"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-long-difficulties-saved.docx",
+      "bytes": 27217,
+      "sha256": "5626df73f021d723058b623906b3590b4840a37fb9fa4ad1398b6db681978525"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-long-difficulties.pdf",
+      "bytes": 69543,
+      "sha256": "ba5173212f09481c8c33b3c981903d8e9417df962030e06a1a4f0275ae761fcc"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-long-difficulties.docx",
+      "bytes": 559723,
+      "sha256": "812d9d42de36d380acfd347de729e489fcce89027a8fd7f029720128a20dd9d3"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-long-difficulties-saved.docx",
+      "bytes": 568481,
+      "sha256": "c4b3e4d3400a6c9f2355c2c2012f0eadac087a1d6186053099368cb6bdecff92"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-long-difficulties.pdf",
+      "bytes": 216028,
+      "sha256": "9132bc9a09f9d5161b6580ab36d5ace8e616e4ad6719bffd6d15ff55393353d9"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-knowledge.docx",
+      "bytes": 965698,
+      "sha256": "931165dfb0fd88cd63b35fba65dcdb8170c680b6f77e5d92ab9ff8e511fcd75e"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-knowledge-saved.docx",
+      "bytes": 1037736,
+      "sha256": "df303099d3f91744a041fab895d0f513760cda7af697ab94fd222bcf868b6e1d"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-1v1-knowledge.pdf",
+      "bytes": 1808364,
+      "sha256": "97c0ae830a58e4135cdae30e41d257ab76035563e59f70ac15d1295481fd227f"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-knowledge.docx",
+      "bytes": 1502754,
+      "sha256": "45bf7075eb3cda7b0a1a4bd0aa2d71c443fd342f3ac3762ac1da5d4c2559cfe2"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-knowledge-saved.docx",
+      "bytes": 1579114,
+      "sha256": "92024dde8caec5673f54bd2ceb9d82721b7d0d8a6cabed624a4dd623eb292dec"
+    },
+    {
+      "path": "C:\\xml-uat\\final-polish-20261005\\final\\page1-class-knowledge.pdf",
+      "bytes": 1921177,
+      "sha256": "2307ce557adcdaa8a9cec91770adc5e033ab78eb63f77dfe4cce8895fb5c5619"
+    }
+  ],
+  "code_hashes": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\v1.2-xml-experiment\\res\\app\\lesson_metadata.py",
+      "bytes": 15497,
+      "sha256": "252eb7d5572b96af0e34a807b59a7a65318df4274121ef418065d4f1f05bd949"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\v1.2-xml-experiment\\res\\app\\template_slot_composer.py",
+      "bytes": 20062,
+      "sha256": "3f96cae34f4056d03a95833c6c7435182eacaaa4aa9f57ea33f07f3837124449"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\v1.2-xml-experiment\\res\\app\\webapp\\app.py",
+      "bytes": 48749,
+      "sha256": "148cc0881521d2f92f1ba6a461c78cf73c3b2cbdf45d7bbb0871bd0b458b4a4a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\v1.2-xml-experiment\\res\\app\\webapp\\job_service.py",
+      "bytes": 42714,
+      "sha256": "3d2e840130448ad87a69bd4472931c11fc76ab4b4da439bea1649975029233b5"
+    }
+  ],
+  "limitations": [
+    "Source TOC undefined-bookmark display remains unchanged.",
+    "WPS re-encodes some PNGs during SaveAs; image byte/pixel identity is not claimed after WPS.",
+    "Chief review not performed; no release or tag."
+  ]
+}

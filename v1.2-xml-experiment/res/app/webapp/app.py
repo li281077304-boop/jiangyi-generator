@@ -26,7 +26,7 @@ if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
 from job_service import JobNotFound, JobService, UnsupportedInput  # noqa: E402
-from lesson_metadata import LessonMetadataUnavailable, resolve_lesson_metadata  # noqa: E402
+from lesson_metadata import LessonMetadataUnavailable, resolve_lesson_metadata, build_cover_display  # noqa: E402
 
 
 app = Flask(__name__)
@@ -193,7 +193,7 @@ def _execute_job(job_id: str) -> None:
     from package_validator import validate_package
     from renderer_orchestrator import FallbackRequired
     from slot_router import SlotRoutingError, build_slot_routing_plan, validate_training_pair_routes
-    from template_slot_composer import render_slots
+    from template_slot_composer import render_slots, build_display_renumbering
     from studentizer_planner import prepare_complete_student
 
     result_dir = None
@@ -358,6 +358,7 @@ def _execute_job(job_id: str) -> None:
                                                         ("student", student_source)) if path is not None}
         plans = {}
         resolved_lesson_metadata = {}
+        display_renumbering = {}
         fallback_detail = {"value": None, "phase": "PREFLIGHT"}
         student_stage = work_dir / ("student-stage%s-%s.docx" % (attempt_suffix, job_id))
         teacher_stage = work_dir / ("teacher-stage%s-%s.docx" % (attempt_suffix, job_id))
@@ -400,7 +401,9 @@ def _execute_job(job_id: str) -> None:
                     return {"supported": False, "reason_code": exc.reason_code,
                             "detail": fallback_detail["value"]}
             route_plan = plans.get("teacher") or next(iter(plans.values()))
+            display_renumbering.update(build_display_renumbering(plans))
             service.update_route_evidence(job_id, {
+                "display_renumbering": display_renumbering,
                 "training_split_strategy": getattr(route_plan, "training_split_strategy", "NOT_APPLICABLE"),
                 "training_question_routes": [
                     {"question_number": number, "slot": slot}
@@ -417,6 +420,9 @@ def _execute_job(job_id: str) -> None:
                 resolved_lesson_metadata.update({
                     "objectives": lesson_metadata.objectives,
                     "difficulties": lesson_metadata.difficulties,
+                    "full_objectives": lesson_metadata.full_objectives,
+                    "full_difficulties": lesson_metadata.full_difficulties,
+                    "cover_display": build_cover_display(lesson_metadata, template_type, topic=topic),
                     "source": lesson_metadata.source,
                     "knowledge_point_status": lesson_metadata.knowledge_point_status,
                     "training_titles": list(lesson_metadata.training_titles),
@@ -453,6 +459,7 @@ def _execute_job(job_id: str) -> None:
                         "handout_type": options.get("handout_type", ""),
                         "objectives": resolved_lesson_metadata["objectives"],
                         "difficulties": resolved_lesson_metadata["difficulties"],
+                        "cover_display": resolved_lesson_metadata["cover_display"],
                     }
                     # Keep the existing three-argument renderer seam usable by
                     # injected test doubles and compatible integrations. The
@@ -463,9 +470,15 @@ def _execute_job(job_id: str) -> None:
                         parameter.kind is inspect.Parameter.VAR_KEYWORD
                         for parameter in parameters.values()))
                     if supports_metadata:
+                        presentation_args = {}
+                        for key, value in (("display_renumbering", display_renumbering), ("source_role", role)):
+                            if key in parameters or any(parameter.kind is inspect.Parameter.VAR_KEYWORD
+                                                        for parameter in parameters.values()):
+                                presentation_args[key] = value
                         results[role] = render_slots(
                             str(source_path), plans[role], staging,
                             cover_metadata=metadata,
+                            **presentation_args,
                         )
                     else:
                         results[role] = render_slots(str(source_path), plans[role], staging)

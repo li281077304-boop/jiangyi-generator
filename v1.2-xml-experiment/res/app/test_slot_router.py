@@ -191,7 +191,7 @@ class SlotRouterTests(unittest.TestCase):
                        "即时训练", "五、归纳总结", "六、巩固练习"):
             self.assertIn(module, saved_text)
         self.assertIn("1. 题目一", saved_text)
-        self.assertIn("3. 题目三", saved_text)
+        self.assertIn("1. 题目三", saved_text)
 
     def test_training_only_class_template_keeps_class_specific_final_heading(self):
         blocks = ["题型01 专题", "1. question one", "2. question two", "3. question three"]

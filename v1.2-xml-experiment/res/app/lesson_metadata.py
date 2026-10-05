@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import re
+import unicodedata
 from pathlib import Path
 
 from docx import Document
@@ -27,6 +28,109 @@ class LessonMetadata:
     source: str
     knowledge_point_status: str
     training_titles: tuple[str, ...] = ()
+    objectives_source: str = ""
+    difficulties_source: str = ""
+
+    @property
+    def full_objectives(self) -> str:
+        return self.objectives
+
+    @property
+    def full_difficulties(self) -> str:
+        return self.difficulties
+
+
+# Measured with frozen templates in WPS 12.0, Songti 10--11pt. One
+# line at 40/36 CJK characters kept the original Y in 1v1/class; retain
+# two CJK characters of headroom. These are display limits, not page estimates.
+COVER_DISPLAY_BUDGET = {
+    "1v1": {"max_logical_lines": 1, "max_display_width_units": 76},
+    "class": {"max_logical_lines": 1, "max_display_width_units": 68},
+}
+
+
+def display_width_units(text: str) -> int:
+    """Conservative half-width units; combining marks occupy no extra width."""
+    return sum(0 if unicodedata.combining(char) else
+               2 if unicodedata.east_asian_width(char) in "FWA" or char in "MWmw@" else 1
+               for char in text)
+
+
+def _clauses(text: str) -> list[str]:
+    return [re.sub(r"\s+", " ", value).strip(" ;；。") for value in
+            re.split(r"[\n；;。]+|(?=[①②③④⑤⑥⑦⑧⑨⑩])", text)
+            if value.strip(" ;；。\t\r\n")]
+
+
+def _ellipsize(text: str, limit: int) -> str:
+    if display_width_units(text) <= limit:
+        return text
+    result = ""
+    for char in text:
+        if display_width_units(result + char + "…") > limit:
+            break
+        result += char
+    return result.rstrip() + "…"
+
+
+def _select_clauses(text: str, limit: int) -> str:
+    clauses = _clauses(text)
+    selected: list[str] = []
+    for clause in clauses:
+        candidate = "；".join(selected + [clause])
+        if display_width_units(candidate) <= limit:
+            selected.append(clause)
+    return "；".join(selected) if selected else _ellipsize(clauses[0], limit) if clauses else ""
+
+
+def _select_difficulties(text: str, limit: int) -> str:
+    clauses = _clauses(text)
+    priority = [next((clause for clause in clauses if re.match(pattern, clause)), "")
+                for pattern in (r"^(?:教学)?重点\s*[:：]", r"^(?:教学)?难点\s*[:：]")]
+    if not all(priority):
+        return _select_clauses(text, limit)
+    joined = "；".join(priority)
+    if display_width_units(joined) <= limit:
+        return joined
+    available = limit - display_width_units("；")
+    first_width, second_width = map(display_width_units, priority)
+    if first_width <= available // 2:
+        allocations = (first_width, available - first_width)
+    elif second_width <= available // 2:
+        allocations = (available - second_width, second_width)
+    else:
+        allocations = (available // 2, available - available // 2)
+    return "；".join(_ellipsize(clause, space) for clause, space in zip(priority, allocations))
+
+
+def build_cover_display(metadata: LessonMetadata, template_type: str, *, topic: str = "") -> dict:
+    """Retain full values and project deterministic, fixed-budget cover text."""
+    budget = dict(COVER_DISPLAY_BUDGET[template_type])
+    limit = budget["max_display_width_units"]
+    values = {}
+    methods = {}
+    for field in ("objectives", "difficulties"):
+        full = getattr(metadata, field)
+        origin = getattr(metadata, field + "_source") or metadata.source
+        if origin in ("TRAINING_TYPE_HEADINGS", "V09_OFFLINE_RULE"):
+            if origin == "TRAINING_TYPE_HEADINGS":
+                anchors = [*metadata.training_titles[:1], "本专题"]
+                pattern = ("掌握{anchor}题型方法；规范分析与解答。" if field == "objectives" else
+                           "重点：{anchor}题型与方法；难点：条件分析与易错辨析。")
+            else:
+                anchors = [topic, "本专题"] if topic else ["本专题"]
+                pattern = ("掌握{anchor}概念与方法；规范推理与解答。" if field == "objectives" else
+                           "重点：{anchor}基本方法；难点：综合运用与易错辨析。")
+            values[field] = next(pattern.format(anchor=anchor) for anchor in anchors
+                                 if display_width_units(pattern.format(anchor=anchor)) <= limit)
+            methods[field] = "SHORT_OFFLINE_RULE"
+        else:
+            selector = _select_clauses if field == "objectives" else _select_difficulties
+            values[field] = selector(full, limit)
+            methods[field] = "SOURCE_CLAUSE_SELECTION"
+    return {**values, "budget": budget,
+            "cover_metadata_compacted": any(values[key] != getattr(metadata, key) for key in values),
+            "compaction_methods": methods}
 
 
 _FIELD = re.compile(r"^\s*[【\[]?\s*(教学目标|学习目标|重点难点|教学重难点|重难点|教学重点|教学难点|重点|难点)\s*[】\]]?\s*[:：]?\s*(.*?)\s*$")
@@ -248,4 +352,6 @@ def resolve_lesson_metadata(
         source="+".join(unique_sources),
         knowledge_point_status=knowledge_point_status,
         training_titles=titles,
+        objectives_source=sources[0],
+        difficulties_source=sources[1],
     )
