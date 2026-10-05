@@ -268,6 +268,27 @@ def test_knowledge_anchor_refuses_a_moved_or_missing_template_heading():
     assert raised.value.reason_code=='TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED'
 
 
+def test_knowledge_anchor_ignores_imported_blocks_that_carry_tables():
+    """render_slots runs after the source blocks are imported at the body tail.
+
+    A source containing a table therefore makes the rendered document hold more
+    than one table; the anchor must still resolve the frozen template carrier
+    instead of failing closed on a table count.
+    """
+    doc=Document(str(resolve_template('1v1')[0]))
+    imported=doc.add_table(rows=1,cols=1)
+    imported.cell(0,0).text='1. 导入题目'
+    evidence=_anchor_knowledge_review(doc,'1v1')
+    assert evidence['target_y']==KNOWLEDGE_REVIEW_TARGET_Y['1v1']
+    assert evidence['spacer_pt']==KNOWLEDGE_REVIEW_SPACER_PT['1v1']
+    assert imported.cell(0,0).text=='1. 导入题目'
+    paragraphs=_content_cell_paragraphs(doc)
+    for index in (1,2,3,4):
+        spacing=paragraphs[index].find(W+'pPr').find(W+'spacing')
+        assert spacing.get(W+'lineRule')=='exact'
+        assert int(spacing.get(W+'line'))==int(round(KNOWLEDGE_REVIEW_SPACER_PT['1v1']*20))
+
+
 def test_render_slots_reports_the_knowledge_anchor_evidence(tmp_path):
     plan=training_plan(tmp_path,'teacher')
     for template in ('1v1','class'):

@@ -185,6 +185,32 @@ def _apply_display_renumbering(offsets: dict, blocks_by_slot: dict, evidence: di
                 cursor = node_end
 
 
+def _resolve_content_carrier(document):
+    """Return the frozen template's own content table, ignoring imported blocks.
+
+    render_slots runs on the rendered output, which already carries the imported
+    source blocks at the body tail. Sources that contain tables therefore make a
+    naive "exactly one table" test wrong. The template carrier is identified by
+    its own frozen structure instead: row 5 is one merged cell whose first
+    paragraph is 一、课堂启动 and whose sixth paragraph is 二、知识回顾.
+    """
+    for table in document.element.body.findall(W_TBL):
+        rows = table.findall(W_TR)
+        if len(rows) <= _KNOWLEDGE_CELL_ROW_INDEX:
+            continue
+        cells = rows[_KNOWLEDGE_CELL_ROW_INDEX].findall(W_TC_NS)
+        if len(cells) != 1:
+            continue
+        paragraphs = cells[0].findall(W_P)
+        if len(paragraphs) <= _KNOWLEDGE_HEADING_INDEX:
+            continue
+        launch = _paragraph_text(paragraphs[_LAUNCH_HEADING_INDEX])
+        heading = _paragraph_text(paragraphs[_KNOWLEDGE_HEADING_INDEX])
+        if launch == "一、课堂启动" and heading == "二、知识回顾":
+            return table
+    return None
+
+
 def _anchor_knowledge_review(document, template_type: str) -> dict:
     """Anchor 二、知识回顾 to the bottom safe area of page one.
 
@@ -196,26 +222,13 @@ def _anchor_knowledge_review(document, template_type: str) -> dict:
     """
     target = KNOWLEDGE_REVIEW_TARGET_Y[template_type]
     spacer_pt = KNOWLEDGE_REVIEW_SPACER_PT[template_type]
-    if len(document.tables) != 1:
+    table = _resolve_content_carrier(document)
+    if table is None:
         raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
                                "template content carrier is not a single table")
-    rows = document.tables[0]._tbl.findall(W_TR)
-    if len(rows) <= _KNOWLEDGE_CELL_ROW_INDEX:
-        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
-                               "template has no content row for the knowledge heading")
+    rows = table.findall(W_TR)
     cells = rows[_KNOWLEDGE_CELL_ROW_INDEX].findall(W_TC_NS)
-    if len(cells) != 1:
-        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
-                               "content row is not a single merged cell")
     paragraphs = cells[0].findall(W_P)
-    if len(paragraphs) <= _KNOWLEDGE_HEADING_INDEX:
-        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
-                               "content cell is shorter than the frozen template layout")
-    launch = _paragraph_text(paragraphs[_LAUNCH_HEADING_INDEX])
-    heading = _paragraph_text(paragraphs[_KNOWLEDGE_HEADING_INDEX])
-    if launch != "一、课堂启动" or heading != "二、知识回顾":
-        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
-                               "template headings moved: %r / %r" % (launch, heading))
     spacer_indices = tuple(range(_LAUNCH_HEADING_INDEX + 1, _KNOWLEDGE_HEADING_INDEX))
     if not spacer_indices:
         raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
