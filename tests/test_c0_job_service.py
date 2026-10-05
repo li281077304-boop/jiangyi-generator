@@ -196,6 +196,7 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
     import shutil
     import renderer_orchestrator
     import slot_router
+    import template_block_plan
 
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
@@ -249,6 +250,11 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
     assert final["status"] == "done", final.get("error")
     assert final["renderer"] == "V0.9"
     assert final["fallback_reason"] == "XML_RENDER_FAILED"
+    assert final["renderer_route"] == "V09_WHOLE_JOB"
+    assert final["fallback_phase"] == "ROUTER"
+    assert final["fallback_reason_code"] == "XML_RENDER_FAILED"
+    assert final["fallback_detail_reason_code"] == "PlanUnsupported"
+    assert final["student_preparation_route"] == "BYPASS"
     assert final["baseline_sha"] == renderer_orchestrator.V09_BASELINE_SHA
     assert final.get("plan_summary") is None
     assert len(final["output_paths"]) == 2
@@ -289,6 +295,9 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     assert final["status"] == "error"
     assert final["renderer"] == "V0.9"
     assert final["fallback_reason"] == "UNSUPPORTED_REVISION_MARKUP"
+    assert final["renderer_route"] == "V09_WHOLE_JOB"
+    assert final["fallback_phase"] == "PREFLIGHT"
+    assert final["fallback_reason_code"] == "UNSUPPORTED_REVISION_MARKUP"
     assert final["baseline_sha"] == expected
 
 
@@ -325,6 +334,9 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
     final = make_service(root).get(job_id)
     assert final["status"] == "done", final.get("error")
     assert final["renderer"] == "XML"
+    assert final["renderer_route"] == "XML"
+    assert final["student_preparation_route"] == "BYPASS"
+    assert final["fallback_phase"] == "NONE"
     assert final["plan_summary"] == {
         "destination_slots": {
             "knowledge": {"label": "知识精讲&例题讲解", "teacher_blocks": 0, "student_blocks": 0},
@@ -336,9 +348,38 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
         "explicit_final_heading": True,
         "knowledge_point_status": "UNKNOWN",
         "omitted_slots": [],
+        "training_split_strategy": "NOT_APPLICABLE",
+        "training_question_routes": [],
         "routing_applied": True,
         "template_sha256": "paired-template",
     }
+
+
+def test_whole_job_fallback_preserves_training_route_evidence(client):
+    created = post_one(client, "training.docx").get_json()
+    service = make_service()
+    service.start_job(created["job_id"])
+    service.update_route_evidence(created["job_id"], {
+        "training_split_strategy": "GROUPED_VERTICAL",
+        "training_question_routes": [
+            {"question_number": 1, "slot": "knowledge"},
+            {"question_number": 2, "slot": "immediate"},
+            {"question_number": 3, "slot": "final"},
+        ],
+        "xml_renderer_attempted": True,
+    })
+    service.record_fallback_attempt(created["job_id"], "XML_RENDER_FAILED", "frozen-sha",
+                                    detail="ProjectionError: unsupported test fixture", phase="RENDER")
+    record = service.get(created["job_id"])
+    assert record["renderer_route"] == "V09_WHOLE_JOB"
+    assert record["fallback_phase"] == "RENDER"
+    assert record["training_split_strategy"] == "GROUPED_VERTICAL"
+    assert record["training_question_routes"] == [
+        {"question_number": 1, "slot": "knowledge"},
+        {"question_number": 2, "slot": "immediate"},
+        {"question_number": 3, "slot": "final"},
+    ]
+    assert record["xml_renderer_attempted"] is True
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):

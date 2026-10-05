@@ -15,6 +15,7 @@ from slot_router import (
     SlotRoutingError,
     _number,
     build_slot_routing_plan,
+    validate_training_pair_routes,
 )
 from template_slot_composer import render_slots
 from struct_doc import read_struct_doc_bytes
@@ -161,34 +162,147 @@ class SlotRouterTests(unittest.TestCase):
             self.assertEqual(found[plan.slot_labels["final"]], ["1. 巩固题"])
             self.assertEqual(set(found), set(plan.slot_labels.values()))
 
-    def test_training_only_omits_knowledge_and_empty_final_sections(self):
+    def test_training_only_keeps_six_modules_and_routes_questions_across_three_slots(self):
         blocks = ["题型分组练", "题型01 物质的构成", "1. 题目一", "2. 题目二",
                   "题型02 分子热运动", "3. 题目三"]
         units = [self._unit("s0", "section", "b0")]
+        units.append(self._unit("s1", "section", "b4"))
         units.extend(self._unit("q%d" % seq, "question_group", "b%d" % seq,
-                                parent="s0") for seq in (2, 3, 5))
+                                parent="s0" if seq in (2, 3) else "s1")
+                      for seq in (2, 3, 5))
         source, snapshot = self._snapshot(blocks, units)
         plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
         self.assertEqual(plan.knowledge_point_status, "NO_KNOWLEDGE_POINT")
-        self.assertEqual(plan.omitted_slots, ("knowledge", "final"))
-        self.assertEqual(plan.slots["knowledge"], ())
-        self.assertEqual(plan.slots["final"], ())
-        self.assertEqual([span.start for span in plan.slots["immediate"]],
-                         ["b%d" % seq for seq in range(len(blocks))])
+        self.assertEqual(plan.omitted_slots, ())
+        self.assertEqual(plan.training_split_strategy, "GROUPED_VERTICAL")
+        self.assertEqual([span.start for span in plan.slots["knowledge"]], ["b0", "b1", "b2"])
+        self.assertEqual([span.start for span in plan.slots["immediate"]], ["b3"])
+        self.assertEqual([span.start for span in plan.slots["final"]], ["b4", "b5"])
+        all_spans = [span.start for slot in SLOT_LABELS["1v1"] for span in plan.slots[slot]]
+        self.assertEqual(len(all_spans), len(blocks))
+        self.assertEqual(len(set(all_spans)), len(blocks))
 
         output = self.root / "training-only.docx"
         render_slots(str(source), plan, str(output))
         saved_text = "\n".join(paragraph.text for paragraph in Document(str(output)).paragraphs)
         saved_text += "\n" + "\n".join(cell.text for table in Document(str(output)).tables
                                                for row in table.rows for cell in row.cells)
-        self.assertNotIn("知识精讲", saved_text)
-        self.assertNotIn("六、巩固练习", saved_text)
-        self.assertNotIn("一、课堂启动", saved_text)
-        self.assertNotIn("二、知识回顾", saved_text)
-        self.assertNotIn("五、归纳总结", saved_text)
-        self.assertIn("一、即时训练", saved_text)
+        for module in ("一、课堂启动", "二、知识回顾", "知识精讲",
+                       "即时训练", "五、归纳总结", "六、巩固练习"):
+            self.assertIn(module, saved_text)
         self.assertIn("1. 题目一", saved_text)
         self.assertIn("3. 题目三", saved_text)
+
+    def test_training_only_class_template_keeps_class_specific_final_heading(self):
+        blocks = ["题型01 专题", "1. question one", "2. question two", "3. question three"]
+        units = [self._unit("s0", "section", "b0")]
+        units.extend(self._unit("q%d" % seq, "question_group", "b%d" % seq,
+                                parent="s0") for seq in (1, 2, 3))
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "class", snapshot=snapshot)
+        output = self.root / "training-only-class.docx"
+        render_slots(str(source), plan, str(output))
+        saved = Document(str(output))
+        saved_text = "\n".join(p.text for p in saved.paragraphs)
+        saved_text += "\n" + "\n".join(cell.text for table in saved.tables
+                                            for row in table.rows for cell in row.cells)
+        self.assertIn("知识精讲&例题讲解", saved_text)
+        self.assertIn("即时训练", saved_text)
+        self.assertIn("六、出门测试", saved_text)
+        self.assertNotIn("六、巩固练习", saved_text)
+
+    def test_training_only_two_question_group_keeps_whole_questions_without_fabricating_final(self):
+        blocks = ["题型01 物质构成", "1. question one", "2. question two"]
+        units = [self._unit("s0", "section", "b0"),
+                 self._unit("q1", "question_group", "b1", parent="s0"),
+                 self._unit("q2", "question_group", "b2", parent="s0")]
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "class", snapshot=snapshot)
+        self.assertEqual(plan.training_split_strategy, "GROUPED_VERTICAL")
+        self.assertEqual([span.start for span in plan.slots["knowledge"]], ["b0", "b1"])
+        self.assertEqual([span.start for span in plan.slots["immediate"]], ["b2"])
+        self.assertEqual(plan.slots["final"], ())
+        self.assertEqual(plan.slot_labels["final"], "六、出门测试")
+
+    def test_mostly_singleton_type_groups_use_stable_degraded_balance(self):
+        blocks = []
+        units = []
+        for number in range(1, 7):
+            section_seq = len(blocks)
+            blocks.append("题型%02d 专题" % number)
+            units.append(self._unit("s%d" % number, "section", "b%d" % section_seq))
+            question_seq = len(blocks)
+            blocks.append("%d. question" % number)
+            units.append(self._unit("q%d" % number, "question_group", "b%d" % question_seq,
+                                    parent="s%d" % number))
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        self.assertEqual(plan.training_split_strategy, "GROUPED_DEGRADED")
+        self.assertEqual(len(plan.slots["knowledge"]), 4)
+        self.assertEqual(len(plan.slots["immediate"]), 4)
+        self.assertEqual(len(plan.slots["final"]), 4)
+        assigned_questions = [span.start for slot in ("knowledge", "immediate", "final")
+                              for span in plan.slots[slot] if span.start in
+                              {"b%d" % i for i in (1, 3, 5, 7, 9, 11)}]
+        self.assertEqual(len(assigned_questions), 6)
+        self.assertEqual(len(set(assigned_questions)), 6)
+
+    def test_unheaded_question_groups_use_sequential_degraded_routing(self):
+        blocks = ["1. q1", "2. q2", "3. q3", "4. q4", "5. q5", "6. q6"]
+        units = [self._unit("q%d" % index, "question_group", "b%d" % index)
+                 for index in range(len(blocks))]
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        self.assertEqual(plan.training_split_strategy, "SEQUENTIAL_DEGRADED")
+        self.assertEqual([len(plan.slots[slot]) for slot in ("knowledge", "immediate", "final")],
+                         [2, 2, 2])
+        self.assertEqual(sum(len(plan.slots[slot]) for slot in ("knowledge", "immediate", "final")), 6)
+
+    def test_unheaded_sequential_route_carries_each_question_body_with_its_start(self):
+        blocks = ["1. first", "continuation one", "2. second", "continuation two",
+                  "3. third", "continuation three"]
+        units = [self._unit("q1", "question_group", "b0", "b1"),
+                 self._unit("q2", "question_group", "b2", "b3"),
+                 self._unit("q3", "question_group", "b4", "b5")]
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        routed = {int(span.start[1:]): slot for slot, spans in plan.slots.items()
+                  for span in spans}
+        self.assertEqual(plan.training_split_strategy, "SEQUENTIAL_DEGRADED")
+        self.assertEqual([routed[index] for index in range(6)],
+                         ["knowledge", "knowledge", "immediate", "immediate", "final", "final"])
+
+    def test_teacher_student_routes_use_shared_question_markers_when_qg_counts_differ(self):
+        blocks = ["题型01 专题", "1. question one", "2. question two",
+                  "3. question three", "4. question four"]
+        teacher_units = [self._unit("s0", "section", "b0")]
+        teacher_units.extend(self._unit("t%d" % number, "question_group", "b%d" % number,
+                                        parent="s0") for number in range(1, 5))
+        student_units = [self._unit("s0", "section", "b0"),
+                         self._unit("s1", "question_group", "b1", parent="s0"),
+                         self._unit("s2", "question_group", "b2", "b3", parent="s0"),
+                         self._unit("s3", "question_group", "b4", parent="s0")]
+        teacher_path, teacher_snapshot = self._snapshot(blocks, teacher_units)
+        student_path, student_snapshot = self._snapshot(blocks, student_units)
+        teacher = build_slot_routing_plan(teacher_path, "1v1", snapshot=teacher_snapshot)
+        student = build_slot_routing_plan(student_path, "1v1", snapshot=student_snapshot)
+        self.assertEqual(teacher.training_split_strategy, "GROUPED_VERTICAL")
+        self.assertEqual(student.training_split_strategy, "GROUPED_VERTICAL")
+        self.assertEqual(teacher.training_question_routes, student.training_question_routes)
+        self.assertEqual(teacher.training_question_routes,
+                         ((1, "knowledge"), (2, "immediate"),
+                          (3, "final"), (4, "final")))
+        validate_training_pair_routes({"teacher": teacher, "student": student})
+
+    def test_paired_training_route_mismatch_fails_closed(self):
+        from types import SimpleNamespace
+        plans = {
+            "teacher": SimpleNamespace(training_question_routes=((1, "knowledge"),)),
+            "student": SimpleNamespace(training_question_routes=((1, "immediate"),)),
+        }
+        with self.assertRaises(SlotRoutingError) as raised:
+            validate_training_pair_routes(plans)
+        self.assertEqual(raised.exception.reason_code, "TEACHER_STUDENT_TRAINING_ROUTE_MISMATCH")
 
     def test_explicit_knowledge_section_remains_knowledge_point_lesson(self):
         blocks = ["知识点 一元一次方程", "1. 解方程", "即时训练", "1. 练习题"]
@@ -220,10 +334,10 @@ class SlotRouterTests(unittest.TestCase):
         path, snapshot = self._snapshot(blocks, units)
         plan = build_slot_routing_plan(path, "1v1", snapshot=snapshot)
         self.assertEqual(plan.knowledge_point_status, "NO_KNOWLEDGE_POINT")
-        self.assertEqual([span.start for span in plan.slots["knowledge"]], [])
-        self.assertEqual([span.start for span in plan.slots["immediate"]],
-                         ["b%d" % seq for seq in range(len(blocks))])
-        self.assertEqual(plan.slots["final"], ())
+        self.assertEqual(plan.training_split_strategy, "GROUPED_VERTICAL")
+        self.assertEqual([span.start for span in plan.slots["knowledge"]], ["b0", "b1"])
+        self.assertEqual([span.start for span in plan.slots["immediate"]], ["b2"])
+        self.assertEqual([span.start for span in plan.slots["final"]], ["b3", "b4"])
 
     def test_leading_number_parser_preserves_natural_question_numbers(self):
         self.assertEqual(_number("1. question"), (1, None))

@@ -192,7 +192,7 @@ def _execute_job(job_id: str) -> None:
     )
     from package_validator import validate_package
     from renderer_orchestrator import FallbackRequired
-    from slot_router import SlotRoutingError, build_slot_routing_plan
+    from slot_router import SlotRoutingError, build_slot_routing_plan, validate_training_pair_routes
     from template_slot_composer import render_slots
     from studentizer_planner import prepare_complete_student
 
@@ -272,7 +272,7 @@ def _execute_job(job_id: str) -> None:
 
         preparation = {"make_student_called": False, "input_version": input_version,
                        "elapsed_seconds": 0.0, "wps_com_started": False,
-                       "student_preparation": "BYPASS", "student_preparation_route": None,
+                       "student_preparation": "BYPASS", "student_preparation_route": "BYPASS",
                        "com_used": False, "com_observation": "NOT_ENTERED",
                        "package_valid": None, "output_package_valid": None,
                        "engine": "BYPASS", "status": "STUDENT_SOURCE_BYPASS",
@@ -358,7 +358,7 @@ def _execute_job(job_id: str) -> None:
                                                         ("student", student_source)) if path is not None}
         plans = {}
         resolved_lesson_metadata = {}
-        fallback_detail = {"value": None}
+        fallback_detail = {"value": None, "phase": "PREFLIGHT"}
         student_stage = work_dir / ("student-stage%s-%s.docx" % (attempt_suffix, job_id))
         teacher_stage = work_dir / ("teacher-stage%s-%s.docx" % (attempt_suffix, job_id))
 
@@ -368,6 +368,7 @@ def _execute_job(job_id: str) -> None:
                 return {"supported": False, "reason_code": forced_reason,
                         "detail": "forced unsupported integration fixture"}
             try:
+                fallback_detail["phase"] = "ROUTER"
                 for role, source_path in active_sources.items():
                     plans[role] = build_slot_routing_plan(source_path, template_type,
                                                           split_mode=split_mode)
@@ -390,7 +391,24 @@ def _execute_job(job_id: str) -> None:
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
             knowledge_point_status = next(iter(statuses))
+            if knowledge_point_status == "NO_KNOWLEDGE_POINT" and split_mode == "smart":
+                try:
+                    validate_training_pair_routes(plans)
+                except SlotRoutingError as exc:
+                    plans.clear()
+                    fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
+                    return {"supported": False, "reason_code": exc.reason_code,
+                            "detail": fallback_detail["value"]}
+            route_plan = plans.get("teacher") or next(iter(plans.values()))
+            service.update_route_evidence(job_id, {
+                "training_split_strategy": getattr(route_plan, "training_split_strategy", "NOT_APPLICABLE"),
+                "training_question_routes": [
+                    {"question_number": number, "slot": slot}
+                    for number, slot in getattr(route_plan, "training_question_routes", ())
+                ],
+            })
             try:
+                fallback_detail["phase"] = "METADATA"
                 metadata_source = teacher_source or student_source
                 lesson_metadata = resolve_lesson_metadata(
                     metadata_source, subject=options.get("subject", ""), topic=topic,
@@ -418,6 +436,11 @@ def _execute_job(job_id: str) -> None:
                     "template_sha256": next(iter(plans.values())).template_sha256}
 
         def xml_render(xml_job):
+            fallback_detail["phase"] = "RENDER"
+            service.update_route_evidence(job_id, {
+                "renderer_route": "XML",
+                "xml_renderer_attempted": True,
+            })
             service.update_progress(job_id, 1, "结构分析完成，正在生成教学槽位")
             results = {}
             try:
@@ -491,10 +514,17 @@ def _execute_job(job_id: str) -> None:
         )
 
         def fallback(original_job, reason_code):
+            fallback_phase = fallback_detail.get("phase", "PREFLIGHT")
+            if reason_code in ("PACKAGE_VALIDATION_FAILED", "UNSUPPORTED_RELATIONSHIP"):
+                fallback_phase = "PACKAGE"
+            if fallback_detail.get("value") and "could not publish validated XML output" in fallback_detail["value"]:
+                fallback_phase = "PUBLISH"
             service.record_fallback_attempt(job_id, reason_code, V09_BASELINE_SHA,
-                                             detail=fallback_detail["value"])
+                                             detail=fallback_detail["value"],
+                                             phase=fallback_phase)
             renderer_fallback_preparation = {
                 "route": "V09_WHOLE_JOB", "make_student_called": False,
+                "fallback_phase": fallback_phase,
                 "reason_code": reason_code, "reason_detail": fallback_detail["value"],
                 "com_used": None, "wps_com_started": None,
                 "com_observation": "NOT_ENTERED", "elapsed_seconds": None,
@@ -695,6 +725,11 @@ def _execute_job(job_id: str) -> None:
                 "explicit_final_heading": plan.explicit_final_heading,
                 "knowledge_point_status": getattr(plan, "knowledge_point_status", "UNKNOWN"),
                 "omitted_slots": list(getattr(plan, "omitted_slots", ())),
+                "training_split_strategy": getattr(plan, "training_split_strategy", "NOT_APPLICABLE"),
+                "training_question_routes": [
+                    {"question_number": number, "slot": slot}
+                    for number, slot in getattr(plan, "training_question_routes", ())
+                ],
                 "routing_applied": outcome.renderer == "XML",
                 "template_sha256": plan.template_sha256,
             }

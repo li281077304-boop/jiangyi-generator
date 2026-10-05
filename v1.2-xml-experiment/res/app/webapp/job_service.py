@@ -266,8 +266,16 @@ class JobService:
             "output_paths": [],
             "has_result": False,
             "renderer": None,
+            "renderer_route": None,
             "fallback_reason": None,
             "fallback_detail": None,
+            "fallback_phase": "NONE",
+            "fallback_reason_code": None,
+            "fallback_detail_reason_code": None,
+            "student_preparation_route": None,
+            "training_split_strategy": "NOT_APPLICABLE",
+            "training_question_routes": [],
+            "xml_renderer_attempted": False,
             "baseline_sha": None,
             "recovered_after_restart": False,
             "generation_attempts": 0,
@@ -441,7 +449,7 @@ class JobService:
             return self.snapshot(record)
 
     def record_fallback_attempt(self, job_id: str, reason: str, baseline_sha: str,
-                                *, detail: str | None = None) -> dict:
+                                *, detail: str | None = None, phase: str = "PREFLIGHT") -> dict:
         """Persist whole-job fallback intent before entering the fallback runtime."""
         with self._lock:
             record = self._recover(job_id)
@@ -450,8 +458,14 @@ class JobService:
             now = datetime.now(timezone.utc)
             record.update({
                 "renderer": "V0.9",
+                "renderer_route": "V09_WHOLE_JOB",
                 "fallback_reason": str(reason),
                 "fallback_detail": str(detail) if detail else None,
+                "fallback_phase": str(phase),
+                "fallback_reason_code": str(reason),
+                "fallback_detail_reason_code": (
+                    str(detail).split(":", 1)[0].strip()
+                    if detail and ":" in str(detail) else None),
                 "baseline_sha": str(baseline_sha),
                 "stage": "XML 不支持（%s），正在调用 V0.9 全任务回退" % reason,
                 "updated_at": now.timestamp(),
@@ -466,6 +480,20 @@ class JobService:
             if record.get("status") != "running":
                 return self.snapshot(record)
             record["student_preparation"] = dict(details)
+            record["student_preparation_route"] = details.get("student_preparation_route")
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def update_route_evidence(self, job_id: str, details: dict) -> dict:
+        """Persist router evidence before metadata/render gates can fall back."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            for key in ("training_split_strategy", "training_question_routes",
+                        "renderer_route", "xml_renderer_attempted"):
+                if key in details:
+                    record[key] = details[key]
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
@@ -699,11 +727,23 @@ class JobService:
             "has_result": True,
             "produced": len(paths),
             "renderer": renderer,
+            "renderer_route": "XML" if renderer == "XML" else "V09_WHOLE_JOB",
             "fallback_reason": fallback_reason,
+            "fallback_reason_code": fallback_reason,
+            "fallback_phase": (record.get("fallback_phase", "PREFLIGHT")
+                               if fallback_reason else "NONE"),
+            "fallback_detail_reason_code": record.get("fallback_detail_reason_code"),
             "baseline_sha": baseline_sha,
             "package_validation": reports,
             "plan_summary": plan_summary,
             "student_preparation": student_preparation or record.get("student_preparation", {}),
+            "student_preparation_route": (student_preparation or record.get("student_preparation", {})).get(
+                "student_preparation_route"),
+            "training_split_strategy": ((plan_summary or {}).get("training_split_strategy")
+                                        or record.get("training_split_strategy")
+                                        or "NOT_APPLICABLE"),
+            "training_question_routes": ((plan_summary or {}).get("training_question_routes")
+                                         or record.get("training_question_routes") or []),
             "elapsed_seconds": round(now.timestamp() - record.get("started_at", now.timestamp()), 3),
         })
         for item in record.get("items", []):

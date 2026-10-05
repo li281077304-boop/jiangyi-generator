@@ -73,6 +73,24 @@ class SlotRoutingError(ValueError):
         self.detail = detail
 
 
+def validate_training_pair_routes(plans: dict[str, "SlotRoutingPlan"]) -> None:
+    """Require teacher/student training plans to share question-slot routes."""
+    if len(plans) < 2:
+        return
+    signatures = [tuple(getattr(plan, "training_question_routes", ()))
+                  for plan in plans.values()]
+    if any(not signature for signature in signatures):
+        raise SlotRoutingError(
+            "TEACHER_STUDENT_ROUTE_SIGNATURE_UNAVAILABLE",
+            "paired training-only plans need visible question-start route signatures",
+        )
+    if any(signature != signatures[0] for signature in signatures[1:]):
+        raise SlotRoutingError(
+            "TEACHER_STUDENT_TRAINING_ROUTE_MISMATCH",
+            "teacher and student question numbers route to different teaching slots",
+        )
+
+
 @dataclass(frozen=True)
 class SlotRoutingPlan:
     source_path: Path
@@ -89,6 +107,8 @@ class SlotRoutingPlan:
     explicit_final_heading: bool
     knowledge_point_status: str
     omitted_slots: tuple[str, ...]
+    training_split_strategy: str = "NOT_APPLICABLE"
+    training_question_routes: tuple[tuple[int, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -97,6 +117,7 @@ class _Unit:
     role: str
     unit_id: str
     seqs: frozenset[int]
+    node_ids: frozenset[str]
     start_seq: int
     end_seq: int
     order: int
@@ -135,6 +156,7 @@ def _make_units(snapshot: SemanticSnapshot) -> list[_Unit]:
             raise SlotRoutingError("SLOT_ROUTING_AMBIGUOUS",
                                    "A-Line unit %s has no source spans" % raw.get("id"))
         seqs: set[int] = set()
+        node_ids: set[str] = set()
         orders: list[int] = []
         for pair in spans:
             if not isinstance(pair, (list, tuple)) or len(pair) != 2:
@@ -146,13 +168,230 @@ def _make_units(snapshot: SemanticSnapshot) -> list[_Unit]:
                     or start_order is None or end_order is None or start_order > end_order):
                 raise SlotRoutingError("SLOT_ROUTING_AMBIGUOUS",
                                        "unprojectable A-Line span %s..%s" % (start, end))
-            seqs.update(range(first, last + 1))
+            interval_ids = snapshot.node_index.interval(start, end)
+            if not interval_ids:
+                raise SlotRoutingError("SLOT_ROUTING_AMBIGUOUS",
+                                       "empty StructDoc node interval %s..%s" % (start, end))
+            node_ids.update(interval_ids)
+            seqs.update(_top_seq(node_id) for node_id in interval_ids)
             orders.append(start_order)
         out.append(_Unit(raw, str(raw.get("role") or ""), str(raw.get("id") or ""),
-                         frozenset(seqs), min(seqs), max(seqs), min(orders),
+                         frozenset(seqs), frozenset(node_ids), min(seqs), max(seqs), min(orders),
                          _WS.sub(" ", _unit_text(snapshot, spans) or "").strip()))
     return sorted(out, key=lambda item: (item.start_seq, item.order, item.unit_id))
 
+
+def _balanced_slots(count: int) -> list[str]:
+    """Deterministically divide ordered units among the three teaching slots."""
+    if count < 1:
+        return []
+    return [SLOT_ORDER[min(2, (index * 3) // count)] for index in range(count)]
+
+
+def _training_only_node_routes(
+    snapshot: SemanticSnapshot,
+    units: list[_Unit],
+    sections: list[_Unit],
+    template_type: str,
+) -> tuple[dict[int, str], str, tuple[tuple[int, str], ...]]:
+    """Route training-only exercises from reliable physical question starts.
+
+    Teacher and student A-Line groups may differ after answer removal. Natural
+    numbered starts are the shared coordinate when they cover every semantic
+    question group. A multi-question group can then cross slots only at distinct
+    physical paragraph boundaries; one paragraph or table cannot be split.
+    """
+    qgs = sorted((unit for unit in units if unit.role == "question_group"),
+                 key=lambda unit: (unit.order, unit.unit_id))
+    if not qgs:
+        raise SlotRoutingError("TRAINING_QUESTIONS_UNRESOLVED",
+                               "NO_KNOWLEDGE_POINT source has no reliable question groups")
+    by_id = {unit.unit_id: unit for unit in units}
+    grouped: dict[str, list[_Unit]] = {}
+    unowned: list[_Unit] = []
+    for qg in qgs:
+        owner = _section_for(qg, by_id, sections)
+        owner_route = _heading_route(owner.text, template_type) if owner is not None else None
+        explicit_knowledge_heading = owner is not None and any(
+            _clean(owner.text).startswith(label) for label in KNOWLEDGE_HEADINGS)
+        if (owner is not None and not explicit_knowledge_heading
+                and owner_route not in ("immediate", "final", "answer_area")):
+            grouped.setdefault(owner.unit_id, []).append(qg)
+        else:
+            unowned.append(qg)
+
+    index = snapshot.node_index
+    order_ids = index.order_ids
+    section_by_id = {section.unit_id: section for section in sections}
+    section_items: dict[str, list[tuple[int, int, int | None]]] = {}
+    for section_id, group in grouped.items():
+        section = section_by_id[section_id]
+        next_sections = [item.order for item in sections
+                         if (item.order, item.unit_id) > (section.order, section.unit_id)]
+        section_start = min((index.order_of(node_id) for node_id in section.node_ids
+                             if index.order_of(node_id) is not None), default=section.order)
+        section_end = min(next_sections) if next_sections else len(order_ids)
+        markers = []
+        for position in range(section_start, section_end):
+            node_id = order_ids[position]
+            number = _visible_question_number(index.text_of(node_id))
+            seq = _top_seq(node_id)
+            if number is not None and seq is not None:
+                markers.append((position, seq, number))
+        covered = sum(1 for qg in group if any(qg.start_seq <= seq <= qg.end_seq
+                                              for _position, seq, _number in markers))
+        if markers and covered == len(group):
+            # Numbering can legitimately restart within a section. Source
+            # order, rather than numeric monotonicity, is the deterministic key.
+            section_items[section_id] = markers
+        else:
+            section_items[section_id] = [(qg.order, qg.start_seq, None) for qg in group]
+
+    if unowned and (grouped or sections):
+        raise SlotRoutingError("TRAINING_QUESTIONS_UNRESOLVED",
+                               "question group has no generic training-section owner")
+
+    all_items = sorted(
+        ((section_id, item) for section_id, items in section_items.items() for item in items),
+        key=lambda entry: (entry[1][0], entry[0]),
+    )
+    singleton_sections = sum(len(items) == 1 for items in section_items.values())
+    grouped_degraded = bool(section_items) and singleton_sections * 2 > len(section_items)
+    strategy = ("GROUPED_DEGRADED" if grouped_degraded else "GROUPED_VERTICAL") if section_items else "SEQUENTIAL_DEGRADED"
+    item_slots: dict[str, list[tuple[int, int, int | None, str]]] = {}
+    if strategy == "GROUPED_VERTICAL":
+        counts = {slot: 0 for slot in SLOT_ORDER}
+        deferred = []
+        for section_id, items in section_items.items():
+            if len(items) == 1:
+                deferred.append((section_id, items[0]))
+                continue
+            routed = [(*item, SLOT_ORDER[min(i, 2)]) for i, item in enumerate(items)]
+            item_slots[section_id] = routed
+            for _position, _seq, _number, slot in routed:
+                counts[slot] += 1
+        for section_id, item in sorted(deferred, key=lambda entry: entry[1][0]):
+            slot = min(SLOT_ORDER, key=lambda candidate: (counts[candidate], SLOT_ORDER.index(candidate)))
+            item_slots[section_id] = [(*item, slot)]
+            counts[slot] += 1
+    elif strategy == "GROUPED_DEGRADED":
+        for (section_id, item), slot in zip(all_items, _balanced_slots(len(all_items))):
+            item_slots.setdefault(section_id, []).append((*item, slot))
+    else:
+        markers = []
+        for position, node_id in enumerate(order_ids):
+            number = _visible_question_number(index.text_of(node_id))
+            seq = _top_seq(node_id)
+            if number is not None and seq is not None:
+                markers.append((position, seq, number))
+        covered = sum(1 for qg in qgs if any(qg.start_seq <= seq <= qg.end_seq
+                                            for _position, seq, _number in markers))
+        if markers and covered == len(qgs):
+            global_items = [(*item, slot) for item, slot in zip(markers, _balanced_slots(len(markers)))]
+        else:
+            global_items = [ (qg.order, qg.start_seq, None, slot)
+                             for qg, slot in zip(qgs, _balanced_slots(len(qgs))) ]
+
+    marker_signature: list[tuple[int, str]] = []
+    node_routes: dict[int, str] = {}
+    marker_positions: list[tuple[int, str]] = []
+    if strategy == "SEQUENTIAL_DEGRADED":
+        ordered = sorted(global_items, key=lambda item: item[0])
+        marker_signature.extend((int(number), slot) for _position, _seq, number, slot in ordered
+                                if number is not None)
+        marker_positions.extend((position, slot) for position, _seq, _number, slot in ordered)
+        for position, node_id in enumerate(order_ids):
+            preceding = [item for item in ordered if item[0] <= position]
+            slot = preceding[-1][3] if preceding else ordered[0][3]
+            seq = _top_seq(node_id)
+            if seq is not None:
+                previous = node_routes.get(seq)
+                if previous is not None and previous != slot:
+                    block = snapshot.document.blocks[seq]
+                    code = "TABLE_SLOT_CONFLICT" if block.kind == "table" else "SLOT_ROUTING_ATOMIC_BLOCK_CONFLICT"
+                    raise SlotRoutingError(code,
+                                           "physical block b%d contains question starts routed to %s and %s" %
+                                           (seq, previous, slot))
+                node_routes[seq] = slot
+    else:
+        for section in sections:
+            items = item_slots.get(section.unit_id)
+            if not items:
+                continue
+            items.sort(key=lambda item: item[0])
+            marker_signature.extend((int(number), slot) for _position, _seq, number, slot in items
+                                    if number is not None)
+            marker_positions.extend((position, slot) for position, _seq, _number, slot in items)
+            next_sections = [item.order for item in sections
+                             if (item.order, item.unit_id) > (section.order, section.unit_id)]
+            section_start = min((index.order_of(node_id) for node_id in section.node_ids
+                                 if index.order_of(node_id) is not None), default=section.order)
+            section_end = min(next_sections) if next_sections else len(order_ids)
+            for position in range(section_start, section_end):
+                if position >= len(order_ids):
+                    break
+                node_id = order_ids[position]
+                preceding = [item for item in items if item[0] <= position]
+                slot = (preceding[-1] if preceding else items[0])[3]
+                seq = _top_seq(node_id)
+                if seq is None:
+                    continue
+                previous = node_routes.get(seq)
+                if previous is not None and previous != slot:
+                    block = snapshot.document.blocks[seq]
+                    code = "TABLE_SLOT_CONFLICT" if block.kind == "table" else "SLOT_ROUTING_ATOMIC_BLOCK_CONFLICT"
+                    raise SlotRoutingError(code,
+                                           "physical block b%d contains question starts routed to %s and %s" %
+                                           (seq, previous, slot))
+                node_routes[seq] = slot
+
+    routes = {seq: "knowledge" for seq in range(len(snapshot.document.blocks))}
+    routes.update(node_routes)
+    # Keep examples in the explanatory slot and reject any shared material
+    # whose connected question groups request different destinations.
+    for qg in qgs:
+        if _is_example(qg):
+            for seq in qg.seqs:
+                if routes.get(seq) not in ("knowledge", None):
+                    raise SlotRoutingError("SLOT_ROUTING_ATOMIC_BLOCK_CONFLICT",
+                                           "example %s overlaps a routed practice question" % qg.unit_id)
+                routes[seq] = "knowledge"
+    materials = {unit.unit_id: unit for unit in units if unit.role == "shared_material"}
+    targets_by_material: dict[str, set[str]] = {}
+    for qg in qgs:
+        material_id = str(qg.raw.get("bind_to") or "")
+        if not material_id:
+            continue
+        material = materials.get(material_id)
+        if material is None:
+            raise SlotRoutingError("SHARED_MATERIAL_BINDING_UNRESOLVED",
+                                   "question group %s binds missing material %s" % (qg.unit_id, material_id))
+        targets_by_material.setdefault(material_id, set()).update(routes[seq] for seq in qg.seqs)
+    for material_id, targets in targets_by_material.items():
+        if len(targets) != 1:
+            raise SlotRoutingError("SHARED_MATERIAL_SLOT_CONFLICT",
+                                   "shared material %s serves question groups in multiple slots" % material_id)
+        for seq in materials[material_id].seqs:
+            routes[seq] = next(iter(targets))
+
+    # A top-level table remains atomic in the renderer. It may belong to one
+    # slot, but a route boundary inside it is a hard capability refusal.
+    for seq, block in enumerate(snapshot.document.blocks):
+        if block.kind == "table":
+            descendants = index.descendants.get("b%d" % seq, [])
+            positions = [index.order_of(node_id) for node_id in descendants]
+            intents = set()
+            for position in positions:
+                if position is None:
+                    continue
+                preceding = [item for item in marker_positions if item[0] <= position]
+                if preceding:
+                    intents.add(max(preceding, key=lambda item: item[0])[1])
+            if len(intents) > 1:
+                raise SlotRoutingError("TABLE_SLOT_CONFLICT",
+                                       "table b%d contains question content routed across slots %s" %
+                                       (seq, sorted(intents)))
+    return routes, strategy, tuple(marker_signature)
 
 def _heading_route(text: str, template_type: str) -> str | None:
     title = _clean(text)
@@ -205,6 +444,14 @@ def _number(text: str) -> tuple[int | None, tuple[int, int] | None]:
         return int(labeled.group(1)), None
     match = _QUESTION_NUMBER.match(title)
     return (int(match.group(1)), None) if match else (None, None)
+
+
+def _visible_question_number(text: str) -> int | None:
+    """Parse a top-level numbered exercise without mistaking (1)/(2) subparts."""
+    title = _WS.sub(" ", text or "").strip()
+    title = title.lstrip("⚡🚀🔥⭐★◆●▪·▌■□◇○※【[ ")
+    match = _QUESTION_NUMBER.match(title)
+    return int(match.group(1)) if match else None
 
 
 def _is_example(unit: _Unit) -> bool:
@@ -326,12 +573,21 @@ def build_slot_routing_plan(
         else "KNOWLEDGE_POINT_PRESENT"
     )
     training_only = knowledge_point_status == "NO_KNOWLEDGE_POINT"
+    training_split_strategy = "NOT_APPLICABLE"
+    training_routes: dict[int, str] | None = None
+    training_question_routes: tuple[tuple[int, str], ...] = ()
+    if (split_mode == "smart" and training_only
+            and not any(route in ("immediate", "final") for route in section_routes.values())):
+        training_routes, training_split_strategy, training_question_routes = _training_only_node_routes(
+            snapshot, units, sections, template_type)
 
     # No semantic units means no reason to route content. Full mode deliberately
     # retains the ordered source as slot 1, preserving its established meaning.
     if split_mode == "full":
         full_slot = "immediate" if training_only else "knowledge"
         routes = {seq: full_slot for seq in range(total)}
+    elif training_routes is not None:
+        routes = training_routes
     else:
         owner_by_seq: dict[int, _Unit | None] = {}
         for seq in range(total):
@@ -574,13 +830,9 @@ def build_slot_routing_plan(
             raise SlotRoutingError("SLOT_ROUTING_ORDER_VIOLATION",
                                    "slot %s does not preserve source order" % slot)
 
+    # All six template modules are product invariants. Empty content slots
+    # retain their template headings; source absence never deletes modules.
     omitted_slots = ()
-    if training_only:
-        # Empty slot headings imply teaching content that the source does not
-        # contain. Remove only these routing anchors; the frozen template and
-        # all non-slot sections remain untouched.
-        omitted_slots = tuple(slot for slot in ("knowledge", "immediate", "final")
-                              if not blocks_by_slot[slot])
 
     template_body = Document(str(template)).element.body
     from struct_doc import W_SECTPR
@@ -609,4 +861,6 @@ def build_slot_routing_plan(
         explicit_final_heading=explicit_final,
         knowledge_point_status=knowledge_point_status,
         omitted_slots=omitted_slots,
+        training_split_strategy=training_split_strategy,
+        training_question_routes=training_question_routes,
     )
