@@ -28,6 +28,8 @@ class CoverMetadataProjectionTests(unittest.TestCase):
         _fill_cover_metadata(document, template_type, {
             "subject": "化学", "grade": "高一", "topic": "复习讲义",
             "handout_type": "专题复习",
+            "objectives": "①掌握本专题题型方法。\n②规范表达解题过程。",
+            "difficulties": "重点：方法选择。\n难点：条件分析。",
         })
         document.save(str(output))
         self.assertTrue(validate_package(str(output))["valid"])
@@ -52,6 +54,8 @@ class CoverMetadataProjectionTests(unittest.TestCase):
         self.assertNotIn("高三", table.cell(0, 2).text)
         self.assertEqual(table.cell(1, 1).text.strip(), "复习讲义")
         self.assertEqual(table.cell(1, 3).text.strip(), "专题复习")
+        self.assertIn("掌握本专题题型方法", table.cell(2, 1).text)
+        self.assertIn("重点：方法选择", table.cell(3, 1).text)
 
     def test_class_selected_metadata_uses_existing_cover_cells(self):
         document = self._project("class")
@@ -62,8 +66,10 @@ class CoverMetadataProjectionTests(unittest.TestCase):
         self.assertNotIn("数学", table.cell(0, 2).text)
         self.assertEqual(table.cell(1, 1).text.strip(), "复习讲义（专题复习）")
         self.assertNotIn("因数与倍数", table.cell(1, 1).text)
-        self.assertEqual(table.cell(2, 1).text.strip(), "")
-        self.assertEqual(table.cell(3, 1).text.strip(), "")
+        self.assertIn("掌握本专题题型方法", table.cell(2, 1).text)
+        self.assertNotIn("掌握重难点题型", table.cell(2, 1).text)
+        self.assertIn("重点：方法选择", table.cell(3, 1).text)
+        self.assertNotIn("质数和合数", table.cell(3, 1).text)
 
 
 if __name__ == "__main__":

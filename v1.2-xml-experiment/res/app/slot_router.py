@@ -87,6 +87,8 @@ class SlotRoutingPlan:
     block_records: tuple[dict[str, Any], ...]
     units: tuple[dict[str, Any], ...]
     explicit_final_heading: bool
+    knowledge_point_status: str
+    omitted_slots: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -310,11 +312,26 @@ def build_slot_routing_plan(
     section_routes = {section.unit_id: _heading_route(section.text, template_type)
                       for section in sections}
     explicit_final = any(route == "final" for route in section_routes.values())
+    has_explicit_knowledge = any(
+        any(section.text.lstrip().startswith(label) for label in KNOWLEDGE_HEADINGS)
+        for section in sections
+    )
+    has_knowledge_unit = any(unit.role == "knowledge" or
+                             (unit.role == "question_group" and _is_example(unit))
+                             for unit in units)
+    has_training_units = any(unit.role == "question_group" for unit in units)
+    knowledge_point_status = (
+        "NO_KNOWLEDGE_POINT"
+        if has_training_units and not has_explicit_knowledge and not has_knowledge_unit
+        else "KNOWLEDGE_POINT_PRESENT"
+    )
+    training_only = knowledge_point_status == "NO_KNOWLEDGE_POINT"
 
     # No semantic units means no reason to route content. Full mode deliberately
     # retains the ordered source as slot 1, preserving its established meaning.
     if split_mode == "full":
-        routes = {seq: "knowledge" for seq in range(total)}
+        full_slot = "immediate" if training_only else "knowledge"
+        routes = {seq: full_slot for seq in range(total)}
     else:
         owner_by_seq: dict[int, _Unit | None] = {}
         for seq in range(total):
@@ -324,6 +341,15 @@ def build_slot_routing_plan(
         routes: dict[int, str] = {}
         for seq, owner in owner_by_seq.items():
             route = "knowledge" if owner is None else section_routes.get(owner.unit_id)
+            if training_only:
+                if route == "answer_area":
+                    raise SlotRoutingError("ANSWER_OWNERSHIP_UNRESOLVED",
+                                           "global answer/analysis section has no reliable question owner at b%d" % seq)
+                # In a training-only source, generic/topic headings describe
+                # practice context. Preserve the complete source sequence in
+                # the training slot unless explicit training/final headings
+                # or natural complete-block boundaries provide a better route.
+                route = route if route in ("immediate", "final") else "immediate"
             if route is None:
                 # A-Line section wording is not a destination rule. Do not
                 # guess if it looks like exercise/test material.
@@ -439,6 +465,8 @@ def build_slot_routing_plan(
             if owner is None:
                 continue
             section_route = section_routes.get(owner.unit_id)
+            if training_only and section_route not in ("immediate", "final"):
+                section_route = "immediate"
             if section_route == "answer_area":
                 raise SlotRoutingError("ANSWER_OWNERSHIP_UNRESOLVED",
                                        "answer/analysis role has no reliable question owner: %s" % unit.unit_id)
@@ -484,7 +512,10 @@ def build_slot_routing_plan(
                         "table b%d contains an unowned answer/analysis heading" % seq,
                     )
                 if section_route is not None:
-                    intents.add("knowledge" if section_route == "generic" else section_route)
+                    if training_only:
+                        intents.add(section_route if section_route in ("immediate", "final") else "immediate")
+                    else:
+                        intents.add("knowledge" if section_route == "generic" else section_route)
             if seq in candidate_routes:
                 intents.add(candidate_routes[seq])
             if len(intents) > 1:
@@ -543,6 +574,14 @@ def build_slot_routing_plan(
             raise SlotRoutingError("SLOT_ROUTING_ORDER_VIOLATION",
                                    "slot %s does not preserve source order" % slot)
 
+    omitted_slots = ()
+    if training_only:
+        # Empty slot headings imply teaching content that the source does not
+        # contain. Remove only these routing anchors; the frozen template and
+        # all non-slot sections remain untouched.
+        omitted_slots = tuple(slot for slot in ("knowledge", "immediate", "final")
+                              if not blocks_by_slot[slot])
+
     template_body = Document(str(template)).element.body
     from struct_doc import W_SECTPR
     section_tail = next((index for index, child in enumerate(template_body)
@@ -568,4 +607,6 @@ def build_slot_routing_plan(
             "source_block_ids": tuple("b%d" % seq for seq in sorted(unit.seqs)),
         } for unit in units),
         explicit_final_heading=explicit_final,
+        knowledge_point_status=knowledge_point_status,
+        omitted_slots=omitted_slots,
     )

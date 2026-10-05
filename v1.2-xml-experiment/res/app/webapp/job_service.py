@@ -479,6 +479,16 @@ class JobService:
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
+    def update_lesson_metadata(self, job_id: str, details: dict) -> dict:
+        """Persist source provenance for generated objectives and difficulties."""
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            record["lesson_metadata"] = dict(details)
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
     def record_publication_plan(self, job_id: str, role_paths: dict[str, str],
                                 expected_sha256: dict[str, str]) -> dict:
         """Persist final paths and safely rebind hashes for unpublished retries."""

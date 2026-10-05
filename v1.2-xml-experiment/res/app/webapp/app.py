@@ -26,6 +26,7 @@ if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
 from job_service import JobNotFound, JobService, UnsupportedInput  # noqa: E402
+from lesson_metadata import LessonMetadataUnavailable, resolve_lesson_metadata  # noqa: E402
 
 
 app = Flask(__name__)
@@ -356,6 +357,7 @@ def _execute_job(job_id: str) -> None:
         active_sources = {role: path for role, path in (("teacher", teacher_source),
                                                         ("student", student_source)) if path is not None}
         plans = {}
+        resolved_lesson_metadata = {}
         fallback_detail = {"value": None}
         student_stage = work_dir / ("student-stage%s-%s.docx" % (attempt_suffix, job_id))
         teacher_stage = work_dir / ("teacher-stage%s-%s.docx" % (attempt_suffix, job_id))
@@ -380,6 +382,38 @@ def _execute_job(job_id: str) -> None:
                 fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
+            statuses = {getattr(plan, "knowledge_point_status", "KNOWLEDGE_POINT_PRESENT")
+                        for plan in plans.values()}
+            if len(statuses) != 1:
+                plans.clear()
+                fallback_detail["value"] = "teacher/student knowledge-point status differs"
+                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
+                        "detail": fallback_detail["value"]}
+            knowledge_point_status = next(iter(statuses))
+            try:
+                metadata_source = teacher_source or student_source
+                lesson_metadata = resolve_lesson_metadata(
+                    metadata_source, subject=options.get("subject", ""), topic=topic,
+                    knowledge_point_status=knowledge_point_status,
+                )
+                resolved_lesson_metadata.update({
+                    "objectives": lesson_metadata.objectives,
+                    "difficulties": lesson_metadata.difficulties,
+                    "source": lesson_metadata.source,
+                    "knowledge_point_status": lesson_metadata.knowledge_point_status,
+                    "training_titles": list(lesson_metadata.training_titles),
+                })
+            except LessonMetadataUnavailable as exc:
+                fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc)
+                service.update_lesson_metadata(job_id, {
+                    "status": "FALLBACK_REQUIRED", "reason_code": exc.reason_code,
+                    "knowledge_point_status": knowledge_point_status,
+                })
+                return {"supported": False, "reason_code": exc.reason_code,
+                        "detail": fallback_detail["value"]}
+            service.update_lesson_metadata(job_id, {
+                "status": "RESOLVED", **resolved_lesson_metadata,
+            })
             return {"supported": True,
                     "template_sha256": next(iter(plans.values())).template_sha256}
 
@@ -394,6 +428,8 @@ def _execute_job(job_id: str) -> None:
                         "grade": options.get("grade", ""),
                         "topic": topic,
                         "handout_type": options.get("handout_type", ""),
+                        "objectives": resolved_lesson_metadata["objectives"],
+                        "difficulties": resolved_lesson_metadata["difficulties"],
                     }
                     # Keep the existing three-argument renderer seam usable by
                     # injected test doubles and compatible integrations. The
@@ -468,6 +504,11 @@ def _execute_job(job_id: str) -> None:
             # even if a later renderer gate rejected a validated XML derivative.
             if input_version == "TEACHER_ONLY":
                 original_job = replace(original_job, student_source_doc=None)
+            original_job = replace(
+                original_job,
+                objectives=resolved_lesson_metadata.get("objectives", ""),
+                difficulties=resolved_lesson_metadata.get("difficulties", ""),
+            )
             with _V09_FALLBACK_LOCK:
                 engine = _load_v09_engine() if input_version == "TEACHER_ONLY" else None
                 original_make_student = engine.make_student if engine else None
@@ -640,7 +681,7 @@ def _execute_job(job_id: str) -> None:
         if student_output:
             preparation["output_package_valid"] = validate_package(str(student_output)).get("valid") is True
         plan_summary = None
-        if outcome.renderer == "XML" and plans:
+        if plans:
             plan = next(iter(plans.values()))
             teacher_plan, student_plan = plans.get("teacher"), plans.get("student")
             plan_summary = {
@@ -652,6 +693,9 @@ def _execute_job(job_id: str) -> None:
                 "teacher_units": len(teacher_plan.units) if teacher_plan else 0,
                 "student_units": len(student_plan.units) if student_plan else 0,
                 "explicit_final_heading": plan.explicit_final_heading,
+                "knowledge_point_status": getattr(plan, "knowledge_point_status", "UNKNOWN"),
+                "omitted_slots": list(getattr(plan, "omitted_slots", ())),
+                "routing_applied": outcome.renderer == "XML",
                 "template_sha256": plan.template_sha256,
             }
         service.complete_job(

@@ -161,6 +161,47 @@ class SlotRouterTests(unittest.TestCase):
             self.assertEqual(found[plan.slot_labels["final"]], ["1. 巩固题"])
             self.assertEqual(set(found), set(plan.slot_labels.values()))
 
+    def test_training_only_omits_knowledge_and_empty_final_sections(self):
+        blocks = ["题型分组练", "题型01 物质的构成", "1. 题目一", "2. 题目二",
+                  "题型02 分子热运动", "3. 题目三"]
+        units = [self._unit("s0", "section", "b0")]
+        units.extend(self._unit("q%d" % seq, "question_group", "b%d" % seq,
+                                parent="s0") for seq in (2, 3, 5))
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        self.assertEqual(plan.knowledge_point_status, "NO_KNOWLEDGE_POINT")
+        self.assertEqual(plan.omitted_slots, ("knowledge", "final"))
+        self.assertEqual(plan.slots["knowledge"], ())
+        self.assertEqual(plan.slots["final"], ())
+        self.assertEqual([span.start for span in plan.slots["immediate"]],
+                         ["b%d" % seq for seq in range(len(blocks))])
+
+        output = self.root / "training-only.docx"
+        render_slots(str(source), plan, str(output))
+        saved_text = "\n".join(paragraph.text for paragraph in Document(str(output)).paragraphs)
+        saved_text += "\n" + "\n".join(cell.text for table in Document(str(output)).tables
+                                               for row in table.rows for cell in row.cells)
+        self.assertNotIn("知识精讲", saved_text)
+        self.assertNotIn("六、巩固练习", saved_text)
+        self.assertNotIn("一、课堂启动", saved_text)
+        self.assertNotIn("二、知识回顾", saved_text)
+        self.assertNotIn("五、归纳总结", saved_text)
+        self.assertIn("一、即时训练", saved_text)
+        self.assertIn("1. 题目一", saved_text)
+        self.assertIn("3. 题目三", saved_text)
+
+    def test_explicit_knowledge_section_remains_knowledge_point_lesson(self):
+        blocks = ["知识点 一元一次方程", "1. 解方程", "即时训练", "1. 练习题"]
+        units = [self._unit("s0", "section", "b0"),
+                 self._unit("q0", "question_group", "b1", parent="s0"),
+                 self._unit("s1", "section", "b2"),
+                 self._unit("q1", "question_group", "b3", parent="s1")]
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        self.assertEqual(plan.knowledge_point_status, "KNOWLEDGE_POINT_PRESENT")
+        self.assertEqual(plan.omitted_slots, ())
+        self.assertIn("b0", [span.start for span in plan.slots["knowledge"]])
+
     def test_two_naturally_complete_blocks_route_whole_1_to_10_and_1_to_5(self):
         path, snapshot = self._practice_fixture()
         plan = build_slot_routing_plan(path, "1v1", snapshot=snapshot)
@@ -170,7 +211,7 @@ class SlotRouterTests(unittest.TestCase):
         self.assertEqual(final, ["b%d" % seq for seq in range(13, 18)])
         self.assertNotIn("b8", final)  # no split-off 6-10 fragment
 
-    def test_number_gap_stays_whole_in_knowledge_and_later_complete_run_can_train(self):
+    def test_number_gap_without_knowledge_point_stays_whole_in_training_slot(self):
         blocks = ["题型01 标题", "1. first candidate", "4. gapped candidate",
                   "变式1-1. variant A", "变式1-2. variant B"]
         units = [self._unit("s0", "section", "b0")]
@@ -178,9 +219,10 @@ class SlotRouterTests(unittest.TestCase):
                                 parent="s0") for seq in range(1, 5))
         path, snapshot = self._snapshot(blocks, units)
         plan = build_slot_routing_plan(path, "1v1", snapshot=snapshot)
-        self.assertIn("b1", [span.start for span in plan.slots["knowledge"]])
-        self.assertIn("b2", [span.start for span in plan.slots["knowledge"]])
-        self.assertEqual([span.start for span in plan.slots["immediate"]], ["b3", "b4"])
+        self.assertEqual(plan.knowledge_point_status, "NO_KNOWLEDGE_POINT")
+        self.assertEqual([span.start for span in plan.slots["knowledge"]], [])
+        self.assertEqual([span.start for span in plan.slots["immediate"]],
+                         ["b%d" % seq for seq in range(len(blocks))])
         self.assertEqual(plan.slots["final"], ())
 
     def test_leading_number_parser_preserves_natural_question_numbers(self):

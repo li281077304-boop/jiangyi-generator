@@ -16,6 +16,7 @@ from dataclasses import dataclass
 import io
 from pathlib import Path
 import os
+import re
 import tempfile
 
 from docx import Document
@@ -83,7 +84,8 @@ def render_minimal(source_doc: str, template_doc: str,
     node_map, table_ids, top_table_ids, table_leaf_ids = _map_structdoc_to_xml(src_body, struct)
     selected = _select_nodes(blocks, index, node_map, table_ids, top_table_ids,
                              table_leaf_ids, struct)
-    permitted_bookmark_drops = _validate_bookmark_scope(src_body, selected)
+    bookmark_preflight = _validate_bookmark_scope(src_body, selected)
+    permitted_bookmark_drops = bookmark_preflight["bookmark_markers_dropped"]
     for node in selected:
         _validate_payload(node)
 
@@ -98,6 +100,9 @@ def render_minimal(source_doc: str, template_doc: str,
         raise ProjectionError("bookmark importer drop count did not match preflight")
     if actual_bookmark_drops:
         resource_report["stats"]["standalone_body_bookmark_markers_dropped"] = actual_bookmark_drops
+    if bookmark_preflight["dangling_toc_anchors_dropped"]:
+        resource_report["stats"]["dangling_toc_anchors_dropped"] = bookmark_preflight[
+            "dangling_toc_anchors_dropped"]
 
     insert_at = target.body_child_index
     body_children = list(tpl_body)
@@ -302,6 +307,7 @@ def _validate_bookmark_scope(source_body, selected_elements):
             ends_by_id.setdefault(bookmark_id, []).append(node)
 
     permitted_drops = 0
+    dangling_toc_anchors_dropped = 0
     relevant_ids = {node.get("{%s}id" % W) for node in selected_starts + selected_ends}
     for bookmark_id in relevant_ids:
         if not bookmark_id:
@@ -331,6 +337,14 @@ def _validate_bookmark_scope(source_body, selected_elements):
         anchor = hyperlink.get("{%s}anchor" % W)
         matches = starts_by_name.get(anchor, [])
         if not anchor or len(matches) != 1:
+            # Word's generated TOC links sometimes outlive their bookmark
+            # targets after editing. Keep their visible text, but drop only
+            # the broken navigation attribute; all other missing anchors and
+            # every ambiguous anchor remain fail-closed.
+            if not matches and re.fullmatch(r"_Toc\d+", anchor or ""):
+                del hyperlink.attrib["{%s}anchor" % W]
+                dangling_toc_anchors_dropped += 1
+                continue
             raise ProjectionError("selected hyperlink anchor is missing or ambiguous: %s" % anchor)
         start = matches[0]
         bookmark_id = start.get("{%s}id" % W)
@@ -338,4 +352,5 @@ def _validate_bookmark_scope(source_body, selected_elements):
         if (not bookmark_id or len(ends) != 1 or start not in selected_nodes
                 or ends[0] not in selected_nodes):
             raise ProjectionError("selected hyperlink anchor is outside selected scope: %s" % anchor)
-    return permitted_drops
+    return {"bookmark_markers_dropped": permitted_drops,
+            "dangling_toc_anchors_dropped": dangling_toc_anchors_dropped}

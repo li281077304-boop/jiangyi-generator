@@ -15,6 +15,7 @@ import tempfile
 from typing import Callable
 
 from docx import Document
+from docx.oxml import OxmlElement
 
 from package_validator import validate_package
 from renderer_xml_minimal import BlockSpan, ProjectionError, RenderResult
@@ -45,6 +46,50 @@ def _set_paragraph_text(paragraph, value: str) -> None:
         node.text = ""
 
 
+def _clear_paragraph_numbering(paragraph) -> None:
+    word_namespace = W_P[1:].split("}", 1)[0]
+    p_pr = paragraph.find("{%s}pPr" % word_namespace)
+    if p_pr is None:
+        return
+    num_pr = p_pr.find("{%s}numPr" % word_namespace)
+    if num_pr is not None:
+        p_pr.remove(num_pr)
+
+
+_TRAINING_ONLY_TEMPLATE_HEADINGS = {
+    "一、课堂启动", "二、知识回顾", "知识精讲", "知识精讲&例题讲解",
+    "即时训练", "五、归纳总结", "六、巩固练习", "六、出门测试",
+}
+
+
+def _compact_training_only_template(cell, immediate_anchor) -> str:
+    """Remove only known empty template placeholders around a training stream."""
+    paragraphs = list(cell.findall(W_P))
+    try:
+        anchor_index = paragraphs.index(immediate_anchor)
+    except ValueError as exc:
+        raise SlotRoutingError("TEMPLATE_SLOT_ANCHOR_UNRESOLVED",
+                               "training slot anchor is outside the teaching cell") from exc
+
+    def is_known_placeholder(paragraph) -> bool:
+        text = _paragraph_text(paragraph)
+        return (not text or text in _TRAINING_ONLY_TEMPLATE_HEADINGS
+                or (text and set(text) <= {"~"}))
+
+    before = paragraphs[:anchor_index]
+    after = paragraphs[anchor_index + 1:]
+    if any(not is_known_placeholder(paragraph) for paragraph in before + after):
+        raise SlotRoutingError("TRAINING_TEMPLATE_PLACEHOLDER_UNRESOLVED",
+                               "training-only template has non-placeholder content outside its routed slot")
+    for paragraph in before + after:
+        parent = paragraph.getparent()
+        if parent is not None:
+            parent.remove(paragraph)
+    _set_paragraph_text(immediate_anchor, "一、即时训练")
+    _clear_paragraph_numbering(immediate_anchor)
+    return "一、即时训练"
+
+
 def _set_cover_cell_value(cell, value: str) -> None:
     """Replace the value portion of a known cover cell while keeping its label.
 
@@ -68,7 +113,23 @@ def _set_cover_cell_value(cell, value: str) -> None:
     separators = [position for mark in (":", "：")
                   if (position := old_text.rfind(mark)) >= 0]
     label = old_text[:max(separators) + 1] if separators else ""
-    value_node.text = label + value
+    pieces = (label + value).splitlines() or [""]
+    run = value_node.getparent()
+    if run.tag != "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}r":
+        value_node.text = "；".join(piece for piece in pieces if piece)
+        return
+    for node in list(run):
+        if node.tag == W_T and node is not value_node:
+            node.text = ""
+    value_node.text = pieces[0]
+    insertion_index = run.index(value_node) + 1
+    for piece in pieces[1:]:
+        run.insert(insertion_index, OxmlElement("w:br"))
+        insertion_index += 1
+        text_node = OxmlElement("w:t")
+        text_node.text = piece
+        run.insert(insertion_index, text_node)
+        insertion_index += 1
 
 
 def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
@@ -91,9 +152,11 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
         # type cells. Labels remain in their original runs.
         coordinates = {
             "subject": (0, 0), "grade": (0, 2), "topic": (1, 1),
-            "handout_type": (1, 3),
+            "handout_type": (1, 3), "objectives": (2, 1),
+            "difficulty": (3, 1),
         }
         values = {key: metadata.get(key, "") for key in coordinates}
+        values["difficulty"] = metadata.get("difficulties", metadata.get("difficulty", ""))
     else:
         # The class cover has no separate course-type cell. Keep all selected
         # information visible in its existing class-topic value cell.
@@ -110,8 +173,9 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
             "objectives": (2, 1), "difficulty": (3, 1),
         }
         values = {"grade": metadata.get("grade", ""),
-                  "subject": metadata.get("subject", ""), "topic": topic_value}
-        values.update({"objectives": "", "difficulty": ""})
+                  "subject": metadata.get("subject", ""), "topic": topic_value,
+                  "objectives": metadata.get("objectives", ""),
+                  "difficulty": metadata.get("difficulties", metadata.get("difficulty", ""))}
 
     for key, (row, column) in coordinates.items():
         try:
@@ -185,6 +249,21 @@ def render_slots(
         if cover_metadata is not None:
             _fill_cover_metadata(document, plan.template_type, cover_metadata)
         anchors = _find_anchor_paragraphs(document, plan)
+        for slot in plan.omitted_slots:
+            anchor = anchors[slot]
+            parent = anchor.getparent()
+            if parent is None:
+                raise SlotRoutingError("TEMPLATE_SLOT_ANCHOR_UNRESOLVED",
+                                       "omitted template slot has no parent: %s" % slot)
+            parent.remove(anchor)
+        training_only_label = None
+        if getattr(plan, "knowledge_point_status", "") == "NO_KNOWLEDGE_POINT":
+            immediate_anchor = anchors["immediate"]
+            cell = immediate_anchor.getparent()
+            if cell is None:
+                raise SlotRoutingError("TEMPLATE_SLOT_ANCHOR_UNRESOLVED",
+                                       "training slot anchor has no teaching cell")
+            training_only_label = _compact_training_only_template(cell, immediate_anchor)
         body = document.element.body
         insert_at = plan.target.body_child_index
         sectpr_index = next((i for i, child in enumerate(body) if child.tag == W_SECTPR), len(body))
@@ -208,11 +287,14 @@ def render_slots(
         for element in payloads:
             body.remove(element)
         for slot in SLOT_ORDER:
+            if slot in plan.omitted_slots:
+                continue
             anchor = anchors[slot]
             # The 1v1 template shares the class template's printed knowledge
             # heading. Keep the frozen template file intact, but project the
             # user-approved template-specific label into this output copy.
-            _set_paragraph_text(anchor, plan.slot_labels[slot])
+            label = training_only_label if slot == "immediate" and training_only_label else plan.slot_labels[slot]
+            _set_paragraph_text(anchor, label)
             for element in offsets[slot]:
                 anchor.addnext(element)
                 anchor = element

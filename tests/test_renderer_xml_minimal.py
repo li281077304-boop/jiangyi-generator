@@ -260,6 +260,42 @@ class RendererMinimalTests(unittest.TestCase):
         self.assertEqual("inside", next(body.iter("{%s}hyperlink" % W)).get("{%s}anchor" % W))
         self.assertGreaterEqual(result.resource_report["stats"].get("bookmark_ids_remapped", 0), 1)
 
+    def test_dangling_word_toc_anchor_keeps_text_and_drops_only_broken_link(self):
+        source, template, output = self._paths()
+        source_doc = Document()
+        paragraph = source_doc.add_paragraph()
+        hyperlink = etree.SubElement(paragraph._p, "{%s}hyperlink" % W)
+        hyperlink.set("{%s}anchor" % W, "_Toc9")
+        run = etree.SubElement(hyperlink, "{%s}r" % W)
+        text = etree.SubElement(run, "{%s}t" % W)
+        text.text = "\u76ee\u5f55\u6807\u9898"
+        source_doc.save(source)
+        Document().save(template)
+
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                                str(output), TemplateTarget(0))
+
+        generated = Document(str(output))
+        imported = next(generated.element.body.iter("{%s}hyperlink" % W))
+        self.assertIsNone(imported.get("{%s}anchor" % W))
+        self.assertIn("\u76ee\u5f55\u6807\u9898", "".join(imported.itertext()))
+        self.assertEqual(1, result.resource_report["stats"]["dangling_toc_anchors_dropped"])
+
+    def test_non_toc_missing_internal_anchor_remains_fail_closed(self):
+        source, template, output = self._paths()
+        source_doc = Document()
+        paragraph = source_doc.add_paragraph()
+        hyperlink = etree.SubElement(paragraph._p, "{%s}hyperlink" % W)
+        hyperlink.set("{%s}anchor" % W, "custom_missing_target")
+        run = etree.SubElement(hyperlink, "{%s}r" % W)
+        etree.SubElement(run, "{%s}t" % W).text = "custom link"
+        source_doc.save(source)
+        Document().save(template)
+
+        with self.assertRaisesRegex(ProjectionError, "custom_missing_target"):
+            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                           str(output), TemplateTarget(0))
+
     def test_partial_bookmark_pair_and_unresolved_anchor_fail_closed(self):
         source, template, output = self._paths()
         _docx(source)

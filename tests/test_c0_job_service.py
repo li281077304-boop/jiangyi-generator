@@ -334,6 +334,9 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
         "teacher_units": 0,
         "student_units": 0,
         "explicit_final_heading": True,
+        "knowledge_point_status": "UNKNOWN",
+        "omitted_slots": [],
+        "routing_applied": True,
         "template_sha256": "paired-template",
     }
 
@@ -455,9 +458,11 @@ def test_paired_teacher_student_routes_each_input_without_make_student(client, m
                         lambda: (_ for _ in ()).throw(AssertionError("make_student engine loaded")))
     monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: _fake_slot_plan())
     seen_sources = []
+    seen_cover_metadata = []
 
-    def render(source, plan, output):
+    def render(source, plan, output, *, cover_metadata=None):
         seen_sources.append(Path(source).read_bytes())
+        seen_cover_metadata.append(cover_metadata)
         return _fake_render_slots(source, plan, output)
 
     monkeypatch.setattr(template_slot_composer, "render_slots", render)
@@ -470,6 +475,10 @@ def test_paired_teacher_student_routes_each_input_without_make_student(client, m
     assert final["input_version"] == "TEACHER_AND_STUDENT"
     assert final["student_preparation"]["make_student_called"] is False
     assert seen_sources == [teacher, student]
+    assert len(seen_cover_metadata) == 2
+    assert all(item and item["objectives"] and item["difficulties"]
+               for item in seen_cover_metadata)
+    assert seen_cover_metadata[0] == seen_cover_metadata[1]
     assert final["items"][0]["topic"] == "Unit"
     result_dir = Path(final["result_dir"])
     assert {path.name for path in result_dir.iterdir()} == {
