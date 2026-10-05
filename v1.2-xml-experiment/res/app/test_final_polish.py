@@ -16,7 +16,9 @@ from struct_nodes import NodeIndex
 from template_block_plan import resolve_template
 from template_slot_composer import (build_display_renumbering, render_slots,
                                     _find_anchor_paragraphs, _fill_cover_metadata,
-                                    _editable_number_nodes, _apply_display_renumbering)
+                                    _editable_number_nodes, _apply_display_renumbering,
+                                    _anchor_knowledge_review,
+                                    KNOWLEDGE_REVIEW_TARGET_Y, KNOWLEDGE_REVIEW_SPACER_PT)
 from renderer_xml_minimal import BlockSpan
 from slot_router import SlotRoutingError
 import pytest
@@ -191,3 +193,86 @@ def test_atomic_table_number_is_not_edited(tmp_path):
     plan=build_slot_routing_plan(source,'1v1',snapshot=snapshot)
     assert build_display_renumbering({'source':plan})['status']=='DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE'
     assert Document(source).tables[0].cell(0,0).text=='1. 表内问题'
+
+
+# --- V1.2 final layout fix: knowledge-review first-page anchor --------------
+
+W='{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
+
+
+def _content_cell_paragraphs(doc):
+    return doc.tables[0]._tbl.findall(W+'tr')[5].findall(W+'tc')[0].findall(W+'p')
+
+
+def test_knowledge_anchor_targets_are_template_specific_and_distinct():
+    assert KNOWLEDGE_REVIEW_TARGET_Y['1v1']!=KNOWLEDGE_REVIEW_TARGET_Y['class']
+    assert KNOWLEDGE_REVIEW_SPACER_PT['1v1']!=KNOWLEDGE_REVIEW_SPACER_PT['class']
+    # The anchor must sit above the footer band of its own template, with a
+    # measured clearance rather than a physical page-edge placement.
+    for template,footer_top in (('1v1',792.25),('class',769.90)):
+        assert KNOWLEDGE_REVIEW_TARGET_Y[template]<footer_top
+        assert footer_top-KNOWLEDGE_REVIEW_TARGET_Y[template]>=20.0
+
+
+def test_knowledge_anchor_changes_only_the_existing_spacer_block():
+    for template in ('1v1','class'):
+        doc=Document(str(resolve_template(template)[0]))
+        cell=doc.tables[0]._tbl.findall(W+'tr')[5].findall(W+'tc')[0]
+        before=[p.xml for p in cell.findall(W+'p')]
+        before_body=[child.tag for child in doc.element.body]
+        before_margins=[(s.top_margin,s.bottom_margin,s.left_margin,s.right_margin,
+                         s.page_width,s.page_height) for s in doc.sections]
+        before_rows=[row.height.pt if row.height else None for row in doc.tables[0].rows]
+        evidence=_anchor_knowledge_review(doc,template)
+        after=[p.xml for p in cell.findall(W+'p')]
+        assert len(before)==len(after), 'no paragraph may be added or removed'
+        # Only the spacer run (indices 1..4) may differ.
+        changed=[index for index,(old,new) in enumerate(zip(before,after)) if old!=new]
+        assert changed==[1,2,3,4], changed
+        assert evidence['spacer_intervals']==4
+        assert evidence['target_y']==KNOWLEDGE_REVIEW_TARGET_Y[template]
+        assert evidence['spacer_pt']==KNOWLEDGE_REVIEW_SPACER_PT[template]
+        # Page geometry, cover rows and the heading text stay untouched.
+        assert before_body==[child.tag for child in doc.element.body]
+        assert before_margins==[(s.top_margin,s.bottom_margin,s.left_margin,s.right_margin,
+                                 s.page_width,s.page_height) for s in doc.sections]
+        assert before_rows==[row.height.pt if row.height else None for row in doc.tables[0].rows]
+        paragraphs=_content_cell_paragraphs(doc)
+        assert ''.join(t.text or '' for t in paragraphs[5].iter(W+'t'))=='二、知识回顾'
+        assert ''.join(t.text or '' for t in paragraphs[0].iter(W+'t'))=='一、课堂启动'
+
+
+def test_knowledge_anchor_uses_exact_line_rule_and_is_idempotent():
+    for template in ('1v1','class'):
+        doc=Document(str(resolve_template(template)[0]))
+        _anchor_knowledge_review(doc,template)
+        first=_content_cell_paragraphs(doc)
+        snapshot=[p.xml for p in first]
+        for index in (1,2,3,4):
+            spacing=first[index].find(W+'pPr').find(W+'spacing')
+            assert spacing.get(W+'lineRule')=='exact'
+            assert spacing.get(W+'before')=='0' and spacing.get(W+'after')=='0'
+            assert int(spacing.get(W+'line'))==int(round(KNOWLEDGE_REVIEW_SPACER_PT[template]*20))
+        _anchor_knowledge_review(doc,template)
+        assert snapshot==[p.xml for p in _content_cell_paragraphs(doc)]
+
+
+def test_knowledge_anchor_refuses_a_moved_or_missing_template_heading():
+    doc=Document(str(resolve_template('1v1')[0]))
+    paragraphs=_content_cell_paragraphs(doc)
+    heading=paragraphs[5]
+    for node in list(heading.iter(W+'t')):
+        heading.remove(node) if node.getparent() is heading else node.getparent().remove(node)
+    with pytest.raises(SlotRoutingError) as raised:
+        _anchor_knowledge_review(doc,'1v1')
+    assert raised.value.reason_code=='TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED'
+
+
+def test_render_slots_reports_the_knowledge_anchor_evidence(tmp_path):
+    plan=training_plan(tmp_path,'teacher')
+    for template in ('1v1','class'):
+        output=tmp_path/('anchored-%s.docx'%template)
+        result=render_slots(str(plan.source_path),replace(plan,template_type=template),
+                            str(output))
+        assert result.knowledge_anchor['target_y']==KNOWLEDGE_REVIEW_TARGET_Y[template]
+        assert result.knowledge_anchor['spacer_pt']==KNOWLEDGE_REVIEW_SPACER_PT[template]

@@ -38,6 +38,7 @@ class SlotRenderResult:
     resource_report: dict
     package_report: dict
     display_renumbering: dict | None = None
+    knowledge_anchor: dict | None = None
 
 
 def _paragraph_text(paragraph) -> str:
@@ -51,6 +52,46 @@ _UNSAFE_NUMBER_TAGS = {
     for name in ("txbxContent", "fldChar", "instrText", "ins", "del", "hyperlink")
 }
 _COVER_ROW_HEIGHTS_PT = {"1v1": (23.9, 23.9), "class": (25.7, 27.8)}
+W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+W_PPR = W + "pPr"
+W_SPACING = W + "spacing"
+W_TR = W + "tr"
+W_TC_NS = W + "tc"
+
+# --- Knowledge-review first-page anchor (V1.2 final layout fix) -------------
+#
+# The user requirement is that the "二、知识回顾" separator heading sits at the
+# bottom of page one. The frozen templates print that heading in the same
+# merged cell as "一、课堂启动" and open the gap between them with a run of
+# spacer paragraphs. Restoring the template's own Y (the previous round) only
+# proved the position was stable -- it did not make it correct, because the
+# template itself draws that heading near the middle of page one.
+#
+# These values are WPS 12.0 / PDF measurements, not layout predictions.
+# KNOWLEDGE_REVIEW_TARGET_Y_* is the PDF text-bottom (y1) of the heading, kept
+# 24pt above the footer band so the heading never touches the footer rule or
+# the page number. Anchoring is done by fixing the paragraph spacing of the
+# template's existing spacer block, so no paragraph is added and the frozen
+# template file is never modified.
+KNOWLEDGE_REVIEW_TARGET_Y = {
+    "1v1": 768.219,
+    "class": 745.899,
+}
+# Fixed exact line height for each spacer paragraph, one value per interval.
+KNOWLEDGE_REVIEW_SPACER_PT = {
+    "1v1": 120.5,
+    "class": 100.8,
+}
+# The heading sits at these indices inside the single content cell of the
+# template's last table row. The spacer block is the run of paragraphs between
+# the 课堂启动 heading and the 知识回顾 heading.
+_KNOWLEDGE_CELL_ROW_INDEX = 5
+_LAUNCH_HEADING_INDEX = 0
+_KNOWLEDGE_HEADING_INDEX = 5
+# Measured rendered text height of the 14pt heading in WPS, used only to
+# derive and verify the target; the anchor itself is the spacer geometry.
+_KNOWLEDGE_HEADING_TEXT_HEIGHT_PT = 14.05
+
 
 
 def _editable_number_nodes(paragraph) -> tuple[list, re.Match | None]:
@@ -142,6 +183,64 @@ def _apply_display_renumbering(offsets: dict, blocks_by_slot: dict, evidence: di
                     node.text = text[:a] + (str(item["new_number"]) if not inserted else "") + text[b:]
                     inserted = True
                 cursor = node_end
+
+
+def _anchor_knowledge_review(document, template_type: str) -> dict:
+    """Anchor 二、知识回顾 to the bottom safe area of page one.
+
+    Deterministic and template-specific: the existing spacer block between the
+    课堂启动 and 知识回顾 headings is given one fixed exact line height per
+    interval. No paragraph is added, no page geometry (page size, margins,
+    footer, fonts, sizes, character spacing) is changed, and the frozen
+    template file is never touched -- this runs on the output copy only.
+    """
+    target = KNOWLEDGE_REVIEW_TARGET_Y[template_type]
+    spacer_pt = KNOWLEDGE_REVIEW_SPACER_PT[template_type]
+    if len(document.tables) != 1:
+        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+                               "template content carrier is not a single table")
+    rows = document.tables[0]._tbl.findall(W_TR)
+    if len(rows) <= _KNOWLEDGE_CELL_ROW_INDEX:
+        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+                               "template has no content row for the knowledge heading")
+    cells = rows[_KNOWLEDGE_CELL_ROW_INDEX].findall(W_TC_NS)
+    if len(cells) != 1:
+        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+                               "content row is not a single merged cell")
+    paragraphs = cells[0].findall(W_P)
+    if len(paragraphs) <= _KNOWLEDGE_HEADING_INDEX:
+        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+                               "content cell is shorter than the frozen template layout")
+    launch = _paragraph_text(paragraphs[_LAUNCH_HEADING_INDEX])
+    heading = _paragraph_text(paragraphs[_KNOWLEDGE_HEADING_INDEX])
+    if launch != "一、课堂启动" or heading != "二、知识回顾":
+        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+                               "template headings moved: %r / %r" % (launch, heading))
+    spacer_indices = tuple(range(_LAUNCH_HEADING_INDEX + 1, _KNOWLEDGE_HEADING_INDEX))
+    if not spacer_indices:
+        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+                               "template has no spacer block before the knowledge heading")
+    for index in spacer_indices:
+        _set_exact_interval(paragraphs[index], spacer_pt)
+    return {"target_y": target, "spacer_pt": spacer_pt,
+            "spacer_intervals": len(spacer_indices),
+            "heading_text_height_pt": _KNOWLEDGE_HEADING_TEXT_HEIGHT_PT}
+
+
+def _set_exact_interval(paragraph, points: float) -> None:
+    """Fix the distance from this paragraph's top to the next paragraph's top."""
+    pPr = paragraph.find(W_PPR)
+    if pPr is None:
+        pPr = OxmlElement("w:pPr")
+        paragraph.insert(0, pPr)
+    spacing = pPr.find(W_SPACING)
+    if spacing is None:
+        spacing = OxmlElement("w:spacing")
+        pPr.append(spacing)
+    spacing.set(W + "line", str(int(round(points * 20))))
+    spacing.set(W + "lineRule", "exact")
+    spacing.set(W + "before", "0")
+    spacing.set(W + "after", "0")
 
 
 def _set_paragraph_text(paragraph, value: str) -> None:
@@ -343,6 +442,9 @@ def render_slots(
         document = Document(str(output))
         if cover_metadata is not None:
             _fill_cover_metadata(document, plan.template_type, cover_metadata)
+        # Presentation-layer layout anchor. Runs before the slot payload is
+        # inserted, so it can only touch the template's own spacer block.
+        knowledge_anchor = _anchor_knowledge_review(document, plan.template_type)
         anchors = _find_anchor_paragraphs(document, plan)
         body = document.element.body
         insert_at = plan.target.body_child_index
@@ -402,6 +504,7 @@ def render_slots(
             resource_report=rendered.resource_report,
             package_report=package_report,
             display_renumbering=display_renumbering,
+            knowledge_anchor=knowledge_anchor,
         )
     except Exception:
         try:
