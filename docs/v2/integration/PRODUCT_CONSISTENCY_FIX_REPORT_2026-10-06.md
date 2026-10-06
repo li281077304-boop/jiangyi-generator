@@ -8,7 +8,7 @@
 
 本轮处理数据表题号误判、独立 metadata 解析、两种 Renderer 共用最终产品规范化，以及 Restart 时规范化输出哈希稳定性。GPT-6.1 Sol review 首轮发现表格归属逻辑未覆盖“顶层题组跨段落包住表格、表内误标 section 改写路由”；PATCH 复审又发现整题组覆盖会抹掉后续另一表的明确跨槽标题。现已将恢复范围限制在误标签影响的题组连续区间，并增加双表 fail-closed 回归。C4 Release 仍暂停；未构建 EXE、未创建 release tag，也未创建 C5 分支。
 
-当前代码与产品门禁有充分通过证据，但**最终 GPT-6.1 Sol review 尚未完成**。因此本报告不声明 `PRODUCT_CONSISTENCY_FIX_PASS`。
+**PATCH 复审：Codex GPT-6.1 Sol PASS（仅针对代码提交 `6bd968b1b4e07b07b2b94e4124c5e19198a84128`）。整体状态仍为 `PRODUCT_CONSISTENCY_FIX_PENDING_EVIDENCE`，不声明 `PRODUCT_CONSISTENCY_FIX_PASS`。**原事故 job 的输入 DOCX 未能找回，不能精确重放；完整 Stage2 GoldCompare 也未运行。最近代码变更后，Router 22/22 通过；Chief 独立定向复核 34 passed + 6 subtests。先前全量 pytest 的 469 passed / 6 failed 发生在最新路由 PATCH 之前，不能视为最新提交的全量回归结果。
 
 ## R1：数据表与路由
 
@@ -64,8 +64,8 @@ X011 的阻断是题组真实跨槽，不是表格小数被提升成普通题号
 
 已留存的产品 corpus scan 中，S03 是一个真实原始来源：SHA-256 `bfcec1ef64ec9d6d3ade8a319cff2e0f0167aebc96a60d8fa760b4c4cab7559b`，class 模板；table block `b260` 的单行单物理单元格内有 7 个顺序段落，并含 inline image 与 OMML，因 knowledge/immediate 目标跨越原子表而拒绝。它是有限 Layout Table 候选证据，但不等于允许拆表。
 
-在 GPT-6.1 Sol PASS 前不创建 C5 分支、不实现 Layout Table。C5 计划要求的额外 20 份日常原始 DOCX 清单尚未收集；数量不足时不得伪称覆盖率结论。
+当前没有足够证据启动 C5：S03 是有限布局表候选，但尚未证明该容器可安全展开；计划要求的额外 20 份日常原始 DOCX 清单也未收集。不创建 C5 分支，不实现 Layout Table。
 
 ## 下一步
 
-本次真实事故 job `72cab43961d6488c91b7a9e049265263` 的原始文件仍不可访问，故修复回归使用结构等价的最小 fixture，不宣称精确事故源已复放。最新 PATCH 提交推送后交 **Codex GPT-6.1 Sol** 再审；即使复审通过，也需如实保留事故源复放缺口。未完成独立 review 前不声明 `PRODUCT_CONSISTENCY_FIX_PASS`；不创建 C5 分支、不恢复 C4 Release、不打 tag。
+本次真实事故 job `72cab43961d6488c91b7a9e049265263` 的原始输入仍不可访问；修复验证使用结构等价的最小 fixture，没有将其冒充为原事故复放。若要关闭整体门禁，下一步需恢复或重新提供该 job 的原始 teacher/student DOCX 并验证真实 1对1/班课成品；完整 Stage2 GoldCompare 需在语料恢复后补跑。当前 Chief PASS 只关闭 Router PATCH blocker；不创建 C5 分支、不恢复 C4 Release、不打 tag。
