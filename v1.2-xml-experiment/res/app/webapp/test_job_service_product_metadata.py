@@ -46,6 +46,29 @@ class JobServiceProductMetadataTests(unittest.TestCase):
         self.assertEqual(self.service.get(self.job["job_id"])["warnings"],
                          ["封面字段：" + warning])
 
+    def test_direct_two_docx_pair_resolves_to_one_ordinary_job(self):
+        teacher = Document()
+        teacher.add_paragraph("1. 测试题")
+        student = Document()
+        student.add_paragraph("1. 测试题")
+        teacher_path = Path(self.temp.name) / "专题 教师版.docx"
+        student_path = Path(self.temp.name) / "专题 学生版.docx"
+        teacher.save(teacher_path)
+        student.save(student_path)
+
+        job = self.service.create_inputs(
+            [(student_path.name, student_path.read_bytes()),
+             (teacher_path.name, teacher_path.read_bytes())],
+            {"docx_mode": "auto", "template_type": "1v1"},
+        )
+
+        self.assertEqual(job["status"], "queued")
+        self.assertEqual(job["input_version"], "TEACHER_AND_STUDENT")
+        self.assertEqual(job["items"][0]["topic"], "专题")
+        self.assertEqual(Path(job["teacher_source_path"]).name, "input-2.docx")
+        self.assertEqual(Path(job["student_source_path"]).name, "input-1.docx")
+        self.assertIsNone(job["parent_job_id"])
+
 
 if __name__ == "__main__":
     unittest.main()

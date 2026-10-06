@@ -193,8 +193,34 @@ class JobService:
                      for filename, data in files]
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
         try:
-            classification = _classification or classify_inputs(
-                [(name, data) for name, _safe, data in validated], form_options["docx_mode"] or "auto")
+            if _classification is not None:
+                classification = _classification
+            elif len(validated) == 2:
+                # Direct two-DOCX upload shares the exact ZIP/batch topic and
+                # role resolver. Keep the user-facing result as one ordinary
+                # job when those files resolve to exactly one logical pair.
+                logical = resolve_batch(
+                    [(name, data) for name, _safe, data in validated],
+                    form_options["docx_mode"] or "auto")
+                if len(logical) != 1 or logical[0].error or len(logical[0].sources) != 2:
+                    detail = logical[0].error if len(logical) == 1 else "文件未解析为唯一教师版/学生版专题"
+                    raise UnsupportedInput(detail or "文件未解析为唯一教师版/学生版专题")
+                item = logical[0]
+                def source_index(source):
+                    if source is None:
+                        return None
+                    matches = [index for index, (name, _safe, data) in enumerate(validated)
+                               if name == source.name and data == source.data]
+                    if len(matches) != 1:
+                        raise UnsupportedInput("教师版/学生版来源无法唯一对应上传文件")
+                    return matches[0]
+                classification = InputClassification(
+                    item.input_version, source_index(item.teacher_source),
+                    source_index(item.student_source), item.evidence)
+                _topic = _topic or item.topic
+            else:
+                classification = classify_inputs(
+                    [(name, data) for name, _safe, data in validated], form_options["docx_mode"] or "auto")
         except UnknownInputVersion:
             raise
         job_id = uuid.uuid4().hex

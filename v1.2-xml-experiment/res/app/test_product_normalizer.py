@@ -15,8 +15,8 @@ from package_validator import validate_package
 from product_normalizer import normalize_product_docx
 from slot_router import SlotRoutingError
 from template_block_plan import resolve_template
-from template_slot_composer import (KNOWLEDGE_REVIEW_TARGET_Y,
-                                    _anchor_knowledge_review,
+from template_slot_composer import (MODULE2_END_DIVIDER_TARGET_Y,
+                                    _anchor_module2_end_divider,
                                     _fill_cover_metadata)
 
 
@@ -57,8 +57,8 @@ class ProductNormalizerTests(unittest.TestCase):
                 for stale in ("因数与倍数", "质数和合数", "掌握重难点题型"):
                     self.assertNotIn(stale, flattened)
                 self.assertEqual(evidence["cover_fields"]["objectives"], "EMPTY_WITH_WARNING")
-                self.assertEqual(evidence["knowledge_review_anchor"]["target_y"],
-                                 KNOWLEDGE_REVIEW_TARGET_Y[template_type])
+                self.assertEqual(evidence["module2_end_divider_anchor"]["target_y"],
+                                 MODULE2_END_DIVIDER_TARGET_Y[template_type])
 
     def test_normalization_is_semantically_idempotent(self):
         template_type = "1v1"
@@ -81,8 +81,8 @@ class ProductNormalizerTests(unittest.TestCase):
                          second_doc.tables[0].cell(2, 1).text)
         self.assertEqual(first_doc.tables[0].cell(3, 1).text,
                          second_doc.tables[0].cell(3, 1).text)
-        self.assertEqual(first["knowledge_review_anchor"],
-                         second["knowledge_review_anchor"])
+        self.assertEqual(first["module2_end_divider_anchor"],
+                         second["module2_end_divider_anchor"])
 
     def test_output_hash_is_stable_when_renderer_zip_timestamps_change(self):
         template, _ = resolve_template("1v1")
@@ -172,8 +172,8 @@ class ProductNormalizerTests(unittest.TestCase):
         carrier_doc = Document(str(template))
         carrier_doc.element.body.append(deepcopy(carrier_doc.tables[0]._tbl))
         with self.assertRaises(SlotRoutingError) as raised:
-            _anchor_knowledge_review(carrier_doc, "1v1")
-        self.assertEqual(raised.exception.reason_code, "TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED")
+            _anchor_module2_end_divider(carrier_doc, "1v1")
+        self.assertEqual(raised.exception.reason_code, "TEMPLATE_MODULE2_END_UNRESOLVED")
 
 
 if __name__ == "__main__":

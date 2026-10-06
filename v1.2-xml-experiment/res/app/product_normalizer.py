@@ -54,11 +54,11 @@ def normalize_product_docx(source_path: str | Path, output_path: str | Path, *,
 
     # Import lazily to share the single tested structural implementation with
     # the XML composer without making Renderer selection part of this module.
-    from template_slot_composer import _anchor_knowledge_review, _fill_cover_metadata
+    from template_slot_composer import _anchor_module2_end_divider, _fill_cover_metadata
 
     document = Document(str(source))
     _fill_cover_metadata(document, template_type, dict(metadata))
-    anchor = _anchor_knowledge_review(document, template_type)
+    anchor = _anchor_module2_end_divider(document, template_type)
     temporary = output.with_name(".%s.normalize-%s.docx" % (output.stem, uuid.uuid4().hex))
     canonical = output.with_name(".%s.canonical-%s.docx" % (output.stem, uuid.uuid4().hex))
     try:
@@ -82,7 +82,7 @@ def normalize_product_docx(source_path: str | Path, output_path: str | Path, *,
                 "difficulties": "POPULATED" if metadata.get("difficulties") else "EMPTY_WITH_WARNING",
                 "cover_display": metadata.get("cover_display", {}),
             },
-            "knowledge_review_anchor": anchor,
+            "module2_end_divider_anchor": anchor,
             "package_validation": package,
         }
     except Exception:

@@ -26,7 +26,7 @@ from lesson_metadata import (LessonMetadata, build_cover_display, display_width_
 from package_validator import validate_package
 from renderer_xml_minimal import BlockSpan, ProjectionError, RenderResult
 from slot_router import (SLOT_ORDER, SlotRoutingError, SlotRoutingPlan,
-                         _visible_question_number, validate_training_pair_routes)
+                         _visible_question_number)
 from struct_doc import W_P, W_SECTPR, W_T, W_TBL, W_TC
 
 
@@ -38,7 +38,7 @@ class SlotRenderResult:
     resource_report: dict
     package_report: dict
     display_renumbering: dict | None = None
-    knowledge_anchor: dict | None = None
+    module2_end_divider_anchor: dict | None = None
 
 
 def _paragraph_text(paragraph) -> str:
@@ -58,42 +58,27 @@ W_SPACING = W + "spacing"
 W_TR = W + "tr"
 W_TC_NS = W + "tc"
 
-# --- Knowledge-review first-page anchor (V1.2 final layout fix) -------------
-#
-# The user requirement is that the "二、知识回顾" separator heading sits at the
-# bottom of page one. The frozen templates print that heading in the same
-# merged cell as "一、课堂启动" and open the gap between them with a run of
-# spacer paragraphs. Restoring the template's own Y (the previous round) only
-# proved the position was stable -- it did not make it correct, because the
-# template itself draws that heading near the middle of page one.
-#
-# These values are WPS 12.0 / PDF measurements, not layout predictions.
-# KNOWLEDGE_REVIEW_TARGET_Y_* is the PDF text-bottom (y1) of the heading, kept
-# 24pt above the footer band so the heading never touches the footer rule or
-# the page number. Anchoring is done by fixing the paragraph spacing of the
-# template's existing spacer block, so no paragraph is added and the frozen
-# template file is never modified.
-KNOWLEDGE_REVIEW_TARGET_Y = {
-    "1v1": 768.219,
-    "class": 745.899,
+# --- Module 2 end-divider first-page anchor ---------------------------------
+# The physical node being positioned is the existing divider after the
+# "二、知识回顾" content area, not the heading. Template-specific values are
+# calibrated against WPS PDF output; only the existing spacer paragraphs after
+# the heading are changed. No paragraph or page geometry is added or removed.
+MODULE2_END_DIVIDER_TARGET_Y = {
+    # WPS 12.0 PDF text-bottom (y1) of the module-2 ending divider.
+    "1v1": 760.3,
+    "class": 740.1,
 }
-# Fixed exact line height for each spacer paragraph, one value per interval.
-KNOWLEDGE_REVIEW_SPACER_PT = {
-    "1v1": 120.5,
-    "class": 100.8,
+# Fixed exact line height for each existing interval after the module-2 heading.
+MODULE2_END_DIVIDER_SPACER_PT = {
+    "1v1": 21.0,
+    "class": 22.0,
 }
-# The heading sits at these indices inside the single content cell of the
-# template's last table row. The spacer block is the run of paragraphs between
-# the 课堂启动 heading and the 知识回顾 heading.
+# The headings and divider occupy fixed positions inside the template's merged
+# content cell. Only the existing spacer block after the module-2 heading moves.
 _KNOWLEDGE_CELL_ROW_INDEX = 5
 _LAUNCH_HEADING_INDEX = 0
 _KNOWLEDGE_HEADING_INDEX = 5
-# Measured rendered text height of the 14pt heading in WPS, used only to
-# derive and verify the target; the anchor itself is the spacer geometry.
-_KNOWLEDGE_HEADING_TEXT_HEIGHT_PT = 14.05
-
-
-
+_MODULE2_END_DIVIDER_INDEX = {"1v1": 19, "class": 16}
 def _editable_number_nodes(paragraph) -> tuple[list, re.Match | None]:
     if any(node.tag in _UNSAFE_NUMBER_TAGS for node in paragraph.iter()):
         return [], None
@@ -108,57 +93,81 @@ def _editable_number_nodes(paragraph) -> tuple[list, re.Match | None]:
 def build_display_renumbering(plans: dict[str, SlotRoutingPlan]) -> dict:
     """One canonical source-occurrence map, shared by all paired presentations.
 
-    Source question numbers and routing remain untouched. Any cross-reference,
-    table-contained start or unsupported prefix structure disables the whole
-    paired display transformation instead of guessing partial correspondence.
+    Source question numbers and routing remain untouched. Table-contained
+    values are excluded; cross-references or unsupported question prefixes
+    disable the whole paired display transformation instead of guessing.
     """
-    if not plans or any(getattr(plan, "knowledge_point_status", "UNKNOWN") != "NO_KNOWLEDGE_POINT"
-                        or getattr(plan, "training_split_strategy", "NOT_APPLICABLE") == "NOT_APPLICABLE" for plan in plans.values()):
+    if not plans:
         return {"status": "NOT_APPLICABLE", "slots": {}}
-    validate_training_pair_routes(plans)
-    signature = next(iter(plans.values())).training_question_routes
-    if not signature:
-        return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
-                "reason": "source occurrence signature unavailable", "slots": {}}
+    role_signatures = {}
     nodes_by_role = {}
+    cross_reference_role = None
     for role, plan in plans.items():
         if sha256(plan.source_path.read_bytes()).hexdigest() != plan.source_sha256:
             raise SlotRoutingError("DISPLAY_RENUMBER_SOURCE_CHANGED", "source changed after routing")
         document = Document(str(plan.source_path))
         if _CROSS_REFERENCE.search(_paragraph_text(document.element.body)):
-            return {"status": "DISPLAY_RENUMBER_SKIPPED_CROSS_REFERENCE", "applied": False,
-                    "reason": "main-story cross-question reference found in " + role, "slots": {}}
-        slot_by_node = {span.start: slot for slot, spans in plan.slots.items() for span in spans}
+            cross_reference_role = cross_reference_role or role
+        block_by_id = {record["block_id"]: record for record in plan.block_records}
+        unit_roles = {unit["unit_id"]: unit["role"] for unit in plan.units}
+        body_blocks = [child for child in document.element.body if child.tag in (W_P, W_TBL)]
         starts = []
-        observed_signature = []
-        for seq, block in enumerate(child for child in document.element.body if child.tag in (W_P, W_TBL)):
-            # Top-level tables are atomic product blocks. Cell values and
-            # experiment serials must not enter the display-number signature.
-            paragraphs = [block] if block.tag == W_P else []
-            for paragraph in paragraphs:
-                number = _visible_question_number(_paragraph_text(paragraph))
-                if number is None:
-                    continue
-                nodes, match = _editable_number_nodes(paragraph) if block.tag == W_P else ([], None)
-                if not nodes or match is None:
-                    return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
-                            "reason": "non-editable question prefix at %s:b%d" % (role, seq), "slots": {}}
-                starts.append("b%d" % seq)
-                observed_signature.append((number, slot_by_node.get("b%d" % seq)))
-        if tuple(observed_signature) != tuple(signature):
-            return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
-                    "reason": "physical question starts do not match routed source occurrences in " + role,
-                    "slots": {}}
+        signature = []
+        for record in plan.block_records:
+            node_id = record["block_id"]
+            if record.get("kind") != "paragraph":
+                # Top-level tables are atomic; measurements and serials in
+                # their cells are never display question starts.
+                continue
+            contributors = record.get("unit_contributors", ())
+            if not any(unit_roles.get(unit_id) == "question_group" for unit_id in contributors):
+                continue
+            seq = int(record["source_index"])
+            paragraph = body_blocks[seq] if 0 <= seq < len(body_blocks) else None
+            if paragraph is not None and paragraph.tag != W_P:
+                paragraph = None
+            if paragraph is None:
+                return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
+                        "reason": "question block ordinal unresolved at %s:%s" % (role, node_id), "slots": {}}
+            number = _visible_question_number(_paragraph_text(paragraph))
+            if number is None:
+                continue
+            nodes, match = _editable_number_nodes(paragraph)
+            if not nodes or match is None:
+                return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
+                        "reason": "non-editable question prefix at %s:%s" % (role, node_id), "slots": {}}
+            slot = record["destination_slot"]
+            starts.append(node_id)
+            signature.append((number, slot))
+        role_signatures[role] = tuple(signature)
         nodes_by_role[role] = starts
+    signatures = list(role_signatures.values())
+    if not signatures or not signatures[0]:
+        return {"status": "NOT_APPLICABLE", "applied": False,
+                "reason": "no validated top-level question starts", "slots": {}}
+    if any(signature != signatures[0] for signature in signatures[1:]):
+        return {"status": "DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE", "applied": False,
+                "reason": "teacher/student routed question occurrences differ", "slots": {}}
+    signature = signatures[0]
     slots = {slot: [] for slot in SLOT_ORDER}
+    needs_renumber = False
     for occurrence, (number, slot) in enumerate(signature, 1):
+        new_number = len(slots[slot]) + 1
+        needs_renumber = needs_renumber or number != new_number
+        display_number = number if cross_reference_role else new_number
         slots[slot].append({"source_occurrence": occurrence,
                             "source_question_number": number,
                             "source_order": occurrence,
                             "destination_slot": slot,
-                            "new_number": len(slots[slot]) + 1,
+                            "new_number": display_number,
                             "source_nodes": {role: ids[occurrence - 1] for role, ids in nodes_by_role.items()}})
-    return {"status": "DISPLAY_RENUMBER_APPLIED", "applied": True, "slots": slots}
+    if cross_reference_role:
+        return {"status": "DISPLAY_RENUMBER_SKIPPED_CROSS_REFERENCE", "applied": False,
+                "reason": "main-story cross-question reference found in " + cross_reference_role,
+                "warning": "题目含跨题引用，已跳过展示题号重排",
+                "slots": slots}
+    status = "DISPLAY_RENUMBER_APPLIED" if needs_renumber else "DISPLAY_RENUMBER_NOT_NEEDED"
+    return {"status": status, "applied": needs_renumber, "slots": slots}
 
 
 def _apply_display_renumbering(offsets: dict, blocks_by_slot: dict, evidence: dict, role: str) -> None:
@@ -214,33 +223,39 @@ def _resolve_content_carrier(document):
     return candidates[0] if len(candidates) == 1 else None
 
 
-def _anchor_knowledge_review(document, template_type: str) -> dict:
-    """Anchor 二、知识回顾 to the bottom safe area of page one.
+def _anchor_module2_end_divider(document, template_type: str) -> dict:
+    """Anchor the existing module-2 end divider to page one's safe bottom.
 
     Deterministic and template-specific: the existing spacer block between the
-    课堂启动 and 知识回顾 headings is given one fixed exact line height per
+    知识回顾 heading and its end divider is given one fixed exact line height per
     interval. No paragraph is added, no page geometry (page size, margins,
     footer, fonts, sizes, character spacing) is changed, and the frozen
     template file is never touched -- this runs on the output copy only.
     """
-    target = KNOWLEDGE_REVIEW_TARGET_Y[template_type]
-    spacer_pt = KNOWLEDGE_REVIEW_SPACER_PT[template_type]
+    target = MODULE2_END_DIVIDER_TARGET_Y[template_type]
+    spacer_pt = MODULE2_END_DIVIDER_SPACER_PT[template_type]
     table = _resolve_content_carrier(document)
     if table is None:
-        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
+        raise SlotRoutingError("TEMPLATE_MODULE2_END_UNRESOLVED",
                                "template content carrier is not a single table")
     rows = table.findall(W_TR)
     cells = rows[_KNOWLEDGE_CELL_ROW_INDEX].findall(W_TC_NS)
     paragraphs = cells[0].findall(W_P)
-    spacer_indices = tuple(range(_LAUNCH_HEADING_INDEX + 1, _KNOWLEDGE_HEADING_INDEX))
+    divider_index = _MODULE2_END_DIVIDER_INDEX[template_type]
+    if (divider_index >= len(paragraphs) or
+            not _paragraph_text(paragraphs[divider_index]).startswith("~")):
+        raise SlotRoutingError("TEMPLATE_MODULE2_END_UNRESOLVED",
+                               "module 2 end divider is not at the validated template position")
+    spacer_indices = tuple(range(_KNOWLEDGE_HEADING_INDEX + 1, divider_index))
     if not spacer_indices:
-        raise SlotRoutingError("TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED",
-                               "template has no spacer block before the knowledge heading")
+        raise SlotRoutingError("TEMPLATE_MODULE2_END_UNRESOLVED",
+                               "template has no spacer block before the module 2 end divider")
     for index in spacer_indices:
         _set_exact_interval(paragraphs[index], spacer_pt)
     return {"target_y": target, "spacer_pt": spacer_pt,
             "spacer_intervals": len(spacer_indices),
-            "heading_text_height_pt": _KNOWLEDGE_HEADING_TEXT_HEIGHT_PT}
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": divider_index}
 
 
 def _set_exact_interval(paragraph, points: float) -> None:
@@ -498,7 +513,7 @@ def render_slots(
             _fill_cover_metadata(document, plan.template_type, cover_metadata)
         # Presentation-layer layout anchor. Runs before the slot payload is
         # inserted, so it can only touch the template's own spacer block.
-        knowledge_anchor = _anchor_knowledge_review(document, plan.template_type)
+        module2_end_divider_anchor = _anchor_module2_end_divider(document, plan.template_type)
         anchors = _find_anchor_paragraphs(document, plan)
         body = document.element.body
         insert_at = plan.target.body_child_index
@@ -558,7 +573,7 @@ def render_slots(
             resource_report=rendered.resource_report,
             package_report=package_report,
             display_renumbering=display_renumbering,
-            knowledge_anchor=knowledge_anchor,
+            module2_end_divider_anchor=module2_end_divider_anchor,
         )
     except Exception:
         try:

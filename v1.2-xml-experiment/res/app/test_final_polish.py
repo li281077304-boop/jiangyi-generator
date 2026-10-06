@@ -2,6 +2,8 @@
 import hashlib
 from dataclasses import replace
 from pathlib import Path
+import sys
+from unittest.mock import Mock
 
 from docx import Document
 from docx.oxml import OxmlElement
@@ -17,11 +19,14 @@ from template_block_plan import resolve_template
 from template_slot_composer import (build_display_renumbering, render_slots,
                                     _find_anchor_paragraphs, _fill_cover_metadata,
                                     _editable_number_nodes, _apply_display_renumbering,
-                                    _anchor_knowledge_review,
-                                    KNOWLEDGE_REVIEW_TARGET_Y, KNOWLEDGE_REVIEW_SPACER_PT)
+                                    _anchor_module2_end_divider,
+                                    MODULE2_END_DIVIDER_TARGET_Y, MODULE2_END_DIVIDER_SPACER_PT)
 from renderer_xml_minimal import BlockSpan
 from slot_router import SlotRoutingError
 import pytest
+
+sys.path.insert(0, str(Path(__file__).parent / "v09_fallback_runtime"))
+from handout import _run_hidden_process
 
 
 def training_plan(tmp_path, role, *, cross_reference=False, field=False):
@@ -146,6 +151,9 @@ def test_cross_reference_disables_both_presentations(tmp_path):
     plans={role:training_plan(tmp_path,role,cross_reference=(role=='teacher')) for role in ('teacher','student')}
     evidence=build_display_renumbering(plans)
     assert evidence['status']=='DISPLAY_RENUMBER_SKIPPED_CROSS_REFERENCE'
+    assert evidence['warning']
+    assert all(item['source_question_number']==item['new_number']
+               for rows in evidence['slots'].values() for item in rows)
     for role,plan in plans.items():
         output=tmp_path/(role+'-out.docx')
         render_slots(str(plan.source_path),plan,str(output),display_renumbering=evidence,source_role=role)
@@ -153,13 +161,14 @@ def test_cross_reference_disables_both_presentations(tmp_path):
         assert '4. 题目0-3' in text
 
 
-def test_field_prefix_fails_safe_and_knowledge_lessons_do_not_renumber(tmp_path):
+def test_field_prefix_fails_safe_and_ordinary_routed_lessons_can_renumber(tmp_path):
     plan=training_plan(tmp_path,'teacher',field=True)
     assert build_display_renumbering({'teacher':plan})['status']=='DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE'
-    assert build_display_renumbering({'teacher':replace(plan,knowledge_point_status='KNOWLEDGE_POINT_PRESENT')})['status']=='NOT_APPLICABLE'
-    ordinary=replace(training_plan(tmp_path,'student'),knowledge_point_status='KNOWLEDGE_POINT_PRESENT')
-    output=tmp_path/'ordinary.docx';render_slots(str(ordinary.source_path),ordinary,str(output))
-    assert '4. 题目0-3' in ''.join(t.text or '' for t in Document(output).element.body.iter(W_T))
+    ordinary=replace(training_plan(tmp_path,'teacher'),knowledge_point_status='KNOWLEDGE_POINT_PRESENT')
+    assert build_display_renumbering({'teacher':ordinary})['status']=='DISPLAY_RENUMBER_APPLIED'
+    ordinary_student=replace(training_plan(tmp_path,'student'),knowledge_point_status='KNOWLEDGE_POINT_PRESENT')
+    output=tmp_path/'ordinary.docx';render_slots(str(ordinary_student.source_path),ordinary_student,str(output))
+    assert '2. 题目0-3' in ''.join(t.text or '' for t in Document(output).element.body.iter(W_T))
 
 
 def test_all_safe_prefixes_and_fragmented_digits_leave_other_numbers_untouched():
@@ -191,11 +200,11 @@ def test_atomic_table_number_is_not_edited(tmp_path):
            dict(id='q0',role='question_group',spans=[['b1.r0c0.n0','b1.r0c0.n0']],parent='s0')]
     snapshot=SemanticSnapshot(hashlib.sha256(payload).hexdigest(),source.name,struct,NodeIndex(struct),units)
     plan=build_slot_routing_plan(source,'1v1',snapshot=snapshot)
-    assert build_display_renumbering({'source':plan})['status']=='DISPLAY_RENUMBER_PARTIAL_UNSAFE_STRUCTURE'
+    assert build_display_renumbering({'source':plan})['status']=='NOT_APPLICABLE'
     assert Document(source).tables[0].cell(0,0).text=='1. 表内问题'
 
 
-# --- V1.2 final layout fix: knowledge-review first-page anchor --------------
+# --- Module 2 end-divider first-page anchor ---------------------------------
 
 W='{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
@@ -204,17 +213,17 @@ def _content_cell_paragraphs(doc):
     return doc.tables[0]._tbl.findall(W+'tr')[5].findall(W+'tc')[0].findall(W+'p')
 
 
-def test_knowledge_anchor_targets_are_template_specific_and_distinct():
-    assert KNOWLEDGE_REVIEW_TARGET_Y['1v1']!=KNOWLEDGE_REVIEW_TARGET_Y['class']
-    assert KNOWLEDGE_REVIEW_SPACER_PT['1v1']!=KNOWLEDGE_REVIEW_SPACER_PT['class']
+def test_module2_end_divider_targets_are_template_specific_and_distinct():
+    assert MODULE2_END_DIVIDER_TARGET_Y['1v1']!=MODULE2_END_DIVIDER_TARGET_Y['class']
+    assert MODULE2_END_DIVIDER_SPACER_PT['1v1']!=MODULE2_END_DIVIDER_SPACER_PT['class']
     # The anchor must sit above the footer band of its own template, with a
     # measured clearance rather than a physical page-edge placement.
     for template,footer_top in (('1v1',792.25),('class',769.90)):
-        assert KNOWLEDGE_REVIEW_TARGET_Y[template]<footer_top
-        assert footer_top-KNOWLEDGE_REVIEW_TARGET_Y[template]>=20.0
+        assert MODULE2_END_DIVIDER_TARGET_Y[template]<footer_top
+        assert footer_top-MODULE2_END_DIVIDER_TARGET_Y[template]>=20.0
 
 
-def test_knowledge_anchor_changes_only_the_existing_spacer_block():
+def test_module2_end_anchor_changes_only_the_existing_post_heading_spacers():
     for template in ('1v1','class'):
         doc=Document(str(resolve_template(template)[0]))
         cell=doc.tables[0]._tbl.findall(W+'tr')[5].findall(W+'tc')[0]
@@ -223,15 +232,17 @@ def test_knowledge_anchor_changes_only_the_existing_spacer_block():
         before_margins=[(s.top_margin,s.bottom_margin,s.left_margin,s.right_margin,
                          s.page_width,s.page_height) for s in doc.sections]
         before_rows=[row.height.pt if row.height else None for row in doc.tables[0].rows]
-        evidence=_anchor_knowledge_review(doc,template)
+        evidence=_anchor_module2_end_divider(doc,template)
         after=[p.xml for p in cell.findall(W+'p')]
         assert len(before)==len(after), 'no paragraph may be added or removed'
-        # Only the spacer run (indices 1..4) may differ.
+        # Only paragraphs between the module-2 heading and end divider change.
         changed=[index for index,(old,new) in enumerate(zip(before,after)) if old!=new]
-        assert changed==[1,2,3,4], changed
-        assert evidence['spacer_intervals']==4
-        assert evidence['target_y']==KNOWLEDGE_REVIEW_TARGET_Y[template]
-        assert evidence['spacer_pt']==KNOWLEDGE_REVIEW_SPACER_PT[template]
+        divider = 19 if template == '1v1' else 16
+        assert changed==list(range(6,divider)), changed
+        assert evidence['spacer_intervals']==divider-6
+        assert evidence['target_y']==MODULE2_END_DIVIDER_TARGET_Y[template]
+        assert evidence['spacer_pt']==MODULE2_END_DIVIDER_SPACER_PT[template]
+        assert evidence['anchor_node']=='MODULE2_END_DIVIDER'
         # Page geometry, cover rows and the heading text stay untouched.
         assert before_body==[child.tag for child in doc.element.body]
         assert before_margins==[(s.top_margin,s.bottom_margin,s.left_margin,s.right_margin,
@@ -242,33 +253,34 @@ def test_knowledge_anchor_changes_only_the_existing_spacer_block():
         assert ''.join(t.text or '' for t in paragraphs[0].iter(W+'t'))=='一、课堂启动'
 
 
-def test_knowledge_anchor_uses_exact_line_rule_and_is_idempotent():
+def test_module2_end_anchor_uses_exact_line_rule_and_is_idempotent():
     for template in ('1v1','class'):
         doc=Document(str(resolve_template(template)[0]))
-        _anchor_knowledge_review(doc,template)
+        _anchor_module2_end_divider(doc,template)
         first=_content_cell_paragraphs(doc)
         snapshot=[p.xml for p in first]
-        for index in (1,2,3,4):
+        divider = 19 if template == '1v1' else 16
+        for index in range(6,divider):
             spacing=first[index].find(W+'pPr').find(W+'spacing')
             assert spacing.get(W+'lineRule')=='exact'
             assert spacing.get(W+'before')=='0' and spacing.get(W+'after')=='0'
-            assert int(spacing.get(W+'line'))==int(round(KNOWLEDGE_REVIEW_SPACER_PT[template]*20))
-        _anchor_knowledge_review(doc,template)
+            assert int(spacing.get(W+'line'))==int(round(MODULE2_END_DIVIDER_SPACER_PT[template]*20))
+        _anchor_module2_end_divider(doc,template)
         assert snapshot==[p.xml for p in _content_cell_paragraphs(doc)]
 
 
-def test_knowledge_anchor_refuses_a_moved_or_missing_template_heading():
+def test_module2_end_anchor_refuses_a_moved_or_missing_template_heading():
     doc=Document(str(resolve_template('1v1')[0]))
     paragraphs=_content_cell_paragraphs(doc)
     heading=paragraphs[5]
     for node in list(heading.iter(W+'t')):
         heading.remove(node) if node.getparent() is heading else node.getparent().remove(node)
     with pytest.raises(SlotRoutingError) as raised:
-        _anchor_knowledge_review(doc,'1v1')
-    assert raised.value.reason_code=='TEMPLATE_KNOWLEDGE_ANCHOR_UNRESOLVED'
+        _anchor_module2_end_divider(doc,'1v1')
+    assert raised.value.reason_code=='TEMPLATE_MODULE2_END_UNRESOLVED'
 
 
-def test_knowledge_anchor_ignores_imported_blocks_that_carry_tables():
+def test_module2_end_anchor_ignores_imported_blocks_that_carry_tables():
     """render_slots runs after the source blocks are imported at the body tail.
 
     A source containing a table therefore makes the rendered document hold more
@@ -278,22 +290,40 @@ def test_knowledge_anchor_ignores_imported_blocks_that_carry_tables():
     doc=Document(str(resolve_template('1v1')[0]))
     imported=doc.add_table(rows=1,cols=1)
     imported.cell(0,0).text='1. 导入题目'
-    evidence=_anchor_knowledge_review(doc,'1v1')
-    assert evidence['target_y']==KNOWLEDGE_REVIEW_TARGET_Y['1v1']
-    assert evidence['spacer_pt']==KNOWLEDGE_REVIEW_SPACER_PT['1v1']
+    evidence=_anchor_module2_end_divider(doc,'1v1')
+    assert evidence['target_y']==MODULE2_END_DIVIDER_TARGET_Y['1v1']
+    assert evidence['spacer_pt']==MODULE2_END_DIVIDER_SPACER_PT['1v1']
     assert imported.cell(0,0).text=='1. 导入题目'
     paragraphs=_content_cell_paragraphs(doc)
-    for index in (1,2,3,4):
+    for index in range(6,19):
         spacing=paragraphs[index].find(W+'pPr').find(W+'spacing')
         assert spacing.get(W+'lineRule')=='exact'
-        assert int(spacing.get(W+'line'))==int(round(KNOWLEDGE_REVIEW_SPACER_PT['1v1']*20))
+        assert int(spacing.get(W+'line'))==int(round(MODULE2_END_DIVIDER_SPACER_PT['1v1']*20))
 
 
-def test_render_slots_reports_the_knowledge_anchor_evidence(tmp_path):
+def test_render_slots_reports_module2_end_anchor_evidence(tmp_path):
     plan=training_plan(tmp_path,'teacher')
     for template in ('1v1','class'):
         output=tmp_path/('anchored-%s.docx'%template)
-        result=render_slots(str(plan.source_path),replace(plan,template_type=template),
-                            str(output))
-        assert result.knowledge_anchor['target_y']==KNOWLEDGE_REVIEW_TARGET_Y[template]
-        assert result.knowledge_anchor['spacer_pt']==KNOWLEDGE_REVIEW_SPACER_PT[template]
+        candidate=build_slot_routing_plan(plan.source_path, template)
+        result=render_slots(str(candidate.source_path),candidate,str(output))
+        assert result.module2_end_divider_anchor['target_y']==MODULE2_END_DIVIDER_TARGET_Y[template]
+        assert result.module2_end_divider_anchor['spacer_pt']==MODULE2_END_DIVIDER_SPACER_PT[template]
+
+
+def test_v09_powershell_child_is_hidden_without_changing_capture_contract(monkeypatch):
+    import handout
+
+    runner = Mock(return_value=object())
+    monkeypatch.setattr(handout.subprocess, "run", runner)
+    monkeypatch.setattr(handout.os, "name", "nt")
+    result = _run_hidden_process(["powershell.exe", "-File", "test.ps1"],
+                                 capture_output=True, timeout=37, check=False)
+    assert result is runner.return_value
+    args, kwargs = runner.call_args
+    assert args[0] == ["powershell.exe", "-File", "test.ps1"]
+    assert kwargs["capture_output"] is True
+    assert kwargs["timeout"] == 37
+    assert kwargs["check"] is False
+    assert kwargs["creationflags"] & handout.subprocess.CREATE_NO_WINDOW
+    assert kwargs["startupinfo"].wShowWindow == handout.subprocess.SW_HIDE

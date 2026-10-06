@@ -68,6 +68,18 @@ def _find_powershell():
 POWERSHELL = _find_powershell()
 
 
+def _run_hidden_process(command, **kwargs):
+    """Run a captured child command without opening a production console."""
+    if os.name == "nt":
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        kwargs["startupinfo"] = startupinfo
+        kwargs["creationflags"] = (kwargs.get("creationflags", 0) |
+                                    getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    return subprocess.run(command, **kwargs)
+
+
 def _body_paragraphs(docx_path):
     """
     返回 [(序号, 文本)]，序号与 Word COM Paragraphs 完全一致。
@@ -78,7 +90,7 @@ def _body_paragraphs(docx_path):
     fd, out_path = tempfile.mkstemp(suffix=".txt", prefix="scan_")
     os.close(fd)
     try:
-        subprocess.run(
+        _run_hidden_process(
             [POWERSHELL, "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", SCAN_PS1,
              "-DocPath", os.path.abspath(docx_path), "-OutPath", out_path],
             capture_output=True, text=True, encoding=locale.getpreferredencoding(), errors="replace", timeout=180)
@@ -130,7 +142,7 @@ def _run_version(v, template):
     with open(pj, "w", encoding="utf-8") as f:
         json.dump(params, f, ensure_ascii=False)
     try:
-        r = subprocess.run(
+        r = _run_hidden_process(
             [POWERSHELL, "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", ps_script, "-ParamsJson", pj],
             capture_output=True, text=True, encoding=locale.getpreferredencoding(), errors="replace")
         print(r.stdout)
@@ -1052,7 +1064,7 @@ def _add_blanks(src_path, out_path):
     """在学生版文档末尾，为简答题补空白行。返回 (简答题数, 空白行数, 日志)。"""
     if not os.path.exists(BLANKS_PS1):
         return 0, 0, "[make_student] 缺 _add_blanks_com.ps1，跳过留白"
-    r = subprocess.run(
+    r = _run_hidden_process(
         [POWERSHELL, "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", BLANKS_PS1,
          "-SrcPath", os.path.abspath(src_path), "-OutPath", os.path.abspath(out_path)],
         capture_output=True, text=True, encoding=locale.getpreferredencoding(), errors="replace", timeout=300)
@@ -1080,7 +1092,7 @@ def _strip_answer_markers(src_path, out_path):
     if not os.path.exists(STRIP_ANSWER_PS1):
         # 脚本缺失则跳过（不影响 red 清除的结果）
         return 0, "[make_student] 缺 _strip_answer_com.ps1，跳过标记段删除"
-    r = subprocess.run(
+    r = _run_hidden_process(
         [POWERSHELL, "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", STRIP_ANSWER_PS1,
          "-SrcPath", os.path.abspath(src_path), "-OutPath", os.path.abspath(out_path)],
         capture_output=True, text=True, encoding=locale.getpreferredencoding(), errors="replace", timeout=300)
