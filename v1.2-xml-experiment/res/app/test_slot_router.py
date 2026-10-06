@@ -232,6 +232,20 @@ class SlotRouterTests(unittest.TestCase):
         self.assertEqual(len(owners), 1)
         self.assertEqual(owners[0], "knowledge")
 
+    def test_measurement_table_cell_label_follows_unique_enclosing_question(self):
+        blocks = ["知识精讲", "电路基础", "即时训练", "实验题题干",
+                  ("table", ["L1两端电压/V", "1.9", "1.0", "2.9"]),
+                  "根据表格回答问题"]
+        units = [self._unit("s_knowledge", "section", "b0"),
+                 self._unit("s_immediate", "section", "b2"),
+                 self._unit("q1", "question_group", "b3", "b5", parent="s_immediate"),
+                 self._unit("cell_label", "section", "b4.r0c0.n0")]
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        self.assertTrue(any(span.start == "b4" for span in plan.slots["immediate"]))
+        self.assertFalse(any(span.start == "b4" for slot in ("knowledge", "final")
+                             for span in plan.slots[slot]))
+
     def test_training_only_two_question_group_keeps_whole_questions_without_fabricating_final(self):
         blocks = ["题型01 物质构成", "1. question one", "2. question two"]
         units = [self._unit("s0", "section", "b0"),

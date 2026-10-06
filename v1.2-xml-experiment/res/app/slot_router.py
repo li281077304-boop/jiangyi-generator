@@ -151,22 +151,81 @@ def _is_top_level_paragraph_node(snapshot: SemanticSnapshot, node_id: str) -> bo
             and snapshot.document.blocks[seq].kind == "paragraph")
 
 
-def _single_question_group_table_owner(snapshot: SemanticSnapshot, seq: int,
-                                      units: list[_Unit], routes: dict[int, str]):
-    """Return a unique question group that owns an atomic table, if proven."""
-    owners = []
+def _is_explicit_section_heading(text: str, template_type: str) -> bool:
+    title = _clean(text)
+    return any(title.startswith(label) for label in (
+        *KNOWLEDGE_HEADINGS, *IMMEDIATE_HEADINGS,
+        *FINAL_HEADINGS[template_type], *ANSWER_HEADINGS,
+    )) or bool(_GENERIC_HEADING.match(title))
+
+
+def _single_question_group_table_owner(
+    snapshot: SemanticSnapshot,
+    seq: int,
+    units: list[_Unit],
+    routes: dict[int, str],
+    sections: list[_Unit],
+    section_routes: dict[str, str | None],
+    candidate_routes: dict[int, str],
+    template_type: str,
+):
+    """Return a unique question group and route owning an atomic table.
+
+    A question group may span ordinary paragraphs on both sides of a table.
+    Its top-level paragraph endpoints are the stable ownership evidence; cell
+    labels such as ``L1两端电压/V`` must not change that physical block's slot.
+    Explicit section headings, top-level section boundaries, and an existing
+    practice split remain authoritative and prevent this ownership shortcut.
+    """
+    owners: list[tuple[_Unit, str]] = []
     for unit in units:
         if unit.role != "question_group" or seq not in unit.seqs:
             continue
         spans = unit.raw.get("spans") or []
-        if not spans or any(not _is_top_level_paragraph_node(snapshot, str(start))
-                            or not _is_top_level_paragraph_node(snapshot, str(end))
-                            or _top_seq(str(start)) != _top_seq(str(end))
-                            for start, end in spans):
+        if not spans:
             continue
-        destinations = {routes.get(item) for item in unit.seqs}
-        if None not in destinations and len(destinations) == 1:
-            owners.append((unit, next(iter(destinations))))
+        covering_spans = []
+        valid_spans = True
+        for start, end in spans:
+            start, end = str(start), str(end)
+            first, last = _top_seq(start), _top_seq(end)
+            if (not _is_top_level_paragraph_node(snapshot, start)
+                    or not _is_top_level_paragraph_node(snapshot, end)
+                    or first is None or last is None or first > last):
+                valid_spans = False
+                break
+            if first <= seq <= last:
+                covering_spans.append((first, last))
+        if not valid_spans or not covering_spans:
+            continue
+
+        destination = routes.get(unit.start_seq)
+        if destination not in SLOT_ORDER:
+            continue
+        # A later explicit top-level section or an already-proven training
+        # split makes the question group unsafe to use as a single owner.
+        if any(section.start_seq > unit.start_seq
+               and section.start_seq <= unit.end_seq
+               and any(_is_top_level_paragraph_node(snapshot, node_id)
+                       for node_id in section.node_ids)
+               and section_routes.get(section.unit_id) not in (None, destination)
+               for section in sections):
+            continue
+        if any(candidate_routes.get(item) not in (None, destination)
+               for item in unit.seqs):
+            continue
+        # A clear, differently routed heading inside the table is a real
+        # conflict. Generic cell labels that merely look like sections are not.
+        nested_conflict = any(
+            section.start_seq == seq
+            and not any(_is_top_level_paragraph_node(snapshot, node_id)
+                        for node_id in section.node_ids)
+            and _is_explicit_section_heading(section.text, template_type)
+            and section_routes.get(section.unit_id) not in (None, destination)
+            for section in sections
+        )
+        if not nested_conflict:
+            owners.append((unit, destination))
     if len(owners) == 1:
         return owners[0]
     return None
@@ -778,9 +837,20 @@ def build_slot_routing_plan(
             seq: owner
             for seq, block in enumerate(snapshot.document.blocks)
             if block.kind == "table"
-            for owner in [_single_question_group_table_owner(snapshot, seq, units, routes)]
+            for owner in [_single_question_group_table_owner(
+                snapshot, seq, units, routes, sections, section_routes,
+                candidate_routes, template_type)]
             if owner is not None
         }
+        # Once a table is proven to belong to one complete top-level QG, its
+        # paragraphs follow that QG. This removes route changes introduced by
+        # false section labels inside the table while leaving genuine explicit
+        # section boundaries and candidate splits fail-closed above.
+        unique_table_owners = {owner.unit_id: (owner, destination)
+                               for owner, destination in atomic_table_owners.values()}
+        for owner, destination in unique_table_owners.values():
+            for seq in owner.seqs:
+                routes[seq] = destination
 
         # Every semantic unit with question ownership must agree with its
         # containing slot. Answer/analysis under knowledge sections remain in
