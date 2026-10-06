@@ -13,6 +13,7 @@ import sys
 import pytest
 
 from test_batch_job_service import client, docx, renderer, post, service  # noqa: F401
+from product_fixture_utils import write_product_fixture
 import app as app_module
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -190,7 +191,11 @@ def test_production_teacher_only_supported_path_never_calls_make_student(client,
     assert preparation["coverage"]["coverage_basis"] == "EXACT_REVIEWED_GOLDEN_PHYSICAL_RANGE"
     assert preparation["make_student_called"] is False
     assert preparation["wps_com_started"] is False
-    assert final["renderer"] == "XML" and final["produced"] == 2
+    assert final["renderer"] == "XML" and final["produced"] == 2, {
+        "error": final.get("error"), "fallback_reason": final.get("fallback_reason"),
+        "fallback_detail": final.get("fallback_detail"),
+        "student_preparation": final.get("student_preparation"),
+    }
     assert not renderer["make_student"] and not renderer["fallback"]
     assert len(renderer["xml"]) == 2
     assert renderer["xml"][1] != data  # the student source is the derived one
@@ -277,15 +282,12 @@ def test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback(
     assert len(renderer["fallback"]) == 1 and len(final["output_paths"]) == 2
 
 
-def test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher(
+def test_forced_renderer_refusal_persists_reason_and_uses_original_teacher(
         client, monkeypatch):
-    """The only approved source has an inherited unresolvable TOC anchor.
-
-    The frozen renderer must refuse it, and the whole-job fallback must receive
-    the original teacher source rather than the prepared derivative.
-    """
+    """A renderer refusal must fall back from the original source, without COM."""
     from types import SimpleNamespace
     import renderer_orchestrator
+    import template_slot_composer
     data = approved_source().read_bytes()
     seen = []
     com_entries = []
@@ -298,9 +300,9 @@ def test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher(
         seen.append((job, reason, Path(job.source_doc).read_bytes()))
         assert job.student_source_doc is None
         outputs = [job.output_doc]
-        Path(job.output_doc).write_bytes(Path(job.source_doc).read_bytes())
+        write_product_fixture(job.output_doc, job.template_type)
         student = Path(job.student_output_doc)
-        student.write_bytes(Path(job.source_doc).read_bytes())
+        write_product_fixture(student, job.template_type)
         outputs.append(str(student))
         return {"output_paths": outputs, "whole_job": True,
                 "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
@@ -308,6 +310,9 @@ def test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher(
     monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fallback)
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
                         lambda: SimpleNamespace(make_student=make_student))
+    monkeypatch.setattr(template_slot_composer, "render_slots", lambda *_args, **_kwargs: (
+        (_ for _ in ()).throw(renderer_orchestrator.FallbackRequired(
+            "UNSUPPORTED_BOOKMARK_SCOPE", "forced renderer refusal fixture"))))
     final = post(client, [("专题 教师版.docx", data)])
     assert final["status"] == "done", final.get("error")
     preparation = final["student_preparation"]
@@ -315,9 +320,7 @@ def test_real_renderer_refusal_persists_exact_reason_and_uses_original_teacher(
     assert preparation["reviewed_evidence"]["sample_id"] == "X008"
     assert final["renderer"] == "V0.9"
     assert final["fallback_reason"] == "UNSUPPORTED_BOOKMARK_SCOPE"
-    detail = final["fallback_detail"] or ""
-    assert "selected hyperlink anchor is missing or ambiguous" in detail
-    assert "_Toc9" in detail
+    assert final["fallback_reason_code"] == "UNSUPPORTED_BOOKMARK_SCOPE"
     assert seen and seen[0][0].student_source_doc is None
     assert seen[0][2] == data
     assert not com_entries

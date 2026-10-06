@@ -10,6 +10,7 @@ import zipfile
 
 from docx import Document
 import pytest
+from product_fixture_utils import write_product_fixture
 
 ROOT = Path(__file__).resolve().parents[1]
 WEBAPP = ROOT / "v1.2-xml-experiment" / "res" / "app" / "webapp"
@@ -70,25 +71,31 @@ def renderer(monkeypatch):
     plan = SimpleNamespace(template_sha256="fixture-template", slots={
         name: () for name in ("knowledge", "immediate", "final")}, units=(),
         slot_labels={"knowledge": "知识精讲", "immediate": "即时训练", "final": "六、巩固练习"},
-        explicit_final_heading=True)
+        explicit_final_heading=True,
+        # The test renderer is a route stub; paired training-only plans expose
+        # the same deterministic fixture signature so the production pair gate
+        # is exercised without pretending to reproduce A-Line classification.
+        training_question_routes=((1, "immediate"),))
 
-    def build(source, *_args, **_kwargs):
+    def build(source, *args, **_kwargs):
+        if args:
+            plan.template_type = args[0]
         if "FORCED_UNSUPPORTED" in " ".join(p.text for p in Document(source).paragraphs):
             raise slot_router.SlotRoutingError("UNSUPPORTED_BOOKMARK_SCOPE", "safe forced fixture")
         return plan
 
     def render(source, _plan, output):
         calls["xml"].append(Path(source).read_bytes())
-        Path(output).write_bytes(Path(source).read_bytes())
+        write_product_fixture(output, getattr(_plan, "template_type", "1v1"))
         return SimpleNamespace(output_path=str(output), resource_report={"unsupported": []},
                                package_report={"valid": True, "errors": []})
 
     def fallback(job, reason):
         calls["fallback"].append((job.topic, reason))
         outputs = [job.output_doc]
-        Path(job.output_doc).write_bytes(Path(job.source_doc).read_bytes())
+        write_product_fixture(job.output_doc, job.template_type)
         if job.student_source_doc:
-            Path(job.student_output_doc).write_bytes(Path(job.student_source_doc).read_bytes())
+            write_product_fixture(job.student_output_doc, job.template_type)
             outputs.append(job.student_output_doc)
         elif not job.student_only:
             engine.make_student(job.source_doc, job.student_output_doc)
@@ -98,7 +105,8 @@ def renderer(monkeypatch):
 
     def make_student(source, output):
         calls["make_student"].append(source)
-        Path(output).write_bytes(docx("已由测试替身去答案的学生版"))
+        write_product_fixture(output, getattr(plan, "template_type", "1v1"),
+                              paragraphs=["已由测试替身去答案的学生版"])
 
     monkeypatch.setattr(slot_router, "build_slot_routing_plan", build)
     monkeypatch.setattr(template_slot_composer, "render_slots", render)
@@ -141,11 +149,7 @@ def test_product_integrity_gate_blocks_duplicate_staged_output_before_publicatio
     def duplicate_all_blocks(source_path, _plan, output_path):
         original = Document(source_path)
         paragraphs = [paragraph.text for paragraph in original.paragraphs]
-        generated = Document()
-        for _ in range(2):
-            for text in paragraphs:
-                generated.add_paragraph(text)
-        generated.save(output_path)
+        write_product_fixture(output_path, "1v1", paragraphs=paragraphs * 2)
         return SimpleNamespace(output_path=str(output_path), resource_report={"unsupported": []},
                                package_report={"valid": True, "errors": []})
 

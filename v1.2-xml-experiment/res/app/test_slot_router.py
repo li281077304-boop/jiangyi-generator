@@ -14,6 +14,7 @@ from slot_router import (
     SLOT_LABELS,
     SlotRoutingError,
     _number,
+    _is_top_level_paragraph_node,
     build_slot_routing_plan,
     validate_training_pair_routes,
 )
@@ -210,6 +211,26 @@ class SlotRouterTests(unittest.TestCase):
         self.assertIn("即时训练", saved_text)
         self.assertIn("六、出门测试", saved_text)
         self.assertNotIn("六、巩固练习", saved_text)
+
+    def test_atomic_measurement_table_decimals_are_not_question_starts(self):
+        blocks = ["题型01 电压规律", "1. 说明测量目的",
+                  ("table", ["L1两端电压/V", "1.9", "1.0", "2.9"]),
+                  "根据表格说明测量结果", "2. 根据表格回答", "3. 比较两组数据"]
+        units = [self._unit("s0", "section", "b0"),
+                 self._unit("q1", "question_group", "b1", "b3", parent="s0"),
+                 self._unit("table_heading", "section", "b2.r0c0.n0"),
+                 self._unit("q2", "question_group", "b4", parent="s0"),
+                 self._unit("q3", "question_group", "b5", parent="s0")]
+        source, snapshot = self._snapshot(blocks, units)
+        plan = build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        path, snapshot = self._snapshot(["paragraph", ("table", ["1.9"])], [])
+        self.assertTrue(_is_top_level_paragraph_node(snapshot, "b0"))
+        self.assertFalse(_is_top_level_paragraph_node(snapshot, "b1"))
+        self.assertFalse(_is_top_level_paragraph_node(snapshot, "b1.r0c0.n0"))
+        owners = [slot for slot, spans in plan.slots.items()
+                  if any(span.start == "b2" for span in spans)]
+        self.assertEqual(len(owners), 1)
+        self.assertEqual(owners[0], "knowledge")
 
     def test_training_only_two_question_group_keeps_whole_questions_without_fabricating_final(self):
         blocks = ["题型01 物质构成", "1. question one", "2. question two"]

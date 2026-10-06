@@ -276,6 +276,8 @@ class JobService:
             "training_split_strategy": "NOT_APPLICABLE",
             "training_question_routes": [],
             "display_renumbering": {"status": "NOT_APPLICABLE", "slots": {}},
+            "lesson_metadata": {"status": "PENDING"},
+            "product_normalization": {"status": "PENDING", "outputs": {}},
             "xml_renderer_attempted": False,
             "baseline_sha": None,
             "recovered_after_restart": False,
@@ -380,7 +382,8 @@ class JobService:
                 roles = child.get("items", [{}])[0]
                 item.update({key: child.get(key) for key in (
                     "status", "renderer", "fallback_reason", "fallback_detail", "output_paths",
-                    "error", "plan_summary", "student_preparation", "package_validation",
+                    "error", "plan_summary", "student_preparation", "student_preparation_route",
+                    "package_validation", "lesson_metadata", "product_normalization", "warnings",
                     "started_at", "updated_at", "elapsed_seconds")})
                 item["teacher"], item["student"] = roles.get("teacher"), roles.get("student")
             except (JobNotFound, OSError, ValueError, KeyError) as exc:
@@ -516,13 +519,27 @@ class JobService:
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 
-    def update_lesson_metadata(self, job_id: str, details: dict) -> dict:
+    def update_product_normalization(self, job_id: str, details: dict) -> dict:
+        with self._lock:
+            record = self._recover(job_id)
+            if record.get("status") != "running":
+                return self.snapshot(record)
+            record["product_normalization"] = details
+            self._write_json(self._job_dir(job_id) / "job.json", record)
+            return self.snapshot(record)
+
+    def update_lesson_metadata(self, job_id: str, details: dict, *, warning: str | None = None) -> dict:
         """Persist source provenance for generated objectives and difficulties."""
         with self._lock:
             record = self._recover(job_id)
             if record.get("status") != "running":
                 return self.snapshot(record)
             record["lesson_metadata"] = dict(details)
+            warnings = [item for item in record.get("warnings", [])
+                        if not str(item).startswith("封面字段：")]
+            if warning:
+                warnings.append("封面字段：" + str(warning))
+            record["warnings"] = warnings
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 

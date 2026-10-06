@@ -137,6 +137,55 @@ def _top_seq(node_id: str) -> int | None:
     return None
 
 
+def _is_top_level_paragraph_node(snapshot: SemanticSnapshot, node_id: str) -> bool:
+    """Only a Word body paragraph can start a routable question.
+
+    Paragraphs nested under a table cell remain part of the atomic table.
+    Their values (for example ``1.9`` in a measurement table) are not source
+    question starts even when they happen to match the top-level prefix regex.
+    """
+    if re.fullmatch(r"b\d+", str(node_id)) is None:
+        return False
+    seq = _top_seq(node_id)
+    return (seq is not None and 0 <= seq < len(snapshot.document.blocks)
+            and snapshot.document.blocks[seq].kind == "paragraph")
+
+
+def _single_question_group_table_owner(snapshot: SemanticSnapshot, seq: int,
+                                      units: list[_Unit], routes: dict[int, str]):
+    """Return a unique question group that owns an atomic table, if proven."""
+    owners = []
+    for unit in units:
+        if unit.role != "question_group" or seq not in unit.seqs:
+            continue
+        spans = unit.raw.get("spans") or []
+        if not spans or any(not _is_top_level_paragraph_node(snapshot, str(start))
+                            or not _is_top_level_paragraph_node(snapshot, str(end))
+                            or _top_seq(str(start)) != _top_seq(str(end))
+                            for start, end in spans):
+            continue
+        destinations = {routes.get(item) for item in unit.seqs}
+        if None not in destinations and len(destinations) == 1:
+            owners.append((unit, next(iter(destinations))))
+    if len(owners) == 1:
+        return owners[0]
+    return None
+
+
+def _nested_unit_follows_table_owner(snapshot: SemanticSnapshot, unit: _Unit,
+                                    seq: int, owner: _Unit) -> bool:
+    """Cell-level A-Line labels cannot split a table inside one proven QG."""
+    if seq not in unit.seqs or unit.unit_id == owner.unit_id:
+        return False
+    if not any(_top_seq(node_id) == seq
+               and not _is_top_level_paragraph_node(snapshot, node_id)
+               for node_id in unit.node_ids):
+        return False
+    return all(_top_seq(node_id) is not None
+               and owner.start_seq <= _top_seq(node_id) <= owner.end_seq
+               for node_id in unit.node_ids)
+
+
 def _unit_text(snapshot: SemanticSnapshot, spans: list) -> str:
     index = snapshot.node_index
     ids: set[str] = set()
@@ -234,6 +283,8 @@ def _training_only_node_routes(
         markers = []
         for position in range(section_start, section_end):
             node_id = order_ids[position]
+            if not _is_top_level_paragraph_node(snapshot, node_id):
+                continue
             number = _visible_question_number(index.text_of(node_id))
             seq = _top_seq(node_id)
             if number is not None and seq is not None:
@@ -280,6 +331,8 @@ def _training_only_node_routes(
     else:
         markers = []
         for position, node_id in enumerate(order_ids):
+            if not _is_top_level_paragraph_node(snapshot, node_id):
+                continue
             number = _visible_question_number(index.text_of(node_id))
             seq = _top_seq(node_id)
             if number is not None and seq is not None:
@@ -459,6 +512,28 @@ def _is_example(unit: _Unit) -> bool:
     return bool(_EXAMPLE.match(unit.text) or "例1默认保留在知识讲解" in note)
 
 
+def classify_knowledge_point_status(snapshot: SemanticSnapshot) -> str:
+    """Classify a source before slot routing so fallback keeps valid metadata."""
+    units = _make_units(snapshot)
+    tocs = [unit for unit in units if unit.role == "toc"]
+    sections = [unit for unit in units if unit.role == "section"
+                and not any(unit.order >= toc.order and unit.order <= max(
+                    (snapshot.node_index.order_of(end) or toc.order)
+                    for _, end in toc.raw["spans"])
+                    for toc in tocs)]
+    has_explicit_knowledge = any(
+        any(section.text.lstrip().startswith(label) for label in KNOWLEDGE_HEADINGS)
+        for section in sections
+    )
+    has_knowledge_unit = any(
+        unit.role == "knowledge" or
+        (unit.role == "question_group" and _is_example(unit)) for unit in units)
+    has_training_units = any(unit.role == "question_group" for unit in units)
+    return ("NO_KNOWLEDGE_POINT"
+            if has_training_units and not has_explicit_knowledge and not has_knowledge_unit
+            else "KNOWLEDGE_POINT_PRESENT")
+
+
 def _generic_practice_blocks(
     section: _Unit,
     section_units: list[_Unit],
@@ -559,19 +634,7 @@ def build_slot_routing_plan(
     section_routes = {section.unit_id: _heading_route(section.text, template_type)
                       for section in sections}
     explicit_final = any(route == "final" for route in section_routes.values())
-    has_explicit_knowledge = any(
-        any(section.text.lstrip().startswith(label) for label in KNOWLEDGE_HEADINGS)
-        for section in sections
-    )
-    has_knowledge_unit = any(unit.role == "knowledge" or
-                             (unit.role == "question_group" and _is_example(unit))
-                             for unit in units)
-    has_training_units = any(unit.role == "question_group" for unit in units)
-    knowledge_point_status = (
-        "NO_KNOWLEDGE_POINT"
-        if has_training_units and not has_explicit_knowledge and not has_knowledge_unit
-        else "KNOWLEDGE_POINT_PRESENT"
-    )
+    knowledge_point_status = classify_knowledge_point_status(snapshot)
     training_only = knowledge_point_status == "NO_KNOWLEDGE_POINT"
     training_split_strategy = "NOT_APPLICABLE"
     training_routes: dict[int, str] | None = None
@@ -711,11 +774,22 @@ def build_slot_routing_plan(
             for seq in material.seqs:
                 routes[seq] = route
 
+        atomic_table_owners = {
+            seq: owner
+            for seq, block in enumerate(snapshot.document.blocks)
+            if block.kind == "table"
+            for owner in [_single_question_group_table_owner(snapshot, seq, units, routes)]
+            if owner is not None
+        }
+
         # Every semantic unit with question ownership must agree with its
         # containing slot. Answer/analysis under knowledge sections remain in
         # knowledge even when their A-Line role is misleading.
         for unit in units:
             if unit.role not in ("question_group", "answer", "analysis", "knowledge"):
+                continue
+            if any(_nested_unit_follows_table_owner(snapshot, unit, seq, owner[0])
+                   for seq, owner in atomic_table_owners.items()):
                 continue
             owner = _section_for(unit, by_id, sections)
             if owner is None:
@@ -760,6 +834,10 @@ def build_slot_routing_plan(
             intents: set[str] = set()
             for section in sections:
                 if seq not in section.seqs:
+                    continue
+                if (seq in atomic_table_owners
+                        and _nested_unit_follows_table_owner(snapshot, section, seq,
+                                                             atomic_table_owners[seq][0])):
                     continue
                 section_route = section_routes.get(section.unit_id)
                 if section_route == "answer_area":

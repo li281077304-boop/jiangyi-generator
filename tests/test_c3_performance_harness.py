@@ -32,7 +32,7 @@ def test_synthetic_wiring_proof_reaches_xml_without_com(tmp_path):
     spec = build_cases(["synthetic-wiring-proof"])["synthetic-wiring-proof"]
     record = run_case("synthetic-wiring-proof", spec["files"], spec["template"],
                       tmp_path / "work", spec["provider"], spec["note"])
-    assert record["status"] == "done", record
+    assert record["status"] == "done", record.get("error") or record
     assert record["items"] == 1
     assert record["xml_items"] == 1 and record["fallback_items"] == 0
     assert record["fallback_reasons"] == []

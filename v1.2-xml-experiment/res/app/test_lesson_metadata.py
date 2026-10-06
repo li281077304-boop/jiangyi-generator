@@ -61,14 +61,16 @@ class LessonMetadataTests(unittest.TestCase):
         for prohibited in ("核心知识点", "核心概念", "知识体系"):
             self.assertNotIn(prohibited, result.objectives + result.difficulties)
 
-    def test_no_reliable_source_fails_closed_instead_of_using_template_text(self):
+    def test_no_reliable_source_is_empty_and_warnable_without_template_text(self):
         path = self._source("unclassified.docx", paragraphs=["1. 普通练习题"])
-        with self.assertRaises(LessonMetadataUnavailable) as raised:
-            resolve_lesson_metadata(
-                path, subject="数学", topic="未命名讲义",
-                knowledge_point_status="NO_KNOWLEDGE_POINT",
-            )
-        self.assertEqual(raised.exception.reason_code, "OBJECTIVES_SOURCE_UNAVAILABLE")
+        result = resolve_lesson_metadata(
+            path, subject="数学", topic="未命名讲义",
+            knowledge_point_status="NO_KNOWLEDGE_POINT",
+        )
+        self.assertEqual(result.objectives, "")
+        self.assertEqual(result.difficulties, "")
+        self.assertEqual(result.objectives_reason, "NO_RELIABLE_OBJECTIVES_SOURCE")
+        self.assertEqual(result.difficulties_reason, "NO_RELIABLE_DIFFICULTIES_SOURCE")
 
     def test_existing_offline_rule_remains_the_knowledge_lesson_fallback(self):
         path = self._source("knowledge.docx", paragraphs=[

@@ -26,7 +26,8 @@ if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
 from job_service import JobNotFound, JobService, UnsupportedInput  # noqa: E402
-from lesson_metadata import LessonMetadataUnavailable, resolve_lesson_metadata, build_cover_display  # noqa: E402
+from lesson_metadata import (build_cover_display, read_lesson_source_lines,
+                             resolve_lesson_metadata)  # noqa: E402
 
 
 app = Flask(__name__)
@@ -98,6 +99,35 @@ def _persist_job_stage(service: JobService, job_id: str, progress: int, stage: s
     hook = app.config.get("C35_TEST_STAGE_HOOK")
     if app.testing and callable(hook):
         hook(job_id, stage)
+
+
+def _lesson_metadata_record(metadata, template_type: str, topic: str) -> tuple[dict, str | None]:
+    cover = build_cover_display(metadata, template_type, topic=topic)
+    missing = []
+    if not metadata.objectives:
+        missing.append("教学目标")
+    if not metadata.difficulties:
+        missing.append("重点难点")
+    status = "UNAVAILABLE" if len(missing) == 2 else "PARTIAL" if missing else "RESOLVED"
+    warning = None
+    if missing:
+        warning = "原文及现有规则无法可靠确定%s，已留空，请使用前补充。" % "、".join(missing)
+    return ({
+        "status": status,
+        "objectives": metadata.objectives,
+        "difficulties": metadata.difficulties,
+        "full_objectives": metadata.full_objectives,
+        "full_difficulties": metadata.full_difficulties,
+        "objectives_source": metadata.objectives_source,
+        "difficulties_source": metadata.difficulties_source,
+        "objectives_reason": metadata.objectives_reason,
+        "difficulties_reason": metadata.difficulties_reason,
+        "cover_display": cover,
+        "source": metadata.source,
+        "knowledge_point_status": metadata.knowledge_point_status,
+        "training_titles": list(metadata.training_titles),
+        "warning": warning,
+    }, warning)
 
 
 def _visible_output_name(options: dict, topic: str, role: str) -> str:
@@ -192,7 +222,8 @@ def _execute_job(job_id: str) -> None:
     )
     from package_validator import validate_package
     from renderer_orchestrator import FallbackRequired
-    from slot_router import SlotRoutingError, build_slot_routing_plan, validate_training_pair_routes
+    from slot_router import (SlotRoutingError, analyze_source, build_slot_routing_plan,
+                             classify_knowledge_point_status, validate_training_pair_routes)
     from template_slot_composer import render_slots, build_display_renumbering
     from studentizer_planner import prepare_complete_student
 
@@ -357,41 +388,74 @@ def _execute_job(job_id: str) -> None:
         active_sources = {role: path for role, path in (("teacher", teacher_source),
                                                         ("student", student_source)) if path is not None}
         plans = {}
+        source_snapshots = {}
+        metadata_source = teacher_source or student_source
+        metadata_lines = read_lesson_source_lines(metadata_source)
         resolved_lesson_metadata = {}
         display_renumbering = {}
         fallback_detail = {"value": None, "phase": "PREFLIGHT"}
         student_stage = work_dir / ("student-stage%s-%s.docx" % (attempt_suffix, job_id))
         teacher_stage = work_dir / ("teacher-stage%s-%s.docx" % (attempt_suffix, job_id))
 
+        def persist_lesson_metadata(knowledge_status: str) -> None:
+            metadata = resolve_lesson_metadata(
+                metadata_source, subject=options.get("subject", ""), topic=topic,
+                knowledge_point_status=knowledge_status, source_lines=metadata_lines,
+            )
+            resolved_lesson_metadata.clear()
+            resolved_lesson_metadata.update({
+                "objectives": metadata.objectives,
+                "difficulties": metadata.difficulties,
+                "full_objectives": metadata.full_objectives,
+                "full_difficulties": metadata.full_difficulties,
+                "cover_display": build_cover_display(metadata, template_type, topic=topic),
+                "source": metadata.source,
+                "knowledge_point_status": knowledge_status,
+                "training_titles": list(metadata.training_titles),
+            })
+            details, warning = _lesson_metadata_record(metadata, template_type, topic)
+            service.update_lesson_metadata(job_id, details, warning=warning)
+
+        persist_lesson_metadata("UNKNOWN")
+
         def xml_preflight(_job):
+            try:
+                fallback_detail["phase"] = "ROUTER"
+                for role, source_path in active_sources.items():
+                    source_snapshots[role] = analyze_source(source_path)
+                statuses = {classify_knowledge_point_status(snapshot)
+                            for snapshot in source_snapshots.values()}
+            except Exception as exc:
+                fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
+                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
+                        "detail": fallback_detail["value"]}
+            if len(statuses) != 1:
+                fallback_detail["value"] = "teacher/student knowledge-point status differs"
+                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
+                        "detail": fallback_detail["value"]}
+            knowledge_point_status = next(iter(statuses))
+            fallback_detail["phase"] = "METADATA"
+            persist_lesson_metadata(knowledge_point_status)
             forced_reason = app.config.get("C0_FORCE_FALLBACK_REASON")
             if forced_reason:
                 return {"supported": False, "reason_code": forced_reason,
                         "detail": "forced unsupported integration fixture"}
+            fallback_detail["phase"] = "ROUTER"
             try:
-                fallback_detail["phase"] = "ROUTER"
                 for role, source_path in active_sources.items():
-                    plans[role] = build_slot_routing_plan(source_path, template_type,
-                                                          split_mode=split_mode)
+                    plans[role] = build_slot_routing_plan(
+                        source_path, template_type, split_mode=split_mode,
+                        snapshot=source_snapshots[role])
             except SlotRoutingError as exc:
                 plans.clear()
                 fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
             except Exception as exc:
-                # Any unexpected planning refusal must still persist a reason.
                 plans.clear()
                 fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
-            statuses = {getattr(plan, "knowledge_point_status", "KNOWLEDGE_POINT_PRESENT")
-                        for plan in plans.values()}
-            if len(statuses) != 1:
-                plans.clear()
-                fallback_detail["value"] = "teacher/student knowledge-point status differs"
-                return {"supported": False, "reason_code": "XML_RENDER_FAILED",
-                        "detail": fallback_detail["value"]}
-            knowledge_point_status = next(iter(statuses))
             if knowledge_point_status == "NO_KNOWLEDGE_POINT" and split_mode == "smart":
                 try:
                     validate_training_pair_routes(plans)
@@ -409,34 +473,6 @@ def _execute_job(job_id: str) -> None:
                     {"question_number": number, "slot": slot}
                     for number, slot in getattr(route_plan, "training_question_routes", ())
                 ],
-            })
-            try:
-                fallback_detail["phase"] = "METADATA"
-                metadata_source = teacher_source or student_source
-                lesson_metadata = resolve_lesson_metadata(
-                    metadata_source, subject=options.get("subject", ""), topic=topic,
-                    knowledge_point_status=knowledge_point_status,
-                )
-                resolved_lesson_metadata.update({
-                    "objectives": lesson_metadata.objectives,
-                    "difficulties": lesson_metadata.difficulties,
-                    "full_objectives": lesson_metadata.full_objectives,
-                    "full_difficulties": lesson_metadata.full_difficulties,
-                    "cover_display": build_cover_display(lesson_metadata, template_type, topic=topic),
-                    "source": lesson_metadata.source,
-                    "knowledge_point_status": lesson_metadata.knowledge_point_status,
-                    "training_titles": list(lesson_metadata.training_titles),
-                })
-            except LessonMetadataUnavailable as exc:
-                fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc)
-                service.update_lesson_metadata(job_id, {
-                    "status": "FALLBACK_REQUIRED", "reason_code": exc.reason_code,
-                    "knowledge_point_status": knowledge_point_status,
-                })
-                return {"supported": False, "reason_code": exc.reason_code,
-                        "detail": fallback_detail["value"]}
-            service.update_lesson_metadata(job_id, {
-                "status": "RESOLVED", **resolved_lesson_metadata,
             })
             return {"supported": True,
                     "template_sha256": next(iter(plans.values())).template_sha256}
@@ -612,6 +648,33 @@ def _execute_job(job_id: str) -> None:
                 raise RuntimeError("Renderer outputs do not match classified input roles")
             roles = (["teacher", "student"] if teacher_source else ["student"])
             generated = [(role, source, target) for role, source, target in zip(roles, outcome.output_paths, targets)]
+
+        from product_normalizer import normalize_product_docx
+        normalized_generated = []
+        normalization_outputs = {}
+        for role, renderer_path, final_target in generated:
+            normalized_path = work_dir / ("normalized-%s%s-%s.docx" %
+                                          (role, attempt_suffix, job_id))
+            normalization_metadata = {
+                "subject": options.get("subject", ""),
+                "grade": options.get("grade", ""),
+                "topic": topic,
+                "handout_type": options.get("handout_type", ""),
+                "objectives": resolved_lesson_metadata.get("objectives", ""),
+                "difficulties": resolved_lesson_metadata.get("difficulties", ""),
+                "cover_display": resolved_lesson_metadata.get("cover_display", {}),
+            }
+            evidence = normalize_product_docx(
+                renderer_path, normalized_path, template_type=template_type,
+                metadata=normalization_metadata,
+            )
+            normalization_outputs[role] = evidence
+            normalized_generated.append((role, str(normalized_path), final_target))
+        generated = normalized_generated
+        service.update_product_normalization(job_id, {
+            "status": "NORMALIZED", "version": "V1.2_PRODUCT_NORMALIZATION_V1",
+            "renderer": outcome.renderer, "outputs": normalization_outputs,
+        })
         _persist_job_stage(service, job_id, 1, "outputs ready; before publication")
         integrity_reports = []
         for role, staged_path, _target in generated:

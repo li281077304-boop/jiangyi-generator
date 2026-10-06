@@ -132,7 +132,9 @@ def build_display_renumbering(plans: dict[str, SlotRoutingPlan]) -> dict:
         starts = []
         observed_signature = []
         for seq, block in enumerate(child for child in document.element.body if child.tag in (W_P, W_TBL)):
-            paragraphs = [block] if block.tag == W_P else list(block.iter(W_P))
+            # Top-level tables are atomic product blocks. Cell values and
+            # experiment serials must not enter the display-number signature.
+            paragraphs = [block] if block.tag == W_P else []
             for paragraph in paragraphs:
                 number = _visible_question_number(_paragraph_text(paragraph))
                 if number is None:
@@ -194,6 +196,7 @@ def _resolve_content_carrier(document):
     its own frozen structure instead: row 5 is one merged cell whose first
     paragraph is 一、课堂启动 and whose sixth paragraph is 二、知识回顾.
     """
+    candidates = []
     for table in document.element.body.findall(W_TBL):
         rows = table.findall(W_TR)
         if len(rows) <= _KNOWLEDGE_CELL_ROW_INDEX:
@@ -207,8 +210,8 @@ def _resolve_content_carrier(document):
         launch = _paragraph_text(paragraphs[_LAUNCH_HEADING_INDEX])
         heading = _paragraph_text(paragraphs[_KNOWLEDGE_HEADING_INDEX])
         if launch == "一、课堂启动" and heading == "二、知识回顾":
-            return table
-    return None
+            candidates.append(table)
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def _anchor_knowledge_review(document, template_type: str) -> dict:
@@ -296,9 +299,16 @@ def _set_cover_cell_value(cell, value: str) -> None:
             paragraph.add_run(value)
             return
     old_text = value_node.text or ""
-    separators = [position for mark in (":", "：")
-                  if (position := old_text.rfind(mark)) >= 0]
-    label = old_text[:max(separators) + 1] if separators else ""
+    # Some template revisions store the field label in the value cell, while
+    # generated documents already contain a complete value such as
+    # ``重点：...；难点：...``. Preserve only a label-only prefix. Carrying
+    # every character before the last colon makes normalization append a
+    # second complete objective/difficulty value on each pass.
+    label_match = re.match(
+        r"^\s*((?:教学目标|学习目标|重点难点|教学重难点|重难点|教学重点|教学难点)\s*[:：]\s*)$",
+        old_text,
+    )
+    label = label_match.group(1) if label_match else ""
     pieces = (label + value).splitlines() or [""]
     run = value_node.getparent()
     if run.tag != "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}r":
@@ -323,10 +333,10 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
     if template_type not in ("1v1", "class"):
         raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
                                "unsupported template type: %s" % template_type)
-    if not document.tables:
+    table = _resolve_cover_table(document, template_type)
+    if table is None:
         raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
-                               "template has no cover table")
-    table = document.tables[0]
+                               "template cover table is missing or ambiguous")
     display = metadata.get("cover_display") or build_cover_display(
         LessonMetadata(metadata.get("objectives", ""), metadata.get("difficulties", ""),
                        "SOURCE", "UNKNOWN"), template_type)
@@ -335,6 +345,11 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
         if any(mark in display[key] for mark in ("\n", "\r", "\t")) or display_width_units(display[key]) > limit:
             raise SlotRoutingError("COVER_DISPLAY_BUDGET_EXCEEDED", "cover display is outside the fixed budget")
     metadata = {**metadata, "objectives": display["objectives"], "difficulties": display["difficulties"]}
+    required_rows = 4
+    required_columns = 4 if template_type == "1v1" else 3
+    if len(table.rows) < required_rows or len(table.columns) < required_columns:
+        raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
+                               "template cover table dimensions do not match %s" % template_type)
     # PDF row borders of the original frozen templates, measured through WPS.
     # Their atLeast minima are smaller than the actual rendered geometry.
     # Lock the original rendered heights, rather than shrinking to the minima.
@@ -344,11 +359,6 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
             raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED", "cover row lacks fixed height")
         row.height = Pt(height)
         row.height_rule = WD_ROW_HEIGHT_RULE.EXACTLY
-    required_rows = 2
-    required_columns = 4 if template_type == "1v1" else 3
-    if len(table.rows) < required_rows or len(table.columns) < required_columns:
-        raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
-                               "template cover table dimensions do not match %s" % template_type)
 
     if template_type == "1v1":
         # The one-to-one cover has explicit subject, grade, topic, and course
@@ -387,6 +397,37 @@ def _fill_cover_metadata(document, template_type: str, metadata: dict) -> None:
             raise SlotRoutingError("TEMPLATE_COVER_METADATA_UNRESOLVED",
                                    "cover cell %s is missing for %s" % (key, template_type)) from exc
         _set_cover_cell_value(cell, values[key])
+
+
+def _resolve_cover_table(document, template_type: str):
+    """Identify the unique frozen cover table by stable, unfilled labels.
+
+    Objective/difficulty and subject/grade cells may already have been
+    populated by the XML composer before the shared post-render normalizer
+    runs. The cover's course/topic labels remain fixed and therefore identify
+    the same table across both pre- and post-population states.
+    """
+    if template_type not in ("1v1", "class"):
+        return None
+
+    def compact(value: str) -> str:
+        return re.sub(r"\s+", "", value or "")
+
+    candidates = []
+    for table in document.tables:
+        if len(table.rows) < 4:
+            continue
+        required_columns = 4 if template_type == "1v1" else 3
+        if len(table.columns) < required_columns:
+            continue
+        row1 = [compact(cell.text) for cell in table.rows[1].cells]
+        if template_type == "1v1":
+            matches = "授课主题" in row1[0] and "课程类型" in row1[2]
+        else:
+            matches = "班课主题" in row1[0]
+        if matches:
+            candidates.append(table)
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def _find_anchor_paragraphs(document, plan: SlotRoutingPlan) -> dict[str, object]:

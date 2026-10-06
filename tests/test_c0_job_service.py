@@ -8,6 +8,7 @@ import zipfile
 
 import pytest
 from docx import Document
+from product_fixture_utils import write_product_fixture
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -201,7 +202,8 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
                       C0_RUN_JOBS_SYNCHRONOUSLY=True)
-    engine = SimpleNamespace(make_student=lambda source, target: shutil.copyfile(source, target),
+    engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
+                                 target, "class"),
                              CLASS_TEMPLATE="unused-class-template.docx",
                              DEFAULT_TEMPLATE="unused-1v1-template.docx")
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
@@ -229,7 +231,7 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
         })
         outputs = [Path(job.output_doc), Path(job.student_output_doc)]
         for output in outputs:
-            output.write_bytes(make_docx())
+            write_product_fixture(output, "class")
         return {"output_paths": [str(path) for path in outputs], "whole_job": True,
                 "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
 
@@ -269,7 +271,8 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
                       C0_RUN_JOBS_SYNCHRONOUSLY=True,
                       C0_FORCE_FALLBACK_REASON="UNSUPPORTED_REVISION_MARKUP")
-    engine = SimpleNamespace(make_student=lambda source, target: shutil.copyfile(source, target),
+    engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
+                                 target, "class"),
                              CLASS_TEMPLATE="unused-class-template.docx",
                              DEFAULT_TEMPLATE="unused-1v1-template.docx")
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
@@ -296,7 +299,9 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     assert final["renderer"] == "V0.9"
     assert final["fallback_reason"] == "UNSUPPORTED_REVISION_MARKUP"
     assert final["renderer_route"] == "V09_WHOLE_JOB"
-    assert final["fallback_phase"] == "PREFLIGHT"
+    # Metadata now resolves before renderer selection so every output path
+    # receives the same cover normalization and field-level warnings.
+    assert final["fallback_phase"] == "METADATA"
     assert final["fallback_reason_code"] == "UNSUPPORTED_REVISION_MARKUP"
     assert final["baseline_sha"] == expected
 
@@ -311,7 +316,8 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
                       C0_RUN_JOBS_SYNCHRONOUSLY=True)
-    engine = SimpleNamespace(make_student=lambda source, target: shutil.copyfile(source, target),
+    engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
+                                 target, "class"),
                              CLASS_TEMPLATE="unused-class-template.docx",
                              DEFAULT_TEMPLATE="unused-1v1-template.docx")
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
@@ -323,7 +329,7 @@ def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
     monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: plan)
 
     def render(_source, _plan, output):
-        Path(output).write_bytes(make_docx())
+        write_product_fixture(output, "class")
         return SimpleNamespace(output_path=str(output), resource_report={"unsupported": []},
                                package_report={"valid": True, "errors": []})
 
@@ -492,7 +498,8 @@ def _post_files(client, files):
 
 
 def _fake_render_slots(source, _plan, output):
-    Path(output).write_bytes(make_docx())
+    template_type = "class" if _plan.slot_labels.get("final") == "六、出门测试" else "1v1"
+    write_product_fixture(output, template_type)
     return SimpleNamespace(output_path=str(output), inserted_nodes=1,
                            resource_report={"unsupported": []},
                            package_report={"valid": True, "errors": []})

@@ -30,6 +30,8 @@ class LessonMetadata:
     training_titles: tuple[str, ...] = ()
     objectives_source: str = ""
     difficulties_source: str = ""
+    objectives_reason: str = ""
+    difficulties_reason: str = ""
 
     @property
     def full_objectives(self) -> str:
@@ -145,7 +147,7 @@ _ORDERED_HEADER_RE = re.compile(r"^[一二三四五六七八九十]+[、.． ](.
 _NUMBERED_QUESTION_RE = re.compile(r"^\s*(\d{1,3})\s*[.．、)）]")
 
 
-def _source_lines(source_path: str | Path) -> list[str]:
+def read_lesson_source_lines(source_path: str | Path) -> list[str]:
     document = Document(str(source_path))
     lines: list[str] = []
     body = document.element.body
@@ -165,6 +167,9 @@ def _source_lines(source_path: str | Path) -> list[str]:
         if text:
             lines.append(text)
     return lines
+
+
+_source_lines = read_lesson_source_lines
 
 
 def _extract_explicit_fields(lines: list[str]) -> tuple[str, str]:
@@ -315,18 +320,19 @@ def resolve_lesson_metadata(
     subject: str,
     topic: str,
     knowledge_point_status: str,
+    source_lines: list[str] | None = None,
 ) -> LessonMetadata:
     """Prefer source fields; otherwise reuse deterministic offline rules."""
-    if knowledge_point_status not in ("KNOWLEDGE_POINT_PRESENT", "NO_KNOWLEDGE_POINT"):
+    if knowledge_point_status not in ("UNKNOWN", "KNOWLEDGE_POINT_PRESENT", "NO_KNOWLEDGE_POINT"):
         raise LessonMetadataUnavailable("knowledge-point status is unresolved")
-    lines = _source_lines(source_path)
+    lines = list(source_lines) if source_lines is not None else read_lesson_source_lines(source_path)
     objectives, difficulties = _extract_explicit_fields(lines)
     titles = _training_titles(lines)
     sources: list[str] = ["SOURCE" if objectives else "", "SOURCE" if difficulties else ""]
 
     missing_objectives = not objectives
     missing_difficulties = not difficulties
-    if missing_objectives or missing_difficulties:
+    if (missing_objectives or missing_difficulties) and knowledge_point_status != "UNKNOWN":
         if knowledge_point_status == "NO_KNOWLEDGE_POINT":
             derived_objectives, derived_difficulties = _training_metadata(topic, titles)
             rule_source = "TRAINING_TYPE_HEADINGS"
@@ -342,10 +348,13 @@ def resolve_lesson_metadata(
             difficulties = derived_difficulties.strip()
             sources[1] = rule_source if difficulties else ""
 
-    if not objectives or not difficulties:
-        raise LessonMetadataUnavailable(
-            "source fields and approved deterministic rules did not supply both cover fields")
     unique_sources = list(dict.fromkeys(item for item in sources if item))
+    objective_reason = "" if objectives else (
+        "KNOWLEDGE_STATUS_UNRESOLVED" if knowledge_point_status == "UNKNOWN"
+        else "NO_RELIABLE_OBJECTIVES_SOURCE")
+    difficulties_reason = "" if difficulties else (
+        "KNOWLEDGE_STATUS_UNRESOLVED" if knowledge_point_status == "UNKNOWN"
+        else "NO_RELIABLE_DIFFICULTIES_SOURCE")
     return LessonMetadata(
         objectives=objectives,
         difficulties=difficulties,
@@ -354,4 +363,6 @@ def resolve_lesson_metadata(
         training_titles=titles,
         objectives_source=sources[0],
         difficulties_source=sources[1],
+        objectives_reason=objective_reason,
+        difficulties_reason=difficulties_reason,
     )

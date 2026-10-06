@@ -378,7 +378,7 @@ def test_publication_restart_reuses_valid_final_roles_without_deleting_them(
     assert final['publication']['published'].keys() == {'teacher', 'student'}
 
 
-def test_restart_rebinds_only_unpublished_role_after_valid_docx_zip_metadata_changes(
+def test_restart_reuses_normalized_hash_after_renderer_zip_metadata_changes(
         client, renderer, monkeypatch):
     import app as app_module
     import template_slot_composer
@@ -439,7 +439,11 @@ def test_restart_rebinds_only_unpublished_role_after_valid_docx_zip_metadata_cha
     final = service().get(job_id)
     assert final['status'] == 'done', final.get('error')
     assert old_expected['student'] != regenerated_hashes['student']
-    assert final['publication']['expected_sha256']['student'] == regenerated_hashes['student']
+    normalized_student_hash = final['product_normalization']['outputs']['student']['output_sha256']
+    assert final['publication']['expected_sha256']['student'] == normalized_student_hash
+    # The normalizer rewrites package timestamps deterministically, so a raw
+    # renderer ZIP timestamp change does not change the published artifact.
+    assert normalized_student_hash == old_expected['student']
     assert final['publication']['expected_sha256']['teacher'] == old_expected['teacher']
     assert sha256(published_teacher.read_bytes()).hexdigest() == teacher_hash_before
     assert published_teacher.read_bytes() == teacher_bytes_before
