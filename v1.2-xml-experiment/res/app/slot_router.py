@@ -842,15 +842,26 @@ def build_slot_routing_plan(
                 candidate_routes, template_type)]
             if owner is not None
         }
-        # Once a table is proven to belong to one complete top-level QG, its
-        # paragraphs follow that QG. This removes route changes introduced by
-        # false section labels inside the table while leaving genuine explicit
-        # section boundaries and candidate splits fail-closed above.
-        unique_table_owners = {owner.unit_id: (owner, destination)
-                               for owner, destination in atomic_table_owners.values()}
-        for owner, destination in unique_table_owners.values():
+        # A non-heading cell label can leak its default section route forward.
+        # Repair only that label's physical interval, stopping at the next
+        # section boundary; never overwrite the whole QG, which could erase a
+        # later explicit heading or a second table's genuine slot conflict.
+        for table_seq, (owner, destination) in atomic_table_owners.items():
+            end_seq = table_seq
+            has_non_heading_cell_label = any(
+                section.start_seq == table_seq
+                and not any(_is_top_level_paragraph_node(snapshot, node_id)
+                            for node_id in section.node_ids)
+                and not _is_explicit_section_heading(section.text, template_type)
+                for section in sections
+            )
+            if has_non_heading_cell_label:
+                later_boundaries = [section.start_seq for section in sections
+                                    if table_seq < section.start_seq <= owner.end_seq]
+                end_seq = min(later_boundaries) - 1 if later_boundaries else owner.end_seq
             for seq in owner.seqs:
-                routes[seq] = destination
+                if table_seq <= seq <= end_seq:
+                    routes[seq] = destination
 
         # Every semantic unit with question ownership must agree with its
         # containing slot. Answer/analysis under knowledge sections remain in
@@ -876,7 +887,11 @@ def build_slot_routing_plan(
                         # A connected bound material is allowed to follow its
                         # question; all other section ownership conflicts fail.
                         if not (unit.role == "shared_material" and seq in routes):
-                            raise SlotRoutingError("SLOT_ROUTING_SECTION_CONFLICT",
+                            code = ("TABLE_SLOT_CONFLICT"
+                                    if unit.role == "question_group"
+                                    and snapshot.document.blocks[seq].kind == "table"
+                                    else "SLOT_ROUTING_SECTION_CONFLICT")
+                            raise SlotRoutingError(code,
                                                    "unit %s crosses its explicit section boundary" % unit.unit_id)
 
         # One question group is an indivisible semantic block. Role overlap

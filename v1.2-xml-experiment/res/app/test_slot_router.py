@@ -246,6 +246,21 @@ class SlotRouterTests(unittest.TestCase):
         self.assertFalse(any(span.start == "b4" for slot in ("knowledge", "final")
                              for span in plan.slots[slot]))
 
+    def test_measurement_table_label_does_not_erase_later_explicit_table_conflict(self):
+        blocks = ["知识精讲", "电路基础", "即时训练", "实验题题干",
+                  ("table", ["L1两端电压/V", "1.9", "1.0", "2.9"]),
+                  "继续分析", ("table", ["巩固练习", "1. 根据实验结论回答"]),
+                  "说明理由"]
+        units = [self._unit("s_knowledge", "section", "b0"),
+                 self._unit("s_immediate", "section", "b2"),
+                 self._unit("q1", "question_group", "b3", "b7", parent="s_immediate"),
+                 self._unit("cell_label", "section", "b4.r0c0.n0"),
+                 self._unit("explicit_final", "section", "b6.r0c0.n0")]
+        source, snapshot = self._snapshot(blocks, units)
+        with self.assertRaises(SlotRoutingError) as raised:
+            build_slot_routing_plan(source, "1v1", snapshot=snapshot)
+        self.assertEqual(raised.exception.reason_code, "TABLE_SLOT_CONFLICT")
+
     def test_training_only_two_question_group_keeps_whole_questions_without_fabricating_final(self):
         blocks = ["题型01 物质构成", "1. question one", "2. question two"]
         units = [self._unit("s0", "section", "b0"),
