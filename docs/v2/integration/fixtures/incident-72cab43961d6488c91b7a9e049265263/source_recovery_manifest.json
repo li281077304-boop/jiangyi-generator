@@ -1,0 +1,91 @@
+{
+  "fixture_id": "incident-72cab43961d6488c91b7a9e049265263",
+  "status": "RECOVERED_IMMUTABLE_SOURCE_PAIR",
+  "recovery_scan": {
+    "roots": [
+      "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+      "C:\\xml-uat\\c4-product-recovery\\corpus"
+    ],
+    "zip_archives_scanned": 254,
+    "members_scanned": 988,
+    "extracted_bytes": 2948814507,
+    "path_traversal_rejections": 0,
+    "non_zip_members_with_zip_extension": [
+      {
+        "zip": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00089_d00\\第十六章 电压 电阻\\第2节 串、并联电路中电压的规律\\第2节 串、并联电路中电压的规律 （培优考点练）物理人教版2024九年级全一册.zip",
+        "error": "BadZipFile('File is not a zip file')"
+      },
+      {
+        "zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\学科网资料20211021040001(6份) (1).zip",
+        "error": "BadZipFile('File is not a zip file')"
+      }
+    ]
+  },
+  "excluded_source_classes": [
+    "生成讲义结果",
+    "publication outputs",
+    "runtime outputs"
+  ],
+  "items": [
+    {
+      "filename": "九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx",
+      "role": "student/original-paper",
+      "sha256": "c66f88d26f1fae9306442ef8e1f55a807d3e705edaa37e57334d4499d3c6a009",
+      "bytes": 2179707,
+      "fixture_path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\docs\\v2\\integration\\fixtures\\incident-72cab43961d6488c91b7a9e049265263\\九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx",
+      "original_corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+      "original_outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-3.zip",
+      "zip_chain": [
+        {
+          "archive": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-3.zip",
+          "member": "期末模拟卷/期末复习（易错精选60题27大考点）九年级物理上学期新教材人教版.zip"
+        },
+        {
+          "archive": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00041_d00\\期末模拟卷\\期末复习（易错精选60题27大考点）九年级物理上学期新教材人教版.zip",
+          "member": "九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx"
+        }
+      ],
+      "textual_identity": {
+        "topic_title_present": 1,
+        "27_exam_point_headings": 27,
+        "question_start_markers": 77,
+        "paragraphs": 401,
+        "tables": 4,
+        "images": 62,
+        "omml": 2,
+        "answer_tag_count": 0,
+        "solution_tag_count": 0
+      }
+    },
+    {
+      "filename": "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx",
+      "role": "teacher/answer-rich",
+      "sha256": "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+      "bytes": 2849764,
+      "fixture_path": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\docs\\v2\\integration\\fixtures\\incident-72cab43961d6488c91b7a9e049265263\\九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx",
+      "original_corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+      "original_outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-3.zip",
+      "zip_chain": [
+        {
+          "archive": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-3.zip",
+          "member": "期末模拟卷/期末复习（易错精选60题27大考点）九年级物理上学期新教材人教版.zip"
+        },
+        {
+          "archive": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00041_d00\\期末模拟卷\\期末复习（易错精选60题27大考点）九年级物理上学期新教材人教版.zip",
+          "member": "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx"
+        }
+      ],
+      "textual_identity": {
+        "topic_title_present": 1,
+        "27_exam_point_headings": 27,
+        "question_start_markers": 78,
+        "paragraphs": 905,
+        "tables": 4,
+        "images": 81,
+        "omml": 127,
+        "answer_tag_count": 49,
+        "solution_tag_count": 59
+      }
+    }
+  ]
+}

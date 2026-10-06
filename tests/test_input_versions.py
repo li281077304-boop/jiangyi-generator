@@ -41,6 +41,17 @@ def test_paired_sources_preserve_the_supplied_student_file():
     assert result.teacher_index == 1 and result.student_index == 0
 
 
+def test_parenthesized_answer_and_original_paper_suffixes_pair_directly():
+    teacher = make_docx("题目", "【答案】A", "【解析】过程")
+    student = make_docx("题目")
+    result = classify_inputs([
+        ("九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx", teacher),
+        ("九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx", student),
+    ])
+    assert result.input_version == "TEACHER_AND_STUDENT"
+    assert result.teacher_index == 0 and result.student_index == 1
+
+
 def test_generic_pair_uses_answer_structure_but_never_file_size():
     result = classify_inputs([
         ("input.docx", make_docx("题目", "【答案】A", "【解析】过程")),

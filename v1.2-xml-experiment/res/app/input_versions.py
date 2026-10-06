@@ -25,8 +25,8 @@ class InputClassification:
 _TEACHER_NAME = re.compile(r"(?:教师版|教师|老师|解析版|答案版|teacher|answer|solution)", re.I)
 _STUDENT_NAME = re.compile(r"(?:学生版|学生|空白版|原卷|无答案|student|blank)", re.I)
 _ROLE_SUFFIX = re.compile(
-    r"[\s._-]*(?:教师版|教师|老师|学生版|学生|空白版|原卷|无答案|答案版|答案|解析版|解析|"
-    r"teacher|student|answer|solution|blank)$", re.I,
+    r"[\s._（(【\[\-]*(?:教师版|教师|老师|学生版|学生|空白版|原卷版|原卷|无答案|答案版|答案|解析版|解析|"
+    r"teacher|student|answer|solution|blank)[）)】\]]?$", re.I,
 )
 _ANSWER_MARKER = re.compile(
     r"(?:【\s*(?:答案|解析|分析)\s*】|参考答案|参考解析|答案\s*[:：]|解析\s*[:：])"

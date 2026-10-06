@@ -70,7 +70,10 @@ MODULE2_END_DIVIDER_TARGET_Y = {
 }
 # Fixed exact line height for each existing interval after the module-2 heading.
 MODULE2_END_DIVIDER_SPACER_PT = {
-    "1v1": 21.0,
+    # WPS PDF measurement of the V0.9-normalized physics pair showed the
+    # 1v1 divider bottom 17.38pt below its 760.3pt target at 21pt x 13
+    # intervals. 19.65pt moves the existing divider to the measured target.
+    "1v1": 19.65,
     "class": 22.0,
 }
 # The headings and divider occupy fixed positions inside the template's merged

@@ -216,6 +216,8 @@ def _content_cell_paragraphs(doc):
 def test_module2_end_divider_targets_are_template_specific_and_distinct():
     assert MODULE2_END_DIVIDER_TARGET_Y['1v1']!=MODULE2_END_DIVIDER_TARGET_Y['class']
     assert MODULE2_END_DIVIDER_SPACER_PT['1v1']!=MODULE2_END_DIVIDER_SPACER_PT['class']
+    assert MODULE2_END_DIVIDER_SPACER_PT['1v1']==19.65
+    assert MODULE2_END_DIVIDER_SPACER_PT['class']==22.0
     # The anchor must sit above the footer band of its own template, with a
     # measured clearance rather than a physical page-edge placement.
     for template,footer_top in (('1v1',792.25),('class',769.90)):
