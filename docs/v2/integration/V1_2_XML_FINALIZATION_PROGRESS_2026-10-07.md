@@ -84,3 +84,12 @@ Build an ordered, unique canonical map that validates each complete question occ
 - Pair projection and Route Once production path: blocked by the real source mismatches above.
 - Fixed 48-topic coverage, OCR production ownership proof, Direct DOCX/ZIP browser UAT, WPS generation round trips, complete regression, Windows EXE build/UAT: not run; release remains gated off.
 - No C4 release, EXE, tag, Installer, or V0.9 normal fallback was used.
+
+### Run Journal — alignment safety round (2026-10-07)
+
+- Worker: primary Codex agent; the active runtime did not expose a verifiable model label, so this entry does not claim GPT-6 Luna.
+- Base SHA: `cd7e4019ca3dcb8f0d95427e8300d72d7ae29031`.
+- Machine gate: focused alignment **11 passed / 3 failed**; `py_compile` PASS; `git diff --check` PASS (line-ending warnings only).
+- Chief: Codex GPT-6.1 Sol, limited review verdict `PASS` for student XML underline-blank provenance and OMML placement checks only. Pair alignment/product verdict remains BLOCKED.
+- Next action: resolve or formally retain the question 27 image-vs-options mismatch and X12.4 occurrence tail mismatch from source evidence; do not weaken fail-closed.
+- Commit/push: implementation and evidence checkpoint `3ed8f6d424cedaeb65f36b260231c5ef8aa27fd4` pushed to `origin/feature/v1.2-c4-release-engineering`; remote HEAD verified equal. Other pre-existing working-tree edits remain uncommitted and preserved.
