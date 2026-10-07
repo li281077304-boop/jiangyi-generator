@@ -1,0 +1,271 @@
+{
+  "model": "GPT-6 Luna",
+  "base_head": "cd75f34db45dd174c550d1f681a8ab2ea51c4d67",
+  "tested_code_base": "c4f2a8805137959725db0703569abd426d93016d",
+  "denominator": 33,
+  "baseline": {
+    "pass": 2,
+    "topic_indexes": [
+      10,
+      11
+    ],
+    "evidence_sha256": "69afd655dba3af20affcde4a18a4142589b44a3fd49583fac47517c6d042381c"
+  },
+  "r1a": {
+    "runner_xml_pass": 1,
+    "topic_indexes": [
+      11
+    ],
+    "new_pass": [],
+    "lost_pass": [
+      10
+    ],
+    "evaluation_sha256": "5c8b240949b6a9ca3d421c958e6e4bc7fd28b3e34ba4fd3a472289ab5ea7a7be"
+  },
+  "r1b": {
+    "runner_xml_pass": 0,
+    "topic_indexes": [],
+    "new_pass": [],
+    "lost_pass": [
+      10,
+      11
+    ],
+    "processed_topics": 33,
+    "hash_checks": 67,
+    "all_hash_checks_match": true,
+    "reason_counts": {
+      "paired sources contain different real question occurrence counts": 15,
+      "paired input has no question-group sequence": 1,
+      "student numbered source candidate lacks one unique teacher occurrence": 5,
+      "paired question occurrences contain different explicit subquestion sets": 5,
+      "ordered question occurrence stems do not match by an allowed exact relation": 1,
+      "teacher continuation has multiple exact structural counterparts": 2,
+      "complete unnumbered question continuation or resource sequence differs": 1,
+      "DOCX 展开大小超过安全上限": 1,
+      "paired question occurrence labels/order differ": 1,
+      "teacher annotation piece has no unique preceding canonical question": 1
+    },
+    "topics": [
+      {
+        "index": 1,
+        "topic": "1.1 物质的变化和性质 第1课时(讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 2,
+        "topic": "1.1 物质的变化和性质 第2课时(讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 3,
+        "topic": "1.2 化学实验与科学探究(题型专练)",
+        "xml_pass": false,
+        "reason": "paired input has no question-group sequence"
+      },
+      {
+        "index": 4,
+        "topic": "2.1 我们周围的空气 第1课时(讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 5,
+        "topic": "2.2 氧气(讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 6,
+        "topic": "专题02 电压 电阻&欧姆定律(期末复习讲义)",
+        "xml_pass": false,
+        "reason": "student numbered source candidate lacks one unique teacher occurrence"
+      },
+      {
+        "index": 7,
+        "topic": "专题04 电功率(期末专项训练)",
+        "xml_pass": false,
+        "reason": "paired question occurrences contain different explicit subquestion sets"
+      },
+      {
+        "index": 8,
+        "topic": "专题1.5 有理数的乘除(高效培优讲义)数学新教材沪科版七年级上册",
+        "xml_pass": false,
+        "reason": "paired question occurrences contain different explicit subquestion sets"
+      },
+      {
+        "index": 9,
+        "topic": "专题1.6 有理数的乘方与近似数(高效培优讲义)数学新教材沪科版七年级上册",
+        "xml_pass": false,
+        "reason": "ordered question occurrence stems do not match by an allowed exact relation"
+      },
+      {
+        "index": 10,
+        "topic": "专题12.4 一次函数的实际应用(高效培优讲义)数学新教材沪科版八年级上册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 11,
+        "topic": "九年级上学期物理期末复习(易错精选60题27大考点)",
+        "xml_pass": false,
+        "reason": "paired question occurrences contain different explicit subquestion sets"
+      },
+      {
+        "index": 12,
+        "topic": "第2节 分子动理论的初步知识(培优考点练)",
+        "xml_pass": false,
+        "reason": "teacher continuation has multiple exact structural counterparts"
+      },
+      {
+        "index": 13,
+        "topic": "第3节 串联和并联 (培优考点练)",
+        "xml_pass": false,
+        "reason": "teacher continuation has multiple exact structural counterparts"
+      },
+      {
+        "index": 14,
+        "topic": "专题05 二元一次方程组",
+        "xml_pass": false,
+        "reason": "student numbered source candidate lacks one unique teacher occurrence"
+      },
+      {
+        "index": 15,
+        "topic": "专题10 新定义型答案",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 16,
+        "topic": "专题06 二元一次方程组的应用",
+        "xml_pass": false,
+        "reason": "paired question occurrences contain different explicit subquestion sets"
+      },
+      {
+        "index": 17,
+        "topic": "专题08 不等式与不等式组应用",
+        "xml_pass": false,
+        "reason": "complete unnumbered question continuation or resource sequence differs"
+      },
+      {
+        "index": 18,
+        "topic": "专题02 平行线模型和辅助线 专题专练【重难点培优:知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 19,
+        "topic": "专题07 不等式与不等式组",
+        "xml_pass": false,
+        "reason": "student numbered source candidate lacks one unique teacher occurrence"
+      },
+      {
+        "index": 20,
+        "topic": "专题04 平面直角坐标系",
+        "xml_pass": false,
+        "reason": "student numbered source candidate lacks one unique teacher occurrence"
+      },
+      {
+        "index": 21,
+        "topic": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优:知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+        "xml_pass": false,
+        "reason": "DOCX 展开大小超过安全上限"
+      },
+      {
+        "index": 22,
+        "topic": "专题09 规律探索型",
+        "xml_pass": false,
+        "reason": "paired question occurrence labels/order differ"
+      },
+      {
+        "index": 23,
+        "topic": "专题11 存在性问题",
+        "xml_pass": false,
+        "reason": "paired question occurrences contain different explicit subquestion sets"
+      },
+      {
+        "index": 24,
+        "topic": "专题03 实数相关",
+        "xml_pass": false,
+        "reason": "student numbered source candidate lacks one unique teacher occurrence"
+      },
+      {
+        "index": 25,
+        "topic": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 (讲义)",
+        "xml_pass": false,
+        "reason": "teacher annotation piece has no unique preceding canonical question"
+      },
+      {
+        "index": 26,
+        "topic": "15.2 电流和电路(讲义)2026-2027年人教版物理九年级全一册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 27,
+        "topic": "15.4 电流的测量(讲义)2026-2027年人教版物理九年级全一册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 28,
+        "topic": "2026-2027年人教版物理九年级第十三章第三节 内能 (讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 29,
+        "topic": "15.3 串联电路和并联电路(讲义)2026-2027年人教版物理九年级全一册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 30,
+        "topic": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 (讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 31,
+        "topic": "13.3 热机效率(讲义)2026-2027年人教版物理九年级全一册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 32,
+        "topic": "15.1 两种电荷(讲义)2026-2027年人教版物理九年级全一册",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      },
+      {
+        "index": 33,
+        "topic": "2026-2027年人教版物理九年级第十四章第二节 热机 (讲义)",
+        "xml_pass": false,
+        "reason": "paired sources contain different real question occurrence counts"
+      }
+    ],
+    "evaluation_sha256": "6edb657f0c1641d5a0e7d30fc76ff7d8722c0dfd50867ef22fe5614248470d1f",
+    "runner_sha256": "6379abe7fe6bb66a42885f1646e6907c17303b9bd4b368cfae95e2e6294be892",
+    "patch_sha256": "1b3ff7e4747d5a13fa73dc93fedc8519957a656360cfcee582dea5d64ce151d9",
+    "changed_source_sha256": {
+      "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\v1.2-xml-experiment\\res\\app\\canonical_pair_alignment.py": "02832a75fc590de9e9c65d674de80b04931bf97f0bcec7187313ccb47b680751",
+      "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit\\v1.2-xml-experiment\\res\\app\\test_canonical_pair_alignment.py": "c463bb03e0b899a76d60ec4829305c1371aee9becfbb112599e7199ce7a8e989"
+    },
+    "working_diff_sha256": "4bdeb955f7855c9aae480b852db1a657a7638f5f2d32f8f5e01e844dd0ed1c2f",
+    "candidate_base_head": "cd75f34db45dd174c550d1f681a8ab2ea51c4d67",
+    "diagnostic_notes": {
+      "q21_raw_start": "A diagnostic helper recovered the exact student b183 and teacher b380 Q21 starts. This does not establish full alignment or XML PASS.",
+      "q2_resource": "Without the temporary textbox-equivalence experiment, the full pair remained blocked because _subquestion_resource_identity returns unprovable for textbox content.",
+      "textbox_experiment": "The temporary exact-textbox experiment was removed. Its 28/27 count result is not R1-B evidence and is not counted as a candidate outcome."
+    }
+  },
+  "family_tests": {
+    "command": "python -m pytest v1.2-xml-experiment/res/app/test_canonical_pair_alignment.py -k 'answer_explanation_subparts or section_heading_closes or subquestion_identity_normalizes_only_inline_cjk_spacing or frozen_q21 or numbered_knowledge_items or explicit_subquestion_mismatch or teacher_filled_gap' -q",
+    "passed": 7,
+    "deselected": 31
+  },
+  "decision": "FAIL_VALUE_GATE; do not retain or commit the R1 code/test candidate. Preserve only evidence and review notes. Pause implementation for alignment-abstraction review.",
+  "baseline_tested_code": "c4f2a8805137959725db0703569abd426d93016d",
+  "baseline_evidence_head": "cd75f34db45dd174c550d1f681a8ab2ea51c4d67"
+}

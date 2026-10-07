@@ -1,0 +1,75 @@
+{
+  "topic": "1.1 物质的变化和性质 第2课时",
+  "student_sha256": "9d99c793b5a7f0fd4b800729b096ebe18645058fd3bbf83eb624d786df329758",
+  "teacher_sha256": "1ccdcda89f832e7b3e5b82b6b302be4582af08ca031ab381d58fb691bf24f388",
+  "student_recovered": [
+    {
+      "seq": 183,
+      "number": 21,
+      "stem": "大国工匠樊再轩修复敦煌壁画时,所使用的矿物颜料在空气中长久不褪色,是因为",
+      "fingerprint": "d1d882990e059a0f1328bdc9b54bf63cfb8af4b5cc9933f10dd7adf790b1ad93",
+      "origin": "RAW_NUMBERED_PARAGRAPH"
+    }
+  ],
+  "teacher_recovered": [
+    {
+      "seq": 380,
+      "number": 21,
+      "stem": "大国工匠樊再轩修复敦煌壁画时,所使用的矿物颜料在空气中长久不褪色,是因为",
+      "fingerprint": "d1d882990e059a0f1328bdc9b54bf63cfb8af4b5cc9933f10dd7adf790b1ad93",
+      "origin": "RAW_NUMBERED_PARAGRAPH"
+    }
+  ],
+  "observed_blocks": {
+    "student": [
+      {
+        "seq": 183,
+        "text": "21．大国工匠樊再轩修复敦煌壁画时，所使用的矿物颜料在空气中长久不褪色，是因为",
+        "images": 0,
+        "math_count": 0,
+        "has_table": false,
+        "kind": "paragraph"
+      },
+      {
+        "seq": 184,
+        "text": "A．颜色鲜艳B．不溶于水C．密度较大D．化学性质稳定",
+        "images": 0,
+        "math_count": 0,
+        "has_table": false,
+        "kind": "paragraph"
+      }
+    ],
+    "teacher": [
+      {
+        "seq": 380,
+        "text": "21．大国工匠樊再轩修复敦煌壁画时，所使用的矿物颜料在空气中长久不褪色，是因为",
+        "images": 0,
+        "math_count": 0,
+        "has_table": false,
+        "kind": "paragraph"
+      },
+      {
+        "seq": 381,
+        "text": "A．颜色鲜艳B．不溶于水C．密度较大D．化学性质稳定",
+        "images": 0,
+        "math_count": 0,
+        "has_table": false,
+        "kind": "paragraph"
+      },
+      {
+        "seq": 382,
+        "text": "【答案】D",
+        "images": 0,
+        "math_count": 0,
+        "has_table": false,
+        "kind": "paragraph"
+      }
+    ]
+  },
+  "alignment_status": "UNRESOLVED_AFTER_RAW_START_RECOVERY",
+  "alignment_failure": {
+    "detail": "paired sources contain different real question occurrence counts",
+    "student_count": 28,
+    "teacher_count": 27
+  }
+}
