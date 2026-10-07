@@ -124,6 +124,21 @@ def test_canonical_pair_numbering_restarts_without_changing_route_or_content(tmp
         render_slots(str(plan.source_path),plan,str(output),display_renumbering=evidence,source_role=role)
         doc=Document(str(output))
         anchors=_find_anchor_paragraphs(doc,replace(plan,template_anchors=tuple(plan.slot_labels[slot] for slot in ('knowledge','immediate','final'))))
+        word_ns = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
+        numbering = doc.part.numbering_part.element
+        for slot in ('knowledge', 'immediate'):
+            num_id = anchors[slot].find('./{%s}pPr/{%s}numPr/{%s}numId' %
+                                        (word_ns, word_ns, word_ns)).get('{%s}val' % word_ns)
+            num = next(item for item in numbering.findall('{%s}num' % word_ns)
+                       if item.get('{%s}numId' % word_ns) == num_id)
+            abstract_id = num.find('{%s}abstractNumId' % word_ns).get('{%s}val' % word_ns)
+            abstract = next(item for item in numbering.findall('{%s}abstractNum' % word_ns)
+                            if item.get('{%s}abstractNumId' % word_ns) == abstract_id)
+            level = abstract.find('{%s}lvl' % word_ns)
+            number_style = level.find('{%s}rPr' % word_ns)
+            assert number_style is not None
+            assert number_style.find('{%s}b' % word_ns) is not None
+            assert number_style.find('{%s}sz' % word_ns).get('{%s}val' % word_ns) == '28'
         body_children=list(doc.element.body)
         tables=[node for node in body_children if node.tag==W_TBL]
         assert len(tables)==2

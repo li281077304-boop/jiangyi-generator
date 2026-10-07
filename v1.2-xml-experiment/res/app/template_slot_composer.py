@@ -506,6 +506,45 @@ def _clear_paragraph_numbering(paragraph) -> None:
         p_pr.remove(num_pr)
 
 
+def _synchronize_heading_number_style(document, paragraph) -> None:
+    """Make an automatic section number match its heading text run.
+
+    The frozen template stores the section number in ``numbering.xml`` while
+    the heading's bold/size live on its text run. Word/WPS applies the level's
+    run properties to the generated number, so copy the heading run properties
+    into this output document's matching numbering level. The template file
+    itself remains untouched.
+    """
+    p_pr = paragraph.find(W_PPR)
+    num_pr = p_pr.find(W + "numPr") if p_pr is not None else None
+    num_id_node = num_pr.find(W + "numId") if num_pr is not None else None
+    level_node = num_pr.find(W + "ilvl") if num_pr is not None else None
+    if num_id_node is None:
+        return  # Literal-number headings do not need numbering projection.
+    num_id = num_id_node.get(W + "val")
+    if not num_id or num_id == "0":
+        return  # The frozen template's explicit final heading uses numId=0.
+    level = level_node.get(W + "val", "0") if level_node is not None else "0"
+    numbering = document.part.numbering_part.element
+    num = next((item for item in numbering.findall(W + "num")
+                if item.get(W + "numId") == num_id), None)
+    abstract_id = (num.find(W + "abstractNumId") if num is not None else None)
+    abstract_id = abstract_id.get(W + "val") if abstract_id is not None else None
+    abstract = next((item for item in numbering.findall(W + "abstractNum")
+                     if item.get(W + "abstractNumId") == abstract_id), None)
+    lvl = next((item for item in abstract.findall(W + "lvl")
+                if item.get(W + "ilvl", "0") == level), None) if abstract is not None else None
+    runs = [run for run in paragraph.findall(W + "r") if run.find(W + "t") is not None]
+    run_properties = runs[0].find(W + "rPr") if runs else None
+    if lvl is None or run_properties is None:
+        raise SlotRoutingError("TEMPLATE_HEADING_NUMBER_STYLE_UNRESOLVED",
+                               "section heading numbering or text style is unresolved")
+    previous = lvl.find(W + "rPr")
+    if previous is not None:
+        lvl.remove(previous)
+    lvl.append(deepcopy(run_properties))
+
+
 def _set_cover_cell_value(cell, value: str) -> None:
     """Replace the value portion of a known cover cell while keeping its label.
 
@@ -803,6 +842,7 @@ def render_slots(
             # heading. Keep the frozen template file intact, but project the
             # user-approved template-specific label into this output copy.
             _set_paragraph_text(anchor, plan.slot_labels[slot])
+            _synchronize_heading_number_style(document, anchor)
             for element in offsets[slot]:
                 anchor.addnext(element)
                 anchor = element
