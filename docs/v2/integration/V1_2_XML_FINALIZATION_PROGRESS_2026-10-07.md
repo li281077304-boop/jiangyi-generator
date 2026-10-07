@@ -188,8 +188,10 @@ source-count versus topic-count contract.
   and parent `1b2419ed550fc4727fc659215fa58443e855b75b` are pushed; remote
   branch matched at the latest SHA. OCR NOTICE wording was corrected in the
   parent commit.
-- Codex GPT-6.1 Sol scoped re-review of `155fd72` is pending. The available
-  fixed-set manifest represents 27 files / 13 distinct fixed topics including
+- Codex GPT-6.1 Sol returned scoped `PASS` on `155fd72`: all four projection
+  families enter the shared order check; inverse partial overlap and mixed
+  order reject; corresponding nested/same-direction overlap pass. This is not
+  final product approval. The available fixed-set manifest represents 27 files / 13 distinct fixed topics including
   the incident pair, plus 20 additional topics (33 total, not 48). No current
   candidate XML coverage run has been performed; direct/ZIP browser UAT, fresh
   product-content checks, WPS round trips, final regression, final package OCR
