@@ -165,3 +165,33 @@ source-count versus topic-count contract.
   measurement, or EXE UAT has been run.
 - Overall status remains `V1_2_XML_FINAL_BLOCKED`. No build, tag, release, or
   installer was created.
+
+## Canonical projection order PATCH — 2026-10-07
+
+- The Chief's mixed-branch blocker is covered by a single global projection
+  relation check that includes paired section headings, complete unnumbered
+  question groups, explicit example/variant scopes, and ordinary residual
+  matches.
+- A pair of spans passes only when its directed interval relation matches in
+  teacher and student: before/after, equal, containing/within, and directed
+  partial overlap. Reversed source order or differing nesting/overlap direction
+  fails closed as `ALIGNMENT_AMBIGUOUS`.
+- Regression covers the requested `section S → residual A → unnumbered group G`
+  versus `section S → G → A` reversal, corresponding nested ranges, and the
+  inverse partial-overlap case raised during Chief review.
+- Final candidate canonical alignment suite: **31 passed** (326.38s), including
+  real X12.4 teacher/student projections for 1v1 and class. The two earlier
+  interval-check attempts each exposed real-source false positives and were
+  corrected before this final run.
+- `py_compile` and `git diff --check`: PASS (only repository LF/CRLF warnings).
+- Current implementation commit `155fd729dcd1148ae471398ec64b131bcf6cdc29`
+  and parent `1b2419ed550fc4727fc659215fa58443e855b75b` are pushed; remote
+  branch matched at the latest SHA. OCR NOTICE wording was corrected in the
+  parent commit.
+- Codex GPT-6.1 Sol scoped re-review of `155fd72` is pending. The available
+  fixed-set manifest represents 27 files / 13 distinct fixed topics including
+  the incident pair, plus 20 additional topics (33 total, not 48). No current
+  candidate XML coverage run has been performed; direct/ZIP browser UAT, fresh
+  product-content checks, WPS round trips, final regression, final package OCR
+  delta, and EXE UAT remain open. Overall status stays
+  `V1_2_XML_FINAL_BLOCKED`.
