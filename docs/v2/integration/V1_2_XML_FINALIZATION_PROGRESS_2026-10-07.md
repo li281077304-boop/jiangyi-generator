@@ -93,3 +93,27 @@ Build an ordered, unique canonical map that validates each complete question occ
 - Chief: Codex GPT-6.1 Sol, limited review verdict `PASS` for student XML underline-blank provenance and OMML placement checks only. Pair alignment/product verdict remains BLOCKED.
 - Next action: resolve or formally retain the question 27 image-vs-options mismatch and X12.4 occurrence tail mismatch from source evidence; do not weaken fail-closed.
 - Commit/push: implementation and evidence checkpoint `3ed8f6d424cedaeb65f36b260231c5ef8aa27fd4` pushed to `origin/feature/v1.2-c4-release-engineering`; remote HEAD verified equal. Other pre-existing working-tree edits remain uncommitted and preserved.
+
+## Current checkpoint correction — 2026-10-07
+
+The previous section “Alignment safety patch update” is historical and predates the latest focused repair. In the current candidate:
+
+- q27 student options are present in raw source blocks `b151-b154`; they were not missing from the incident source. The earlier progress note that compared only `b149-b150` was incomplete.
+- q26 A-D options in the teacher source are recovered from the physical interval after the choice stem and before its explicit answer marker, then matched as complete ordered option text to student `b147-b148`.
+- Canonical route projections now retain per-unit split evidence for A-Line answer/question-group ranges that span several physical slots. Each top-level block is still assigned exactly once; tables stay atomic; unbound and bound shared-material components fail closed when they cross slots.
+- The ordered occurrence-tail comparison sorts projected nodes by physical source position, even when a proven extension was appended after the initial A-Line range.
+- Codex GPT-6.1 Sol independently reviewed this canonical/route-once scope and returned `PASS`. This is not the final product Chief review.
+
+### Current machine evidence
+
+- Incident pair: teacher/student alignment and canonical plans for 1v1 and class **2 passed**.
+- X12.4 pair: 21 canonical occurrences and teacher/student plans for 1v1 and class **2 passed**; plan routes match the projected source-block routes, including cover metadata normalization.
+- Physical source order and unbound shared-material split safety **2 passed**.
+- Metadata, router, image-role, topic, real-source, and first-page focused tests: **70 passed**.
+- Job service/orchestrator focused tests: **33 passed** when the already available local OCR runtime probe was placed on `PYTHONPATH`. The base UAT venv itself does not have `rapidocr_onnxruntime` installed.
+- Selected module compilation, JavaScript syntax, and `git diff --check`: **PASS**.
+- Implementation checkpoint `9424c031fd9213a67f6fc12056aa7e104140ee62` is pushed; remote branch matched, worktree clean before this report update.
+
+### Gates still open
+
+The 48-topic fixed evaluation, additional-topic eligibility scan, real browser Direct 2 DOCX/ZIP UAT on this candidate, fresh rendered DOCX content review, WPS round trips for this candidate, measured final package OCR delta, final full regression, and packaged EXE UAT are not complete. The overall status remains `V1_2_XML_FINAL_BLOCKED`; no XML coverage percentage or final PASS is claimed.
