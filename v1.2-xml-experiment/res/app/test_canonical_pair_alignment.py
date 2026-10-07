@@ -689,7 +689,41 @@ def test_residual_projection_rejects_crossed_source_order():
             (10, 10, 20, 20), (14, 14, 19, 19),
         ])
     assert error.value.reason_code == "ALIGNMENT_AMBIGUOUS"
-    assert "cross source order" in str(error.value)
+    assert "cross or nest differently" in str(error.value)
+
+
+def test_residual_projection_rejects_crossing_between_section_residual_and_group():
+    # Student order: section S -> residual A -> unnumbered group G.
+    # Teacher order crosses the latter two: section S -> G -> A.
+    with pytest.raises(PairAlignmentError) as error:
+        _require_ordered_residual_projection([
+            (10, 10, 20, 20),  # paired section S
+            (14, 14, 31, 31),  # residual A
+            (20, 25, 25, 30),  # unnumbered group G
+        ])
+
+    assert error.value.reason_code == "ALIGNMENT_AMBIGUOUS"
+    assert error.value.evidence["teacher_relation"] == "before"
+    assert error.value.evidence["student_relation"] == "after"
+
+
+def test_residual_projection_allows_corresponding_nested_scopes():
+    _require_ordered_residual_projection([
+        (10, 30, 20, 40),  # outer explicit exercise scope
+        (14, 18, 24, 28),  # paired unnumbered group inside it
+        (20, 20, 30, 30),  # paired section heading, still ordered
+        (30, 35, 40, 45),  # same partial-overlap relation in both sources
+        (34, 39, 44, 49),
+    ])
+
+    with pytest.raises(PairAlignmentError) as error:
+        _require_ordered_residual_projection([
+            (10, 30, 20, 40),
+            (14, 18, 35, 42),  # same teacher containment, student partial overlap
+        ])
+    assert error.value.reason_code == "ALIGNMENT_AMBIGUOUS"
+    assert error.value.evidence["teacher_relation"] == "contains"
+    assert error.value.evidence["student_relation"] == "partial_overlap"
 
 
 @pytest.mark.parametrize("template_type", ["1v1", "class"])

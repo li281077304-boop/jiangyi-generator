@@ -44,11 +44,14 @@ licenses observed from the locked wheel metadata:
 | Shapely | 2.1.2 | BSD-3-Clause |
 | pyclipper | 1.4.0 | MIT |
 | PyYAML | 6.0.3 | MIT |
-| tqdm | 4.70.1 | MPL-2.0 / MIT |
+| tqdm | 4.70.1 | MPL-2.0 AND MIT |
 | six | 1.17.0 | MIT |
-| packaging | 26.2 | Apache-2.0 / BSD-2-Clause |
+| packaging | 26.2 | Not independently probed; the available metadata probe was for 26.3 (Apache-2.0 / BSD-2-Clause) |
 
-These identifiers were read from the exact pinned wheel metadata in the
-offline Windows runtime probe. This table identifies the OCR-specific runtime
-closure; it is not a complete notice for unrelated application dependencies
-or every native component's transitive notices.
+Except for packaging, these identifiers were read from the pinned wheel
+metadata in the offline Windows runtime probe. The probe inspected packaging
+26.3 while the release lock pins 26.2; its license identifiers are therefore
+not asserted here as verified metadata for the locked 26.2 wheel. This table
+identifies the OCR-specific runtime closure; it is not a complete notice for
+unrelated application dependencies or every native component's transitive
+notices.

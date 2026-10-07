@@ -2324,26 +2324,46 @@ def _block_projection_signature(snapshot, seq: int, source_path, *, exact_images
 
 
 def _require_ordered_residual_projection(spans: list[tuple[int, int, int, int]]) -> None:
-    """Reject residual peer maps that cross source order in either document.
+    """Reject residual peer maps whose interval relation differs by source.
 
     Each span is ``(teacher_start, teacher_end, student_start, student_end)``.
     A teacher-only annotation has no student span and is intentionally not
     passed here. Multi-block student projections, such as a teacher paragraph
     containing separate student options, are represented by one bounding span.
+    Matched scopes may contain another matched scope; that nesting is safe only
+    when the exact same containment relation holds in both documents.
     """
-    ordered = sorted(spans, key=lambda item: (item[0], item[1], item[2], item[3]))
-    previous = None
-    for current in ordered:
-        if previous is not None and (
-                current[0] <= previous[1] or current[2] <= previous[3]):
-            raise PairAlignmentError(
-                "ALIGNMENT_AMBIGUOUS",
-                "residual structural peers cross source order",
-                {"previous_teacher_span": [previous[0], previous[1]],
-                 "previous_student_span": [previous[2], previous[3]],
-                 "current_teacher_span": [current[0], current[1]],
-                 "current_student_span": [current[2], current[3]]})
-        previous = current
+    def relation(left_start: int, left_end: int, right_start: int,
+                 right_end: int) -> str:
+        if left_start == right_start and left_end == right_end:
+            return "equal"
+        if left_end < right_start:
+            return "before"
+        if right_end < left_start:
+            return "after"
+        if left_start <= right_start and left_end >= right_end:
+            return "contains"
+        if right_start <= left_start and right_end >= left_end:
+            return "within"
+        return "partial_overlap"
+
+    for index, left in enumerate(spans):
+        for right in spans[index + 1:]:
+            teacher_relation = relation(left[0], left[1], right[0], right[1])
+            student_relation = relation(left[2], left[3], right[2], right[3])
+            if teacher_relation != student_relation:
+                raise PairAlignmentError(
+                    "ALIGNMENT_AMBIGUOUS",
+                    "residual structural peer intervals cross or nest differently by source: "
+                    "%s vs %s (%s/%s)" % (
+                        [left[0], left[1]], [right[0], right[1]],
+                        teacher_relation, student_relation),
+                    {"left_teacher_span": [left[0], left[1]],
+                     "left_student_span": [left[2], left[3]],
+                     "right_teacher_span": [right[0], right[1]],
+                     "right_student_span": [right[2], right[3]],
+                     "teacher_relation": teacher_relation,
+                     "student_relation": student_relation})
 
 
 def _is_empty_layout_only_block(block) -> bool:
@@ -2915,6 +2935,7 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
     paired_section_heading_student_nodes: set[int] = set()
     paired_section_heading_teacher_nodes: set[int] = set()
     paired_section_heading_spans: list[tuple[int, int, int, int]] = []
+    residual_projection_spans: list[tuple[int, int, int, int]] = []
     teacher_annotation_candidates = range(teacher_prefix_end, total_teacher)
     for teacher_seq in teacher_annotation_candidates:
         teacher_block = teacher_snapshot.document.blocks[teacher_seq]
@@ -2961,6 +2982,8 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
         paired_section_heading_student_nodes.add(student_seq)
         paired_section_heading_teacher_nodes.add(teacher_seq)
         paired_section_heading_spans.append(
+            (teacher_seq, teacher_seq, student_seq, student_seq))
+        residual_projection_spans.append(
             (teacher_seq, teacher_seq, student_seq, student_seq))
         for occurrence in occurrence_evidence:
             for field in ("teacher_nodes", "source_teacher_nodes",
@@ -3058,6 +3081,9 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
             teacher_routes[teacher_seq] = destination
         matched_student_group_nodes.update(student_group["nodes"])
         matched_teacher_group_nodes.update(teacher_group["nodes"])
+        residual_projection_spans.append((
+            teacher_group["start"], teacher_group["end"],
+            student_group["start"], student_group["end"]))
         residual_map.append({
             "student_unit_id": student_group["unit_id"],
             "teacher_unit_id": teacher_group["unit_id"],
@@ -3253,6 +3279,12 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
                 {"student_interval": [student_scope["start"], student_scope["end"]],
                  "teacher_interval": [teacher_scope["start"], teacher_scope["end"]]})
         example_alignment = paths[0]
+        # The full exact exercise scope is one order-preserving projection.
+        # Teacher-only annotation blocks may sit inside the scope, but must not
+        # disappear from the global order check against other residual units.
+        residual_projection_spans.append((
+            teacher_scope["start"], teacher_scope["end"],
+            student_scope["start"], student_scope["end"]))
         student_destinations = {
             canonical_student_routes.get(seq) for seq in student_scope["nodes"]}
         if (len(student_destinations) != 1
@@ -3388,8 +3420,6 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
         teacher_residuals.setdefault(key, []).append(seq)
 
     consumed_student_residuals: set[int] = set()
-    residual_projection_spans: list[tuple[int, int, int, int]] = list(
-        paired_section_heading_spans)
     for key, teacher_nodes in teacher_residuals.items():
         student_nodes = student_residuals.get(key, [])
         if len(teacher_nodes) == 1 and not student_nodes:
