@@ -2341,11 +2341,15 @@ def _require_ordered_residual_projection(spans: list[tuple[int, int, int, int]])
             return "before"
         if right_end < left_start:
             return "after"
+        if left_start < right_start and left_end < right_end:
+            return "partial_before"
+        if right_start < left_start and right_end < left_end:
+            return "partial_after"
         if left_start <= right_start and left_end >= right_end:
             return "contains"
         if right_start <= left_start and right_end >= left_end:
             return "within"
-        return "partial_overlap"
+        raise ValueError("interval relation is not classifiable")
 
     for index, left in enumerate(spans):
         for right in spans[index + 1:]:

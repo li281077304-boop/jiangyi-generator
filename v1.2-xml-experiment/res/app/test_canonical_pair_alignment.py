@@ -723,7 +723,20 @@ def test_residual_projection_allows_corresponding_nested_scopes():
         ])
     assert error.value.reason_code == "ALIGNMENT_AMBIGUOUS"
     assert error.value.evidence["teacher_relation"] == "contains"
-    assert error.value.evidence["student_relation"] == "partial_overlap"
+    assert error.value.evidence["student_relation"] == "partial_before"
+
+
+def test_residual_projection_rejects_inverse_partial_overlap_order():
+    # Both pairs overlap, but their directed order is reversed across sources.
+    with pytest.raises(PairAlignmentError) as error:
+        _require_ordered_residual_projection([
+            (10, 20, 25, 35),
+            (15, 25, 20, 30),
+        ])
+
+    assert error.value.reason_code == "ALIGNMENT_AMBIGUOUS"
+    assert error.value.evidence["teacher_relation"] == "partial_before"
+    assert error.value.evidence["student_relation"] == "partial_after"
 
 
 @pytest.mark.parametrize("template_type", ["1v1", "class"])
