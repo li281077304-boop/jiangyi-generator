@@ -120,6 +120,9 @@ The 48-topic fixed evaluation, additional-topic eligibility scan, real browser D
 
 ## Follow-up PATCH work — 2026-10-07
 
+Checkpoint: `f57bce9ee67d81a7a85db2ac2a98615484bc8aab` (pushed; local and
+remote branch matched; worktree clean at checkpoint).
+
 ### Findings addressed in the current working change set
 
 - A real-source reproduction showed that the cover metadata title image was removed from the source-block selection and therefore absent from the rendered DOCX. Cover image paragraphs are now imported by the existing XML importer and relocated ahead of the uniquely resolved template cover table. A real X12.4 regression verifies the output still contains the exact original image SHA.
