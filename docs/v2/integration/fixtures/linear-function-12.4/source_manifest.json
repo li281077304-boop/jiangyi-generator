@@ -1,0 +1,24 @@
+{
+  "status": "IMMUTABLE_ORIGINAL_SOURCE_FIXTURE",
+  "provenance": "ORIGINAL_TRAINING_CORPUS",
+  "corpus_archive_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册.zip",
+  "archive_sha256": "350c9174feb9352df21333688c44beb0df3f9b43e6fe7dbd3a07d906f86954a7",
+  "archive_member_count": 2,
+  "files": [
+    {
+      "filename": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（解析版）.docx",
+      "zip_member": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（解析版）.docx",
+      "role": "teacher",
+      "bytes": 1413666,
+      "sha256": "6ac70b3647633f8562883e9c32729d10cfcb866794a2d80e4e12f9a979f8262d"
+    },
+    {
+      "filename": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（原卷版）.docx",
+      "zip_member": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（原卷版）.docx",
+      "role": "student",
+      "bytes": 1210602,
+      "sha256": "4929eaeb604962e34d866509782b2365693afbb95bd760af6618e9af1786e922"
+    }
+  ],
+  "not_from_generated_results": true
+}
