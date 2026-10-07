@@ -711,8 +711,16 @@ def render_slots(
     total = sum(len(items) for items in blocks_by_slot.values())
     excluded_ids = set(getattr(plan, "cover_metadata_blocks", ()))
     record_ids = {str(record.get("block_id")) for record in plan.block_records}
+    cover_image_blocks = [
+        BlockSpan(str(record["block_id"]), str(record["block_id"]))
+        for record in plan.block_records
+        if str(record.get("block_id")) in excluded_ids
+        and record.get("kind") == "paragraph"
+    ]
+    cover_image_ids = {span.start for span in cover_image_blocks}
     if (not total or total + len(excluded_ids) != len(plan.block_records)
-            or not excluded_ids <= record_ids):
+            or not excluded_ids <= record_ids
+            or len(cover_image_ids) != len(cover_image_blocks)):
         raise SlotRoutingError("SLOT_ROUTING_DUPLICATE_OR_MISSING_BLOCK",
                                "slot streams plus projected cover metadata do not partition the source")
     ids = [span.start for span in flat_blocks]
@@ -723,7 +731,8 @@ def render_slots(
         raise SlotRoutingError("SLOT_ROUTING_DUPLICATE_OR_MISSING_BLOCK",
                                "slot streams leave source blocks outside routed content and cover metadata")
 
-    rendered = render_minimal_fn(source_doc, str(plan.template_path), flat_blocks,
+    imported_blocks = flat_blocks + cover_image_blocks
+    rendered = render_minimal_fn(source_doc, str(plan.template_path), imported_blocks,
                                  str(output), plan.target)
     try:
         document = Document(str(output))
@@ -736,20 +745,35 @@ def render_slots(
         body = document.element.body
         insert_at = plan.target.body_child_index
         sectpr_index = next((i for i, child in enumerate(body) if child.tag == W_SECTPR), len(body))
-        if insert_at < 0 or insert_at + total > sectpr_index:
+        import_total = total + len(cover_image_blocks)
+        if insert_at < 0 or insert_at + import_total > sectpr_index:
             raise SlotRoutingError("TEMPLATE_SLOT_PAYLOAD_UNRESOLVED",
                                    "rendered body tail does not match the slot plan")
-        payloads = list(body)[insert_at:insert_at + total]
+        payloads = list(body)[insert_at:insert_at + import_total]
         if any(element.tag not in (W_P, W_TBL) for element in payloads):
             raise SlotRoutingError("TEMPLATE_SLOT_PAYLOAD_UNRESOLVED",
                                    "renderer tail contains a non-paragraph/table block")
+        slot_payloads = payloads[:total]
+        cover_payloads = payloads[total:]
+        if len(cover_payloads) != len(cover_image_blocks):
+            raise SlotRoutingError("TEMPLATE_SLOT_PAYLOAD_UNRESOLVED",
+                                   "renderer did not import each cover image occurrence")
+        blip_tag = "{http://schemas.openxmlformats.org/drawingml/2006/main}blip"
+        imagedata_tag = "{urn:schemas-microsoft-com:vml}imagedata"
+        for span, element in zip(cover_image_blocks, cover_payloads):
+            if (element.tag != W_P or not any(
+                    node.tag in (blip_tag, imagedata_tag) for node in element.iter())):
+                raise SlotRoutingError(
+                    "COVER_IMAGE_PROJECTION_UNRESOLVED",
+                    "cover image %s did not import as a complete image paragraph" % span.start,
+                )
         offsets: dict[str, list[object]] = {}
         cursor = 0
         for slot in SLOT_ORDER:
             count = len(blocks_by_slot[slot])
-            offsets[slot] = payloads[cursor:cursor + count]
+            offsets[slot] = slot_payloads[cursor:cursor + count]
             cursor += count
-        if cursor != len(payloads):
+        if cursor != len(slot_payloads):
             raise SlotRoutingError("TEMPLATE_SLOT_PAYLOAD_UNRESOLVED",
                                    "renderer imported a different number of physical blocks")
 
@@ -757,6 +781,22 @@ def render_slots(
 
         for element in payloads:
             body.remove(element)
+        if cover_payloads:
+            cover_table = _resolve_cover_table(document, plan.template_type)
+            if cover_table is None:
+                raise SlotRoutingError(
+                    "TEMPLATE_COVER_METADATA_UNRESOLVED",
+                    "cannot locate the unique cover table for source metadata images",
+                )
+            cover_table_element = cover_table._tbl
+            if cover_table_element.getparent() is not body:
+                raise SlotRoutingError(
+                    "TEMPLATE_COVER_METADATA_UNRESOLVED",
+                    "cover metadata table is not a direct body child",
+                )
+            insertion_index = body.index(cover_table_element)
+            for offset, element in enumerate(cover_payloads):
+                body.insert(insertion_index + offset, element)
         for slot in SLOT_ORDER:
             anchor = anchors[slot]
             # The 1v1 template shares the class template's printed knowledge
@@ -799,7 +839,7 @@ def render_slots(
             raise
         return SlotRenderResult(
             output_path=str(output),
-            inserted_nodes=total,
+            inserted_nodes=import_total,
             slot_nodes={slot: len(offsets[slot]) for slot in SLOT_ORDER},
             resource_report=rendered.resource_report,
             package_report=package_report,

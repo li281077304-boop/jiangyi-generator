@@ -117,3 +117,48 @@ The previous section “Alignment safety patch update” is historical and preda
 ### Gates still open
 
 The 48-topic fixed evaluation, additional-topic eligibility scan, real browser Direct 2 DOCX/ZIP UAT on this candidate, fresh rendered DOCX content review, WPS round trips for this candidate, measured final package OCR delta, final full regression, and packaged EXE UAT are not complete. The overall status remains `V1_2_XML_FINAL_BLOCKED`; no XML coverage percentage or final PASS is claimed.
+
+## Follow-up PATCH work — 2026-10-07
+
+### Findings addressed in the current working change set
+
+- A real-source reproduction showed that the cover metadata title image was removed from the source-block selection and therefore absent from the rendered DOCX. Cover image paragraphs are now imported by the existing XML importer and relocated ahead of the uniquely resolved template cover table. A real X12.4 regression verifies the output still contains the exact original image SHA.
+- Conflicting high-confidence OCR role cues now fail closed as `IMAGE_ROLE_AMBIGUOUS`; a production-classifier regression proves that a KNOWLEDGE_ASSET + TOPIC_CUE conflict cannot route through the knowledge slot.
+- The onedir build script now installs both the general Windows lock and the pinned OCR runtime lock. The OCR lock includes the observed ONNX Runtime dependencies `flatbuffers==25.12.19` and `protobuf==7.36.2`. The build audit checks OCR imports and includes the three model files and notice in required package inventory.
+- OCR notices now record the exact model source URLs, release manifest, verified model hashes, and OCR runtime package/version/license identifiers. The source models match the RapidOCR v3.9.2 published hashes.
+
+### Machine checks on the working change set
+
+- Canonical pair alignment + real source finalization tests: **35 passed** (333.21s), including incident/X12.4 cases, real cover-image resource retention, and ambiguous image-role rejection.
+- Real source finalization tests rerun separately: **7 passed**.
+- Image-role evidence + Slot Router focused tests: **30 passed**.
+- Latest combined real-source + image-role + Slot Router focused rerun: **37 passed** (4.56s).
+- Selected `py_compile`, PowerShell parser, OCR model SHA checks, and `git diff --check`: **PASS**.
+- No final package was built. The runtime-probe ZIP size is still not the final package delta.
+
+### Evaluation-set freeze and denominator correction
+
+The deterministic audit and hash-verified manifest are checked in under
+`docs/v2/integration/fixtures/v12-finalization-evaluation/`. It verifies 27/27
+fixed source-file hashes and 40/40 members for 20 additional distinct topics.
+The fixed baseline has **27 files but 13 distinct topic identities** after
+role variants are collapsed; the incident pair is X005/X006 and already one
+of those 13 topics. Thus the requested “27 fixed topics + incident + 20”
+denominator is inconsistent with the existing manifest. No evaluation XML run
+has occurred and no coverage percentage is claimed. The maximum currently
+evidenced distinct-topic denominator is 33 (13 fixed identities including
+incident + 20 additional identities), pending product-level decision on the
+source-count versus topic-count contract.
+
+### Gates still blocking
+
+- Codex GPT-6.1 Sol has not re-reviewed the current patched commit. The earlier
+  final alignment PATCH remains open until the reviewer confirms the residual
+  consumption and ordering guards on the exact candidate; a separate image/OCR
+  review found the image-preservation, ambiguity, build-lock, and attribution
+  blockers recorded above, now requiring re-review.
+- No current-candidate fixed-set XML run, Direct DOCX/ZIP browser UAT, full
+  product-content review, WPS round-trip, full regression, final OCR package
+  measurement, or EXE UAT has been run.
+- Overall status remains `V1_2_XML_FINAL_BLOCKED`. No build, tag, release, or
+  installer was created.

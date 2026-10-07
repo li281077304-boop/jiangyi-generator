@@ -806,6 +806,12 @@ def _validate_knowledge_image_ownership(snapshot: SemanticSnapshot,
         raise SlotRoutingError("IMAGE_EVIDENCE_SOURCE_MISMATCH",
                                "OCR image evidence is not bound to this source snapshot")
     for row in image_role_evidence.get("images", []):
+        if row.get("role") == "AMBIGUOUS":
+            raise SlotRoutingError(
+                "IMAGE_ROLE_AMBIGUOUS",
+                "conflicting OCR cues leave image ownership unresolved at %s" %
+                (row.get("source_node_id") or "unknown node"),
+            )
         if not (row.get("role") == "KNOWLEDGE_ASSET"
                 and row.get("confidence") == "HIGH_CONFIDENCE_CUE"
                 and row.get("actionable") is True):

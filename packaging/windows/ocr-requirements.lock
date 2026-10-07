@@ -2,6 +2,8 @@ rapidocr-onnxruntime==1.4.4
 onnxruntime==1.30.0
 opencv-python==5.0.0.93
 numpy==2.4.6
+flatbuffers==25.12.19
+protobuf==7.36.2
 Pillow==12.3.0
 Shapely==2.1.2
 pyclipper==1.4.0
