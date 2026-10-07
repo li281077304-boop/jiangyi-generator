@@ -116,9 +116,17 @@ def build_cover_display(metadata: LessonMetadata, template_type: str, *, topic: 
         origin = getattr(metadata, field + "_source") or metadata.source
         if origin in ("TRAINING_TYPE_HEADINGS", "V09_OFFLINE_RULE"):
             if origin == "TRAINING_TYPE_HEADINGS":
-                anchors = [*metadata.training_titles[:1], "本专题"]
-                pattern = ("掌握{anchor}题型方法；规范分析与解答。" if field == "objectives" else
-                           "重点：{anchor}题型与方法；难点：条件分析与易错辨析。")
+                # The first subsection is not representative of a training
+                # sheet with many independently named question groups. Keep
+                # cover text concise and describe the source's overall role;
+                # the full source-derived group titles remain in metadata.
+                values[field] = (
+                    "掌握本专题主要题型及解题方法；规范分析与解答。"
+                    if field == "objectives" else
+                    "重点：常见题型与解题方法；难点：综合分析与易错辨析。"
+                )
+                methods[field] = "SHORT_TRAINING_RULE"
+                continue
             else:
                 anchors = [topic, "本专题"] if topic else ["本专题"]
                 pattern = ("掌握{anchor}概念与方法；规范推理与解答。" if field == "objectives" else
@@ -319,9 +327,24 @@ def _training_titles(lines: list[str]) -> tuple[str, ...]:
     result: list[str] = []
     for line in lines:
         match = _TITLE.match(line)
-        if not match:
-            continue
-        title = re.sub(r"[\t ]+\d+$", "", match.group(1)).strip(" ：:、.-")
+        if match:
+            title = match.group(1)
+        else:
+            # Real exam/worksheet sources commonly list each training block
+            # as an ordered heading ("一．...（共2小题）") rather than using
+            # an explicit 题型/专题 label. Keep the source title, but remove
+            # only its structural question-count suffix.
+            ordered = _ORDERED_HEADER_RE.match(line)
+            if not ordered:
+                continue
+            title = ordered.group(1)
+            title = re.sub(r"\s*[（(]\s*共\s*\d+\s*(?:道\s*)?(?:小题|题)\s*[）)]\s*$", "", title)
+            if title.strip() in {
+                "课堂启动", "知识回顾", "知识精讲", "即时训练",
+                "归纳总结", "巩固练习", "出门测试", "参考答案", "答案与解析",
+            }:
+                continue
+        title = re.sub(r"[\t ]+\d+$", "", title).strip(" ：:、.-")
         if title and len(title) <= 48 and not _QUESTION.match(title) and title not in result:
             result.append(title)
     return tuple(result[:5])

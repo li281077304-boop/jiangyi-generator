@@ -8,7 +8,7 @@ from pathlib import Path
 
 from docx import Document
 
-from lesson_metadata import (LessonMetadataUnavailable, read_lesson_source_lines,
+from lesson_metadata import (LessonMetadataUnavailable, build_cover_display, read_lesson_source_lines,
                              resolve_lesson_metadata)
 
 
@@ -59,6 +59,32 @@ class LessonMetadataTests(unittest.TestCase):
         self.assertEqual(result.training_titles, ("物质的构成", "分子热运动"))
         self.assertIn("物质的构成", result.objectives)
         self.assertIn("分子热运动", result.difficulties)
+        for prohibited in ("核心知识点", "核心概念", "知识体系"):
+            self.assertNotIn(prohibited, result.objectives + result.difficulties)
+
+    def test_training_only_uses_ordered_real_exam_section_titles(self):
+        path = self._source("ordered-exam-headings.docx", paragraphs=[
+            "九年级上学期物理期末复习（易错精选60题27大考点）",
+            "一．热传递改变物体的内能（共2小题）",
+            "二．做功改变物体的内能（共2小题）",
+            "三．比热容的计算公式（共2小题）",
+            "1．根据题目条件判断热传递方式。",
+        ])
+        result = resolve_lesson_metadata(
+            path, subject="物理", topic="易错题精选",
+            knowledge_point_status="NO_KNOWLEDGE_POINT",
+        )
+        self.assertEqual(result.source, "TRAINING_TYPE_HEADINGS")
+        self.assertEqual(result.training_titles, (
+            "热传递改变物体的内能", "做功改变物体的内能", "比热容的计算公式",
+        ))
+        self.assertTrue(result.objectives)
+        self.assertTrue(result.difficulties)
+        for template in ("1v1", "class"):
+            display = build_cover_display(result, template, topic="易错题精选")
+            self.assertIn("主要题型", display["objectives"])
+            self.assertIn("易错辨析", display["difficulties"])
+            self.assertNotIn("热传递", display["objectives"] + display["difficulties"])
         for prohibited in ("核心知识点", "核心概念", "知识体系"):
             self.assertNotIn(prohibited, result.objectives + result.difficulties)
 

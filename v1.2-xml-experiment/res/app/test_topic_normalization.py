@@ -13,6 +13,12 @@ def test_topic_keeps_core_and_strips_known_course_and_marketing_tail():
     ) == "专题12.4 一次函数的实际应用"
 
 
+def test_counted_final_review_title_is_shortened_to_its_source_descriptor():
+    assert normalize_display_topic(
+        "九年级上学期物理期末复习（易错精选60题27大考点）"
+    ) == "易错题精选"
+
+
 def test_topic_strips_roles_and_extension_without_rewriting_core():
     assert normalize_display_topic("专题12.4 一次函数的实际应用（解析版）.docx") == \
         "专题12.4 一次函数的实际应用"

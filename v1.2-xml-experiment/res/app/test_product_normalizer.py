@@ -10,6 +10,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from docx import Document
+from docx.oxml import OxmlElement
 
 from package_validator import validate_package
 from product_normalizer import normalize_product_docx
@@ -147,6 +148,91 @@ class ProductNormalizerTests(unittest.TestCase):
                     source, output, template_type=template_type, metadata=metadata)
                 self.assertEqual(evidence["status"], "NORMALIZED")
                 self.assertTrue(validate_package(str(output))["valid"])
+
+    def test_only_structurally_bound_source_title_is_shortened(self):
+        source_title = "九年级上学期物理期末复习（易错精选60题27大考点）"
+        metadata = {"subject": "物理", "grade": "九年级", "topic": "易错题精选",
+                    "handout_type": "期末复习", "objectives": "目标", "difficulties": "重点",
+                    "cover_display": {"objectives": "目标", "difficulties": "重点"}}
+        for template_type in ("1v1", "class"):
+            with self.subTest(template=template_type):
+                template, _ = resolve_template(template_type)
+                source = self.root / (template_type + "-long-source-title.docx")
+                output = self.root / (template_type + "-short-source-title.docx")
+                document = Document(str(template))
+                anchors = [paragraph for cell in document.element.body.iter(
+                    "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tc")
+                    for paragraph in cell.findall(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p")
+                    if "".join(node.text or "" for node in paragraph.iter(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
+                    .strip() == "知识精讲&例题讲解"]
+                self.assertEqual(len(anchors), 1)
+                if template_type == "1v1":
+                    from template_slot_composer import _set_paragraph_text
+                    _set_paragraph_text(anchors[0], "知识精讲")
+                    knowledge_label = "知识精讲"
+                else:
+                    knowledge_label = "知识精讲&例题讲解"
+                title = OxmlElement("w:p")
+                run = OxmlElement("w:r")
+                text = OxmlElement("w:t")
+                text.text = source_title
+                run.append(text)
+                title.append(run)
+                anchors[0].addnext(title)
+                immediate_anchors = [paragraph for cell in document.element.body.iter(
+                    "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tc")
+                    for paragraph in cell.findall(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p")
+                    if "".join(node.text or "" for node in paragraph.iter(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
+                    .strip() == "即时训练"]
+                self.assertEqual(len(immediate_anchors), 1)
+                duplicate = OxmlElement("w:p")
+                duplicate_run = OxmlElement("w:r")
+                duplicate_text = OxmlElement("w:t")
+                duplicate_text.text = source_title
+                duplicate_run.append(duplicate_text)
+                duplicate.append(duplicate_run)
+                immediate_anchors[0].addnext(duplicate)
+                document.save(str(source))
+
+                evidence = normalize_product_docx(
+                    source, output, template_type=template_type, metadata=metadata)
+                rendered = Document(str(output))
+                knowledge = next(paragraph for cell in rendered.element.body.iter(
+                    "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tc")
+                    for paragraph in cell.findall(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p")
+                    if "".join(node.text or "" for node in paragraph.iter(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
+                    .strip() == knowledge_label)
+                actual_title = knowledge.getnext()
+                actual_text = "".join(node.text or "" for node in actual_title.iter(
+                    "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t")).strip()
+                self.assertEqual(actual_text, "易错题精选")
+                self.assertEqual(evidence["source_title_projection"], {
+                    "status": "APPLIED", "source_title": source_title,
+                    "display_title": "易错题精选"})
+                duplicate_after = [paragraph for cell in rendered.element.body.iter(
+                    "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tc")
+                    for paragraph in cell.findall(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p")
+                    if "".join(node.text or "" for node in paragraph.iter(
+                        "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
+                    .strip() == source_title]
+                self.assertEqual(len(duplicate_after), 1)
+                second = self.root / (template_type + "-short-source-title-twice.docx")
+                second_evidence = normalize_product_docx(
+                    output, second, template_type=template_type, metadata=metadata)
+                self.assertEqual(second_evidence["source_title_projection"]["status"], "UNCHANGED")
+                second_doc = Document(str(second))
+                self.assertIn("易错题精选", [paragraph.text.strip() for paragraph in second_doc.paragraphs]
+                              + ["".join(node.text or "" for node in p.iter(
+                                  "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t")).strip()
+                                 for p in second_doc.element.body.iter(
+                                     "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p")])
 
     def test_malformed_renderer_output_fails_closed_and_cleans_temp(self):
         source = self.root / "invalid.docx"
