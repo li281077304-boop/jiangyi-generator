@@ -107,8 +107,10 @@ class SlotRoutingPlan:
     explicit_final_heading: bool
     knowledge_point_status: str
     omitted_slots: tuple[str, ...]
+    cover_metadata_blocks: tuple[str, ...] = ()
     training_split_strategy: str = "NOT_APPLICABLE"
     training_question_routes: tuple[tuple[int, str], ...] = ()
+    canonical_unit_splits: tuple[dict[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -258,6 +260,10 @@ def _unit_text(snapshot: SemanticSnapshot, spans: list) -> str:
 def _make_units(snapshot: SemanticSnapshot) -> list[_Unit]:
     out: list[_Unit] = []
     total = len(snapshot.document.blocks)
+    # Structural shape alone is not enough: an identical two-row table may
+    # occur in the body. Exclude only the unique, positionally validated cover
+    # table accepted by _cover_metadata_sequences().
+    cover_metadata_sequences = set(_cover_metadata_sequences(snapshot))
     for raw in snapshot.units:
         spans = raw.get("spans")
         if not isinstance(spans, list) or not spans:
@@ -283,10 +289,92 @@ def _make_units(snapshot: SemanticSnapshot) -> list[_Unit]:
             node_ids.update(interval_ids)
             seqs.update(_top_seq(node_id) for node_id in interval_ids)
             orders.append(start_order)
-        out.append(_Unit(raw, str(raw.get("role") or ""), str(raw.get("id") or ""),
+        role = str(raw.get("role") or "")
+        if role == "question_group":
+            start_seq = min(seqs) if seqs else -1
+            if start_seq in cover_metadata_sequences:
+                # A-Line may absorb the cover metadata table and the next
+                # blank/image into a false question group. Keep the source
+                # nodes available for projection, but never treat them as a
+                # routed question unit.
+                role = "cover_metadata_group"
+        out.append(_Unit(raw, role, str(raw.get("id") or ""),
                          frozenset(seqs), frozenset(node_ids), min(seqs), max(seqs), min(orders),
                          _WS.sub(" ", _unit_text(snapshot, spans) or "").strip()))
     return sorted(out, key=lambda item: (item.start_seq, item.order, item.unit_id))
+
+
+def _is_cover_metadata_table(block) -> bool:
+    if getattr(block, "kind", None) != "table":
+        return False
+    table = getattr(block, "table", None)
+    if table is None or len(table.rows) != 2:
+        return False
+    expected = {"教学目标"}
+    difficulty_labels = {"重点难点", "教学重难点", "教学重点难点", "重难点"}
+    labels = set()
+    for row in table.rows:
+        if len(row) != 2:
+            return False
+        label_cell, value_cell = row
+        if (label_cell.has_image or label_cell.has_nested_table
+                or value_cell.has_image or value_cell.has_nested_table):
+            return False
+        if any(nested.images or nested.oles or nested.math_count or nested.table is not None
+               or nested.textbox_texts for cell in row for nested in cell.blocks):
+            return False
+        label = _clean(label_cell.text)
+        if label not in expected | difficulty_labels or not _clean(value_cell.text):
+            return False
+        labels.add(label)
+    return (len(labels) == 2 and "教学目标" in labels
+            and bool(labels & difficulty_labels))
+
+
+def _cover_metadata_sequences(snapshot) -> tuple[int, ...]:
+    candidates = [block.seq for block in snapshot.document.blocks
+                  if _is_cover_metadata_table(block)]
+    if len(candidates) != 1:
+        return ()
+    first_numbered_paragraph = next((
+        block.seq for block in snapshot.document.blocks
+        if block.kind == "paragraph" and _visible_question_number(block.text)
+    ), None)
+    if first_numbered_paragraph is not None and candidates[0] >= first_numbered_paragraph:
+        return ()
+    return tuple(candidates)
+
+
+def cover_metadata_sequences_with_images(snapshot, image_role_evidence) -> tuple[int, ...]:
+    table_sequences = _cover_metadata_sequences(snapshot)
+    if not table_sequences or not image_role_evidence:
+        return table_sequences
+    if image_role_evidence.get("source_sha256") != snapshot.source_sha256:
+        raise SlotRoutingError("IMAGE_EVIDENCE_SOURCE_MISMATCH",
+                               "cover image evidence is not bound to this source snapshot")
+    table_seq = table_sequences[0]
+    rows_by_node: dict[str, list[dict]] = {}
+    for row in image_role_evidence.get("images", []):
+        rows_by_node.setdefault(str(row.get("source_node_id") or ""), []).append(row)
+    cover_images = []
+    for node_id, rows in rows_by_node.items():
+        match = re.fullmatch(r"b(\d+)", node_id)
+        if not match:
+            continue
+        seq = int(match.group(1))
+        if (seq >= table_seq or seq >= len(snapshot.document.blocks)
+                or {row.get("role") for row in rows} != {"TEACHING_METADATA"}
+                or any(row.get("confidence") != "HIGH_CONFIDENCE_CUE" for row in rows)):
+            continue
+        block = snapshot.document.blocks[seq]
+        if not block.images or block.text.strip() or block.oles or block.math_count or block.table:
+            continue
+        between = snapshot.document.blocks[seq + 1:table_seq]
+        if any(item.text.strip() or item.images or item.oles or item.math_count or item.table
+               or item.textbox_texts for item in between):
+            continue
+        cover_images.append(seq)
+    return tuple(sorted(set(table_sequences) | set(cover_images)))
 
 
 def _balanced_slots(count: int) -> list[str]:
@@ -301,6 +389,7 @@ def _training_only_node_routes(
     units: list[_Unit],
     sections: list[_Unit],
     template_type: str,
+    canonical_node_routes: dict[int, str] | None = None,
 ) -> tuple[dict[int, str], str, tuple[tuple[int, str], ...]]:
     """Route training-only exercises from reliable physical question starts.
 
@@ -404,13 +493,95 @@ def _training_only_node_routes(
             global_items = [ (qg.order, qg.start_seq, None, slot)
                              for qg, slot in zip(qgs, _balanced_slots(len(qgs))) ]
 
+    # Paired inputs route from one student-derived canonical map. Apply those
+    # destinations at each structurally aligned top-level question marker;
+    # source number and original A-Line group identity are evidence, not the
+    # assignment key.
+    if canonical_node_routes:
+        requested = set(canonical_node_routes)
+        seen: set[int] = set()
+        orphan_canonical_markers: list[tuple[int, int, int, str]] = []
+        def project(items):
+            projected = []
+            for item in items:
+                position, seq, number, slot = item
+                destination = canonical_node_routes.get(seq)
+                if destination is not None:
+                    if destination not in SLOT_ORDER:
+                        raise SlotRoutingError("CANONICAL_ROUTE_INVALID",
+                                               "invalid canonical destination at b%d" % seq)
+                    seen.add(seq)
+                    slot = destination
+                projected.append((position, seq, number, slot))
+            return projected
+        if strategy == "SEQUENTIAL_DEGRADED":
+            global_items = project(global_items)
+        else:
+            item_slots = {section_id: project(items) for section_id, items in item_slots.items()}
+            # A-Line can miss one real question start while correctly
+            # identifying the surrounding generic section and later QGs.
+            # Admit that endpoint only when canonical alignment provided
+            # its exact paragraph ordinal and a single section interval owns it.
+            missing_now = sorted(requested - seen)
+            for seq in missing_now:
+                node_id = "b%d" % seq
+                position = index.order_of(node_id)
+                owners = []
+                if position is not None:
+                    for section_id in section_items:
+                        section = section_by_id[section_id]
+                        next_sections = [item.order for item in sections
+                                         if (item.order, item.unit_id) >
+                                         (section.order, section.unit_id)]
+                        start = min((index.order_of(value) for value in section.node_ids
+                                     if index.order_of(value) is not None), default=section.order)
+                        end = min(next_sections) if next_sections else len(order_ids)
+                        if start <= position < end:
+                            owners.append(section_id)
+                if not owners:
+                    before = [unit for unit in qgs if unit.end_seq < seq]
+                    after = [unit for unit in qgs if unit.start_seq > seq]
+                    adjacent_owners = []
+                    for neighbor in ((max(before, key=lambda unit: unit.end_seq) if before else None),
+                                     (min(after, key=lambda unit: unit.start_seq) if after else None)):
+                        owner = _section_for(neighbor, by_id, sections) if neighbor is not None else None
+                        if owner is not None and owner.unit_id in section_items:
+                            adjacent_owners.append(owner.unit_id)
+                    if adjacent_owners and len(set(adjacent_owners)) == 1:
+                        owners = [adjacent_owners[0]]
+                if len(owners) == 1:
+                    number = _visible_question_number(index.text_of(node_id))
+                    if number is None:
+                        raise SlotRoutingError("CANONICAL_ROUTE_ENDPOINT_MISSING",
+                                               "aligned raw endpoint has no visible question number at b%d" % seq)
+                    item_slots[owners[0]].append((
+                        position, seq, number, canonical_node_routes[seq]))
+                    seen.add(seq)
+                else:
+                    number = _visible_question_number(index.text_of(node_id))
+                    if number is None:
+                        raise SlotRoutingError("CANONICAL_ROUTE_ENDPOINT_MISSING",
+                                               "aligned raw endpoint has no visible question number at b%d" % seq)
+                    orphan_canonical_markers.append((
+                        position if position is not None else seq, seq, number,
+                        canonical_node_routes[seq]))
+                    seen.add(seq)
+        missing = sorted(requested - seen)
+        if missing:
+            raise SlotRoutingError("CANONICAL_ROUTE_ENDPOINT_MISSING",
+                                   "canonical question starts were not routed by the source plan: %s" %
+                                   ", ".join("b%d" % seq for seq in missing[:8]))
+
     marker_signature: list[tuple[int, str]] = []
+    signature_entries: list[tuple[int, int, str]] = []
     node_routes: dict[int, str] = {}
     marker_positions: list[tuple[int, str]] = []
+    table_route_intents: dict[int, set[str]] = {}
     if strategy == "SEQUENTIAL_DEGRADED":
         ordered = sorted(global_items, key=lambda item: item[0])
-        marker_signature.extend((int(number), slot) for _position, _seq, number, slot in ordered
-                                if number is not None)
+        signature_entries.extend((position, int(number), slot)
+                                 for position, _seq, number, slot in ordered
+                                 if number is not None)
         marker_positions.extend((position, slot) for position, _seq, _number, slot in ordered)
         for position, node_id in enumerate(order_ids):
             preceding = [item for item in ordered if item[0] <= position]
@@ -420,6 +591,9 @@ def _training_only_node_routes(
                 previous = node_routes.get(seq)
                 if previous is not None and previous != slot:
                     block = snapshot.document.blocks[seq]
+                    if block.kind == "table":
+                        table_route_intents.setdefault(seq, set()).update((previous, slot))
+                        continue
                     code = "TABLE_SLOT_CONFLICT" if block.kind == "table" else "SLOT_ROUTING_ATOMIC_BLOCK_CONFLICT"
                     raise SlotRoutingError(code,
                                            "physical block b%d contains question starts routed to %s and %s" %
@@ -431,8 +605,9 @@ def _training_only_node_routes(
             if not items:
                 continue
             items.sort(key=lambda item: item[0])
-            marker_signature.extend((int(number), slot) for _position, _seq, number, slot in items
-                                    if number is not None)
+            signature_entries.extend((position, int(number), slot)
+                                     for position, _seq, number, slot in items
+                                     if number is not None)
             marker_positions.extend((position, slot) for position, _seq, _number, slot in items)
             next_sections = [item.order for item in sections
                              if (item.order, item.unit_id) > (section.order, section.unit_id)]
@@ -451,6 +626,9 @@ def _training_only_node_routes(
                 previous = node_routes.get(seq)
                 if previous is not None and previous != slot:
                     block = snapshot.document.blocks[seq]
+                    if block.kind == "table":
+                        table_route_intents.setdefault(seq, set()).update((previous, slot))
+                        continue
                     code = "TABLE_SLOT_CONFLICT" if block.kind == "table" else "SLOT_ROUTING_ATOMIC_BLOCK_CONFLICT"
                     raise SlotRoutingError(code,
                                            "physical block b%d contains question starts routed to %s and %s" %
@@ -468,6 +646,30 @@ def _training_only_node_routes(
                     raise SlotRoutingError("SLOT_ROUTING_ATOMIC_BLOCK_CONFLICT",
                                            "example %s overlaps a routed practice question" % qg.unit_id)
                 routes[seq] = "knowledge"
+    for _position, seq, _number, destination in orphan_canonical_markers if canonical_node_routes else ():
+        routes[seq] = destination
+        for qg in qgs:
+            if seq in qg.seqs:
+                if _is_example(qg) and destination != "knowledge":
+                    raise SlotRoutingError("CANONICAL_ROUTE_CONFLICT",
+                                           "canonical route conflicts with an explanatory example")
+                for owned_seq in qg.seqs:
+                    routes[owned_seq] = destination
+    canonical_table_owners: dict[int, str] = {}
+    for seq, block in enumerate(snapshot.document.blocks):
+        if block.kind != "table":
+            continue
+        owners = [qg for qg in qgs if seq in qg.seqs]
+        if owners:
+            destinations = {canonical_node_routes.get(qg.start_seq)
+                            for qg in owners if canonical_node_routes is not None}
+            destinations.discard(None)
+            if len(destinations) == 1:
+                canonical_table_owners[seq] = next(iter(destinations))
+                routes[seq] = next(iter(destinations))
+            elif len(destinations) > 1:
+                raise SlotRoutingError("TABLE_SLOT_CONFLICT",
+                                       "atomic table b%d is owned by questions routed to multiple slots" % seq)
     materials = {unit.unit_id: unit for unit in units if unit.role == "shared_material"}
     targets_by_material: dict[str, set[str]] = {}
     for qg in qgs:
@@ -490,6 +692,8 @@ def _training_only_node_routes(
     # slot, but a route boundary inside it is a hard capability refusal.
     for seq, block in enumerate(snapshot.document.blocks):
         if block.kind == "table":
+            if seq in canonical_table_owners:
+                continue
             descendants = index.descendants.get("b%d" % seq, [])
             positions = [index.order_of(node_id) for node_id in descendants]
             intents = set()
@@ -503,6 +707,11 @@ def _training_only_node_routes(
                 raise SlotRoutingError("TABLE_SLOT_CONFLICT",
                                        "table b%d contains question content routed across slots %s" %
                                        (seq, sorted(intents)))
+    for _position, _seq, number, slot in orphan_canonical_markers if canonical_node_routes else ():
+        signature_entries.append((_position, number, slot))
+        marker_positions.append((_position, slot))
+    marker_signature = [(number, slot) for _position, number, slot in
+                        sorted(signature_entries, key=lambda item: item[0])]
     return routes, strategy, tuple(marker_signature)
 
 def _heading_route(text: str, template_type: str) -> str | None:
@@ -571,7 +780,51 @@ def _is_example(unit: _Unit) -> bool:
     return bool(_EXAMPLE.match(unit.text) or "例1默认保留在知识讲解" in note)
 
 
-def classify_knowledge_point_status(snapshot: SemanticSnapshot) -> str:
+def _has_confirmed_knowledge_image(snapshot: SemanticSnapshot,
+                                   image_role_evidence: dict | None) -> bool:
+    if not image_role_evidence:
+        return False
+    if image_role_evidence.get("source_sha256") != snapshot.source_sha256:
+        raise SlotRoutingError("IMAGE_EVIDENCE_SOURCE_MISMATCH",
+                               "OCR image evidence is not bound to this source snapshot")
+    return any(
+        row.get("role") == "KNOWLEDGE_ASSET"
+        and row.get("confidence") == "HIGH_CONFIDENCE_CUE"
+        and row.get("actionable") is True
+        and row.get("source_node_id")
+        for row in image_role_evidence.get("images", [])
+    )
+
+
+def _validate_knowledge_image_ownership(snapshot: SemanticSnapshot,
+                                        image_role_evidence: dict | None,
+                                        routes: dict[int, str]) -> None:
+    """Refuse a confirmed knowledge image whose physical owner routes elsewhere."""
+    if not image_role_evidence:
+        return
+    if image_role_evidence.get("source_sha256") != snapshot.source_sha256:
+        raise SlotRoutingError("IMAGE_EVIDENCE_SOURCE_MISMATCH",
+                               "OCR image evidence is not bound to this source snapshot")
+    for row in image_role_evidence.get("images", []):
+        if not (row.get("role") == "KNOWLEDGE_ASSET"
+                and row.get("confidence") == "HIGH_CONFIDENCE_CUE"
+                and row.get("actionable") is True):
+            continue
+        match = re.fullmatch(r"b(\d+)", str(row.get("source_node_id") or ""))
+        if not match:
+            raise SlotRoutingError("IMAGE_ROLE_OWNERSHIP_UNRESOLVED",
+                                   "confirmed knowledge image has no top-level source owner")
+        seq = int(match.group(1))
+        if not 0 <= seq < len(snapshot.document.blocks):
+            raise SlotRoutingError("IMAGE_ROLE_OWNERSHIP_UNRESOLVED",
+                                   "confirmed knowledge image owner is outside the source")
+        if routes.get(seq) != "knowledge":
+            raise SlotRoutingError("IMAGE_ROLE_SECTION_CONFLICT",
+                                   "confirmed knowledge image conflicts with its containing route at b%d" % seq)
+
+
+def classify_knowledge_point_status(snapshot: SemanticSnapshot,
+                                   image_role_evidence: dict | None = None) -> str:
     """Classify a source before slot routing so fallback keeps valid metadata."""
     units = _make_units(snapshot)
     tocs = [unit for unit in units if unit.role == "toc"]
@@ -580,7 +833,7 @@ def classify_knowledge_point_status(snapshot: SemanticSnapshot) -> str:
                     (snapshot.node_index.order_of(end) or toc.order)
                     for _, end in toc.raw["spans"])
                     for toc in tocs)]
-    has_explicit_knowledge = any(
+    has_explicit_knowledge = _has_confirmed_knowledge_image(snapshot, image_role_evidence) or any(
         any(section.text.lstrip().startswith(label) for label in KNOWLEDGE_HEADINGS)
         for section in sections
     )
@@ -657,6 +910,9 @@ def build_slot_routing_plan(
     *,
     split_mode: str = "smart",
     snapshot: SemanticSnapshot | None = None,
+    canonical_node_routes: dict[int, str] | None = None,
+    canonical_projection_routes: dict[int, str] | None = None,
+    image_role_evidence: dict | None = None,
 ) -> SlotRoutingPlan:
     """Route one source snapshot to three template-specific slots.
 
@@ -677,9 +933,19 @@ def build_slot_routing_plan(
     total = len(snapshot.document.blocks)
     if not total:
         raise SlotRoutingError("SLOT_ROUTING_AMBIGUOUS", "source has no main-story blocks")
+    knowledge_point_status = classify_knowledge_point_status(snapshot, image_role_evidence)
 
     units = _make_units(snapshot)
+    cover_metadata_sequences = set(
+        cover_metadata_sequences_with_images(snapshot, image_role_evidence))
     by_id = {unit.unit_id: unit for unit in units}
+    if canonical_projection_routes is not None:
+        _validate_knowledge_image_ownership(
+            snapshot, image_role_evidence, canonical_projection_routes)
+        return _build_canonical_projection_plan(
+            source, template_type, snapshot, template, template_digest, units,
+            canonical_projection_routes, cover_metadata_sequences=cover_metadata_sequences,
+            knowledge_point_status=knowledge_point_status)
     units_by_seq: dict[int, list[str]] = {seq: [] for seq in range(total)}
     for unit in units:
         for seq in unit.seqs:
@@ -693,7 +959,6 @@ def build_slot_routing_plan(
     section_routes = {section.unit_id: _heading_route(section.text, template_type)
                       for section in sections}
     explicit_final = any(route == "final" for route in section_routes.values())
-    knowledge_point_status = classify_knowledge_point_status(snapshot)
     training_only = knowledge_point_status == "NO_KNOWLEDGE_POINT"
     training_split_strategy = "NOT_APPLICABLE"
     training_routes: dict[int, str] | None = None
@@ -701,7 +966,8 @@ def build_slot_routing_plan(
     if (split_mode == "smart" and training_only
             and not any(route in ("immediate", "final") for route in section_routes.values())):
         training_routes, training_split_strategy, training_question_routes = _training_only_node_routes(
-            snapshot, units, sections, template_type)
+            snapshot, units, sections, template_type,
+            canonical_node_routes=canonical_node_routes)
 
     # No semantic units means no reason to route content. Full mode deliberately
     # retains the ordered source as slot 1, preserving its established meaning.
@@ -963,6 +1229,75 @@ def build_slot_routing_plan(
                         (start, end, seq),
                     )
 
+    # In paired-document mode the student-derived canonical occurrence map
+    # is authoritative for each aligned question. Project the selected slot
+    # across the complete A-Line question-group spans (answers, analysis,
+    # tables, and attached paragraphs included). Any shared/overlapping
+    # physical block asked to cross slots remains a hard refusal.
+    if canonical_node_routes:
+        if split_mode == "full":
+            # Full mode has one canonical destination for every source block;
+            # disagreement is an invalid caller-supplied projection.
+            destinations = set(canonical_node_routes.values())
+            if len(destinations) > 1:
+                raise SlotRoutingError("CANONICAL_ROUTE_INVALID",
+                                       "full mode cannot project questions to multiple slots")
+        projected_owner: dict[int, str] = {}
+        question_starts = set()
+        for unit in units:
+            if unit.role != "question_group":
+                continue
+            destination = canonical_node_routes.get(unit.start_seq)
+            if destination is None:
+                continue
+            if destination not in SLOT_ORDER:
+                raise SlotRoutingError("CANONICAL_ROUTE_INVALID",
+                                       "invalid canonical route for %s" % unit.unit_id)
+            question_starts.add(unit.start_seq)
+            for seq in unit.seqs:
+                existing = projected_owner.get(seq)
+                if existing is not None and existing != destination:
+                    code = ("TABLE_SLOT_CONFLICT" if snapshot.document.blocks[seq].kind == "table"
+                            else "CANONICAL_ROUTE_CONFLICT")
+                    raise SlotRoutingError(code,
+                                           "physical block b%d belongs to canonical questions in %s and %s" %
+                                           (seq, existing, destination))
+                projected_owner[seq] = destination
+        for seq, destination in canonical_node_routes.items():
+            if destination not in SLOT_ORDER or not 0 <= seq < total:
+                raise SlotRoutingError("CANONICAL_ROUTE_INVALID",
+                                       "canonical route endpoint is outside the source document")
+            if seq not in question_starts:
+                # A uniquely cross-source-matched raw question start missed
+                # by A-Line is safe only as a single physical paragraph.
+                if snapshot.document.blocks[seq].kind != "paragraph":
+                    raise SlotRoutingError("CANONICAL_ROUTE_ENDPOINT_MISSING",
+                                           "unmapped A-Line endpoint is not a paragraph: b%d" % seq)
+                projected_owner[seq] = destination
+        for seq, destination in projected_owner.items():
+            routes[seq] = destination
+
+        # Canonical projection may not split an indivisible shared component.
+        for unit in units:
+            if unit.role == "shared_material":
+                targets = {routes[seq] for seq in unit.seqs if seq in routes}
+                if len(targets) > 1:
+                    raise SlotRoutingError("SHARED_MATERIAL_SLOT_CONFLICT",
+                                           "shared material %s spans canonical destinations" % unit.unit_id)
+        for seq, block in enumerate(snapshot.document.blocks):
+            if block.kind != "table":
+                continue
+            question_targets = {routes[node_seq] for node_seq in projected_owner
+                                if seq == node_seq or any(
+                                    unit.role == "question_group" and node_seq == unit.start_seq
+                                    and seq in unit.seqs and node_seq in canonical_node_routes
+                                    for unit in units)}
+            if len(question_targets) > 1:
+                raise SlotRoutingError("TABLE_SLOT_CONFLICT",
+                                       "atomic table b%d is shared across canonical destinations" % seq)
+
+    _validate_knowledge_image_ownership(snapshot, image_role_evidence, routes)
+
     # An indivisible table or overlapping semantic component cannot belong to
     # multiple destinations. A top-level table is one physical block/seq.
     blocks_by_slot = {slot: [] for slot in SLOT_ORDER}
@@ -972,21 +1307,27 @@ def build_slot_routing_plan(
         if route not in blocks_by_slot:
             raise SlotRoutingError("SLOT_ROUTING_AMBIGUOUS", "invalid destination at b%d" % seq)
         block_id = "b%d" % seq
-        blocks_by_slot[route].append(BlockSpan(block_id, block_id))
+        excluded_cover_metadata = seq in cover_metadata_sequences
+        if not excluded_cover_metadata:
+            blocks_by_slot[route].append(BlockSpan(block_id, block_id))
         block = snapshot.document.blocks[seq]
         block_records.append({
             "block_id": block_id,
             "source_index": seq,
             "kind": block.kind,
-            "destination_slot": route,
+            "destination_slot": None if excluded_cover_metadata else route,
+            "exclusion_reason": ("COVER_METADATA_PROJECTED_TO_TEMPLATE_COVER"
+                                 if excluded_cover_metadata else None),
             "unit_contributors": tuple(dict.fromkeys(units_by_seq.get(seq, []))),
         })
 
     # Verify span uniqueness and per-slot source order before exposing the plan.
     flattened = [span.start for slot in SLOT_ORDER for span in blocks_by_slot[slot]]
-    if len(flattened) != total or len(set(flattened)) != total:
+    if (len(flattened) + len(cover_metadata_sequences) != total
+            or len(set(flattened)) != len(flattened)
+            or set(flattened) & {"b%d" % seq for seq in cover_metadata_sequences}):
         raise SlotRoutingError("SLOT_ROUTING_DUPLICATE_OR_MISSING_BLOCK",
-                               "physical source blocks are not assigned exactly once")
+                               "routed blocks and cover metadata exclusions do not partition the source")
     for slot, spans in blocks_by_slot.items():
         seqs = [int(span.start[1:]) for span in spans]
         if seqs != sorted(seqs):
@@ -1024,6 +1365,155 @@ def build_slot_routing_plan(
         explicit_final_heading=explicit_final,
         knowledge_point_status=knowledge_point_status,
         omitted_slots=omitted_slots,
+        cover_metadata_blocks=tuple("b%d" % seq for seq in sorted(cover_metadata_sequences)),
         training_split_strategy=training_split_strategy,
         training_question_routes=training_question_routes,
+    )
+
+
+def _build_canonical_projection_plan(source: Path, template_type: str,
+                                    snapshot: SemanticSnapshot, template: Path,
+                                    template_digest: str, units: list[_Unit],
+                                    projection: dict[int, str], *,
+                                    cover_metadata_sequences: set[int] | None = None,
+                                    knowledge_point_status: str | None = None) -> SlotRoutingPlan:
+    """Construct a plan from a complete peer-derived map without re-routing."""
+    total = len(snapshot.document.blocks)
+    cover_metadata_sequences = (set(cover_metadata_sequences)
+                                if cover_metadata_sequences is not None
+                                else set(_cover_metadata_sequences(snapshot)))
+    if set(projection) != set(range(total)):
+        raise SlotRoutingError("CANONICAL_PROJECTION_INCOMPLETE",
+                               "canonical projection must assign every source block exactly once")
+    if any(destination not in SLOT_ORDER and
+           not (destination == "cover" and seq in cover_metadata_sequences)
+           for seq, destination in projection.items()):
+        raise SlotRoutingError("CANONICAL_ROUTE_INVALID", "projection contains an invalid destination")
+    canonical_unit_splits = []
+    for unit in units:
+        destinations = {projection[seq] for seq in unit.seqs
+                        if seq not in cover_metadata_sequences}
+        if unit.role in ("question_group", "answer", "analysis") and len(destinations) > 1:
+            # A-Line's semantic range can span multiple physical questions or
+            # include a following section heading. In a paired canonical plan,
+            # the order-preserving pair projection owns every physical block
+            # exactly once; retain the original unit as provenance and record
+            # its per-slot split instead of treating that range as atomic.
+            # A physical table is still one top-level block and therefore
+            # cannot be split by this projection.
+            split = {
+                "unit_id": unit.unit_id,
+                "role": unit.role,
+                "blocks_by_slot": {
+                    slot: tuple("b%d" % seq for seq in sorted(unit.seqs)
+                                if seq not in cover_metadata_sequences
+                                and projection[seq] == slot)
+                    for slot in SLOT_ORDER
+                    if any(seq not in cover_metadata_sequences
+                           and projection[seq] == slot for seq in unit.seqs)
+                },
+            }
+            canonical_unit_splits.append(split)
+    materials = {unit.unit_id: unit for unit in units if unit.role == "shared_material"}
+    targets_by_material: dict[str, set[str]] = {}
+    for material_id, material in materials.items():
+        destinations = {projection[seq] for seq in material.seqs
+                        if seq not in cover_metadata_sequences}
+        if len(destinations) > 1:
+            raise SlotRoutingError(
+                "SHARED_MATERIAL_SLOT_CONFLICT",
+                "shared material %s spans multiple canonical slots" % material_id)
+    for unit in units:
+        if unit.role != "question_group":
+            continue
+        material_id = str(unit.raw.get("bind_to") or "")
+        if not material_id:
+            continue
+        if material_id not in materials:
+            raise SlotRoutingError("SHARED_MATERIAL_BINDING_UNRESOLVED",
+                                   "question group %s binds missing material %s" %
+                                   (unit.unit_id, material_id))
+        targets_by_material.setdefault(material_id, set()).update(
+            projection[seq] for seq in unit.seqs if seq not in cover_metadata_sequences)
+    for material_id, targets in targets_by_material.items():
+        if len(targets) != 1:
+            raise SlotRoutingError("SHARED_MATERIAL_SLOT_CONFLICT",
+                                   "shared material %s connects multiple canonical slots" % material_id)
+        expected = next(iter(targets))
+        material = materials[material_id]
+        if any(seq not in cover_metadata_sequences and projection[seq] != expected
+               for seq in material.seqs):
+            raise SlotRoutingError("SHARED_MATERIAL_SLOT_CONFLICT",
+                                   "shared material %s is not projected with its question component" % material_id)
+
+    sections = [unit for unit in units if unit.role == "section"]
+    for section in sections:
+        # Canonical route validation only treats explicit section labels as
+        # authoritative. _heading_route intentionally defaults ordinary
+        # section-like paragraphs to knowledge, which would misclassify
+        # answer choices or equation rows as explicit headings here.
+        title = _clean(section.text)
+        if title.startswith("题型讲解"):
+            intent = "knowledge"
+        elif any(title.startswith(label) for label in FINAL_HEADINGS[template_type]):
+            intent = "final"
+        elif any(title.startswith(label) for label in IMMEDIATE_HEADINGS):
+            intent = "immediate"
+        elif any(title.startswith(label) for label in KNOWLEDGE_HEADINGS):
+            intent = "knowledge"
+        else:
+            intent = None
+        if intent is not None:
+            destinations = {projection[seq] for seq in section.seqs
+                            if seq not in cover_metadata_sequences}
+            if len(destinations) > 1 or (destinations and next(iter(destinations)) != intent):
+                raise SlotRoutingError("CANONICAL_SECTION_CONFLICT",
+                                       "explicit section %s conflicts with its canonical destination" %
+                                       section.unit_id)
+
+    blocks_by_slot = {slot: [] for slot in SLOT_ORDER}
+    block_records = []
+    units_by_seq: dict[int, list[str]] = {seq: [] for seq in range(total)}
+    for unit in units:
+        for seq in unit.seqs:
+            units_by_seq[seq].append(unit.unit_id)
+    for seq in range(total):
+        slot = projection[seq]
+        block_id = "b%d" % seq
+        excluded_cover_metadata = seq in cover_metadata_sequences
+        if not excluded_cover_metadata:
+            blocks_by_slot[slot].append(BlockSpan(block_id, block_id))
+        block = snapshot.document.blocks[seq]
+        block_records.append({"block_id": block_id, "source_index": seq,
+                              "kind": block.kind,
+                              "destination_slot": None if excluded_cover_metadata else slot,
+                              "exclusion_reason": ("COVER_METADATA_PROJECTED_TO_TEMPLATE_COVER"
+                                                   if excluded_cover_metadata else None),
+                              "unit_contributors": tuple(dict.fromkeys(units_by_seq[seq]))})
+    explicit_final = any(_heading_route(section.text, template_type) == "final"
+                         for section in sections)
+    template_body = Document(str(template)).element.body
+    from struct_doc import W_SECTPR
+    section_tail = next((index for index, child in enumerate(template_body)
+                         if child.tag == W_SECTPR), len(template_body))
+    return SlotRoutingPlan(
+        source_path=source, source_sha256=snapshot.source_sha256,
+        template_type=template_type, template_path=template,
+        template_sha256=template_digest, target=TemplateTarget(section_tail),
+        slots={slot: tuple(blocks_by_slot[slot]) for slot in SLOT_ORDER},
+        slot_labels=dict(SLOT_LABELS[template_type]),
+        template_anchors=TEMPLATE_ANCHORS[template_type],
+        block_records=tuple(block_records),
+        units=tuple({"unit_id": unit.unit_id, "role": unit.role,
+                     "parent": unit.raw.get("parent"), "bind_to": unit.raw.get("bind_to"),
+                     "source_block_ids": tuple("b%d" % seq for seq in sorted(unit.seqs))}
+                    for unit in units),
+        explicit_final_heading=explicit_final,
+        knowledge_point_status=(knowledge_point_status or
+                                classify_knowledge_point_status(snapshot)),
+        omitted_slots=(),
+        cover_metadata_blocks=tuple("b%d" % seq for seq in sorted(cover_metadata_sequences)),
+        training_split_strategy="CANONICAL_PROJECTION",
+        training_question_routes=(),
+        canonical_unit_splits=tuple(canonical_unit_splits),
     )

@@ -278,8 +278,9 @@
       topic.textContent = item.topic || "识别中"; teacher.appendChild(statusCell(item.teacher)); student.appendChild(statusCell(item.student));
       var itemRenderer = item.renderer || (!job.is_batch && job.renderer);
       var itemStatus = item.status || job.status;
-      renderer.textContent = itemRenderer === "XML" ? "XML" : itemRenderer === "V0.9" ? "fallback（V0.9）" : itemStatus === "error" ? "未执行" : "待确定";
-      if (item.fallback_reason || (!job.is_batch && job.fallback_reason)) renderer.title = "回退原因：" + (item.fallback_detail || item.fallback_reason || job.fallback_reason);
+      renderer.textContent = itemRenderer === "XML" ? "XML" : itemRenderer === "XML_UNSUPPORTED" ? "XML 不支持" : itemRenderer === "V0.9" ? "fallback（V0.9）" : itemStatus === "error" ? "未执行" : "待确定";
+      if (item.renderer_reason_code || (!job.is_batch && job.renderer_reason_code)) renderer.title = "XML 未支持：" + (item.renderer_reason_code || job.renderer_reason_code) + (job.renderer_reason_detail ? "；" + job.renderer_reason_detail : "");
+      else if (item.fallback_reason || (!job.is_batch && job.fallback_reason)) renderer.title = "回退原因：" + (item.fallback_detail || item.fallback_reason || job.fallback_reason);
       status.appendChild(statusCell(itemStatus === "done" ? "成功" : itemStatus === "error" ? "失败" : itemStatus === "running" ? "处理中" : "等待中"));
       if (item.error) status.title = item.error;
       tr.append(topic, teacher, student, renderer, status); rows.appendChild(tr);

@@ -41,6 +41,11 @@ app.config.setdefault("C0_FORCE_FALLBACK_REASON", None)  # integration-test hook
 app.config.setdefault("C0_DISABLE_JOB_SUBMISSION", False)
 app.config.setdefault("STUDENTIZER_EVIDENCE_PROVIDER", None)  # trusted server config only; no upload/UI API
 app.config.setdefault("STUDENTIZER_REVIEWED_MANIFEST_DIR", None)  # None => packaged reviewed evidence
+app.config.setdefault("LOCAL_OCR_MODEL_DIR", Path(os.environ.get(
+    "JIANGYI_OCR_MODEL_DIR", str(APP_DIR / "ocr_models"))))
+# The user-facing V1.2 path is XML-only. V0.9 remains available only when an
+# operator explicitly enables the diagnostic/emergency mode for this process.
+app.config.setdefault("V12_ALLOW_DIAGNOSTIC_V09", False)
 _V09_FALLBACK_LOCK = threading.RLock()
 
 
@@ -53,6 +58,11 @@ def _jobs() -> JobService:
     if key not in services:
         services[key] = JobService(root, runtime_root=runtime_root, opener=opener)
     return services[key]
+
+
+def _v09_diagnostic_mode_enabled() -> bool:
+    """Permit V0.9 only when an operator explicitly enables diagnostic mode."""
+    return bool(app.config.get("V12_ALLOW_DIAGNOSTIC_V09", False))
 
 
 def _submit_job(job_id: str) -> None:
@@ -217,13 +227,16 @@ def _execute_job(job_id: str) -> None:
         _execute_batch(job_id)
         return
     from renderer_orchestrator import (
-        RenderJob, V09_BASELINE_SHA, _load_v09_engine, render_v09_whole_job,
+        RenderJob, XmlUnsupportedError, V09_BASELINE_SHA, _load_v09_engine, render_v09_whole_job,
         render_xml_or_fallback,
     )
     from package_validator import validate_package
     from renderer_orchestrator import FallbackRequired
     from slot_router import (SlotRoutingError, analyze_source, build_slot_routing_plan,
-                             classify_knowledge_point_status, validate_training_pair_routes)
+                             classify_knowledge_point_status, cover_metadata_sequences_with_images,
+                             validate_training_pair_routes)
+    from canonical_pair_alignment import (PairAlignmentError, align_teacher_student,
+                                          project_pair_routes)
     from template_slot_composer import render_slots, build_display_renumbering
     from studentizer_planner import prepare_complete_student
 
@@ -325,6 +338,20 @@ def _execute_job(job_id: str) -> None:
             studentizer_rejected = prepared.status != "XML_PREPARED"
             preparation["studentizer_fallback"] = studentizer_rejected
             if studentizer_rejected:
+                if not _v09_diagnostic_mode_enabled():
+                    reason = prepared.reason_code or "STUDENTIZER_UNSUPPORTED"
+                    detail = prepared.reason_detail or "XML Studentizer capability gate rejected input"
+                    preparation.update({"student_preparation": "XML_UNSUPPORTED",
+                                        "student_preparation_route": "XML_UNSUPPORTED",
+                                        "preparation_error_code": reason,
+                                        "preparation_error_detail": detail})
+                    service.update_student_preparation(job_id, preparation)
+                    service.update_route_evidence(job_id, {
+                        "renderer_route": "XML_UNSUPPORTED",
+                        "renderer_reason_code": reason,
+                        "renderer_reason_detail": detail,
+                    })
+                    raise XmlUnsupportedError(reason, detail)
                 # Studentizer capability refusal is a preparation decision,
                 # not a renderer decision. Use the frozen V0.9 preparation
                 # step to create a student source, then continue through the
@@ -389,10 +416,12 @@ def _execute_job(job_id: str) -> None:
                                                         ("student", student_source)) if path is not None}
         plans = {}
         source_snapshots = {}
+        source_image_evidence = {}
         metadata_source = teacher_source or student_source
         metadata_lines = read_lesson_source_lines(metadata_source)
         resolved_lesson_metadata = {}
         display_renumbering = {}
+        canonical_state = {"occurrences": None}
         fallback_detail = {"value": None, "phase": "PREFLIGHT"}
         student_stage = work_dir / ("student-stage%s-%s.docx" % (attempt_suffix, job_id))
         teacher_stage = work_dir / ("teacher-stage%s-%s.docx" % (attempt_suffix, job_id))
@@ -423,17 +452,47 @@ def _execute_job(job_id: str) -> None:
                 fallback_detail["phase"] = "ROUTER"
                 for role, source_path in active_sources.items():
                     source_snapshots[role] = analyze_source(source_path)
-                statuses = {classify_knowledge_point_status(snapshot)
-                            for snapshot in source_snapshots.values()}
             except Exception as exc:
                 fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
-            if len(statuses) != 1:
+            if any(block.images for snapshot in source_snapshots.values()
+                   for block in snapshot.document.blocks):
+                try:
+                    from image_role_evidence import (LocalOCRError, get_local_ocr_recognizer,
+                                                     inspect_document_images, requires_local_ocr)
+                    needs_ocr = any(requires_local_ocr(snapshot)
+                                    for snapshot in source_snapshots.values())
+                    recognizer = (get_local_ocr_recognizer(Path(app.config["LOCAL_OCR_MODEL_DIR"]))
+                                  if needs_ocr else None)
+                    for role, source_path in active_sources.items():
+                        snapshot = source_snapshots[role]
+                        if any(block.images for block in snapshot.document.blocks):
+                            source_image_evidence[role] = inspect_document_images(
+                                source_path, snapshot, recognizer)
+                except LocalOCRError as exc:
+                    fallback_detail["value"] = str(exc)
+                    return {"supported": False, "reason_code": "LOCAL_OCR_UNAVAILABLE",
+                            "detail": fallback_detail["value"]}
+                except Exception as exc:
+                    fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
+                    return {"supported": False, "reason_code": "LOCAL_OCR_FAILED",
+                            "detail": fallback_detail["value"]}
+                service.update_route_evidence(job_id, {
+                    "image_role_evidence": source_image_evidence,
+                })
+            statuses = {
+                classify_knowledge_point_status(
+                    snapshot, source_image_evidence.get(role))
+                for role, snapshot in source_snapshots.items()
+            }
+            if len(statuses) != 1 and not ("teacher" in source_snapshots and "student" in source_snapshots):
                 fallback_detail["value"] = "teacher/student knowledge-point status differs"
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
-            knowledge_point_status = next(iter(statuses))
+            knowledge_point_status = (classify_knowledge_point_status(
+                source_snapshots["teacher"], source_image_evidence.get("teacher"))
+                if "teacher" in source_snapshots else next(iter(statuses)))
             fallback_detail["phase"] = "METADATA"
             persist_lesson_metadata(knowledge_point_status)
             forced_reason = app.config.get("C0_FORCE_FALLBACK_REASON")
@@ -442,21 +501,90 @@ def _execute_job(job_id: str) -> None:
                         "detail": "forced unsupported integration fixture"}
             fallback_detail["phase"] = "ROUTER"
             try:
-                for role, source_path in active_sources.items():
-                    plans[role] = build_slot_routing_plan(
-                        source_path, template_type, split_mode=split_mode,
-                        snapshot=source_snapshots[role])
+                if "teacher" in active_sources and "student" in active_sources:
+                    alignment = align_teacher_student(
+                        source_snapshots["student"], source_snapshots["teacher"],
+                        student_source_path=active_sources["student"],
+                        teacher_source_path=active_sources["teacher"],
+                    )
+                    service.update_route_evidence(job_id, {"canonical_alignment": alignment})
+                    # The student skeleton chooses each destination once;
+                    # paired teacher content is projected from that map.
+                    student_base = build_slot_routing_plan(
+                        active_sources["student"], template_type, split_mode=split_mode,
+                        snapshot=source_snapshots["student"],
+                        image_role_evidence=source_image_evidence.get("student"))
+                    student_block_routes = {
+                        int(item["block_id"][1:]): (
+                            "cover" if item["destination_slot"] is None
+                            else item["destination_slot"])
+                        for item in student_base.block_records
+                    }
+                    student_cover_nodes = {
+                        int(block_id[1:]) for block_id in student_base.cover_metadata_blocks}
+                    teacher_cover_nodes = set(cover_metadata_sequences_with_images(
+                        source_snapshots["teacher"], source_image_evidence.get("teacher")))
+                    projection = project_pair_routes(
+                        source_snapshots["student"], source_snapshots["teacher"],
+                        alignment, student_block_routes,
+                        student_cover_nodes=student_cover_nodes,
+                        teacher_cover_nodes=teacher_cover_nodes,
+                        student_source_path=active_sources["student"],
+                        teacher_source_path=active_sources["teacher"])
+                    student_projection = {int(seq): slot for seq, slot in
+                                          projection["student_block_routes"].items()}
+                    teacher_projection = {int(seq): slot for seq, slot in
+                                          projection["teacher_block_routes"].items()}
+                    plans["student"] = build_slot_routing_plan(
+                        active_sources["student"], template_type, split_mode=split_mode,
+                        snapshot=source_snapshots["student"],
+                        canonical_projection_routes=student_projection,
+                        image_role_evidence=source_image_evidence.get("student"))
+                    plans["teacher"] = build_slot_routing_plan(
+                        active_sources["teacher"], template_type, split_mode=split_mode,
+                        snapshot=source_snapshots["teacher"],
+                        canonical_projection_routes=teacher_projection,
+                        image_role_evidence=source_image_evidence.get("teacher"))
+                    service.update_route_evidence(job_id, {
+                        "canonical_occurrence_routes": projection["occurrences"],
+                        "canonical_projection": projection,
+                        "canonical_route_source": "STUDENT_PLAN_ONCE",
+                    })
+                    canonical_state["occurrences"] = projection["occurrences"]
+                else:
+                    for role, source_path in active_sources.items():
+                        plans[role] = build_slot_routing_plan(
+                            source_path, template_type, split_mode=split_mode,
+                            snapshot=source_snapshots[role],
+                            image_role_evidence=source_image_evidence.get(role))
+                    if len(plans) > 1:
+                        alignment = align_teacher_student(
+                            source_snapshots["student"], source_snapshots["teacher"],
+                            student_source_path=active_sources["student"],
+                            teacher_source_path=active_sources["teacher"],
+                        )
+                        service.update_route_evidence(job_id, {"canonical_alignment": alignment})
             except SlotRoutingError as exc:
                 plans.clear()
                 fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
+                        "detail": fallback_detail["value"]}
+            except PairAlignmentError as exc:
+                plans.clear()
+                fallback_detail["value"] = "%s: %s" % (exc.reason_code, exc.detail)
+                service.update_route_evidence(job_id, {"canonical_alignment": {
+                    "status": "UNRESOLVED", "reason_code": exc.reason_code,
+                    "detail": exc.detail, "evidence": exc.evidence,
+                }})
+                return {"supported": False, "reason_code": exc.reason_code,
                         "detail": fallback_detail["value"]}
             except Exception as exc:
                 plans.clear()
                 fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
-            if knowledge_point_status == "NO_KNOWLEDGE_POINT" and split_mode == "smart":
+            if (knowledge_point_status == "NO_KNOWLEDGE_POINT" and split_mode == "smart"
+                    and canonical_state["occurrences"] is None):
                 try:
                     validate_training_pair_routes(plans)
                 except SlotRoutingError as exc:
@@ -465,7 +593,8 @@ def _execute_job(job_id: str) -> None:
                     return {"supported": False, "reason_code": exc.reason_code,
                             "detail": fallback_detail["value"]}
             route_plan = plans.get("teacher") or next(iter(plans.values()))
-            display_renumbering.update(build_display_renumbering(plans))
+            display_renumbering.update(build_display_renumbering(
+                plans, canonical_occurrences=canonical_state["occurrences"]))
             service.update_route_evidence(job_id, {
                 "display_renumbering": display_renumbering,
                 "training_split_strategy": getattr(route_plan, "training_split_strategy", "NOT_APPLICABLE"),
@@ -532,9 +661,12 @@ def _execute_job(job_id: str) -> None:
                 raise
             reports = [result.package_report for result in results.values()]
             primary = results.get("teacher") or results.get("student")
+            page_layout = {role: result.page_layout for role, result in results.items()}
+            service.update_route_evidence(job_id, {"page_layout": page_layout})
             return {
                 "output_path": primary.output_path,
                 "student_output_path": results["student"].output_path if "student" in results else None,
+                "page_layout": page_layout,
                 "resource_report": {"unsupported": [item for result in results.values()
                                                       for item in result.resource_report.get("unsupported", [])]},
                 "package_report": {"valid": all(report.get("valid") is True for report in reports),
@@ -633,7 +765,8 @@ def _execute_job(job_id: str) -> None:
 
         outcome = render_xml_or_fallback(
             render_job, xml_preflight=xml_preflight, xml_render=xml_render,
-            fallback=fallback, package_validator=validate_package)
+            fallback=fallback, package_validator=validate_package,
+            allow_v09_fallback=_v09_diagnostic_mode_enabled())
         if outcome.renderer == "XML":
             generated = []
             if teacher_source:
@@ -801,6 +934,7 @@ def _execute_job(job_id: str) -> None:
                 "explicit_final_heading": plan.explicit_final_heading,
                 "knowledge_point_status": getattr(plan, "knowledge_point_status", "UNKNOWN"),
                 "omitted_slots": list(getattr(plan, "omitted_slots", ())),
+                "cover_metadata_blocks": list(getattr(plan, "cover_metadata_blocks", ())),
                 "training_split_strategy": getattr(plan, "training_split_strategy", "NOT_APPLICABLE"),
                 "training_question_routes": [
                     {"question_number": number, "slot": slot}
@@ -814,6 +948,13 @@ def _execute_job(job_id: str) -> None:
             fallback_reason=outcome.fallback_reason,
             baseline_sha=V09_BASELINE_SHA if outcome.renderer == "V0.9" else None,
             plan_summary=plan_summary, student_preparation=preparation)
+    except XmlUnsupportedError as exc:
+        service.update_route_evidence(job_id, {
+            "renderer_route": "XML_UNSUPPORTED",
+            "renderer_reason_code": exc.reason_code,
+            "renderer_reason_detail": exc.detail,
+        })
+        service.fail_job(job_id, "XML_UNSUPPORTED: %s" % exc)
     except Exception as exc:
         # Published role DOCX files are durable progress. A failed/restarted
         # item may resume against its recorded publication plan; never clean

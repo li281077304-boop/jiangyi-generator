@@ -10,7 +10,10 @@ semantics or split the source paragraph.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from functools import lru_cache
 import hashlib
+from io import BytesIO
+from pathlib import Path
 import xml.etree.ElementTree as ET
 import re
 import unicodedata
@@ -24,7 +27,7 @@ _QUESTION = re.compile(r"^\s*(\d{1,3})\s*[.．、)）]\s*(.*)$", re.S)
 _SPACE = re.compile(r"\s+")
 _EMPTY_BLANK = re.compile(
     r"\u3000[^\u3000]{0,64}\u3000|\u3000[ \t]{1,64}(?=[A-Za-z0-9%°℃Ω\u4e00-\u9fff])")
-_CHOICE_MARKER = re.compile(r"(?:^|\s)([A-D])[\.．、]\s*\S", re.I)
+_CHOICE_MARKER = re.compile(r"(?<![A-Za-z0-9])([A-D])[\.．、]\s*\S", re.I)
 _CHOICE_STEM = re.compile(
     r"(?:下列|以下).{0,16}(?:正确|不正确|符合|不符合|错误).{0,10}(?:是|的是|的一项|选项)"
 )
@@ -327,6 +330,269 @@ def _raw_subquestion_text_with_underlined_blanks(snapshot, span, source_path):
         return None
 
 
+def _table_semantic_signature(snapshot, block, source_path, *, exact_images=False):
+    """Exact table cell/text/formula signature, ignoring run formatting only."""
+    if source_path is None or block.table is None or block.body_idx is None:
+        return None
+    w = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+    m = "{http://schemas.openxmlformats.org/officeDocument/2006/math}"
+    rel_id = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+    try:
+        with zipfile.ZipFile(source_path, "r") as package:
+            root = ET.fromstring(package.read("word/document.xml"))
+            rel_root = ET.fromstring(package.read("word/_rels/document.xml.rels"))
+            members = set(package.namelist())
+            rels = {rel.get("Id"): rel for rel in rel_root}
+            body = root.find(w + "body")
+            if body is None or not 0 <= int(block.body_idx) < len(body):
+                return None
+            table = body[int(block.body_idx)]
+            if table.tag != w + "tbl":
+                return None
+
+            referenced_ids = {
+                value for node in table.iter() for key, value in node.attrib.items()
+                if key in {rel_id + "embed", rel_id + "link", rel_id + "id"}
+            }
+            resource_parts = {}
+            for rid in referenced_ids:
+                rel = rels.get(rid)
+                if rel is None or rel.get("TargetMode") == "External":
+                    continue
+                target = str(rel.get("Target") or "").replace("\\", "/")
+                resolved = (posixpath.normpath(target.lstrip("/")) if target.startswith("/")
+                            else posixpath.normpath(posixpath.join("word", target)))
+                if (target and resolved not in (".", "..")
+                        and not resolved.startswith("../") and resolved in members):
+                    resource_parts[resolved] = package.read(resolved)
+
+        def property_value(parent, name, default=None):
+            prop = parent.find(name) if parent is not None else None
+            if prop is None:
+                return default
+            value = prop.get(w + "val")
+            # OOXML merge properties with no val mean "continue". They are
+            # semantically different from the absence of a merge property.
+            return value if value is not None else "continue"
+
+        def math_shape(node):
+            local = node.tag.split("}")[-1]
+            children = tuple(value for value in (math_shape(child) for child in list(node))
+                             if value is not None)
+            # Keep every OMML property/value in the identity. Formatting
+            # differences may make two semantically equal equations reject,
+            # but dropping operator/fence/fraction properties could make
+            # different equations compare equal.
+            attributes = tuple(sorted((key.split("}")[-1], value)
+                                      for key, value in node.attrib.items()))
+            return (local, attributes, (node.text or "").strip(), children)
+
+        def target_for(rid):
+            rel = rels.get(rid)
+            if rel is None or rel.get("TargetMode") == "External":
+                return None
+            target = str(rel.get("Target") or "").replace("\\", "/")
+            resolved = (posixpath.normpath(target.lstrip("/")) if target.startswith("/")
+                        else posixpath.normpath(posixpath.join("word", target)))
+            if (not target or resolved in (".", "..") or resolved.startswith("../")
+                    or resolved not in resource_parts):
+                return None
+            return resolved
+
+        def paragraph_tokens(paragraph):
+            tokens = []
+            if any(node.tag.split("}")[-1] == "txbxContent"
+                   for node in paragraph.iter()):
+                return None
+
+            def walk(node):
+                if node.tag in {m + "oMath", m + "oMathPara"}:
+                    tokens.append(("omml", math_shape(node)))
+                    return True
+                if node.tag == w + "t":
+                    tokens.append(("text", node.text or ""))
+                    return True
+                local = node.tag.split("}")[-1]
+                if local == "txbxContent":
+                    return False
+                if local in {"blip", "imagedata"}:
+                    rid = (node.get(rel_id + "embed") or node.get(rel_id + "link")
+                           or node.get(rel_id + "id"))
+                    target = target_for(rid) if rid else None
+                    if target is None:
+                        return False
+                    if exact_images:
+                        tokens.append(("image-sha256", hashlib.sha256(
+                            resource_parts[target]).hexdigest()))
+                    else:
+                        # Side-local question illustrations are compared by
+                        # topology only after the containing question is
+                        # independently identified.
+                        tokens.append(("image-slot", local, len(
+                            [token for token in tokens if token[0] == "image-slot"])))
+                    return True
+                if local == "OLEObject":
+                    rid = node.get(rel_id + "id")
+                    target = target_for(rid) if rid else None
+                    if target is None:
+                        return False
+                    tokens.append(("ole-sha256", hashlib.sha256(
+                        resource_parts[target]).hexdigest()))
+                    return True
+                if local == "sym":
+                    tokens.append(("symbol", node.get(w + "font"), node.get(w + "char")))
+                    return True
+                if node.tag == w + "hyperlink":
+                    rid = node.get(rel_id + "id")
+                    if rid:
+                        rel = rels.get(rid)
+                        if rel is None:
+                            return False
+                        tokens.append(("hyperlink", rel.get("TargetMode") or "Internal",
+                                       rel.get("Target") or ""))
+                    elif node.get(w + "anchor"):
+                        tokens.append(("hyperlink-anchor", node.get(w + "anchor")))
+                if node.tag == w + "object":
+                    ole_nodes = [child for child in node.iter()
+                                 if child.tag.split("}")[-1] == "OLEObject"]
+                    image_nodes = [child for child in node.iter()
+                                   if child.tag.split("}")[-1] in {"blip", "imagedata"}]
+                    if not ole_nodes and not image_nodes:
+                        return False
+                    for ole_node in ole_nodes:
+                        rid = ole_node.get(rel_id + "id")
+                        target = target_for(rid) if rid else None
+                        if target is None:
+                            return False
+                        tokens.append(("ole-sha256", hashlib.sha256(
+                            resource_parts[target]).hexdigest()))
+                    for image_node in image_nodes:
+                        rid = (image_node.get(rel_id + "embed")
+                               or image_node.get(rel_id + "link")
+                               or image_node.get(rel_id + "id"))
+                        if target_for(rid) is None:
+                            return False
+                        if exact_images:
+                            target = target_for(rid)
+                            tokens.append(("image-sha256", hashlib.sha256(
+                                resource_parts[target]).hexdigest()))
+                        else:
+                            tokens.append(("image-slot", image_node.tag.split("}")[-1],
+                                           len([token for token in tokens
+                                                if token[0] == "image-slot"])))
+                    return True
+                if local in {"drawing", "pict"}:
+                    image_nodes = [child for child in node.iter()
+                                   if child.tag.split("}")[-1] in {"blip", "imagedata"}]
+                    if not image_nodes:
+                        return False
+                    for image_node in image_nodes:
+                        rid = (image_node.get(rel_id + "embed")
+                               or image_node.get(rel_id + "link")
+                               or image_node.get(rel_id + "id"))
+                        target = target_for(rid) if rid else None
+                        if target is None:
+                            return False
+                        if exact_images:
+                            target = target_for(rid)
+                            tokens.append(("image-sha256", hashlib.sha256(
+                                resource_parts[target]).hexdigest()))
+                        else:
+                            tokens.append(("image-slot", image_node.tag.split("}")[-1],
+                                           len([token for token in tokens
+                                                if token[0] == "image-slot"])))
+                    return True
+                if local in {"tab", "br", "cr", "fldChar", "instrText"}:
+                    tokens.append((local, node.get(w + "fldCharType"), node.text or ""))
+                if local in {"bookmarkStart", "bookmarkEnd", "proofErr"}:
+                    return True
+                if node.tag in {w + "rPr", w + "pPr", w + "tblPr", w + "trPr",
+                                w + "tcPr", w + "tblGrid"}:
+                    return True
+                allowed_containers = {w + "p", w + "r", w + "hyperlink", w + "object",
+                                      w + "smartTag", w + "customXml", w + "sdtContent"}
+                if node.tag not in allowed_containers:
+                    return False
+                for child in list(node):
+                    if not walk(child):
+                        return False
+                return True
+
+            return tuple(tokens) if walk(paragraph) else None
+
+        def table_semantics(table_el):
+            allowed_table_children = {w + "tblPr", w + "tblGrid", w + "tr"}
+            if any(child.tag not in allowed_table_children for child in list(table_el)):
+                return None
+            grid_el = table_el.find(w + "tblGrid")
+            col_count = None if grid_el is None else len(grid_el.findall(w + "gridCol"))
+            rows = []
+            for row in table_el.findall("./" + w + "tr"):
+                if any(child.tag not in {w + "trPr", w + "tblPrEx", w + "tc"}
+                       for child in list(row)):
+                    return None
+                row_pr = row.find(w + "trPr")
+                before = property_value(row_pr, w + "gridBefore", "0")
+                after = property_value(row_pr, w + "gridAfter", "0")
+                cells = []
+                for cell in row.findall("./" + w + "tc"):
+                    if any(child.tag not in {w + "tcPr", w + "p", w + "tbl"}
+                           for child in list(cell)):
+                        return None
+                    cell_pr = cell.find(w + "tcPr")
+                    span = property_value(cell_pr, w + "gridSpan", "1")
+                    vmerge = property_value(cell_pr, w + "vMerge", "none")
+                    hmerge = property_value(cell_pr, w + "hMerge", "none")
+                    content = []
+                    for child in list(cell):
+                        if child.tag == w + "tcPr":
+                            continue
+                        if child.tag == w + "p":
+                            tokens = paragraph_tokens(child)
+                            if tokens is None:
+                                return None
+                            content.append(("paragraph", tokens))
+                        elif child.tag == w + "tbl":
+                            nested = table_semantics(child)
+                            if nested is None:
+                                return None
+                            content.append(("table", nested))
+                        else:
+                            return None
+                    cells.append((span, vmerge, hmerge, tuple(content)))
+                rows.append((before, after, tuple(cells)))
+            return ("table-grid-v1", col_count, tuple(rows))
+
+        return table_semantics(table)
+    except (OSError, KeyError, zipfile.BadZipFile, ET.ParseError, ValueError):
+        return None
+
+
+def _omml_expression_roots(paragraph):
+    """Return logical OMML expressions, treating oMathPara as one expression.
+
+    An ``m:oMathPara`` commonly wraps an ``m:oMath``. Counting both nodes as
+    separate formulas disagrees with StructDoc's ``math_count`` and can make an
+    otherwise verifiable resource block look unsupported. Descend normally
+    until the first OMML node, then keep that complete subtree as one unit.
+    """
+    math_tags = {
+        "{http://schemas.openxmlformats.org/officeDocument/2006/math}oMath",
+        "{http://schemas.openxmlformats.org/officeDocument/2006/math}oMathPara",
+    }
+    roots = []
+
+    def walk(node):
+        for child in list(node):
+            if child.tag in math_tags:
+                roots.append(child)
+            else:
+                walk(child)
+
+    walk(paragraph)
+    return roots
+
+
 def _subquestion_resource_identity(snapshot, span: dict[str, Any], source_path) -> tuple | None:
     """Describe ordered resources attached to an already matched subquestion.
 
@@ -341,23 +607,25 @@ def _subquestion_resource_identity(snapshot, span: dict[str, Any], source_path) 
         block = snapshot.document.blocks[seq]
         if block.textbox_texts:
             return None
+        if block.kind == "paragraph":
+            symbols = _paragraph_symbol_identity(block, source_path)
+            if symbols is None:
+                return None
+            if symbols:
+                resource_rows.append((seq, "symbols", symbols))
         if block.math_count:
             if block.kind != "paragraph" or not block.pno:
                 return None
             resource_rows.append((seq, "omml", int(block.pno), int(block.math_count)))
         if block.table is not None:
-            table_rows = []
             for row in block.table.rows:
-                cell_rows = []
                 for cell in row:
-                    if cell.has_image or cell.has_nested_table or any(
-                            nested.images or nested.oles or nested.math_count or
-                            nested.table is not None or nested.textbox_texts
-                            for nested in cell.blocks):
+                    if any(nested.textbox_texts for nested in cell.blocks):
                         return None
-                    cell_rows.append((_normalized_block_text(cell.text), cell.n_paras))
-                table_rows.append(tuple(cell_rows))
-            resource_rows.append((seq, "table", tuple(table_rows)))
+            semantic_signature = _table_semantic_signature(snapshot, block, source_path)
+            if semantic_signature is None:
+                return None
+            resource_rows.append((seq, "table", semantic_signature))
         for image_index, _image in enumerate(block.images):
             resource_rows.append((seq, "image_slot", image_index))
         for ole in block.oles:
@@ -388,6 +656,9 @@ def _subquestion_resource_identity(snapshot, span: dict[str, Any], source_path) 
 
             for row in resource_rows:
                 seq, kind, *details = row
+                if kind == "symbols":
+                    result.append((seq - span["nodes"][0], kind, details[0]))
+                    continue
                 if kind == "table":
                     result.append((seq - span["nodes"][0], kind, details[0]))
                     continue
@@ -400,11 +671,7 @@ def _subquestion_resource_identity(snapshot, span: dict[str, Any], source_path) 
                             or pno > len(main_body_paragraphs)):
                         return None
                     paragraph = main_body_paragraphs[pno - 1]
-                    math_nodes = [node for node in paragraph.iter()
-                                  if node.tag in {
-                                      "{http://schemas.openxmlformats.org/officeDocument/2006/math}oMath",
-                                      "{http://schemas.openxmlformats.org/officeDocument/2006/math}oMathPara",
-                                  }]
+                    math_nodes = _omml_expression_roots(paragraph)
                     if len(math_nodes) != expected_count:
                         return None
                     result.append((seq - span["nodes"][0], kind,
@@ -476,15 +743,11 @@ def _omml_is_between_ideographic_delimiters(block, source_path) -> bool:
         if body is None:
             return False
         w = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
-        math_tags = {
-            "{http://schemas.openxmlformats.org/officeDocument/2006/math}oMath",
-            "{http://schemas.openxmlformats.org/officeDocument/2006/math}oMathPara",
-        }
         paragraphs = [child for child in body if child.tag == w + "p"]
         if not 1 <= int(block.pno) <= len(paragraphs):
             return False
         paragraph = paragraphs[int(block.pno) - 1]
-        math_nodes = [node for node in paragraph.iter() if node.tag in math_tags]
+        math_nodes = _omml_expression_roots(paragraph)
         if len(math_nodes) != 1:
             return False
         math_node = math_nodes[0]
@@ -510,11 +773,17 @@ def _occurrence_tail_payload(snapshot, occurrence, source_path):
     """Return ordered tail text/resources, independent of paragraph wrapping."""
     text_parts = []
     resources_all = []
+    tail_seqs = []
     answer_stream = False
-    for node in occurrence.source_nodes:
+    ordered_nodes = sorted(
+        set(occurrence.source_nodes),
+        key=lambda node: (_top_seq(node) if _top_seq(node) is not None else -1, node),
+    )
+    for node in ordered_nodes:
         seq = _top_seq(node)
         if seq is None or seq == occurrence.start_seq:
             continue
+        tail_seqs.append(seq)
         block = snapshot.document.blocks[seq]
         if _EXPLICIT_ANSWER_MARKER.match(block.text or ""):
             answer_stream = True
@@ -535,7 +804,30 @@ def _occurrence_tail_payload(snapshot, occurrence, source_path):
             resources_all.extend(item for item in resources if item[1] != "omml")
         else:
             resources_all.extend(resources)
-    return "".join(text_parts), tuple(resources_all)
+    text = "".join(text_parts)
+    # StructDoc may trim an underlined U+3000 blank that spans adjacent Word
+    # paragraphs. Recover that exact source evidence only for text-only tails;
+    # OMML/table/OLE content stays on the structural path above.
+    if (source_path is not None and tail_seqs and all(
+            not (snapshot.document.blocks[seq].math_count
+                 or snapshot.document.blocks[seq].table is not None
+                 or snapshot.document.blocks[seq].oles
+                 or snapshot.document.blocks[seq].textbox_texts)
+            for seq in tail_seqs)):
+        raw = _raw_subquestion_text_with_underlined_blanks(
+            snapshot, {"nodes": tail_seqs}, source_path)
+        if raw is not None and raw[1]:
+            # The XML recovery may restore trimmed whitespace only. Confirm
+            # every non-whitespace character still agrees with the current
+            # semantic projection so edited/corrupt in-memory text cannot be
+            # overwritten by the source XML during matching.
+            raw_skeleton = re.sub(r"\s+", "", unicodedata.normalize("NFKC", raw[0]))
+            projected_skeleton = re.sub(r"\s+", "", unicodedata.normalize("NFKC", text))
+            if raw_skeleton == projected_skeleton:
+                sentinel = "\ue000"
+                raw_text = unicodedata.normalize("NFKC", raw[0].replace("\u3000", sentinel))
+                text = _SPACE.sub("", raw_text).replace(sentinel, "\u3000")
+    return text, tuple(resources_all)
 
 
 def _complete_occurrence_tail_match(student_snapshot, teacher_snapshot,
@@ -700,6 +992,82 @@ def _augment_with_unique_raw_matches(snapshot, reference, covered):
     return additions
 
 
+def _in_explicit_knowledge_region(snapshot, seq: int) -> bool:
+    """A numbered definition/list item under a knowledge heading is not a raw question start."""
+    knowledge_heading = re.compile(
+        r"^\s*(?:知识点|知识要点|知识梳理|概念|定义|方法|公式|定理|性质|规律|技巧)"
+        r"[\s：:、#0-9一二三四五六七八九十]*"
+    )
+    teaching_boundary = re.compile(
+        r"^\s*(?:题型|专题|即时训练|即学即练|对点训练|随堂练习|课堂练习|"
+        r"巩固练习|出门测试|综合练习|课后练习|当堂检测|达标检测)"
+    )
+    for index in range(seq - 1, -1, -1):
+        block = snapshot.document.blocks[index]
+        text = re.sub(r"\s+", " ", block.text or "").strip()
+        if not text:
+            continue
+        if teaching_boundary.match(text):
+            return False
+        if knowledge_heading.match(text):
+            return True
+        # Numbered/ordinary prose does not erase the nearest explicit section
+        # ownership. A later section heading does.
+        if re.match(r"^\s*[一二三四五六七八九十]+[、.．]", text):
+            return False
+    return False
+
+
+_EXPLICIT_CONTENT_HEADING = re.compile(
+    r"^\s*(?:[一二三四五六七八九十百]+[、.．]\s*)?"
+    r"(?:课堂启动|知识回顾|知识精讲|即时训练|归纳总结|巩固练习|出门测试|"
+    r"知识点|知识要点|知识梳理|考点|题型|专题|参考答案|答案与解析)"
+)
+_EXPLICIT_TEACHING_HEADING = re.compile(
+    r"^\s*(?:[一二三四五六七八九十百]+[、.．]\s*)?"
+    r"(?:课堂启动|知识回顾|知识精讲|即时训练|归纳总结|巩固练习|出门测试|"
+    r"知识点|知识要点|知识梳理|考点|题型|专题)"
+)
+
+
+def _clip_annotation_before_teaching_heading(snapshot, lo: int, hi: int) -> tuple[int, int] | None:
+    """Keep an answer/analysis span from crossing into a teaching section."""
+    for seq in range(lo, hi + 1):
+        text = re.sub(r"\s+", " ", snapshot.document.blocks[seq].text or "").strip()
+        if _EXPLICIT_TEACHING_HEADING.match(text):
+            return (lo, seq - 1) if seq > lo else None
+    return lo, hi
+
+
+def _answer_continuation_boundary(snapshot, start_seq: int, limit_seq: int) -> int:
+    """Return the first explicit teaching/topic boundary before a solution close."""
+    numbered_section = re.compile(r"^\s*[一二三四五六七八九十百]+[、.．]\s*\S")
+    for seq in range(start_seq + 1, limit_seq):
+        text = re.sub(r"\s+", " ", snapshot.document.blocks[seq].text or "").strip()
+        if numbered_section.match(text) or _EXPLICIT_TEACHING_HEADING.match(text):
+            return seq
+    return limit_seq
+
+
+def _next_occurrence_boundary(snapshot, start_seq: int, limit_seq: int) -> int:
+    """Stop question continuations at explicit answer or section boundaries."""
+    boundaries = [limit_seq]
+    for unit in snapshot.units:
+        if unit.get("role") != "section":
+            continue
+        for first, _last in unit.get("spans") or []:
+            seq = _physical_seq(snapshot.node_index.resolve_ref(first) or "")
+            if seq is not None and start_seq < seq < limit_seq:
+                boundaries.append(seq)
+    for seq in range(start_seq + 1, limit_seq):
+        text = snapshot.document.blocks[seq].text or ""
+        if (re.match(r"^\s*【(?:答案|解答)】|^\s*(?:答案与点拨|答案详解|试题解析)", text)
+                or _EXPLICIT_CONTENT_HEADING.match(text)):
+            boundaries.append(seq)
+            break
+    return min(boundaries)
+
+
 def align_teacher_student(student_snapshot, teacher_snapshot, *,
                           student_source_path=None, teacher_source_path=None) -> dict[str, Any]:
     """Build a strict canonical map; any real unmatched/ambiguous question fails."""
@@ -714,6 +1082,28 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
     teacher += _augment_with_unique_raw_matches(teacher_snapshot, student, teacher_covered)
     student.sort(key=lambda item: (item.start_seq, item.unit_id or ""))
     teacher.sort(key=lambda item: (item.start_seq, item.unit_id or ""))
+
+    # The student source is the canonical skeleton. Do not silently omit a
+    # numbered student paragraph merely because A-Line did not make it a
+    # question_group and the teacher has no exact counterpart. Such a block is
+    # either an unmatched real question or ambiguous content; both fail closed.
+    student_raw_candidates: dict[tuple[int, str], list[int]] = {}
+    for block in student_snapshot.document.blocks:
+        if block.seq in student_covered or block.kind != "paragraph":
+            continue
+        number, stem, fingerprint = _fingerprint(block.text)
+        if number and stem and not _in_explicit_knowledge_region(student_snapshot, block.seq):
+            student_raw_candidates.setdefault((number, fingerprint), []).append(block.seq)
+    teacher_identities = [(item.number, item.fingerprint) for item in teacher]
+    for (number, fingerprint), seqs in student_raw_candidates.items():
+        counterpart_count = teacher_identities.count((number, fingerprint))
+        if len(seqs) != 1 or counterpart_count != 1:
+            raise PairAlignmentError(
+                "ALIGNMENT_UNRESOLVED",
+                "student numbered source candidate lacks one unique teacher occurrence",
+                {"student_nodes": ["b%d" % seq for seq in seqs],
+                 "question_number": number,
+                 "teacher_counterpart_count": counterpart_count})
 
     if len(student) != len(teacher):
         raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
@@ -1104,9 +1494,10 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
         teacher_start_seq = _top_seq(item.get("teacher_node") or "")
         answer_structure_for_item = answer_evidence_by_start.get(teacher_start_seq, False)
         existing_teacher_signatures = {
-            _block_projection_signature(teacher_snapshot.document.blocks[seq])
+            _block_projection_signature(teacher_snapshot, seq, teacher_source_path)
             for seq in existing_teacher_nodes if seq is not None
         }
+        existing_teacher_signatures.discard(None)
         unmatched_in_group = []
         for seq in sorted(existing_student_nodes):
             block = student_snapshot.document.blocks[seq]
@@ -1114,20 +1505,25 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
                 continue
             if not re.match(r"^\s*(?:[（(]\d+[）)]|[①-⑳])", block.text or ""):
                 continue
-            if _block_projection_signature(block) not in existing_teacher_signatures:
+            student_signature = _block_projection_signature(
+                student_snapshot, seq, student_source_path)
+            if student_signature is None or student_signature not in existing_teacher_signatures:
                 unmatched_in_group.append(seq)
         student_candidates = sorted(set(unmatched_in_group + student_candidates))
         additions = []
         used_teacher = set()
         for student_seq in student_candidates:
             student_block = student_snapshot.document.blocks[student_seq]
+            student_signature = _block_projection_signature(
+                student_snapshot, student_seq, student_source_path)
             # First align to explicit subquestions inside the paired teacher
             # question group. These are question bodies, not the teacher's
             # later answer/solution paragraphs. A body difference may be
             # accepted only through the bounded blank-fill relation below.
             exact = [seq for seq in teacher_question_subparts if seq not in used_teacher
-                     and _block_projection_signature(student_block) ==
-                     _block_projection_signature(teacher_snapshot.document.blocks[seq])]
+                     and student_signature is not None
+                     and student_signature == _block_projection_signature(
+                         teacher_snapshot, seq, teacher_source_path)]
             relation = "EXACT_ORDERED_SUBQUESTION_TEXT_AND_RESOURCE_SIGNATURE"
             candidates = exact
             if not candidates:
@@ -1140,8 +1536,9 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
                 relation = "ANSWER_FILLED_SUBQUESTION_WITH_BOUND_ANSWER_STRUCTURE"
             if not candidates:
                 exact = [seq for seq in teacher_candidates if seq not in used_teacher
-                         and _block_projection_signature(student_block) ==
-                         _block_projection_signature(teacher_snapshot.document.blocks[seq])]
+                         and student_signature is not None
+                         and student_signature == _block_projection_signature(
+                             teacher_snapshot, seq, teacher_source_path)]
                 candidates = exact
                 relation = "EXACT_ORDERED_SUBQUESTION_TEXT_AND_RESOURCE_SIGNATURE"
             if not candidates:
@@ -1237,6 +1634,15 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
                 piece_start = piece_end = seq
             pieces.append((piece_start, piece_end))
 
+            # A-Line can give one broad answer/analysis span that continues
+            # through a later explicit teaching heading. Such a heading ends
+            # annotation ownership even when the following question has not
+            # started yet. Leave the heading and its content for peer-bound
+            # residual projection or fail closed there.
+            pieces = [bounded for piece_lo, piece_hi in pieces
+                      if (bounded := _clip_annotation_before_teaching_heading(
+                          teacher_snapshot, piece_lo, piece_hi)) is not None]
+
             # First accept an explicit parent/bind chain for the unowned
             # pieces, provided the same unit does not cross another canonical
             # question's physical range.
@@ -1252,6 +1658,18 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
                 if parent_unit is None:
                     break
                 parent = str(parent_unit.get("parent") or parent_unit.get("bind_to") or "")
+            explicit_answer_evidence = any(
+                _EXPLICIT_ANSWER_MARKER.match(
+                    teacher_snapshot.document.blocks[seq].text or "")
+                for piece_lo, piece_hi in pieces
+                for seq in range(piece_lo, piece_hi + 1))
+            if owner_unit_id is None and not explicit_answer_evidence:
+                # A-Line's answer/analysis role and a unique physical gap do
+                # not prove semantic ownership. Leave the blocks for exact
+                # residual matching against the student source; if no peer
+                # exists, projection will fail closed rather than moving
+                # knowledge content across slots.
+                continue
             if owner_unit_id is not None:
                 owner_occurrence = teacher_unit_to_occurrence[owner_unit_id]
                 occurrence_id = str(owner_occurrence["canonical_occurrence_id"])
@@ -1299,6 +1717,102 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
                                      "one teacher annotation unit spans multiple canonical questions",
                                      {"unit_id": unit.get("id"),
                                       "owners": sorted(unit_owner_ids)})
+
+    # Some A-Line versions label the explicit answer paragraph as ``body``
+    # and then split its continuation into presentation-only ``section`` /
+    # ``body`` units. The literal answer marker is strong ownership evidence;
+    # bind that bounded suffix to the immediately preceding canonical question
+    # only when no next canonical question starts inside the interval.
+    question_owned_teacher = {}
+    for item in mapping:
+        for node in item.get("teacher_nodes", []):
+            seq = _top_seq(node)
+            if seq is not None:
+                question_owned_teacher[seq] = item
+        for match in teacher_subquestion_evidence.get(
+                item["canonical_occurrence_id"], []):
+            for node in match.get("teacher_nodes", []):
+                seq = _top_seq(node)
+                if seq is not None:
+                    question_owned_teacher[seq] = item
+    for interval_index, (_q_start, q_end, occurrence) in enumerate(qg_intervals):
+        next_start = (qg_intervals[interval_index + 1][0]
+                      if interval_index + 1 < len(qg_intervals)
+                      else len(teacher_snapshot.document.blocks))
+        marker_nodes = [seq for seq in range(q_end + 1, next_start)
+                        if _EXPLICIT_ANSWER_MARKER.match(
+                            teacher_snapshot.document.blocks[seq].text or "")]
+        if not marker_nodes:
+            continue
+        marker_start = marker_nodes[0]
+        bounded_answer = _clip_annotation_before_teaching_heading(
+            teacher_snapshot, marker_start, next_start - 1)
+        answer_end = (bounded_answer[1] + 1) if bounded_answer else marker_start
+        occurrence_id = str(occurrence["canonical_occurrence_id"])
+        conflicts = {str(owner["canonical_occurrence_id"])
+                     for seq, owner in question_owned_teacher.items()
+                     if marker_start <= seq < answer_end
+                     and str(owner["canonical_occurrence_id"]) != occurrence_id}
+        if conflicts:
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "explicit teacher answer stream crosses another canonical question",
+                {"canonical_occurrence_id": occurrence_id,
+                 "other_owners": sorted(conflicts),
+                 "answer_start": "b%d" % marker_start})
+        owner_nodes = annotation_owners.setdefault(occurrence_id, set())
+        owner_nodes.update("b%d" % seq for seq in range(marker_start, answer_end)
+                           if seq not in question_owned_teacher)
+        annotation_units_by_owner.setdefault(occurrence_id, set()).add(
+            "EXPLICIT_ANSWER_MARKER_GAP:b%d-b%d" % (marker_start, answer_end - 1))
+
+    # Some A-Line answer/analysis units begin before the literal answer marker
+    # and swallow standalone A-D option paragraphs. Keep those options with
+    # the canonical question only when the complete, ordered choice set is
+    # structurally bounded by that question and its explicit answer marker.
+    # This prevents a broad annotation span from misclassifying student-visible
+    # options as teacher-only answer material.
+    for interval_index, (_q_start, q_end, occurrence) in enumerate(qg_intervals):
+        next_start = (qg_intervals[interval_index + 1][0]
+                      if interval_index + 1 < len(qg_intervals)
+                      else len(teacher_snapshot.document.blocks))
+        marker_nodes = [seq for seq in range(q_end + 1, next_start)
+                        if _EXPLICIT_ANSWER_MARKER.match(
+                            teacher_snapshot.document.blocks[seq].text or "")]
+        if not marker_nodes:
+            continue
+        marker_start = marker_nodes[0]
+        option_seqs = list(range(q_end + 1, marker_start))
+        if not option_seqs:
+            continue
+        occurrence_id = str(occurrence["canonical_occurrence_id"])
+        owner_nodes = annotation_owners.get(occurrence_id, set())
+        question_seqs = [seq for seq in range(_q_start, q_end + 1)]
+        stem_text = " ".join(teacher_snapshot.document.blocks[seq].text or ""
+                              for seq in question_seqs)
+        if not _CHOICE_STEM.search(stem_text):
+            continue
+        option_labels = []
+        safe_option_group = True
+        for seq in option_seqs:
+            block = teacher_snapshot.document.blocks[seq]
+            if (block.kind != "paragraph" or block.images or block.oles
+                    or block.math_count or block.table is not None
+                    or block.textbox_texts):
+                safe_option_group = False
+                break
+            labels = _CHOICE_MARKER.findall(block.text or "")
+            if not labels:
+                safe_option_group = False
+                break
+            option_labels.extend(label.upper() for label in labels)
+        prefix_labels = []
+        for seq in question_seqs:
+            prefix_labels.extend(label.upper() for label in _CHOICE_MARKER.findall(
+                teacher_snapshot.document.blocks[seq].text or ""))
+        if safe_option_group and prefix_labels + option_labels == ["A", "B", "C", "D"]:
+            for seq in option_seqs:
+                owner_nodes.discard("b%d" % seq)
 
     # A paired answer-rich edition may store the remaining multiple-choice
     # options in separate paragraphs that A-Line leaves outside the question
@@ -1368,13 +1882,167 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
             "relation": "COMPLETE_AD_OPTIONS_BETWEEN_CHOICE_STEM_AND_OWNED_ANSWER",
         }
 
+    # A-Line can leave the student A-D options as separate section/body units
+    # immediately after the question span while the teacher edition groups
+    # them into its question or answer stream. Attach the student continuation
+    # only when the teacher option extension is already structurally bounded
+    # and all four normalized option texts match exactly in order.
+    student_owned_nodes = {
+        int(node[1:]): item["canonical_occurrence_id"]
+        for item in mapping for node in item.get("student_nodes", [])
+        if re.fullmatch(r"b\d+", node)
+    }
+    for index, (item, left) in enumerate(zip(mapping, student)):
+        teacher_extension = item.get("teacher_only_option_extension") or {}
+        teacher_option_nodes = list(dict.fromkeys([
+            int(node[1:]) for node in item.get("teacher_nodes", [])
+            if re.fullmatch(r"b\d+", node)
+        ] + [
+            int(node[1:]) for node in teacher_extension.get("nodes", [])
+            if re.fullmatch(r"b\d+", node)
+        ]))
+        if not teacher_option_nodes:
+            continue
+        teacher_entries = _choice_entries_from_blocks(teacher_snapshot,
+                                                      teacher_option_nodes)
+        if teacher_entries is None:
+            continue
+        student_nodes = [int(node[1:]) for node in item.get("student_nodes", [])
+                         if re.fullmatch(r"b\d+", node)]
+        if not student_nodes:
+            continue
+        next_start = (student[index + 1].start_seq if index + 1 < len(student)
+                      else len(student_snapshot.document.blocks))
+        student_extension = _following_choice_entries(
+            student_snapshot, student_nodes, next_start)
+        if student_extension is None:
+            continue
+        student_entries, extension_seqs = student_extension
+        if student_entries != teacher_entries[0]:
+            continue
+        conflicting_nodes = [seq for seq in extension_seqs
+                             if (seq in student_owned_nodes
+                                 and student_owned_nodes[seq]
+                                 != item["canonical_occurrence_id"])]
+        if conflicting_nodes:
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "student choice continuation is already owned by another canonical occurrence",
+                {"canonical_occurrence_id": item["canonical_occurrence_id"],
+                 "conflicting_nodes": {"b%d" % seq: student_owned_nodes.get(seq)
+                                       for seq in conflicting_nodes}})
+        student_option_nodes = ["b%d" % seq for seq in extension_seqs]
+        item["student_nodes"] = list(dict.fromkeys(
+            [*item.get("student_nodes", []), *student_option_nodes]))
+        item["student_only_option_extension"] = {
+            "nodes": student_option_nodes,
+            "labels": [label for label, _text in student_entries],
+            "relation": "EXACT_ORDERED_TEXT_MATCH_TO_TEACHER_OPTIONS",
+        }
+        for seq in extension_seqs:
+            student_owned_nodes[seq] = item["canonical_occurrence_id"]
+
+    # Recover only exact, order-preserving teacher continuations that A-Line
+    # left outside the question_group. Search is bounded by the next canonical
+    # teacher question and stops at an explicit answer marker. No ordinal or
+    # fuzzy text match is used. Answer-filled subquestions are handled by the
+    # separately verified subquestion map below.
+    teacher_node_owners = {
+        int(node[1:]): item["canonical_occurrence_id"]
+        for item in mapping for node in item.get("teacher_nodes", [])
+        if re.fullmatch(r"b\d+", node)
+    }
+    for index, (item, left, right) in enumerate(zip(mapping, student, teacher)):
+        proven_student_subquestions = {
+            int(node[1:])
+            for evidence in teacher_subquestion_evidence.get(
+                item["canonical_occurrence_id"], [])
+            for node in evidence.get("student_nodes", [])
+            if re.fullmatch(r"b\d+", node)
+        }
+        proven_student_options = {
+            int(node[1:]) for node in (item.get("student_only_option_extension") or {}).get(
+                "nodes", []) if re.fullmatch(r"b\d+", node)
+        }
+        next_teacher_start = (teacher[index + 1].start_seq if index + 1 < len(teacher)
+                              else len(teacher_snapshot.document.blocks))
+        teacher_stop = next_teacher_start
+        for seq in range(right.start_seq + 1, next_teacher_start):
+            if _EXPLICIT_ANSWER_MARKER.match(
+                    teacher_snapshot.document.blocks[seq].text or ""):
+                teacher_stop = seq
+                break
+        candidate_seqs = list(range(right.start_seq, teacher_stop))
+
+        def continuation_identity(snapshot, source_path, seq):
+            block = snapshot.document.blocks[seq]
+            resources = _subquestion_resource_identity(snapshot, {"nodes": [seq]}, source_path)
+            if resources is None:
+                return None
+            sentinel = "\ue000"
+            normalized = unicodedata.normalize(
+                "NFKC", (block.text or "").replace("\u3000", sentinel))
+            normalized = _SPACE.sub("", normalized).replace(sentinel, "\u3000")
+            if not normalized and not block.images and not block.oles and not block.math_count \
+                    and block.table is None and not block.textbox_texts:
+                return None
+            return (block.kind, normalized, len(block.images), resources)
+
+        additions = []
+        last_teacher_seq = right.start_seq - 1
+        for student_node in item.get("student_nodes", []):
+            student_seq = _top_seq(student_node)
+            if (student_seq is None or student_seq == left.start_seq
+                    or student_seq in proven_student_subquestions
+                    or student_seq in proven_student_options):
+                continue
+            identity = continuation_identity(student_snapshot, student_source_path,
+                                             student_seq)
+            if identity is None:
+                continue
+            matches = []
+            for teacher_seq in candidate_seqs:
+                owner = teacher_node_owners.get(teacher_seq)
+                if (teacher_seq <= last_teacher_seq
+                        or (owner is not None
+                            and owner != item["canonical_occurrence_id"])):
+                    continue
+                if continuation_identity(teacher_snapshot, teacher_source_path,
+                                         teacher_seq) == identity:
+                    matches.append(teacher_seq)
+            if len(matches) > 1:
+                raise PairAlignmentError(
+                    "ALIGNMENT_AMBIGUOUS",
+                    "teacher continuation has multiple exact structural counterparts",
+                    {"canonical_occurrence_id": item["canonical_occurrence_id"],
+                     "student_node": student_node,
+                     "teacher_candidates": ["b%d" % seq for seq in matches]})
+            if len(matches) == 1:
+                teacher_seq = matches[0]
+                last_teacher_seq = teacher_seq
+                if teacher_seq not in {
+                        int(node[1:]) for node in item.get("teacher_nodes", [])
+                        if re.fullmatch(r"b\d+", node)}:
+                    additions.append(teacher_seq)
+        if additions:
+            item["teacher_nodes"] = list(dict.fromkeys([
+                *item.get("teacher_nodes", []),
+                *["b%d" % seq for seq in additions],
+            ]))
+            item["teacher_exact_continuation_nodes"] = ["b%d" % seq for seq in additions]
+            for seq in additions:
+                teacher_node_owners[seq] = item["canonical_occurrence_id"]
+
     # Validate complete question bodies only after raw-range and proven
     # teacher-only option recovery have finalized the occurrence projections.
     # Checking earlier would reject valid occurrences merely because A-Line
     # left a continuation outside the question_group span.
-    for item, left, right in zip(mapping, student, teacher):
+    for occurrence_index, (item, left, right) in enumerate(zip(mapping, student, teacher)):
         student_nodes = list(item.get("student_nodes") or [])
         teacher_nodes = list(item.get("teacher_nodes") or [])
+        for evidence in teacher_subquestion_evidence.get(
+                item["canonical_occurrence_id"], []):
+            teacher_nodes.extend(evidence.get("teacher_nodes") or [])
         extension = item.get("teacher_only_option_extension") or {}
         teacher_nodes.extend(extension.get("nodes") or [])
         moved = item.get("teacher_moved_supplement") or {}
@@ -1387,10 +2055,44 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
             raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
                                      "complete body check has no physical occurrence start",
                                      {"canonical_occurrence_id": item["canonical_occurrence_id"]})
+        for role, snapshot, nodes in (
+                ("student", student_snapshot, student_nodes),
+                ("teacher", teacher_snapshot, teacher_nodes)):
+            current_seqs = [_top_seq(node) for node in nodes]
+            current_seqs = [seq for seq in current_seqs if seq is not None]
+            if not current_seqs:
+                continue
+            current_end = max(current_seqs)
+            next_starts = [_top_seq(candidate.get(role + "_node") or "")
+                           for candidate in mapping[occurrence_index + 1:]]
+            next_starts = [seq for seq in next_starts if seq is not None and seq > current_end]
+            limit = min(next_starts) if next_starts else len(snapshot.document.blocks)
+            boundary = _next_occurrence_boundary(snapshot, current_end, limit)
+            existing = set(current_seqs)
+            for seq in range(current_end + 1, boundary):
+                if seq not in existing:
+                    nodes.append("b%d" % seq)
+                    existing.add(seq)
+            item[role + "_nodes"] = list(dict.fromkeys(nodes))
+        student_nodes = list(item.get("student_nodes") or student_nodes)
+        teacher_nodes = list(item.get("teacher_nodes") or teacher_nodes)
         left_final = replace(left, start_seq=student_start,
                              source_nodes=tuple(student_nodes))
         right_final = replace(right, start_seq=teacher_start,
                               source_nodes=tuple(dict.fromkeys(teacher_nodes)))
+        student_head_resources = _subquestion_resource_identity(
+            student_snapshot, {"nodes": [student_start]}, student_source_path)
+        teacher_head_resources = _subquestion_resource_identity(
+            teacher_snapshot, {"nodes": [teacher_start]}, teacher_source_path)
+        if (student_head_resources is None or teacher_head_resources is None
+                or not _resource_identities_match(student_head_resources,
+                                                  teacher_head_resources)):
+            raise PairAlignmentError(
+                "ALIGNMENT_UNRESOLVED",
+                "canonical question-head resources differ or cannot be verified",
+                {"canonical_occurrence_id": item["canonical_occurrence_id"],
+                 "student_node": "b%d" % student_start,
+                 "teacher_node": "b%d" % teacher_start})
         if not _complete_occurrence_tail_match(
                 student_snapshot, teacher_snapshot, left_final, right_final,
                 student_source_path, teacher_source_path,
@@ -1483,7 +2185,6 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
     # blocks. Images, equations, OLEs, and atomic tables remain attached to the
     # same occurrence; none is split or reinterpreted.
     unit_by_id = {str(unit.get("id")): unit for unit in teacher_snapshot.units}
-    explicit_topic_heading = re.compile(r"^\s*[一二三四五六七八九十百]+[、.．]\s*\S")
     answer_close = re.compile(r"^\s*(?:故答案为|故答案：|故选[：:]?|答：|答案：)")
     terminal_answer_close = re.compile(r"^\s*(?:故答案为|故答案：|故选[：:]?)")
     subquestion_start = re.compile(r"^\s*(?:答：)?[（(](\d+)[）)]")
@@ -1505,12 +2206,8 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
         next_question = (qg_intervals[current_interval + 1][0]
                          if current_interval is not None and current_interval + 1 < len(qg_intervals)
                          else len(teacher_snapshot.document.blocks))
-        boundary = next_question
-        for seq in range(current_end + 1, next_question):
-            block = teacher_snapshot.document.blocks[seq]
-            if explicit_topic_heading.match(block.text or ""):
-                boundary = seq
-                break
+        boundary = _answer_continuation_boundary(
+            teacher_snapshot, current_end, next_question)
 
         expected_parts = []
         for node in item.get("teacher_nodes", []):
@@ -1578,29 +2275,366 @@ def align_teacher_student(student_snapshot, teacher_snapshot, *,
     }
 
 
-def _block_projection_signature(block) -> str:
-    """Strict residual-block fingerprint; answer blanks are bounded above."""
+def _block_projection_signature(snapshot, seq: int, source_path, *, exact_images=False,
+                                allow_visually_empty_prefix_images=False) -> str | None:
+    """Strict source-bound identity for a physical block projection.
+
+    Resource counts/shapes are not identities. When a block carries resources,
+    hash or structurally describe their complete source content; reject a
+    resource-bearing block if its exact source package is unavailable.
+    """
+    block = snapshot.document.blocks[seq]
     normalized = unicodedata.normalize("NFKC", block.text or "")
     normalized = _SPACE.sub("", normalized)
-    image_signature = tuple((image.kind, image.cx, image.cy) for image in block.images)
-    table_signature = None
-    if block.table is not None:
-        table_signature = (block.table.n_rows, block.table.n_cols_max)
-    payload = (block.kind, normalized, image_signature, block.math_count,
-               len(block.oles), table_signature, len(block.textbox_texts))
+    if block.textbox_texts:
+        return None
+    resources = _subquestion_resource_identity(
+        snapshot, {"nodes": [seq]}, source_path)
+    if resources is None and (block.images or block.oles or block.math_count
+                              or block.table is not None):
+        return None
+    if resources is None:
+        resources = ()
+    symbols = _paragraph_symbol_identity(block, source_path)
+    if symbols is None:
+        return None
+    if exact_images:
+        if block.images and source_path is None:
+            return None
+        image_identity = _exact_image_resource_identity(
+            block, source_path,
+            allow_visually_empty=allow_visually_empty_prefix_images)
+        if image_identity is None:
+            return None
+        table_identity = (_table_semantic_signature(snapshot, block, source_path,
+                                                    exact_images=True)
+                          if block.table is not None else None)
+        if block.table is not None and table_identity is None:
+            return None
+        if table_identity is not None:
+            resources = tuple(resources) + (("exact-table-images-and-content", table_identity),)
+        image_slots = image_identity
+    else:
+        # Side-local illustrations are compared by topology only after a
+        # canonical question occurrence has independently bound their owner.
+        image_slots = tuple((image.kind, index) for index, image in enumerate(block.images))
+    payload = ("block-source-v3", block.kind, normalized, image_slots, resources, symbols)
     return hashlib.sha256(json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
                           .encode("utf-8")).hexdigest()
 
 
-def _paired_prefix_signature(block) -> str:
-    """Exact ordered prefix identity, allowing different image dimensions."""
-    normalized = unicodedata.normalize("NFKC", block.text or "")
-    image_signature = tuple(image.kind for image in block.images)
-    table_signature = None if block.table is None else (block.table.n_rows, block.table.n_cols_max)
-    payload = (block.kind, normalized, image_signature, block.math_count,
-               len(block.oles), table_signature, len(block.textbox_texts))
-    return hashlib.sha256(json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-                          .encode("utf-8")).hexdigest()
+def _require_ordered_residual_projection(spans: list[tuple[int, int, int, int]]) -> None:
+    """Reject residual peer maps that cross source order in either document.
+
+    Each span is ``(teacher_start, teacher_end, student_start, student_end)``.
+    A teacher-only annotation has no student span and is intentionally not
+    passed here. Multi-block student projections, such as a teacher paragraph
+    containing separate student options, are represented by one bounding span.
+    """
+    ordered = sorted(spans, key=lambda item: (item[0], item[1], item[2], item[3]))
+    previous = None
+    for current in ordered:
+        if previous is not None and (
+                current[0] <= previous[1] or current[2] <= previous[3]):
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "residual structural peers cross source order",
+                {"previous_teacher_span": [previous[0], previous[1]],
+                 "previous_student_span": [previous[2], previous[3]],
+                 "current_teacher_span": [current[0], current[1]],
+                 "current_student_span": [current[2], current[3]]})
+        previous = current
+
+
+def _is_empty_layout_only_block(block) -> bool:
+    """Return true only for a physical paragraph with no semantic/resource content."""
+    return not (
+        (block.text or "").strip() or block.images or block.oles or block.math_count
+        or block.table is not None or block.textbox_texts
+    )
+
+
+def _is_explicit_exercise_section_heading(block) -> bool:
+    """Recognize only numbered exercise-group titles with an explicit count."""
+    text = unicodedata.normalize("NFKC", block.text or "")
+    return bool(re.match(
+        r"^\s*[一二三四五六七八九十百]+[、.]\s*"
+        r"(?=.*(?:共\s*\d+\s*(?:小题|题)|题型|专题|考点)).+",
+        text))
+
+
+def _require_student_residual_consumption(snapshot, residuals, consumed, routes,
+                                          residual_map) -> None:
+    """Fail closed on unmatched student content; retain only empty layout nodes."""
+    for key, student_nodes in residuals.items():
+        for student_seq in student_nodes:
+            if student_seq in consumed:
+                continue
+            block = snapshot.document.blocks[student_seq]
+            if not _is_empty_layout_only_block(block):
+                raise PairAlignmentError(
+                    "ALIGNMENT_UNRESOLVED",
+                    "student residual b%d has no unique structurally identical teacher peer: %s"
+                    % (student_seq, (block.text or "")[:120]),
+                    {"student_node": "b%d" % student_seq,
+                     "context": key[0], "block_kind": block.kind,
+                     "block_text": (block.text or "")[:120],
+                     "resource_counts": {"images": len(block.images),
+                                         "oles": len(block.oles),
+                                         "math": block.math_count,
+                                         "table": block.table is not None}})
+            residual_map.append({
+                "student_node": "b%d" % student_seq,
+                "destination_slot": routes.get(student_seq),
+                "fingerprint_match": "UNPAIRED_EMPTY_LAYOUT_ONLY_PARAGRAPH",
+            })
+
+
+def _exact_image_resource_identity(block, source_path, *, allow_visually_empty=False):
+    """Return ordered media SHA-256s for conservative residual/group matching."""
+    if not block.images:
+        return ()
+    if source_path is None:
+        return None
+    try:
+        with zipfile.ZipFile(source_path, "r") as package:
+            members = set(package.namelist())
+            identities = []
+            for image in block.images:
+                target = posixpath.normpath(str(image.target or "").replace("\\", "/"))
+                if (not target or target in (".", "..") or target.startswith("../")
+                        or target.startswith("/") or ":" in target or target not in members):
+                    return None
+                image_bytes = package.read(target)
+                empty_identity = (_visually_empty_white_image_identity(image_bytes)
+                                  if allow_visually_empty else None)
+                if allow_visually_empty and empty_identity is not None:
+                    identities.append((image.kind, "VISUALLY_EMPTY_PREFIX_IMAGE", empty_identity))
+                else:
+                    # Display extents are preserved independently on each
+                    # source projection. They affect layout, not the identity
+                    # of the embedded image bytes being aligned.
+                    identities.append((image.kind, hashlib.sha256(image_bytes).hexdigest()))
+            return tuple(identities)
+    except (OSError, KeyError, zipfile.BadZipFile, TypeError, ValueError):
+        return None
+
+
+def _paired_visual_image_match(left_snapshot, left_seq: int, left_path,
+                               right_snapshot, right_seq: int, right_path) -> bool:
+    """Compare a single image-only paragraph visually across paired sources.
+
+    This is used only inside an already exact, explicitly marked exercise
+    scope. The image bytes remain unchanged. It accepts resolution/compression
+    variants only when aspect ratio and normalized raster pixels are nearly
+    identical; OCR or nearby text alone never establishes image identity.
+    """
+    try:
+        from PIL import Image
+
+        def image_bytes(snapshot, seq, source_path):
+            block = snapshot.document.blocks[seq]
+            if (block.kind != "paragraph" or len(block.images) != 1
+                    or (block.text or "").strip() or block.oles or block.math_count
+                    or block.table is not None or block.textbox_texts):
+                return None
+            target = str(block.images[0].target or "").replace("\\", "/")
+            normalized = posixpath.normpath(target)
+            if (not target or normalized in (".", "..") or normalized.startswith("../")
+                    or normalized.startswith("/") or ":" in normalized):
+                return None
+            with zipfile.ZipFile(source_path, "r") as package:
+                if normalized not in package.namelist():
+                    return None
+                return package.read(normalized)
+
+        left_data = image_bytes(left_snapshot, left_seq, left_path)
+        right_data = image_bytes(right_snapshot, right_seq, right_path)
+        if not left_data or not right_data:
+            return False
+
+        return _visually_equivalent_rasters(left_data, right_data)
+    except Exception:
+        return False
+
+
+def _visually_equivalent_rasters(left_data: bytes, right_data: bytes) -> bool:
+    """Conservative resolution-normalized raster equivalence check."""
+    try:
+        from PIL import Image, ImageChops, ImageStat
+
+        def normalized_image(data):
+            image = Image.open(BytesIO(data))
+            if (image.n_frames != 1 or image.mode not in
+                    {"1", "L", "LA", "RGB", "RGBA"}
+                    or max(image.size) > 8192 or min(image.size) < 16):
+                return None
+            image.load()
+            if image.mode in {"LA", "RGBA"}:
+                rgba = image.convert("RGBA")
+                white = Image.new("RGBA", rgba.size, (255, 255, 255, 255))
+                image = Image.alpha_composite(white, rgba).convert("RGB")
+            else:
+                image = image.convert("RGB")
+            return image
+
+        left, right = normalized_image(left_data), normalized_image(right_data)
+        if left is None or right is None:
+            return False
+        left_ratio = left.width / left.height
+        right_ratio = right.width / right.height
+        if abs(left_ratio - right_ratio) / max(left_ratio, right_ratio) > 0.02:
+            return False
+        target_width = 192
+        target_height = max(16, round(target_width / ((left_ratio + right_ratio) / 2)))
+        left_gray = left.resize((target_width, target_height), Image.Resampling.LANCZOS).convert("L")
+        right_gray = right.resize((target_width, target_height), Image.Resampling.LANCZOS).convert("L")
+        if ImageStat.Stat(left_gray).stddev[0] < 5 or ImageStat.Stat(right_gray).stddev[0] < 5:
+            return False
+        differences = list(ImageChops.difference(left_gray, right_gray).get_flattened_data())
+        if not differences:
+            return False
+        sorted_differences = sorted(differences)
+        p95 = sorted_differences[min(len(sorted_differences) - 1,
+                                     int(len(sorted_differences) * 0.95))]
+        mean = sum(differences) / len(differences)
+        close_ratio = sum(value <= 16 for value in differences) / len(differences)
+        return mean <= 2.0 and p95 <= 16 and close_ratio >= 0.97
+    except Exception:
+        return False
+
+
+def _paired_visual_table_match(left_snapshot, left_seq: int, left_path,
+                               right_snapshot, right_seq: int, right_path) -> bool:
+    """Validate an atomic table by exact semantics and ordered image identity."""
+    left_block = left_snapshot.document.blocks[left_seq]
+    right_block = right_snapshot.document.blocks[right_seq]
+    if left_block.table is None or right_block.table is None:
+        return False
+    left_semantics = _table_semantic_signature(
+        left_snapshot, left_block, left_path, exact_images=False)
+    right_semantics = _table_semantic_signature(
+        right_snapshot, right_block, right_path, exact_images=False)
+    if left_semantics is None or left_semantics != right_semantics:
+        return False
+
+    def nested_images(table):
+        result = []
+        for row in table.rows:
+            for cell in row:
+                for child in cell.blocks:
+                    if child.table is not None:
+                        result.extend(nested_images(child.table))
+                    for image in child.images:
+                        result.append(image)
+        return result
+
+    left_images = nested_images(left_block.table)
+    right_images = nested_images(right_block.table)
+    if len(left_images) != len(right_images):
+        return False
+
+    def read_images(source_path, images):
+        values = []
+        with zipfile.ZipFile(source_path, "r") as package:
+            members = set(package.namelist())
+            for image in images:
+                target = str(image.target or "").replace("\\", "/")
+                normalized = posixpath.normpath(target)
+                if (not target or normalized in (".", "..")
+                        or normalized.startswith("../") or normalized.startswith("/")
+                        or ":" in normalized or normalized not in members):
+                    return None
+                values.append(package.read(normalized))
+        return values
+
+    left_bytes = read_images(left_path, left_images)
+    right_bytes = read_images(right_path, right_images)
+    if left_bytes is None or right_bytes is None:
+        return False
+    for left_image, right_image, left_data, right_data in zip(
+            left_images, right_images, left_bytes, right_bytes):
+        if left_image.kind != right_image.kind:
+            return False
+        if left_data != right_data and not _visually_equivalent_rasters(left_data, right_data):
+            return False
+    return True
+
+
+def _visually_empty_white_image_identity(image_bytes: bytes) -> tuple | None:
+    """Canonicalize only raster placeholders with no visible foreground.
+
+    This exception is used for pre-question paired-prefix projection only. It
+    does not discard or replace the original image. Images with any pixel below
+    near-white are kept byte-exact; unsupported or malformed image formats fail
+    closed by returning None.
+    """
+    try:
+        from PIL import Image
+        with Image.open(BytesIO(image_bytes)) as image:
+            # Pillow's I;16 -> RGBA conversion saturates high-bit-depth samples
+            # and can turn dark pixels white. Normalize only known-safe 8-bit,
+            # single-frame modes; all other encodings retain exact SHA identity.
+            if image.n_frames != 1 or image.mode not in {"1", "L", "LA", "RGB", "RGBA"}:
+                return None
+            rgba = image.convert("RGBA")
+            pixels = rgba.get_flattened_data()
+            if all(alpha == 0 or min(red, green, blue) >= 254
+                   for red, green, blue, alpha in pixels):
+                return ("alpha-empty-or-near-white",)
+    except Exception:
+        return None
+    return None
+
+
+def _paired_prefix_signature(snapshot, seq: int, source_path) -> str | None:
+    """Source-bound prefix identity; only content-free white images normalize."""
+    return _block_projection_signature(
+        snapshot, seq, source_path, exact_images=True,
+        allow_visually_empty_prefix_images=True)
+
+
+@lru_cache(maxsize=32)
+def _load_paragraph_symbol_map(path_text: str, modified_ns: int, size: int) -> tuple | None:
+    w = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+    try:
+        with zipfile.ZipFile(path_text, "r") as package:
+            root = ET.fromstring(package.read("word/document.xml"))
+        body = root.find(w + "body")
+        if body is None:
+            return None
+        results = []
+        def walk(node, result, in_textbox=False):
+            in_textbox = in_textbox or node.tag == w + "txbxContent"
+            if node.tag == w + "sym" and not in_textbox:
+                result.append((node.get(w + "font"), node.get(w + "char")))
+            for child in node:
+                walk(child, result, in_textbox)
+        for paragraph in body.findall(w + "p"):
+            result = []
+            walk(paragraph, result)
+            results.append(tuple(result))
+        return tuple(results)
+    except (OSError, KeyError, zipfile.BadZipFile, ET.ParseError, ValueError):
+        return None
+
+
+def _paragraph_symbol_identity(block, source_path) -> tuple | None:
+    """Retain Word's semantic w:sym glyph identity omitted from plain text."""
+    if block.kind != "paragraph":
+        return ()
+    if source_path is None or not block.pno:
+        return None
+    try:
+        path = Path(source_path).expanduser().resolve(strict=True)
+        stat = path.stat()
+        symbols = _load_paragraph_symbol_map(str(path), stat.st_mtime_ns, stat.st_size)
+        pno = int(block.pno)
+        if symbols is None or not 1 <= pno <= len(symbols):
+            return None
+        return symbols[pno - 1]
+    except (OSError, TypeError, ValueError):
+        return None
 
 
 def _exact_option_subblock(teacher_text: str, student_blocks) -> list[tuple[str, int]]:
@@ -1630,10 +2664,57 @@ def _exact_option_subblock(teacher_text: str, student_blocks) -> list[tuple[str,
     return result
 
 
+def _choice_entries_from_blocks(snapshot, seqs: list[int]) -> tuple[list[tuple[str, str]], list[int]] | None:
+    """Read a complete A-D option run from explicit, resource-free paragraphs."""
+    pattern = re.compile(
+        r"(?<![A-Za-z0-9])([A-D])[\.．、]\s*(.*?)(?=(?<![A-Za-z0-9])[A-D][\.．、]\s*|$)",
+        re.S | re.I)
+    entries: list[tuple[str, str]] = []
+    used_nodes: list[int] = []
+    for seq in seqs:
+        block = snapshot.document.blocks[seq]
+        matches = list(pattern.finditer(block.text or ""))
+        if not matches:
+            continue
+        if (block.kind != "paragraph" or block.images or block.oles or
+                block.math_count or block.table is not None or block.textbox_texts):
+            return None
+        used_nodes.append(seq)
+        for match in matches:
+            entries.append((match.group(1).upper(), _normalized_block_text(match.group(2))))
+    if [label for label, _text in entries] != ["A", "B", "C", "D"]:
+        return None
+    if any(not text for _label, text in entries):
+        return None
+    return entries, used_nodes
+
+
+def _following_choice_entries(snapshot, prefix_nodes: list[int], end: int) -> tuple[list[tuple[str, str]], list[int]] | None:
+    """Find an exact A-D run, allowing the question span to contain its prefix."""
+    candidate_nodes = list(prefix_nodes)
+    start = max(prefix_nodes) + 1 if prefix_nodes else 0
+    for seq in range(start, end):
+        block = snapshot.document.blocks[seq]
+        if not (block.text or "").strip() and not block.images and not block.oles and not block.math_count and block.table is None:
+            continue
+        if not _CHOICE_MARKER.search(block.text or ""):
+            break
+        candidate_nodes.append(seq)
+        parsed = _choice_entries_from_blocks(snapshot, candidate_nodes)
+        if parsed is not None:
+            return parsed
+        labels = [label.upper() for label in _CHOICE_MARKER.findall(
+            " ".join(snapshot.document.blocks[node].text or "" for node in candidate_nodes))]
+        if labels and labels != ["A", "B", "C", "D"][:len(labels)]:
+            return None
+    return None
+
+
 def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str, Any],
                         student_routes: dict[int, str], *,
                         student_cover_nodes: set[int] | None = None,
-                        teacher_cover_nodes: set[int] | None = None) -> dict[str, Any]:
+                        teacher_cover_nodes: set[int] | None = None,
+                        student_source_path=None, teacher_source_path=None) -> dict[str, Any]:
     """Project a complete student routing plan onto its aligned teacher source.
 
     Canonical question spans receive one student-chosen destination. All
@@ -1666,8 +2747,13 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
         teacher_routes[seq] = "cover"
     occurrence_evidence = []
     for occurrence in alignment.get("occurrences", []):
-        student_nodes = tuple(occurrence.get("student_nodes") or ())
-        teacher_nodes = tuple(occurrence.get("teacher_nodes") or ())
+        student_nodes = list(occurrence.get("student_nodes") or ())
+        teacher_nodes = list(occurrence.get("teacher_nodes") or ())
+        for subquestion in occurrence.get("teacher_subquestion_matches") or []:
+            student_nodes.extend(subquestion.get("student_nodes") or [])
+            teacher_nodes.extend(subquestion.get("teacher_nodes") or [])
+        student_nodes = tuple(dict.fromkeys(student_nodes))
+        teacher_nodes = tuple(dict.fromkeys(teacher_nodes))
         if not student_nodes or not teacher_nodes:
             raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
                                      "canonical occurrence lacks complete source spans",
@@ -1734,6 +2820,8 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
             teacher_routes[seq] = destination
         occurrence_evidence.append({
             **occurrence,
+            "student_nodes": list(student_nodes),
+            "teacher_nodes": list(teacher_nodes),
             "destination_slot": destination,
             "source_teacher_nodes": ["b%d" % seq for seq in sorted(teacher_seqs)],
             "source_student_nodes": ["b%d" % seq for seq in sorted(student_seqs)],
@@ -1746,7 +2834,7 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
     # not question identity or question routing.
     student_intervals = []
     teacher_intervals = []
-    for occurrence in alignment.get("occurrences", []):
+    for occurrence in occurrence_evidence:
         student_seqs = [_top_seq(node) for node in occurrence.get("student_nodes", [])]
         teacher_seqs = [_top_seq(node) for node in occurrence.get("teacher_nodes", [])]
         student_intervals.append((min(student_seqs), max(student_seqs), occurrence))
@@ -1756,6 +2844,8 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
     residual_map = []
     student_prefix_end = student_intervals[0][0]
     teacher_prefix_end = teacher_intervals[0][0]
+    prefix_student = set(range(student_prefix_end))
+    prefix_teacher = set(range(teacher_prefix_end))
     student_prefix_nodes = [seq for seq in range(student_prefix_end)
                             if seq not in student_cover_nodes]
     teacher_prefix_nodes = [seq for seq in range(teacher_prefix_end)
@@ -1770,8 +2860,12 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
         raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
                                  "cover metadata must precede the first canonical question")
     for student_seq, teacher_seq in zip(student_prefix_nodes, teacher_prefix_nodes):
-        if _paired_prefix_signature(student_snapshot.document.blocks[student_seq]) != \
-                _paired_prefix_signature(teacher_snapshot.document.blocks[teacher_seq]):
+        student_signature = _paired_prefix_signature(
+            student_snapshot, student_seq, student_source_path)
+        teacher_signature = _paired_prefix_signature(
+            teacher_snapshot, teacher_seq, teacher_source_path)
+        if (student_signature is None or teacher_signature is None
+                or student_signature != teacher_signature):
             raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
                                      "paired source prefix blocks do not match exactly in order",
                                      {"student_block": "b%d" % student_seq,
@@ -1798,24 +2892,504 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
                    if following else None)
         return previous_id, next_id
 
-    student_residuals: dict[tuple, list[int]] = {}
-    prefix_student = set(range(student_prefix_end))
-    for seq in range(total_student):
-        if seq in student_q_nodes or seq in prefix_student:
+    def section_heading_context_for(seq: int,
+                                    intervals: list[tuple[int, int, dict[str, Any]]]):
+        # A-Line can absorb a following group heading into the preceding
+        # teacher question span. For a verified section title, the occurrence
+        # whose span starts before the heading is the left neighbor even when
+        # its inclusive span extends over that heading.
+        previous = [entry for entry in intervals if entry[0] < seq]
+        following = [entry for entry in intervals if entry[0] > seq]
+        previous_id = (max(previous, key=lambda entry: entry[0])[2]["canonical_occurrence_id"]
+                       if previous else None)
+        next_id = (min(following, key=lambda entry: entry[0])[2]["canonical_occurrence_id"]
+                   if following else None)
+        return previous_id, next_id
+
+    # Some source pairs put a numbered exercise-group title inside the
+    # teacher's broad answer/analysis span for the preceding question. Such a
+    # title is not teacher-only answer content: map it to one exact student
+    # heading in the same canonical neighboring-question context. Ambiguous or
+    # missing peers are refused; the complete heading is never matched by text
+    # alone or by selecting an arbitrary repeated occurrence.
+    paired_section_heading_student_nodes: set[int] = set()
+    paired_section_heading_teacher_nodes: set[int] = set()
+    paired_section_heading_spans: list[tuple[int, int, int, int]] = []
+    teacher_annotation_candidates = range(teacher_prefix_end, total_teacher)
+    for teacher_seq in teacher_annotation_candidates:
+        teacher_block = teacher_snapshot.document.blocks[teacher_seq]
+        if not _is_explicit_exercise_section_heading(teacher_block):
             continue
-        key = (context_for(seq, student_intervals),
-               _block_projection_signature(student_snapshot.document.blocks[seq]))
+        teacher_signature = _block_projection_signature(
+            teacher_snapshot, teacher_seq, teacher_source_path, exact_images=True)
+        if teacher_signature is None:
+            raise PairAlignmentError(
+                "ALIGNMENT_UNRESOLVED",
+                "teacher exercise-section heading has unverifiable structure",
+                {"teacher_node": "b%d" % teacher_seq})
+        teacher_context = section_heading_context_for(teacher_seq, teacher_intervals)
+        candidates = []
+        for student_seq, student_block in enumerate(student_snapshot.document.blocks):
+            if (student_seq in student_q_nodes or student_seq in prefix_student
+                    or student_seq in paired_section_heading_student_nodes
+                    or not _is_explicit_exercise_section_heading(student_block)):
+                continue
+            if section_heading_context_for(student_seq, student_intervals) != teacher_context:
+                continue
+            student_signature = _block_projection_signature(
+                student_snapshot, student_seq, student_source_path, exact_images=True)
+            if student_signature == teacher_signature:
+                candidates.append(student_seq)
+        if len(candidates) != 1:
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS" if candidates else "ALIGNMENT_UNRESOLVED",
+                "teacher exercise-section heading b%d lacks one exact contextual student peer: %s"
+                % (teacher_seq, (teacher_block.text or "")[:120]),
+                {"teacher_node": "b%d" % teacher_seq,
+                 "student_candidates": ["b%d" % seq for seq in candidates],
+                 "canonical_context": teacher_context})
+        student_seq = candidates[0]
+        destination = canonical_student_routes.get(student_seq)
+        if destination not in ("knowledge", "immediate", "final"):
+            raise PairAlignmentError(
+                "ALIGNMENT_UNRESOLVED",
+                "paired exercise-section heading has no canonical student route",
+                {"student_node": "b%d" % student_seq,
+                 "teacher_node": "b%d" % teacher_seq,
+                 "destination_slot": destination})
+        teacher_routes[teacher_seq] = destination
+        paired_section_heading_student_nodes.add(student_seq)
+        paired_section_heading_teacher_nodes.add(teacher_seq)
+        paired_section_heading_spans.append(
+            (teacher_seq, teacher_seq, student_seq, student_seq))
+        for occurrence in occurrence_evidence:
+            for field in ("teacher_nodes", "source_teacher_nodes",
+                          "teacher_annotation_nodes", "source_teacher_annotation_nodes"):
+                occurrence[field] = [node for node in occurrence.get(field, [])
+                                     if node != "b%d" % teacher_seq]
+            for subquestion in occurrence.get("teacher_subquestion_matches", []) or []:
+                subquestion["teacher_nodes"] = [
+                    node for node in subquestion.get("teacher_nodes", [])
+                    if node != "b%d" % teacher_seq]
+        teacher_q_nodes.discard(teacher_seq)
+        residual_map.append({
+            "student_node": "b%d" % student_seq,
+            "teacher_node": "b%d" % teacher_seq,
+            "destination_slot": destination,
+            "fingerprint_match": "EXACT_CONTEXTUAL_EXERCISE_SECTION_HEADING",
+        })
+
+    # Some complete exercises are explicit StructDoc question_group units but
+    # have no top-level numbered question occurrence. Pair them only as whole
+    # units by exact ordered block/resource signatures and canonical neighbor
+    # context. Unit order or title text alone is never identity evidence.
+    def unnumbered_question_groups(snapshot, assigned_nodes, prefix_nodes,
+                                   intervals, source_path):
+        result: dict[tuple, list[dict[str, Any]]] = {}
+        for unit in getattr(snapshot, "units", ()) or ():
+            if unit.get("role") != "question_group":
+                continue
+            spans = unit.get("spans") or ()
+            if len(spans) != 1 or len(spans[0]) != 2:
+                continue
+            start = _top_seq(str(spans[0][0]))
+            end = _top_seq(str(spans[0][1]))
+            if start is None or end is None or end < start:
+                continue
+            nodes = list(range(start, end + 1))
+            if any(seq in assigned_nodes or seq in prefix_nodes for seq in nodes):
+                continue
+            signatures = tuple(
+                _block_projection_signature(snapshot, seq, source_path, exact_images=True)
+                for seq in nodes)
+            if not signatures or any(signature is None for signature in signatures):
+                continue
+            key = ((context_for(start, intervals), context_for(end, intervals)),
+                   signatures)
+            result.setdefault(key, []).append({
+                "unit_id": str(unit.get("id") or ""),
+                "start": start,
+                "end": end,
+                "nodes": nodes,
+            })
+        return result
+
+    student_groups = unnumbered_question_groups(
+        student_snapshot, student_q_nodes | paired_section_heading_student_nodes,
+        prefix_student, student_intervals, student_source_path)
+    teacher_groups = unnumbered_question_groups(
+        teacher_snapshot, set(teacher_routes), prefix_teacher, teacher_intervals,
+        teacher_source_path)
+    matched_student_group_nodes: set[int] = set()
+    matched_teacher_group_nodes: set[int] = set()
+    group_proposals = []
+    for key, student_candidates in student_groups.items():
+        teacher_candidates = teacher_groups.get(key, [])
+        if len(student_candidates) != 1 or len(teacher_candidates) != 1:
+            continue
+        group_proposals.append((student_candidates[0], teacher_candidates[0]))
+    group_proposals.sort(key=lambda pair: pair[0]["start"])
+    previous_student_end = previous_teacher_end = -1
+    for student_group, teacher_group in group_proposals:
+        if (student_group["start"] <= previous_student_end
+                or teacher_group["start"] <= previous_teacher_end):
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "exact unnumbered question_group matches do not preserve source order",
+                {"student_unit_id": student_group["unit_id"],
+                 "teacher_unit_id": teacher_group["unit_id"],
+                 "student_interval": [student_group["start"], student_group["end"]],
+                 "teacher_interval": [teacher_group["start"], teacher_group["end"]]})
+        previous_student_end = student_group["end"]
+        previous_teacher_end = teacher_group["end"]
+        destinations = {canonical_student_routes.get(seq) for seq in student_group["nodes"]}
+        if len(destinations) != 1 or next(iter(destinations), None) not in (
+                "knowledge", "immediate", "final"):
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "an exact unnumbered question_group does not have one canonical slot",
+                {"student_unit_id": student_group["unit_id"],
+                 "teacher_unit_id": teacher_group["unit_id"],
+                 "student_nodes": ["b%d" % seq for seq in student_group["nodes"]],
+                 "teacher_nodes": ["b%d" % seq for seq in teacher_group["nodes"]],
+                 "destinations": sorted(str(value) for value in destinations)})
+        destination = next(iter(destinations))
+        for teacher_seq in teacher_group["nodes"]:
+            teacher_routes[teacher_seq] = destination
+        matched_student_group_nodes.update(student_group["nodes"])
+        matched_teacher_group_nodes.update(teacher_group["nodes"])
+        residual_map.append({
+            "student_unit_id": student_group["unit_id"],
+            "teacher_unit_id": teacher_group["unit_id"],
+            "student_nodes": ["b%d" % seq for seq in student_group["nodes"]],
+            "teacher_nodes": ["b%d" % seq for seq in teacher_group["nodes"]],
+            "destination_slot": destination,
+            "fingerprint_match": "UNIQUE_CONTEXT_AND_COMPLETE_ORDERED_QUESTION_GROUP_SIGNATURE",
+        })
+
+    # Explicit examples/variants may carry teacher-only answer/analysis blocks
+    # between otherwise identical source blocks. Pair such a scope only when
+    # the section heading, marker kind/number, stem/resource signature, and the
+    # complete ordered non-annotation signature sequence agree. The annotation
+    # inherits a single route proven by every physical student block in scope.
+    # This is intentionally stricter than matching by role or proximity.
+    def explicit_example_scopes(snapshot, assigned_nodes, prefix_nodes, source_path):
+        blocks = snapshot.document.blocks
+        example_start = re.compile(r"^\s*【(典例|变式)\s*(\d+)\s*】")
+        scope_boundary = re.compile(
+            r"^\s*(?:题型\s*\d+|专题\s*\d+|考点\s*\d+|【(?:典例|变式|训练|练习)\s*\d+\s*】)"
+        )
+        scopes = []
+        for start, block in enumerate(blocks):
+            text = block.text or ""
+            match = example_start.match(text)
+            if not match:
+                continue
+            end = len(blocks)
+            for seq in range(start + 1, len(blocks)):
+                candidate = (blocks[seq].text or "").strip()
+                if scope_boundary.match(candidate):
+                    end = seq
+                    break
+            section_title = ""
+            for seq in range(start - 1, -1, -1):
+                prior = (blocks[seq].text or "").strip()
+                if re.match(r"^(?:题型\s*\d+|专题\s*\d+|考点\s*\d+)", prior):
+                    section_title = re.sub(r"\s+", " ", prior).strip()
+                    break
+                if prior.startswith("【典例") or prior.startswith("【变式"):
+                    break
+            nodes = list(range(start, end))
+            if not nodes or any(seq in prefix_nodes for seq in nodes):
+                continue
+            signatures = tuple(
+                _block_projection_signature(snapshot, seq, source_path, exact_images=True)
+                for seq in nodes)
+            if not signatures or any(signature is None for signature in signatures):
+                continue
+            scopes.append({
+                "kind": match.group(1),
+                "number": match.group(2),
+                "section_title": section_title,
+                "start": start,
+                "end": end,
+                "nodes": nodes,
+                "signatures": signatures,
+            })
+        return scopes
+
+    def explicit_annotation_nodes(snapshot):
+        result: set[int] = set()
+        for unit in getattr(snapshot, "units", ()) or ():
+            if unit.get("role") not in ("answer", "analysis"):
+                continue
+            for span in unit.get("spans") or ():
+                if len(span) != 2:
+                    continue
+                start, end = _top_seq(str(span[0])), _top_seq(str(span[1]))
+                if start is not None and end is not None and end >= start:
+                    result.update(range(start, end + 1))
+        return result
+
+    example_student_scopes = explicit_example_scopes(
+        student_snapshot, student_q_nodes | paired_section_heading_student_nodes,
+        prefix_student, student_source_path)
+    example_teacher_scopes = explicit_example_scopes(
+        teacher_snapshot, set(teacher_routes), prefix_teacher, teacher_source_path)
+    teacher_annotation_nodes = explicit_annotation_nodes(teacher_snapshot)
+    matched_student_example_nodes: set[int] = set()
+    matched_teacher_example_nodes: set[int] = set()
+    example_pairs_by_key: dict[tuple, list[dict[str, Any]]] = {}
+    for scope in example_teacher_scopes:
+        key = (scope["section_title"], scope["kind"], scope["number"],
+               scope["signatures"][0])
+        example_pairs_by_key.setdefault(key, []).append(scope)
+    for student_scope in example_student_scopes:
+        key = (student_scope["section_title"], student_scope["kind"],
+               student_scope["number"],
+               student_scope["signatures"][0])
+        teacher_candidates = example_pairs_by_key.get(key, [])
+        if not teacher_candidates:
+            continue
+        if len(teacher_candidates) != 1:
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "an explicit exercise has multiple exact teacher counterparts",
+                {"student_interval": [student_scope["start"], student_scope["end"]],
+                 "teacher_intervals": [[item["start"], item["end"]]
+                                       for item in teacher_candidates]})
+        teacher_scope = teacher_candidates[0]
+        # There may be shared knowledge/resource blocks inside a StructDoc
+        # analysis span. Match those when the ordered signature proves they are
+        # present on both sides; skip only teacher-only blocks in explicit
+        # answer/analysis units. Count paths so repeated identical blocks never
+        # get assigned by a greedy or arbitrary choice.
+        from functools import lru_cache
+
+        student_signatures = student_scope["signatures"]
+        teacher_signatures = tuple(
+            _block_projection_signature(teacher_snapshot, seq, teacher_source_path,
+                                        exact_images=True)
+            for seq in teacher_scope["nodes"])
+
+        def empty_layout_only(snapshot, seq):
+            block = snapshot.document.blocks[seq]
+            return (block.kind == "paragraph" and not (block.text or "").strip()
+                    and not block.images and not block.oles and not block.math_count
+                    and block.table is None and not block.textbox_texts)
+
+        @lru_cache(maxsize=None)
+        def example_alignment_paths(student_index: int, teacher_index: int):
+            if student_index == len(student_signatures):
+                if teacher_index == len(teacher_signatures):
+                    return ((),)
+                teacher_seq = teacher_scope["nodes"][teacher_index]
+                if (teacher_seq in teacher_annotation_nodes
+                        or empty_layout_only(teacher_snapshot, teacher_seq)):
+                    operation = ("annotation" if teacher_seq in teacher_annotation_nodes
+                                 else "teacher_extra")
+                    return tuple(((operation, None, teacher_index),) + tail
+                                 for tail in example_alignment_paths(
+                                     student_index, teacher_index + 1))[:2]
+                return ()
+            if teacher_index >= len(teacher_signatures):
+                return ()
+            student_seq = student_scope["nodes"][student_index]
+            teacher_seq = teacher_scope["nodes"][teacher_index]
+            if empty_layout_only(student_snapshot, student_seq):
+                return tuple((("student_empty", student_index, None),) + tail
+                             for tail in example_alignment_paths(
+                                 student_index + 1, teacher_index))[:2]
+            if empty_layout_only(teacher_snapshot, teacher_seq):
+                return tuple((("teacher_extra", None, teacher_index),) + tail
+                             for tail in example_alignment_paths(
+                                 student_index, teacher_index + 1))[:2]
+            paths = []
+            if student_signatures[student_index] == teacher_signatures[teacher_index]:
+                for tail in example_alignment_paths(student_index + 1, teacher_index + 1):
+                    paths.append((("match", student_index, teacher_index),) + tail)
+                    if len(paths) == 2:
+                        return tuple(paths)
+            elif (
+                    len(student_snapshot.document.blocks[
+                        student_scope["nodes"][student_index]].images) == 1
+                    and len(teacher_snapshot.document.blocks[
+                        teacher_scope["nodes"][teacher_index]].images) == 1
+                    and _paired_visual_image_match(
+                        student_snapshot, student_scope["nodes"][student_index],
+                        student_source_path, teacher_snapshot,
+                        teacher_scope["nodes"][teacher_index], teacher_source_path)):
+                for tail in example_alignment_paths(student_index + 1, teacher_index + 1):
+                    paths.append((("visual_match", student_index, teacher_index),) + tail)
+                    if len(paths) == 2:
+                        return tuple(paths)
+            elif (
+                    student_snapshot.document.blocks[
+                        student_scope["nodes"][student_index]].table is not None
+                    and teacher_snapshot.document.blocks[
+                        teacher_scope["nodes"][teacher_index]].table is not None
+                    and _paired_visual_table_match(
+                        student_snapshot, student_scope["nodes"][student_index],
+                        student_source_path, teacher_snapshot,
+                        teacher_scope["nodes"][teacher_index], teacher_source_path)):
+                for tail in example_alignment_paths(student_index + 1, teacher_index + 1):
+                    paths.append((("table_match", student_index, teacher_index),) + tail)
+                    if len(paths) == 2:
+                        return tuple(paths)
+            if teacher_scope["nodes"][teacher_index] in teacher_annotation_nodes:
+                for tail in example_alignment_paths(student_index, teacher_index + 1):
+                    paths.append((("annotation", None, teacher_index),) + tail)
+                    if len(paths) == 2:
+                        return tuple(paths)
+            return tuple(paths)
+
+        paths = example_alignment_paths(0, 0)
+        if not paths:
+            continue
+        if len(paths) != 1:
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "an explicit exercise has multiple ordered structural projections",
+                {"student_interval": [student_scope["start"], student_scope["end"]],
+                 "teacher_interval": [teacher_scope["start"], teacher_scope["end"]]})
+        example_alignment = paths[0]
+        student_destinations = {
+            canonical_student_routes.get(seq) for seq in student_scope["nodes"]}
+        if (len(student_destinations) != 1
+                or next(iter(student_destinations), None) not in
+                ("knowledge", "immediate", "final")):
+            raise PairAlignmentError(
+                "ALIGNMENT_AMBIGUOUS",
+                "an exact explicit exercise does not have one canonical student route",
+                {"student_interval": [student_scope["start"], student_scope["end"]],
+                 "destinations": sorted(str(value) for value in student_destinations)})
+        destination = next(iter(student_destinations))
+        for operation, student_index, teacher_index in example_alignment:
+            if operation == "student_empty":
+                student_seq = student_scope["nodes"][student_index]
+                residual_map.append({
+                    "student_node": "b%d" % student_seq,
+                    "destination_slot": destination,
+                    "example_kind": student_scope["kind"],
+                    "example_number": student_scope["number"],
+                    "fingerprint_match": "EMPTY_LAYOUT_ONLY_PARAGRAPH_WITH_NO_PAIRED_NODE",
+                })
+                continue
+            if operation not in ("match", "visual_match", "table_match"):
+                continue
+            student_seq = student_scope["nodes"][student_index]
+            teacher_seq = teacher_scope["nodes"][teacher_index]
+            if teacher_seq in teacher_routes and teacher_routes[teacher_seq] != destination:
+                raise PairAlignmentError(
+                    "ALIGNMENT_AMBIGUOUS",
+                "an explicit exercise conflicts with an existing canonical teacher route",
+                    {"student_node": "b%d" % student_seq,
+                     "teacher_node": "b%d" % teacher_seq,
+                     "existing_route": teacher_routes[teacher_seq],
+                     "example_route": destination})
+            teacher_routes[teacher_seq] = destination
+            residual_map.append({
+                "student_node": "b%d" % student_seq,
+                "teacher_node": "b%d" % teacher_seq,
+                "destination_slot": destination,
+                "example_kind": student_scope["kind"],
+                "example_number": student_scope["number"],
+                "fingerprint_match": (
+                    "NORMALIZED_VISUAL_IMAGE_IDENTITY_IN_EXACT_EXERCISE_SCOPE"
+                    if operation == "visual_match"
+                    else "EXACT_TABLE_STRUCTURE_CONTENT_AND_VISUAL_IMAGE_IDENTITY"
+                    if operation == "table_match"
+                    else "EXACT_ORDERED_EXPLICIT_EXERCISE_SCOPE"),
+            })
+        for operation, _student_index, teacher_index in example_alignment:
+            if operation in ("annotation", "teacher_extra"):
+                teacher_seq = teacher_scope["nodes"][teacher_index]
+                if teacher_seq in teacher_q_nodes:
+                    # A generic numbered-question span may have absorbed a
+                    # clearly marked teacher answer/analysis that structurally
+                    # belongs to this exact explicit example. Remove that node
+                    # from the provisional occurrence ownership; the exact
+                    # example projection below becomes its sole canonical owner.
+                    previous_route = teacher_routes.get(teacher_seq)
+                    teacher_q_nodes.discard(teacher_seq)
+                    for occurrence_item in occurrence_evidence:
+                        for field in ("teacher_nodes", "source_teacher_nodes",
+                                      "source_teacher_annotation_nodes"):
+                            occurrence_item[field] = [
+                                node for node in occurrence_item.get(field, [])
+                                if node != "b%d" % teacher_seq]
+                        for subquestion in occurrence_item.get(
+                                "teacher_subquestion_matches", []) or []:
+                            subquestion["teacher_nodes"] = [
+                                node for node in subquestion.get("teacher_nodes", [])
+                                if node != "b%d" % teacher_seq]
+                    residual_map.append({
+                        "teacher_node": "b%d" % teacher_seq,
+                        "previous_provisional_route": previous_route,
+                        "destination_slot": destination,
+                        "example_kind": student_scope["kind"],
+                        "example_number": student_scope["number"],
+                        "fingerprint_match":
+                            "EXACT_EXERCISE_SCOPE_OVERRIDES_GENERIC_QUESTION_SPAN_ANNOTATION",
+                    })
+                elif (teacher_seq in teacher_routes
+                      and teacher_routes[teacher_seq] != destination):
+                    raise PairAlignmentError(
+                        "ALIGNMENT_AMBIGUOUS",
+                        "teacher-only exercise annotation conflicts with an existing route",
+                        {"teacher_node": "b%d" % teacher_seq,
+                         "existing_route": teacher_routes[teacher_seq],
+                         "example_route": destination})
+                teacher_routes[teacher_seq] = destination
+                residual_map.append({
+                    "student_example_nodes": ["b%d" % seq
+                                              for seq in student_scope["nodes"]],
+                    "teacher_node": "b%d" % teacher_seq,
+                    "destination_slot": destination,
+                    "example_kind": student_scope["kind"],
+                    "example_number": student_scope["number"],
+                    "fingerprint_match": (
+                        "EMPTY_LAYOUT_ONLY_PARAGRAPH_WITH_NO_PAIRED_NODE"
+                        if operation == "teacher_extra" else
+                        "EXPLICIT_ANSWER_ANALYSIS_ATTACHED_TO_EXACT_PAIRED_EXERCISE"),
+                })
+        matched_student_example_nodes.update(student_scope["nodes"])
+        matched_teacher_example_nodes.update(teacher_scope["nodes"])
+
+    student_residuals: dict[tuple, list[int]] = {}
+    for seq in range(total_student):
+        if (seq in student_q_nodes or seq in prefix_student
+                or seq in paired_section_heading_student_nodes
+                or seq in matched_student_group_nodes
+                or seq in matched_student_example_nodes):
+            continue
+        signature = _block_projection_signature(
+            student_snapshot, seq, student_source_path, exact_images=True)
+        if signature is None:
+            raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
+                                     "student residual has unsupported or unverifiable resources",
+                                     {"student_node": "b%d" % seq})
+        key = (context_for(seq, student_intervals), signature)
         student_residuals.setdefault(key, []).append(seq)
 
     teacher_residuals: dict[tuple, list[int]] = {}
-    prefix_teacher = set(range(teacher_prefix_end))
     for seq in range(total_teacher):
-        if seq in teacher_routes or seq in prefix_teacher:
+        if (seq in teacher_routes or seq in prefix_teacher
+                or seq in matched_teacher_group_nodes
+                or seq in matched_teacher_example_nodes):
             continue
-        key = (context_for(seq, teacher_intervals),
-               _block_projection_signature(teacher_snapshot.document.blocks[seq]))
+        signature = _block_projection_signature(
+            teacher_snapshot, seq, teacher_source_path, exact_images=True)
+        if signature is None:
+            raise PairAlignmentError("ALIGNMENT_UNRESOLVED",
+                                     "teacher residual has unsupported or unverifiable resources",
+                                     {"teacher_node": "b%d" % seq})
+        key = (context_for(seq, teacher_intervals), signature)
         teacher_residuals.setdefault(key, []).append(seq)
 
+    consumed_student_residuals: set[int] = set()
+    residual_projection_spans: list[tuple[int, int, int, int]] = list(
+        paired_section_heading_spans)
     for key, teacher_nodes in teacher_residuals.items():
         student_nodes = student_residuals.get(key, [])
         if len(teacher_nodes) == 1 and not student_nodes:
@@ -1838,6 +3412,11 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
             if len(option_matches) == 1:
                 owner, matched_options = option_matches[0]
                 teacher_routes[teacher_seq] = owner["destination_slot"]
+                option_student_seqs = [seq for _label, seq in matched_options]
+                consumed_student_residuals.update(option_student_seqs)
+                residual_projection_spans.append((
+                    teacher_seq, teacher_seq,
+                    min(option_student_seqs), max(option_student_seqs)))
                 residual_map.append({"student_node": "b%d" % matched_options[0][1],
                                      "teacher_node": "b%d" % teacher_seq,
                                      "source_student_nodes": sorted({"b%d" % seq
@@ -1877,6 +3456,11 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
                     ]
                     if len(terminal_student_nodes) == 1:
                         teacher_routes[teacher_seq] = owner["destination_slot"]
+                        terminal_student_seq = int(terminal_student_nodes[0][1:])
+                        consumed_student_residuals.add(terminal_student_seq)
+                        residual_projection_spans.append((
+                            teacher_seq, teacher_seq,
+                            terminal_student_seq, terminal_student_seq))
                         residual_map.append({
                             "student_node": terminal_student_nodes[0],
                             "teacher_node": "b%d" % teacher_seq,
@@ -1917,6 +3501,11 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
                             and teacher_images_in_interval == [teacher_seq]
                             and before_answer):
                         teacher_routes[teacher_seq] = owner["destination_slot"]
+                        student_image_seq = int(student_image_nodes[0][1:])
+                        consumed_student_residuals.add(student_image_seq)
+                        residual_projection_spans.append((
+                            teacher_seq, teacher_seq,
+                            student_image_seq, student_image_seq))
                         residual_map.append({
                             "student_node": student_image_nodes[0],
                             "teacher_node": "b%d" % teacher_seq,
@@ -1945,10 +3534,23 @@ def project_pair_routes(student_snapshot, teacher_snapshot, alignment: dict[str,
                                      {"student_node": "b%d" % student_seq,
                                       "teacher_node": "b%d" % teacher_seq})
         teacher_routes[teacher_seq] = destination
+        consumed_student_residuals.add(student_seq)
+        residual_projection_spans.append((teacher_seq, teacher_seq,
+                                          student_seq, student_seq))
         residual_map.append({"student_node": "b%d" % student_seq,
                              "teacher_node": "b%d" % teacher_seq,
                              "destination_slot": destination,
                              "fingerprint_match": "UNIQUE_CONTEXT_AND_STRUCTURAL_SIGNATURE"})
+
+    # Every substantive student-side residual must have been consumed by one
+    # unique peer or by an explicitly bounded teacher-only projection above.
+    # Empty layout paragraphs carry no exercise/resource content and may stay
+    # side-local, but are recorded explicitly rather than silently discarded.
+    _require_student_residual_consumption(
+        student_snapshot, student_residuals, consumed_student_residuals,
+        canonical_student_routes, residual_map)
+
+    _require_ordered_residual_projection(residual_projection_spans)
 
     if set(teacher_routes) != set(range(total_teacher)):
         missing = sorted(set(range(total_teacher)) - set(teacher_routes))

@@ -9,6 +9,7 @@ content-cell anchors, then validates the final package again.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from copy import deepcopy
 import os
 import re
 from hashlib import sha256
@@ -39,6 +40,7 @@ class SlotRenderResult:
     package_report: dict
     display_renumbering: dict | None = None
     module2_end_divider_anchor: dict | None = None
+    page_layout: dict | None = None
 
 
 def _paragraph_text(paragraph) -> str:
@@ -56,6 +58,7 @@ W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 W_PPR = W + "pPr"
 W_SPACING = W + "spacing"
 W_TR = W + "tr"
+W_TCPR = W + "tcPr"
 W_TC_NS = W + "tc"
 
 # --- Module 2 end-divider first-page anchor ---------------------------------
@@ -93,7 +96,8 @@ def _editable_number_nodes(paragraph) -> tuple[list, re.Match | None]:
     return nodes, match
 
 
-def build_display_renumbering(plans: dict[str, SlotRoutingPlan]) -> dict:
+def build_display_renumbering(plans: dict[str, SlotRoutingPlan], *,
+                              canonical_occurrences: list[dict] | None = None) -> dict:
     """One canonical source-occurrence map, shared by all paired presentations.
 
     Source question numbers and routing remain untouched. Table-contained
@@ -102,6 +106,8 @@ def build_display_renumbering(plans: dict[str, SlotRoutingPlan]) -> dict:
     """
     if not plans:
         return {"status": "NOT_APPLICABLE", "slots": {}}
+    if canonical_occurrences is not None:
+        return _build_canonical_display_renumbering(plans, canonical_occurrences)
     role_signatures = {}
     nodes_by_role = {}
     cross_reference_role = None
@@ -171,6 +177,70 @@ def build_display_renumbering(plans: dict[str, SlotRoutingPlan]) -> dict:
                 "slots": slots}
     status = "DISPLAY_RENUMBER_APPLIED" if needs_renumber else "DISPLAY_RENUMBER_NOT_NEEDED"
     return {"status": status, "applied": needs_renumber, "slots": slots}
+
+
+def _build_canonical_display_renumbering(plans: dict[str, SlotRoutingPlan],
+                                         occurrences: list[dict]) -> dict:
+    """Build one numbering projection from the aligned pair occurrence map."""
+    if not occurrences:
+        return {"status": "NOT_APPLICABLE", "applied": False,
+                "reason": "canonical question sequence is empty", "slots": {}}
+    roles = tuple(sorted(plans))
+    slots = {slot: [] for slot in SLOT_ORDER}
+    cross_reference_role = None
+    parsed = []
+    for role in roles:
+        plan = plans[role]
+        if sha256(plan.source_path.read_bytes()).hexdigest() != plan.source_sha256:
+            raise SlotRoutingError("DISPLAY_RENUMBER_SOURCE_CHANGED", "source changed after routing")
+        document = Document(str(plan.source_path))
+        if _CROSS_REFERENCE.search(_paragraph_text(document.element.body)):
+            cross_reference_role = cross_reference_role or role
+        body_blocks = [child for child in document.element.body if child.tag in (W_P, W_TBL)]
+        parsed.append((role, plan, body_blocks))
+
+    for ordinal, occurrence in enumerate(occurrences, 1):
+        number = int(occurrence["question_number"])
+        slot = occurrence.get("destination_slot")
+        if slot not in SLOT_ORDER:
+            raise SlotRoutingError("CANONICAL_ROUTE_INVALID",
+                                   "canonical occurrence has no valid destination")
+        source_nodes = {}
+        for role, plan, body_blocks in parsed:
+            node_id = occurrence.get(role + "_node")
+            match_node = re.fullmatch(r"b(\d+)", str(node_id or ""))
+            if not match_node:
+                raise SlotRoutingError("DISPLAY_RENUMBER_PROJECTION_MISMATCH",
+                                       "canonical question node is not a top-level block")
+            seq = int(match_node.group(1))
+            paragraph = body_blocks[seq] if 0 <= seq < len(body_blocks) else None
+            if paragraph is None or paragraph.tag != W_P:
+                raise SlotRoutingError("DISPLAY_RENUMBER_PROJECTION_MISMATCH",
+                                       "canonical question endpoint is not a paragraph: %s:%s" %
+                                       (role, node_id))
+            visible = _visible_question_number(_paragraph_text(paragraph))
+            nodes, prefix = _editable_number_nodes(paragraph)
+            if visible != number or not nodes or prefix is None:
+                raise SlotRoutingError("DISPLAY_RENUMBER_PROJECTION_MISMATCH",
+                                       "canonical question number does not match editable source prefix at %s:%s" %
+                                       (role, node_id))
+            source_nodes[role] = node_id
+        new_number = len(slots[slot]) + 1
+        slots[slot].append({"source_occurrence": ordinal,
+                            "canonical_occurrence_id": occurrence["canonical_occurrence_id"],
+                            "source_question_number": number,
+                            "source_order": ordinal,
+                            "destination_slot": slot,
+                            "new_number": new_number,
+                            "source_nodes": source_nodes})
+    if cross_reference_role:
+        return {"status": "DISPLAY_RENUMBER_SKIPPED_CROSS_REFERENCE", "applied": False,
+                "reason": "main-story cross-question reference found in " + cross_reference_role,
+                "warning": "题目含跨题引用，已跳过展示题号重排", "slots": slots}
+    needs_renumber = any(item["source_question_number"] != item["new_number"]
+                         for slot_items in slots.values() for item in slot_items)
+    return {"status": "DISPLAY_RENUMBER_APPLIED" if needs_renumber else "DISPLAY_RENUMBER_NOT_NEEDED",
+            "applied": needs_renumber, "slots": slots}
 
 
 def _apply_display_renumbering(offsets: dict, blocks_by_slot: dict, evidence: dict, role: str) -> None:
@@ -275,6 +345,145 @@ def _set_exact_interval(paragraph, points: float) -> None:
     spacing.set(W + "lineRule", "exact")
     spacing.set(W + "before", "0")
     spacing.set(W + "after", "0")
+
+
+def _set_page_break_before(paragraph) -> None:
+    """Keep the knowledge-section heading with its page-two content stream."""
+    pPr = paragraph.find(W_PPR)
+    if pPr is None:
+        pPr = OxmlElement("w:pPr")
+        paragraph.insert(0, pPr)
+    if pPr.find(W + "pageBreakBefore") is not None:
+        return
+    page_break = OxmlElement("w:pageBreakBefore")
+    style = pPr.find(W + "pStyle")
+    if style is None:
+        pPr.insert(0, page_break)
+    else:
+        pPr.insert(pPr.index(style) + 1, page_break)
+
+
+def _place_knowledge_and_later_slots_on_page_two(document, knowledge_anchor) -> dict:
+    """Split the one-cell carrier table at module 3 and page-break between tables.
+
+    WPS ignores paragraph-level pageBreakBefore inside this merged template
+    carrier row. A body-level page break between two continuation tables is
+    honored while retaining the original cover/divider table and all routed
+    source nodes. The frozen template itself is never modified.
+    """
+    cell = knowledge_anchor.getparent()
+    row = cell.getparent() if cell is not None else None
+    table = row.getparent() if row is not None else None
+    body = document.element.body
+    if (cell is None or cell.tag != W_TC or row is None or row.tag != W_TR
+            or table is None or table.tag != W_TBL or table.getparent() is not body):
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "module-three anchor is not in a top-level template carrier table")
+    rows = table.findall(W_TR)
+    cells = row.findall(W_TC)
+    if row is not rows[-1] or len(cells) != 1:
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "template carrier row is not the unique single-cell final row")
+    cell_children = list(cell)
+    try:
+        split_at = cell_children.index(knowledge_anchor)
+    except ValueError as exc:
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "module-three anchor is not a direct cell child") from exc
+    trailing = cell_children[split_at:]
+    if not trailing or any(node.tag not in (W_P, W_TBL) for node in trailing):
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "module-three continuation contains unsupported carrier nodes")
+    preceding_dividers = [index for index, node in enumerate(cell_children[:split_at])
+                          if node.tag == W_P and _paragraph_text(node).lstrip().startswith("~")]
+    if not preceding_dividers:
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "module-two divider before module three was not found")
+    divider_index = preceding_dividers[-1]
+    review_titles = [index for index, node in enumerate(cell_children[:divider_index])
+                     if node.tag == W_P and _paragraph_text(node) == "二、知识回顾"]
+    if not review_titles:
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "module-two heading before its divider was not found")
+    review_index = review_titles[-1]
+    for node in cell_children[review_index + 1:divider_index]:
+        if node.tag != W_P or _paragraph_text(node):
+            continue
+        p_pr = node.find(W_PPR)
+        if p_pr is not None:
+            for flag_name in ("pageBreakBefore", "keepNext"):
+                flag = p_pr.find(W + flag_name)
+                if flag is not None:
+                    p_pr.remove(flag)
+    # The frozen template contains trailing empty layout paragraphs between
+    # the module-two divider and module-three heading. Keeping the full chain
+    # at the end of the first table can force that table onto page 2 in WPS;
+    # the explicit body-level break then leaves page 2 blank. Remove only
+    # plain empty paragraphs in this interval; preserve drawings, fields,
+    # bookmarks, equations, or any other semantic/resource-bearing node.
+    spacer_nodes = cell_children[divider_index + 1:split_at]
+    protected = []
+    removable = []
+    for node in spacer_nodes:
+        if node.tag == W_P and not _paragraph_text(node):
+            sensitive = any(local in {"drawing", "pict", "object", "bookmarkStart",
+                                      "bookmarkEnd", "fldChar", "instrText", "hyperlink",
+                                      "oMath", "oMathPara", "footnoteReference", "endnoteReference"}
+                            for local in (child.tag.split("}")[-1] for child in node.iter()))
+            (protected if sensitive else removable).append(node)
+        else:
+            protected.append(node)
+    if protected:
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "non-empty or resource-bearing nodes follow the module-two divider")
+
+    continuation = deepcopy(table)
+    continuation_rows = continuation.findall(W_TR)
+    continuation_row = continuation_rows[-1]
+    for old_row in continuation_rows[:-1]:
+        continuation.remove(old_row)
+    continuation_cells = continuation_row.findall(W_TC)
+    if len(continuation_cells) != 1:
+        raise SlotRoutingError("TEMPLATE_PAGE_SPLIT_UNRESOLVED",
+                               "continuation template row has multiple physical cells")
+    continuation_cell = continuation_cells[0]
+    for child in list(continuation_cell):
+        if child.tag != W_TCPR:
+            continuation_cell.remove(child)
+    for node in trailing:
+        continuation_cell.append(deepcopy(node))
+    # Some source lesson titles carry their own pageBreakBefore. The new
+    # body-level boundary already starts the complete module-three stream on
+    # page 2; keeping that source break makes WPS create a blank page after
+    # SaveAs/Reopen. Remove only this now-redundant first-content break.
+    continuation_paragraphs = [node for node in continuation_cell if node.tag == W_P]
+    first_content = continuation_paragraphs[1] if len(continuation_paragraphs) > 1 else None
+    if first_content is not None:
+        content_ppr = first_content.find(W_PPR)
+        if content_ppr is not None:
+            redundant_break = content_ppr.find(W + "pageBreakBefore")
+            if redundant_break is not None:
+                content_ppr.remove(redundant_break)
+
+    for node in trailing:
+        cell.remove(node)
+    for node in removable:
+        cell.remove(node)
+
+    page_break_paragraph = OxmlElement("w:p")
+    run = OxmlElement("w:r")
+    page_break = OxmlElement("w:br")
+    page_break.set(W + "type", "page")
+    run.append(page_break)
+    page_break_paragraph.append(run)
+    table_index = list(body).index(table)
+    body.insert(table_index + 1, page_break_paragraph)
+    body.insert(table_index + 2, continuation)
+    return {"status": "SPLIT_AFTER_MODULE2_DIVIDER", "page_break": "BODY_LEVEL",
+            "first_table_rows": len(table.findall(W_TR)),
+            "continuation_table_rows": len(continuation.findall(W_TR)),
+            "moved_nodes": len(trailing),
+            "removed_plain_spacers": len(removable)}
 
 
 def _set_paragraph_text(paragraph, value: str) -> None:
@@ -500,13 +709,19 @@ def render_slots(
         display_renumbering = build_display_renumbering({source_role: plan})
     flat_blocks: list[BlockSpan] = [span for slot in SLOT_ORDER for span in blocks_by_slot[slot]]
     total = sum(len(items) for items in blocks_by_slot.values())
-    if not total or total != len(plan.block_records):
+    excluded_ids = set(getattr(plan, "cover_metadata_blocks", ()))
+    record_ids = {str(record.get("block_id")) for record in plan.block_records}
+    if (not total or total + len(excluded_ids) != len(plan.block_records)
+            or not excluded_ids <= record_ids):
         raise SlotRoutingError("SLOT_ROUTING_DUPLICATE_OR_MISSING_BLOCK",
-                               "slot streams do not cover the complete physical source sequence")
+                               "slot streams plus projected cover metadata do not partition the source")
     ids = [span.start for span in flat_blocks]
-    if len(ids) != len(set(ids)):
+    if len(ids) != len(set(ids)) or set(ids) & excluded_ids:
         raise SlotRoutingError("SLOT_ROUTING_DUPLICATE_OR_MISSING_BLOCK",
-                               "slot streams contain duplicate physical source blocks")
+                               "slot streams duplicate or include projected cover metadata blocks")
+    if set(ids) | excluded_ids != record_ids:
+        raise SlotRoutingError("SLOT_ROUTING_DUPLICATE_OR_MISSING_BLOCK",
+                               "slot streams leave source blocks outside routed content and cover metadata")
 
     rendered = render_minimal_fn(source_doc, str(plan.template_path), flat_blocks,
                                  str(output), plan.target)
@@ -552,6 +767,19 @@ def render_slots(
                 anchor.addnext(element)
                 anchor = element
 
+        # WPS does not honor paragraph pageBreakBefore inside this merged
+        # carrier row. Split the rendered copy after the frozen module-two
+        # divider so module three and later routed slots start in a new
+        # body-level table on page two.
+        if plan.template_type == "1v1":
+            page_layout = _place_knowledge_and_later_slots_on_page_two(
+                document, anchors["knowledge"])
+        else:
+            # The frozen class template already places module three on page 2.
+            # Duplicating its carrier table would add an unwanted blank page.
+            page_layout = {"status": "NATIVE_TEMPLATE_PAGE_TWO",
+                           "page_break": "TEMPLATE_FLOW"}
+
         output.parent.mkdir(parents=True, exist_ok=True)
         fd, temp_name = tempfile.mkstemp(prefix=".slot-composer-", suffix=".docx",
                                          dir=str(output.parent))
@@ -577,6 +805,7 @@ def render_slots(
             package_report=package_report,
             display_renumbering=display_renumbering,
             module2_end_divider_anchor=module2_end_divider_anchor,
+            page_layout=page_layout,
         )
     except Exception:
         try:

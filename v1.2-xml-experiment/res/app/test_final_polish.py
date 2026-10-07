@@ -13,7 +13,7 @@ from lesson_metadata import LessonMetadata, build_cover_display, display_width_u
 from product_integrity import validate_product_integrity
 from semantic_facade import SemanticSnapshot
 from slot_router import build_slot_routing_plan, _visible_question_number
-from struct_doc import read_struct_doc_bytes, W_P, W_T
+from struct_doc import read_struct_doc_bytes, W_P, W_T, W_TBL
 from struct_nodes import NodeIndex
 from template_block_plan import resolve_template
 from template_slot_composer import (build_display_renumbering, render_slots,
@@ -124,6 +124,22 @@ def test_canonical_pair_numbering_restarts_without_changing_route_or_content(tmp
         render_slots(str(plan.source_path),plan,str(output),display_renumbering=evidence,source_role=role)
         doc=Document(str(output))
         anchors=_find_anchor_paragraphs(doc,replace(plan,template_anchors=tuple(plan.slot_labels[slot] for slot in ('knowledge','immediate','final'))))
+        body_children=list(doc.element.body)
+        tables=[node for node in body_children if node.tag==W_TBL]
+        assert len(tables)==2
+        first_table_index=body_children.index(tables[0])
+        assert body_children[first_table_index+1].tag==W_P
+        assert body_children[first_table_index+1].xpath('.//w:br[@w:type="page"]')
+        first_text=''.join(node.text or '' for node in tables[0].iter(W_T))
+        second_text=''.join(node.text or '' for node in tables[1].iter(W_T))
+        assert '二、知识回顾' in first_text and '知识精讲' not in first_text
+        assert '知识精讲' in second_text
+        last_row=tables[0].findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tr')[-1]
+        first_cell=last_row.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tc')[0]
+        first_cell_paragraphs=[node for node in first_cell if node.tag==W_P]
+        assert ''.join(t.text or '' for t in first_cell_paragraphs[-1].iter(W_T)).strip().startswith('~')
+        knowledge_ppr=anchors['knowledge'].find('{%s}pPr' % W_P[1:].split('}',1)[0])
+        assert knowledge_ppr is None or knowledge_ppr.find('{%s}pageBreakBefore' % W_P[1:].split('}',1)[0]) is None
         for slot,anchor in anchors.items():
             paragraphs=[]
             for following in anchor.itersiblings():

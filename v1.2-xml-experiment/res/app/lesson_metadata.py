@@ -135,7 +135,7 @@ def build_cover_display(metadata: LessonMetadata, template_type: str, *, topic: 
             "compaction_methods": methods}
 
 
-_FIELD = re.compile(r"^\s*[【\[]?\s*(教学目标|学习目标|重点难点|教学重难点|重难点|教学重点|教学难点|重点|难点)\s*[】\]]?\s*[:：]?\s*(.*?)\s*$")
+_FIELD = re.compile(r"^\s*[【\[]?\s*(教学目标|学习目标|教学重点难点|重点难点|教学重难点|重难点|教学重点|教学难点|重点|难点)\s*[】\]]?\s*[:：]?\s*(.*?)\s*$")
 _TITLE = re.compile(r"^\s*(?:题型|专题|考点)\s*(?:第\s*)?(?:\d+|[一二三四五六七八九十]+)\s*[、.．:：、\-]?\s*(.*?)\s*$")
 _SECTION_BREAK = re.compile(r"^(?:第?[一二三四五六七八九十\d]+[、.．]|课堂启动|知识回顾|知识精讲|即时训练|归纳总结|巩固练习|出门测试|参考答案|答案与解析)")
 _QUESTION = re.compile(r"^\s*(?:\d{1,3}[.．、)）]|[（(]\d+[）)])")
@@ -145,27 +145,80 @@ _KNOWLEDGE_SECTION_RE = re.compile(
 )
 _ORDERED_HEADER_RE = re.compile(r"^[一二三四五六七八九十]+[、.． ](.+)$")
 _NUMBERED_QUESTION_RE = re.compile(r"^\s*(\d{1,3})\s*[.．、)）]")
+_TABLE_START = "\u241fMETADATA_TABLE_START\u241f"
+_TABLE_START_INVALID = "\u241fNON_METADATA_TABLE_START\u241f"
+_TABLE_END = "\u241fMETADATA_TABLE_END\u241f"
+_W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 
 
 def read_lesson_source_lines(source_path: str | Path) -> list[str]:
     document = Document(str(source_path))
     lines: list[str] = []
     body = document.element.body
-    # Walk only the main story and retain the physical paragraph order, including
-    # paragraphs in tables. Header/footer text is intentionally excluded.
-    for paragraph in body.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p"):
+    # Preserve table boundaries so a following numbered question cannot be
+    # absorbed as a metadata continuation.
+    def paragraph_text(paragraph) -> str:
         pieces = []
-        for node in paragraph.iter():
-            if node.tag == "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t":
+        def collect(node):
+            if node.tag == _W_NS + "txbxContent":
+                return
+            if node.tag == _W_NS + "t":
                 pieces.append(node.text or "")
-            elif node.tag == "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}tab":
+            elif node.tag == _W_NS + "tab":
                 pieces.append("\t")
-            elif node.tag in ("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}br",
-                              "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}cr"):
+            elif node.tag in (_W_NS + "br", _W_NS + "cr"):
                 pieces.append("\n")
+            else:
+                for child in node:
+                    collect(child)
+        collect(paragraph)
         text = "".join(pieces).strip()
-        if text:
-            lines.append(text)
+        return text
+
+    def is_metadata_table(table) -> bool:
+        rows = table.findall(_W_NS + "tr")
+        if len(rows) != 2:
+            return False
+        expected = {"教学目标"}
+        difficulty_labels = {"重点难点", "教学重难点", "教学重点难点", "重难点"}
+        labels = set()
+        for row in rows:
+            cells = row.findall(_W_NS + "tc")
+            if len(cells) != 2:
+                return False
+            for cell in cells:
+                if any(desc.tag in {_W_NS + "tbl", _W_NS + "drawing", _W_NS + "pict",
+                                    _W_NS + "object", _W_NS + "txbxContent"}
+                       or desc.tag.endswith("}oMath") or desc.tag.endswith("}oMathPara")
+                       for desc in cell.iter() if desc is not cell):
+                    return False
+            texts = []
+            for cell in cells:
+                texts.append("".join(node.text or "" for node in cell.iter(_W_NS + "t")).strip())
+            label = re.sub(r"\s+", "", texts[0])
+            value = re.sub(r"\s+", "", texts[1])
+            if label not in expected | difficulty_labels or not value:
+                return False
+            labels.add(label)
+        return (len(labels) == 2
+                and "教学目标" in labels
+                and bool(labels & difficulty_labels))
+
+    def walk_container(node, *, allow_metadata_table=False) -> None:
+        for child in node:
+            if child.tag == _W_NS + "p":
+                text = paragraph_text(child)
+                if text:
+                    lines.append(text)
+            elif child.tag == _W_NS + "tbl":
+                valid_metadata_table = allow_metadata_table and is_metadata_table(child)
+                lines.append(_TABLE_START if valid_metadata_table else _TABLE_START_INVALID)
+                walk_container(child, allow_metadata_table=False)
+                lines.append(_TABLE_END)
+            elif child.tag != _W_NS + "txbxContent":
+                walk_container(child, allow_metadata_table=False)
+
+    walk_container(body, allow_metadata_table=True)
     return lines
 
 
@@ -176,6 +229,9 @@ def _extract_explicit_fields(lines: list[str]) -> tuple[str, str]:
     objectives: list[str] = []
     difficulties: list[str] = []
     active: str | None = None
+    difficulty_label: str | None = None
+    in_table = False
+    ignored_table_depth = 0
 
     def append(value: str) -> None:
         value = value.strip()
@@ -184,30 +240,77 @@ def _extract_explicit_fields(lines: list[str]) -> tuple[str, str]:
         if active == "objectives":
             objectives.append(value)
         elif active == "difficulties":
-            difficulties.append(value)
+            if difficulty_label:
+                prefix = difficulty_label + "："
+                if difficulties and difficulties[-1].startswith(prefix):
+                    difficulties[-1] += " " + value
+                else:
+                    difficulties.append(prefix + value)
+            else:
+                difficulties.append(value)
 
     for line in lines:
-        match = _FIELD.match(line)
+        if line in (_TABLE_START, _TABLE_START_INVALID):
+            if ignored_table_depth:
+                ignored_table_depth += 1
+            elif line == _TABLE_START_INVALID:
+                ignored_table_depth = 1
+                in_table = False
+            else:
+                in_table = True
+            continue
+        if line == _TABLE_END:
+            if ignored_table_depth:
+                ignored_table_depth -= 1
+                if ignored_table_depth:
+                    continue
+            active = None
+            difficulty_label = None
+            in_table = False
+            continue
+        if ignored_table_depth:
+            continue
+        numbered_value = re.sub(r"^\s*(?:\d{1,2}[.．、]|[（(]\d+[）)])\s*", "", line)
+        match = _FIELD.match(line) or (_FIELD.match(numbered_value) if active else None)
         if match:
             label, value = match.groups()
             if label in ("教学目标", "学习目标"):
                 active = "objectives"
+                difficulty_label = None
                 append(value)
-            elif label in ("重点难点", "教学重难点", "重难点"):
+            elif label in ("重点难点", "教学重难点", "教学重点难点", "重难点"):
                 active = "difficulties"
+                difficulty_label = None
                 append(value)
             elif label in ("重点", "教学重点"):
                 active = "difficulties"
-                append("重点：" + value if value else "")
+                difficulty_label = "重点"
+                append(value)
             else:
                 active = "difficulties"
-                append("难点：" + value if value else "")
+                difficulty_label = "难点"
+                append(value)
             continue
-        if active and _SECTION_BREAK.match(line):
+        # Explicit metadata in real source tables is often a numbered list
+        # (1., 2., 3.).  The generic section-heading expression also matches
+        # those Arabic prefixes, which previously stopped extraction after
+        # the first objective and silently selected the unrelated offline
+        # fallback.  Keep numbered clauses while a metadata field is active;
+        # terminate on a clear teaching-section/title boundary instead.
+        numbered_clause = numbered_value != line
+        if active and numbered_clause and not in_table:
+            # Outside a bounded metadata table, numbering is ambiguous with a
+            # real question. Stop instead of extending the metadata field.
             active = None
+            difficulty_label = None
+            continue
+        if active and ((_SECTION_BREAK.match(line) and not numbered_clause)
+                       or _KNOWLEDGE_SECTION_RE.match(line) or _TITLE.match(line)):
+            active = None
+            difficulty_label = None
             continue
         if active:
-            append(line)
+            append(numbered_value)
 
     return "\n".join(objectives).strip(), "\n".join(difficulties).strip()
 

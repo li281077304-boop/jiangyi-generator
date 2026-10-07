@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename
 from package_validator import validate_package
 from input_versions import classify_inputs, UnknownInputVersion, InputClassification
 from batch_inputs import resolve_batch
+from topic_normalization import normalize_display_topic
 
 
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
@@ -255,7 +256,8 @@ class JobService:
         })
         topic_source = (input_paths[classification.teacher_index][0] if classification and
                         classification.teacher_index is not None else input_paths[0][0])
-        topic = _topic or self._topic_name(topic_source)
+        original_topic = _topic or self._topic_name(topic_source)
+        topic = normalize_display_topic(original_topic)
         result_dir = _result_dir or self._allocate_result_dir(form_options, topic)
         teacher_source = (str(input_paths[classification.teacher_index][1]) if classification and
                           classification.teacher_index is not None else None)
@@ -283,7 +285,9 @@ class JobService:
             "teacher_source_path": teacher_source,
             "student_source_path": student_source,
             "options": form_options,
-            "items": [{"topic": topic,
+            "topic_provenance": {"original": original_topic, "display": topic,
+                                 "normalizer": "V1.2_TOPIC_NORMALIZATION_V1"},
+            "items": [{"topic": topic, "original_topic": original_topic,
                        "teacher": "处理中" if teacher_source else "未提供",
                        "student": "处理中" if student_source or version == "TEACHER_ONLY" else "未提供"}],
             "warnings": [],
@@ -301,6 +305,7 @@ class JobService:
             "student_preparation_route": None,
             "training_split_strategy": "NOT_APPLICABLE",
             "training_question_routes": [],
+            "page_layout": {"status": "PENDING"},
             "display_renumbering": {"status": "NOT_APPLICABLE", "slots": {}},
             "lesson_metadata": {"status": "PENDING"},
             "product_normalization": {"status": "PENDING", "outputs": {}},
@@ -333,8 +338,10 @@ class JobService:
         result_dir = self._allocate_result_dir(form_options, "批量讲义")
         items = []
         for index, item in enumerate(logical):
+            display_topic = normalize_display_topic(item.topic)
             entry = {
-                "item_id": str(index + 1), "topic": item.topic,
+                "item_id": str(index + 1), "topic": display_topic,
+                "original_topic": item.topic,
                 "input_version": item.input_version,
                 "teacher_source": None, "student_source": None,
                 "status": "error" if item.error else "queued",
@@ -347,10 +354,10 @@ class JobService:
             if not item.error:
                 try:
                     # Allocate only readable topic folders; never use ZIP directories.
-                    folder = result_dir / (self._display_part(item.topic) or "专题")
+                    folder = result_dir / (self._display_part(display_topic) or "专题")
                     number = 2
                     while folder.exists():
-                        folder = result_dir / ((self._display_part(item.topic) or "专题") + "（%d）" % number)
+                        folder = result_dir / ((self._display_part(display_topic) or "专题") + "（%d）" % number)
                         number += 1
                     folder.mkdir()
                     teacher_index = next((i for i, source in enumerate(item.sources)
@@ -529,9 +536,15 @@ class JobService:
             if record.get("status") != "running":
                 return self.snapshot(record)
             for key in ("training_split_strategy", "training_question_routes",
-                        "renderer_route", "xml_renderer_attempted", "display_renumbering"):
+                        "renderer_route", "renderer_reason_code", "renderer_reason_detail",
+                        "xml_renderer_attempted", "display_renumbering",
+                        "canonical_alignment", "canonical_occurrence_routes",
+                        "canonical_route_source", "canonical_projection",
+                        "page_layout", "image_role_evidence"):
                 if key in details:
                     record[key] = details[key]
+            if details.get("renderer_route") == "XML_UNSUPPORTED":
+                record["renderer"] = "XML_UNSUPPORTED"
             self._write_json(self._job_dir(job_id) / "job.json", record)
             return self.snapshot(record)
 

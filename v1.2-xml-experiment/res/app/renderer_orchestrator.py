@@ -31,6 +31,10 @@ REASON_CODES = {
     "OBJECTIVES_SOURCE_UNAVAILABLE",
     "TEACHER_STUDENT_ROUTE_SIGNATURE_UNAVAILABLE",
     "TEACHER_STUDENT_TRAINING_ROUTE_MISMATCH",
+    "ALIGNMENT_UNRESOLVED",
+    "ALIGNMENT_AMBIGUOUS",
+    "LOCAL_OCR_UNAVAILABLE",
+    "LOCAL_OCR_FAILED",
 }
 
 
@@ -40,6 +44,15 @@ class FallbackRequired(RuntimeError):
     def __init__(self, reason_code: str, detail: str = ""):
         if reason_code not in REASON_CODES:
             raise ValueError("unknown fallback reason code: %s" % reason_code)
+        self.reason_code = reason_code
+        self.detail = detail
+        super().__init__("%s%s" % (reason_code, ": " + detail if detail else ""))
+
+
+class XmlUnsupportedError(RuntimeError):
+    """Production XML-only refusal; carries evidence without invoking V0.9."""
+
+    def __init__(self, reason_code: str, detail: str = ""):
         self.reason_code = reason_code
         self.detail = detail
         super().__init__("%s%s" % (reason_code, ": " + detail if detail else ""))
@@ -81,6 +94,7 @@ def render_xml_or_fallback(
     xml_render: Callable[[RenderJob], Any],
     fallback: Callable[[RenderJob, str], Any],
     package_validator: Optional[Callable[[str], dict[str, Any]]] = None,
+    allow_v09_fallback: bool = True,
 ) -> RenderOutcome:
     """Run XML if supported; otherwise invoke the V0.9 whole-job callback.
 
@@ -154,6 +168,8 @@ def render_xml_or_fallback(
                 staging_output.unlink()
         except OSError:
             pass
+        if not allow_v09_fallback:
+            raise XmlUnsupportedError(failure.reason_code, failure.detail) from failure
         # The reason is passed into the callback and returned on the outcome;
         # callers can persist it in a job event/log before exposing completion.
         result = fallback(job, failure.reason_code)

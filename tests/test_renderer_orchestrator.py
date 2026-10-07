@@ -10,6 +10,7 @@ sys.path.insert(0, str(APP))
 from renderer_orchestrator import (  # noqa: E402
     FallbackRequired,
     RenderJob,
+    XmlUnsupportedError,
     render_v09_whole_job,
     render_xml_or_fallback,
 )
@@ -151,6 +152,24 @@ class RendererOrchestratorTests(unittest.TestCase):
             fallback=self._fallback,
         )
         self.assertEqual(result.fallback_reason, "XML_RENDER_FAILED")
+
+    def test_xml_only_mode_preserves_reason_and_never_invokes_v09(self):
+        with self.assertRaises(XmlUnsupportedError) as caught:
+            render_xml_or_fallback(
+                self.job,
+                xml_preflight=lambda _job: {
+                    "supported": False,
+                    "reason_code": "UNSUPPORTED_REVISION_MARKUP",
+                    "detail": "reviewed XML capability gate",
+                },
+                xml_render=lambda _job: self.fail("unsupported input must not render"),
+                fallback=self._fallback,
+                allow_v09_fallback=False,
+            )
+        self.assertEqual(caught.exception.reason_code, "UNSUPPORTED_REVISION_MARKUP")
+        self.assertEqual(caught.exception.detail, "reviewed XML capability gate")
+        self.assertEqual(self.calls, [])
+        self.assertFalse(self.output.exists())
 
 
 if __name__ == "__main__":

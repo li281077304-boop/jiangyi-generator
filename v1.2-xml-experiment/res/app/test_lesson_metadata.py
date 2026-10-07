@@ -8,7 +8,8 @@ from pathlib import Path
 
 from docx import Document
 
-from lesson_metadata import LessonMetadataUnavailable, resolve_lesson_metadata
+from lesson_metadata import (LessonMetadataUnavailable, read_lesson_source_lines,
+                             resolve_lesson_metadata)
 
 
 class LessonMetadataTests(unittest.TestCase):
@@ -83,6 +84,58 @@ class LessonMetadataTests(unittest.TestCase):
         self.assertEqual(result.source, "V09_OFFLINE_RULE")
         self.assertIn("一元一次方程", result.objectives)
         self.assertTrue(result.difficulties)
+
+    def test_numbered_question_after_cover_table_is_not_metadata(self):
+        document = Document()
+        table = document.add_table(rows=2, cols=2)
+        table.cell(0, 0).text = "教学目标"
+        table.cell(0, 1).text = "掌握一次函数的性质"
+        table.cell(1, 0).text = "教学重难点"
+        table.cell(1, 1).text = "重点：函数图像与性质"
+        document.add_paragraph("1. 已知一次函数 y=2x+1，求其图像与性质。")
+        source = self.root / "metadata-then-question.docx"
+        document.save(source)
+
+        lines = read_lesson_source_lines(source)
+        result = resolve_lesson_metadata(
+            source, subject="数学", topic="一次函数",
+            knowledge_point_status="UNKNOWN", source_lines=lines)
+
+        self.assertIn("掌握一次函数的性质", result.objectives)
+        self.assertNotIn("已知一次函数", result.objectives)
+        self.assertNotIn("已知一次函数", result.difficulties)
+
+    def test_mixed_three_row_table_is_not_accepted_as_metadata_container(self):
+        document = Document()
+        table = document.add_table(rows=3, cols=2)
+        table.cell(0, 0).text = "教学目标"
+        table.cell(0, 1).text = "掌握一次函数"
+        table.cell(1, 0).text = "教学重难点"
+        table.cell(1, 1).text = "重点：函数图像"
+        table.cell(2, 0).text = "1."
+        table.cell(2, 1).text = "已知一次函数，求解析式。"
+        source = self.root / "mixed-table.docx"
+        document.save(source)
+
+        result = resolve_lesson_metadata(
+            source, subject="数学", topic="一次函数",
+            knowledge_point_status="UNKNOWN",
+            source_lines=read_lesson_source_lines(source))
+
+        self.assertEqual(result.objectives, "")
+        self.assertEqual(result.difficulties, "")
+
+    def test_full_difficulty_label_alias_is_not_split_as_a_prefix(self):
+        path = self._source("full-difficulty-label.docx", cover=[
+            ("教学目标", "掌握函数建模。"),
+            ("教学重点难点", "函数建模与应用。"),
+        ])
+        result = resolve_lesson_metadata(
+            path, subject="数学", topic="函数建模",
+            knowledge_point_status="UNKNOWN",
+        )
+        self.assertEqual(result.difficulties, "函数建模与应用。")
+        self.assertEqual(result.difficulties_source, "SOURCE")
 
 
 if __name__ == "__main__":

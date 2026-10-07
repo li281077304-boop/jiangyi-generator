@@ -399,6 +399,18 @@ class SlotRouterTests(unittest.TestCase):
             build_slot_routing_plan(path, "1v1", snapshot=snapshot)
         self.assertEqual(raised.exception.reason_code, "SHARED_MATERIAL_SLOT_CONFLICT")
 
+    def test_canonical_projection_rejects_unbound_shared_material_split(self):
+        path, snapshot = self._snapshot(
+            ["共享材料第一段", "共享材料第二段"],
+            [self._unit("material0", "shared_material", "b0", "b1")],
+        )
+        with self.assertRaises(SlotRoutingError) as raised:
+            build_slot_routing_plan(
+                path, "1v1", snapshot=snapshot,
+                canonical_projection_routes={0: "knowledge", 1: "immediate"},
+            )
+        self.assertEqual(raised.exception.reason_code, "SHARED_MATERIAL_SLOT_CONFLICT")
+
     def test_atomic_table_cannot_be_split_between_training_slots(self):
         path, snapshot = self._practice_fixture(table=True)
         with self.assertRaises(SlotRoutingError) as raised:

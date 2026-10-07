@@ -14,6 +14,8 @@ from product_fixture_utils import write_product_fixture
 ROOT = Path(__file__).resolve().parents[1]
 WEBAPP = ROOT / "v1.2-xml-experiment" / "res" / "app" / "webapp"
 APP_DIR = WEBAPP.parent
+INCIDENT_FIXTURE = (ROOT / "docs" / "v2" / "integration" / "fixtures" /
+                    "incident-72cab43961d6488c91b7a9e049265263")
 sys.path.insert(0, str(WEBAPP))
 sys.path.insert(0, str(APP_DIR))
 
@@ -55,7 +57,8 @@ def client(tmp_path):
                       RUNTIME_ROOT=tmp_path / "runtime-jobs",
                       C0_DISABLE_JOB_SUBMISSION=True,
                       C0_RUN_JOBS_SYNCHRONOUSLY=False,
-                      C0_FORCE_FALLBACK_REASON=None, STUDENTIZER_EVIDENCE_PROVIDER=None)
+                      C0_FORCE_FALLBACK_REASON=None, STUDENTIZER_EVIDENCE_PROVIDER=None,
+                      V12_ALLOW_DIAGNOSTIC_V09=False)
     app.config.pop("OPEN_FOLDER", None)
     return app.test_client()
 
@@ -104,6 +107,20 @@ def test_post_persists_single_docx_and_get_recovers_after_service_restart(client
     assert restarted.get(created["job_id"])["status"] == "queued"
     assert [item["job_id"] for item in restarted.list()] == [created["job_id"]]
     assert client.get("/api/jobs/" + created["job_id"]).get_json()["status"] == "queued"
+
+
+def test_result_folder_uses_normalized_topic_and_preserves_original_topic_provenance(client):
+    long_name = ("专题12.4 一次函数的实际应用（高效培优讲义）"
+                 "数学新教材沪科版八年级上册 期末复习（教师版）.docx")
+    created = post_one(client, long_name, make_docx()).get_json()
+    assert created["items"][0]["topic"] == "专题12.4 一次函数的实际应用"
+    assert created["items"][0]["original_topic"].startswith("专题12.4 一次函数的实际应用")
+    assert created["topic_provenance"] == {
+        "original": created["items"][0]["original_topic"],
+        "display": "专题12.4 一次函数的实际应用",
+        "normalizer": "V1.2_TOPIC_NORMALIZATION_V1",
+    }
+    assert Path(created["result_dir"]).name.endswith("专题12.4 一次函数的实际应用 课时讲义")
 
 
 def test_upload_accepts_one_explicit_pair_and_rejects_unsupported_inputs(client):
@@ -192,32 +209,14 @@ def test_legacy_download_metadata_is_removed_without_losing_local_outputs(client
     assert client.get("/api/download/" + created["job_id"]).status_code == 404
 
 
-def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
+def test_pair_alignment_failure_uses_v09_only_in_explicit_diagnostic_mode(
         client, tmp_path, monkeypatch):
-    import shutil
     import renderer_orchestrator
-    import slot_router
-    import template_block_plan
 
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
-                      C0_RUN_JOBS_SYNCHRONOUSLY=True)
-    engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
-                                 target, "class"),
-                             CLASS_TEMPLATE="unused-class-template.docx",
-                             DEFAULT_TEMPLATE="unused-1v1-template.docx")
-    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
-    teacher_plan = SimpleNamespace(template_sha256="teacher-template", blocks=(), units=(), target=None)
-    plan_calls = 0
-
-    def build_plan(*_args, **_kwargs):
-        nonlocal plan_calls
-        plan_calls += 1
-        if plan_calls == 1:
-            return teacher_plan
-        raise template_block_plan.PlanUnsupported("student source unsupported")
-
-    monkeypatch.setattr(slot_router, "build_slot_routing_plan", build_plan)
+                      C0_RUN_JOBS_SYNCHRONOUSLY=True,
+                      V12_ALLOW_DIAGNOSTIC_V09=True)
     fallback_observed = {}
 
     def successful_fallback(job, reason):
@@ -241,21 +240,19 @@ def test_student_plan_unsupported_uses_fallback_without_stale_teacher_summary(
     assert response.status_code == 202
     job_id = response.get_json()["job_id"]
     final = make_service(root).get(job_id)
-    assert plan_calls == 2
     assert fallback_observed == {
         "renderer": "V0.9",
-        "fallback_reason": "XML_RENDER_FAILED",
+        "fallback_reason": "ALIGNMENT_UNRESOLVED",
         "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA,
-        "reason_arg": "XML_RENDER_FAILED",
+        "reason_arg": "ALIGNMENT_UNRESOLVED",
         "plan_summary": None,
     }
     assert final["status"] == "done", final.get("error")
     assert final["renderer"] == "V0.9"
-    assert final["fallback_reason"] == "XML_RENDER_FAILED"
+    assert final["fallback_reason"] == "ALIGNMENT_UNRESOLVED"
     assert final["renderer_route"] == "V09_WHOLE_JOB"
     assert final["fallback_phase"] == "ROUTER"
-    assert final["fallback_reason_code"] == "XML_RENDER_FAILED"
-    assert final["fallback_detail_reason_code"] == "PlanUnsupported"
+    assert final["fallback_reason_code"] == "ALIGNMENT_UNRESOLVED"
     assert final["student_preparation_route"] == "BYPASS"
     assert final["baseline_sha"] == renderer_orchestrator.V09_BASELINE_SHA
     assert final.get("plan_summary") is None
@@ -270,7 +267,8 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
                       C0_RUN_JOBS_SYNCHRONOUSLY=True,
-                      C0_FORCE_FALLBACK_REASON="UNSUPPORTED_REVISION_MARKUP")
+                      C0_FORCE_FALLBACK_REASON="UNSUPPORTED_REVISION_MARKUP",
+                      V12_ALLOW_DIAGNOSTIC_V09=True)
     engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
                                  target, "class"),
                              CLASS_TEMPLATE="unused-class-template.docx",
@@ -306,59 +304,20 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
     assert final["baseline_sha"] == expected
 
 
-def test_plan_summary_is_only_published_for_successful_paired_xml_plans(
-        client, tmp_path, monkeypatch):
-    import shutil
-    import renderer_orchestrator
-    import slot_router
-    import template_slot_composer
-
+def test_synthetic_pair_without_question_skeleton_fails_closed_without_summary(
+        client, tmp_path):
     root = tmp_path / "results"
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
                       C0_RUN_JOBS_SYNCHRONOUSLY=True)
-    engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
-                                 target, "class"),
-                             CLASS_TEMPLATE="unused-class-template.docx",
-                             DEFAULT_TEMPLATE="unused-1v1-template.docx")
-    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
-    plan = SimpleNamespace(template_sha256="paired-template", template_path="unused-template.docx",
-                           slots={slot: () for slot in ("knowledge", "immediate", "final")},
-                           slot_labels={"knowledge": "知识精讲&例题讲解", "immediate": "即时训练",
-                                        "final": "六、出门测试"},
-                           units=(), explicit_final_heading=True)
-    monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: plan)
-
-    def render(_source, _plan, output):
-        write_product_fixture(output, "class")
-        return SimpleNamespace(output_path=str(output), resource_report={"unsupported": []},
-                               package_report={"valid": True, "errors": []})
-
-    monkeypatch.setattr(template_slot_composer, "render_slots", render)
     response = _post_files(client, [("Unit 教师版.docx", make_docx()),
                                     ("Unit 学生版.docx", make_student_docx())])
     job_id = response.get_json()["job_id"]
     final = make_service(root).get(job_id)
-    assert final["status"] == "done", final.get("error")
-    assert final["renderer"] == "XML"
-    assert final["renderer_route"] == "XML"
-    assert final["student_preparation_route"] == "BYPASS"
-    assert final["fallback_phase"] == "NONE"
-    assert final["plan_summary"] == {
-        "destination_slots": {
-            "knowledge": {"label": "知识精讲&例题讲解", "teacher_blocks": 0, "student_blocks": 0},
-            "immediate": {"label": "即时训练", "teacher_blocks": 0, "student_blocks": 0},
-            "final": {"label": "六、出门测试", "teacher_blocks": 0, "student_blocks": 0},
-        },
-        "teacher_units": 0,
-        "student_units": 0,
-        "explicit_final_heading": True,
-        "knowledge_point_status": "UNKNOWN",
-        "omitted_slots": [],
-        "training_split_strategy": "NOT_APPLICABLE",
-        "training_question_routes": [],
-        "routing_applied": True,
-        "template_sha256": "paired-template",
-    }
+    assert final["status"] == "error"
+    assert final["renderer"] == "XML_UNSUPPORTED"
+    assert final["renderer_reason_code"] == "ALIGNMENT_UNRESOLVED"
+    assert final.get("fallback_reason") is None
+    assert final.get("plan_summary") is None
 
 
 def test_whole_job_fallback_preserves_training_route_evidence(client):
@@ -395,6 +354,25 @@ def test_whole_job_fallback_preserves_training_route_evidence(client):
         "status": "DISPLAY_RENUMBER_NOT_APPLIED_FALLBACK", "applied": False,
         "slots": {"knowledge": [{"source_occurrence": 1, "new_number": 1}]},
     }
+
+
+def test_xml_unsupported_route_is_persisted_without_fallback(client):
+    created = post_one(client, "training.docx").get_json()
+    service = make_service()
+    service.start_job(created["job_id"])
+    service.update_route_evidence(created["job_id"], {
+        "renderer_route": "XML_UNSUPPORTED",
+        "renderer_reason_code": "ALIGNMENT_UNRESOLVED",
+        "renderer_reason_detail": "unmatched canonical question",
+    })
+    service.fail_job(created["job_id"], "XML_UNSUPPORTED: ALIGNMENT_UNRESOLVED")
+    record = service.get(created["job_id"])
+    assert record["status"] == "error"
+    assert record["renderer"] == "XML_UNSUPPORTED"
+    assert record["renderer_route"] == "XML_UNSUPPORTED"
+    assert record["renderer_reason_code"] == "ALIGNMENT_UNRESOLVED"
+    assert record["renderer_reason_detail"] == "unmatched canonical question"
+    assert record.get("fallback_reason") is None
 
 
 def test_restart_reconciles_done_job_when_a_final_docx_is_missing(client):
@@ -487,10 +465,10 @@ def _fake_slot_plan():
     )
 
 
-def _post_files(client, files):
+def _post_files(client, files, *, template_type="class"):
     data = {
         "subject": "物理", "grade": "九年级", "handout_type": "复习讲义",
-        "academic_year": "2026-2027学年", "template_type": "class",
+        "academic_year": "2026-2027学年", "template_type": template_type,
         "split_mode": "smart", "docx_mode": "auto",
         "files": [(io.BytesIO(content), name) for name, content in files],
     }
@@ -502,18 +480,19 @@ def _fake_render_slots(source, _plan, output):
     write_product_fixture(output, template_type)
     return SimpleNamespace(output_path=str(output), inserted_nodes=1,
                            resource_report={"unsupported": []},
-                           package_report={"valid": True, "errors": []})
+                           package_report={"valid": True, "errors": []},
+                           page_layout=None)
 
 
-def test_paired_teacher_student_routes_each_input_without_make_student(client, monkeypatch):
+@pytest.mark.parametrize("template_type", ["1v1", "class"])
+def test_paired_teacher_student_routes_each_input_without_make_student(
+        client, monkeypatch, template_type):
     import renderer_orchestrator
-    import slot_router
     import template_slot_composer
 
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
                         lambda: (_ for _ in ()).throw(AssertionError("make_student engine loaded")))
-    monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: _fake_slot_plan())
     seen_sources = []
     seen_cover_metadata = []
 
@@ -523,24 +502,52 @@ def test_paired_teacher_student_routes_each_input_without_make_student(client, m
         return _fake_render_slots(source, plan, output)
 
     monkeypatch.setattr(template_slot_composer, "render_slots", render)
-    teacher = make_docx()
-    student = make_student_docx()
-    response = _post_files(client, [("Unit 教师版.docx", teacher), ("Unit 学生版.docx", student)])
+    teacher_path = next(INCIDENT_FIXTURE.glob("*解析版*.docx"))
+    student_path = next(INCIDENT_FIXTURE.glob("*原卷版*.docx"))
+    teacher = teacher_path.read_bytes()
+    student = student_path.read_bytes()
+    response = _post_files(client, [("Unit 教师版.docx", teacher), ("Unit 学生版.docx", student)],
+                           template_type=template_type)
     job = response.get_json()
     final = make_service().get(job["job_id"])
     assert final["status"] == "done", final.get("error")
     assert final["input_version"] == "TEACHER_AND_STUDENT"
+    assert final["renderer"] == "XML"
+    assert final["renderer_route"] == "XML"
+    assert final["canonical_alignment"]["unmatched_real_question_count"] == 0
+    assert final["canonical_alignment"]["ambiguous_real_question_count"] == 0
+    assert len(final["canonical_occurrence_routes"]) == 60
+    projection = final["canonical_projection"]
+    assert projection["status"] == "PROJECTED"
+    assert projection["source_block_counts"] == {"student": 356, "teacher": 860}
+    assert len(projection["student_block_routes"]) == 356
+    assert len(projection["teacher_block_routes"]) == 860
+    for occurrence in final["canonical_occurrence_routes"]:
+        assert projection["student_block_routes"][occurrence["student_node"][1:]] == \
+            occurrence["destination_slot"]
+        assert projection["teacher_block_routes"][occurrence["teacher_node"][1:]] == \
+            occurrence["destination_slot"]
     assert final["student_preparation"]["make_student_called"] is False
     assert seen_sources == [teacher, student]
     assert len(seen_cover_metadata) == 2
-    assert all(item and item["objectives"] and item["difficulties"]
-               for item in seen_cover_metadata)
+    # The incident source has no reliable cover fields. Both outputs must use
+    # the same teacher-owned metadata result, including an explicit empty state.
     assert seen_cover_metadata[0] == seen_cover_metadata[1]
     metadata = final["lesson_metadata"]
+    assert metadata["status"] == "UNAVAILABLE"
+    assert metadata["objectives"] == metadata["difficulties"] == ""
+    assert metadata["warning"]
     assert metadata["full_objectives"] == metadata["objectives"]
     assert metadata["full_difficulties"] == metadata["difficulties"]
     assert metadata["cover_display"] == seen_cover_metadata[0]["cover_display"]
-    assert final["display_renumbering"]["status"] == "NOT_APPLICABLE"
+    renumbering = final["display_renumbering"]
+    assert renumbering["status"] == "DISPLAY_RENUMBER_APPLIED"
+    assert set(renumbering["slots"]) == {"knowledge", "immediate", "final"}
+    assert sum(len(items) for items in renumbering["slots"].values()) == 60
+    for items in renumbering["slots"].values():
+        assert [item["new_number"] for item in items] == list(range(1, len(items) + 1))
+        assert all(item["source_nodes"]["teacher"] and item["source_nodes"]["student"]
+                   for item in items)
     assert final["items"][0]["topic"] == "Unit"
     result_dir = Path(final["result_dir"])
     assert {path.name for path in result_dir.iterdir()} == {
@@ -551,13 +558,11 @@ def test_paired_teacher_student_routes_each_input_without_make_student(client, m
 
 def test_student_only_creates_no_teacher_output_and_never_calls_make_student(client, monkeypatch):
     import renderer_orchestrator
-    import slot_router
     import template_slot_composer
 
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
                         lambda: (_ for _ in ()).throw(AssertionError("student-only must not load COM")))
-    monkeypatch.setattr(slot_router, "build_slot_routing_plan", lambda *_args, **_kwargs: _fake_slot_plan())
     seen = []
 
     def render(source, plan, output):
@@ -591,8 +596,8 @@ def test_unknown_input_version_is_explicit_and_does_not_create_result_folder(cli
 def test_unrelated_teacher_student_pair_is_rejected_without_result_folder(client):
     response = _post_files(client, [("math 教师版.docx", make_docx()),
                                     ("chem 学生版.docx", make_student_docx())])
-    assert response.status_code == 422
-    assert response.get_json()["error_code"] == "UNKNOWN_INPUT_VERSION"
+    assert response.status_code == 415
+    assert "error" in response.get_json()
     assert list(Path(app.config["RESULT_ROOT"]).iterdir()) == []
 
 
@@ -600,6 +605,7 @@ def test_failed_make_student_attempt_is_persisted_truthfully(client, monkeypatch
     import renderer_orchestrator
 
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
+    app.config["V12_ALLOW_DIAGNOSTIC_V09"] = True
     engine = SimpleNamespace(
         make_student=lambda *_args: (_ for _ in ()).throw(RuntimeError("simulated COM failure")),
         CLASS_TEMPLATE="unused-class-template.docx",

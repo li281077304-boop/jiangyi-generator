@@ -2,6 +2,7 @@
 """Pinned Windows x64 onedir recipe. All output paths are supplied externally."""
 from pathlib import Path
 import os
+from PyInstaller.utils.hooks import collect_all
 
 ROOT = Path(os.environ["C4_REPO_ROOT"]).resolve()
 APP = ROOT / "v1.2-xml-experiment" / "res" / "app"
@@ -38,6 +39,24 @@ for source in sorted((WEBAPP / "static").rglob("*")):
     if source.is_file():
         add_file(source, str(app_rel / "webapp" / "static" / source.relative_to(WEBAPP / "static").parent))
 
+ocr_models = APP / "ocr_models"
+for source in sorted(ocr_models.glob("*.onnx")):
+    add_file(source, str(app_rel / "ocr_models"))
+add_file(ocr_models / "NOTICE.md", str(app_rel / "ocr_models"))
+if {source.name for source in ocr_models.glob("*.onnx")} != {
+        "ch_PP-OCRv4_det_infer.onnx", "ch_PP-OCRv4_rec_infer.onnx",
+        "ch_ppocr_mobile_v2.0_cls_infer.onnx"}:
+    raise SystemExit("the reviewed offline OCR model set is incomplete")
+
+ocr_hiddenimports = []
+binaries = []
+for ocr_package in ("rapidocr_onnxruntime", "onnxruntime", "cv2", "numpy", "shapely",
+                    "pyclipper", "yaml", "PIL"):
+    package_datas, package_binaries, package_hidden = collect_all(ocr_package)
+    datas.extend(package_datas)
+    binaries.extend(package_binaries)
+    ocr_hiddenimports.extend(package_hidden)
+
 # The web entry and job service are discovered as imports, while preserving
 # their source files beside the other dynamically loaded app modules is useful
 # for audited path-based imports and keeps the reviewed resource tree intact.
@@ -70,7 +89,7 @@ for asset in manifest["assets"]:
 analysis = Analysis(
     [str(ENTRY)],
     pathex=[str(WEBAPP), str(APP)],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     # Keep Flask's root_path tied to the packaged source path so its default
     # templates/static lookup remains inside the audited webapp tree.
@@ -78,7 +97,7 @@ analysis = Analysis(
     # Flask sees the correct template root. Analyze the source-loaded runtime
     # closure separately, avoiding test modules and retaining their source data
     # for the two audited path-based loaders.
-    hiddenimports=runtime_module_names + ["job_service", "flask"],
+    hiddenimports=runtime_module_names + ["job_service", "flask"] + ocr_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
