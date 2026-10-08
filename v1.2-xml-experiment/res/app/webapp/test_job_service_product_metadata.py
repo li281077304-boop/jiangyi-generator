@@ -28,6 +28,7 @@ class JobServiceProductMetadataTests(unittest.TestCase):
         self.service.start_job(self.job["job_id"])
 
     def test_missing_metadata_warning_and_normalization_survive_job_reads(self):
+        prior_warnings = self.service.get(self.job["job_id"])["warnings"][:]
         warning = "原文未提供教学目标，已留空，请使用前补充。"
         details = {"status": "PARTIAL", "objectives": "", "difficulties": "重点",
                    "objectives_reason": "NO_RELIABLE_OBJECTIVES_SOURCE"}
@@ -38,13 +39,13 @@ class JobServiceProductMetadataTests(unittest.TestCase):
 
         persisted = self.service.get(self.job["job_id"])
         self.assertEqual(persisted["lesson_metadata"], details)
-        self.assertEqual(persisted["warnings"], ["封面字段：" + warning])
+        self.assertEqual(persisted["warnings"], prior_warnings + ["封面字段：" + warning])
         self.assertEqual(persisted["product_normalization"], normalization)
 
         # Re-evaluation replaces the prior cover warning instead of duplicating it.
         self.service.update_lesson_metadata(self.job["job_id"], details, warning=warning)
         self.assertEqual(self.service.get(self.job["job_id"])["warnings"],
-                         ["封面字段：" + warning])
+                         prior_warnings + ["封面字段：" + warning])
 
     def test_direct_two_docx_pair_resolves_to_one_ordinary_job(self):
         teacher = Document()

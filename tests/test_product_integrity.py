@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 
 from docx import Document
+from docx.oxml import OxmlElement
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "v1.2-xml-experiment" / "res" / "app"
@@ -24,6 +25,38 @@ def make_docx(path: Path, paragraphs: list[str]) -> Path:
         document.add_paragraph(text)
     document.save(path)
     return path
+
+
+def textbox_docx(path, text):
+    document = Document()
+    box = OxmlElement("w:txbxContent")
+    paragraph = OxmlElement("w:p")
+    run = OxmlElement("w:r")
+    node = OxmlElement("w:t")
+    node.text = text
+    run.append(node)
+    paragraph.append(run)
+    box.append(paragraph)
+    document.add_paragraph()._p.append(box)
+    document.save(path)
+    return path
+
+
+def test_substantive_textbox_loss_blocks_publication(tmp_path):
+    reminder = "使用坩埚钳夹取木炭，点燃后由上而下缓慢伸入集气瓶。" * 3
+    source = textbox_docx(tmp_path / "source.docx", reminder)
+    output = make_docx(tmp_path / "output.docx", ["其他实验内容仍然存在"])
+    report = validate_product_integrity(source, output)
+    assert not report["accepted"]
+    assert report["errors"][0]["reason_code"] == "PRODUCT_TEXTBOX_CONTENT_UNPROVEN"
+    assert report["textbox_conservation"]["checked_unique_paragraphs"] == 1
+
+
+def test_textbox_moved_to_main_story_is_conserved(tmp_path):
+    reminder = "实验现象不能描述为生成物的名称，应准确描述颜色和状态。" * 3
+    source = textbox_docx(tmp_path / "source.docx", reminder)
+    output = make_docx(tmp_path / "output.docx", [reminder])
+    assert validate_product_integrity(source, output)["accepted"]
 
 
 def template_cycle(prefix: str) -> list[str]:

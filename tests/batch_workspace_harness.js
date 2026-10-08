@@ -44,7 +44,7 @@ const context = {
     getElementById: element, createElement: tag => new Element(tag),
     createTextNode: text => { const node = new Element("text"); node.textContent = text; return node; },
     querySelectorAll: () => [], querySelector: element, addEventListener() {}
-  }, window: {}, Intl, Date, Math, FormData,
+  }, window: {}, Intl, Date, Math, FormData, AbortController,
   localStorage: {getItem: key => stored.get(key), setItem: (key, value) => stored.set(key, value),
                  removeItem: key => stored.delete(key)},
   setInterval: () => 1, clearInterval() {}, setTimeout: () => 1, clearTimeout() {},

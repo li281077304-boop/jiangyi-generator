@@ -112,15 +112,15 @@ def test_stable_mode_uses_only_selected_v09_and_preserves_input_roles(
         assert job["student_preparation_route"] == "BYPASS"
 
 
-def test_job_without_engine_option_defaults_to_stable_v09(tmp_path):
+def test_job_without_engine_option_defaults_to_automatic_xml(tmp_path):
     from job_service import JobService
 
     service = JobService(tmp_path / "results", runtime_root=tmp_path / "runtime")
     job = service.create_inputs([("专题 学生版.docx", source_docx("student"))], {
         "template_type": "1v1", "docx_mode": "auto"})
-    assert job["options"]["engine_mode"] == "stable_v09"
-    assert job["selected_engine"] == "V0.9"
-    assert job["renderer_route"] == "STABLE_V09"
+    assert job["options"]["engine_mode"] == "auto"
+    assert job["selected_engine"] == "XML"
+    assert job["renderer_route"] == "XML_AUTO"
 
 
 def test_batch_children_keep_selected_engine_mode(tmp_path):

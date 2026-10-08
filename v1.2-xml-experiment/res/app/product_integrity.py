@@ -238,6 +238,31 @@ def _slot_overlaps(plan: Any) -> list[dict[str, str]]:
     return overlaps
 
 
+def _textbox_conservation(source_path: str | Path, output_path: str | Path) -> dict[str, Any]:
+    """Require substantive textbox text to remain searchable before publication.
+
+    AlternateContent can contain the same textbox twice. Compare unique leaf
+    paragraphs, not ancestor concatenations. Rasterized-only text is unproven,
+    rather than silently accepted as content preservation.
+    """
+    def load(path):
+        with zipfile.ZipFile(path) as archive:
+            return ET.fromstring(archive.read("word/document.xml"))
+    def text(node):
+        return re.sub(r"\s+", "", "".join(t.text or "" for t in node.iter(W_T)))
+    source, output = load(source_path), load(output_path)
+    paragraphs = {
+        text(p) for box in source.iter(W_TXBX) for p in box.iter(W_P)
+        if not any(child.tag == W_P for child in p.iter() if child is not p)
+        and len(text(p)) >= 40
+    }
+    final_text = text(output)
+    missing = sorted(p for p in paragraphs if p not in final_text)
+    return {"checked_unique_paragraphs": len(paragraphs),
+            "unproven": [{"sha256": hashlib.sha256(p.encode("utf-8")).hexdigest(),
+                          "text_chars": len(p)} for p in missing]}
+
+
 def validate_product_integrity(source_path: str | Path, output_path: str | Path,
                                *, plan: Any = None) -> dict[str, Any]:
     source_metrics = inspect_product_docx(source_path)
@@ -246,6 +271,11 @@ def validate_product_integrity(source_path: str | Path, output_path: str | Path,
     expansion_ratio = (output_metrics.text_chars / source_chars) if source_chars else None
     errors: list[dict[str, Any]] = []
     warnings: list[dict[str, Any]] = []
+    textbox_conservation = _textbox_conservation(source_path, output_path)
+    if textbox_conservation["unproven"]:
+        errors.append({"reason_code": "PRODUCT_TEXTBOX_CONTENT_UNPROVEN",
+                       "detail": "原文文本框正文未能完整核验，停止发布以避免内容遗漏。",
+                       "paragraphs": textbox_conservation["unproven"]})
     if output_metrics.template_cycles > 1 or output_metrics.template_title_count > 1:
         errors.append({"reason_code": "PRODUCT_TEMPLATE_RECURSION",
                        "detail": "output contains %d template titles and %d complete lecture-template sequences" %
@@ -269,6 +299,7 @@ def validate_product_integrity(source_path: str | Path, output_path: str | Path,
         "accepted": not errors,
         "errors": errors,
         "warnings": warnings,
+        "textbox_conservation": textbox_conservation,
         "source": {"sha256": _sha256(source_path), **source_metrics.as_dict()},
         "output": {"sha256": _sha256(output_path), **output_metrics.as_dict()},
         "expansion_ratio": round(expansion_ratio, 4) if expansion_ratio is not None else None,
