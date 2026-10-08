@@ -45,6 +45,8 @@ if (Test-Path -LiteralPath $output) {
 $null = New-Item -ItemType Directory -Path $output
 
 $sourceFiles = Get-FileInventory $source
+$sourceTotalBytes = [long]0
+foreach ($file in $sourceFiles) { $sourceTotalBytes += [long]$file.size_bytes }
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $v09ManifestPath = Join-Path $repoRoot 'v1.2-xml-experiment\res\app\v09_fallback_runtime\ASSET_MANIFEST.json'
 if (-not (Test-Path -LiteralPath $v09ManifestPath -PathType Leaf)) {
@@ -65,10 +67,17 @@ $allowedTemplatePaths = @(
     '_internal/v1.2-xml-experiment/res/app/v09_fallback_runtime/2025+1v1讲义模板(2).docx',
     '_internal/v1.2-xml-experiment/res/app/v09_fallback_runtime/2025班课模板.doc'
 )
+$allowedRuntimeDocuments = @(
+    '_internal/base_library.zip',
+    '_internal/docx/templates/default.docx',
+    '_internal/v1.2-xml-experiment/res/app/webapp/static/previews/1v1.pdf',
+    '_internal/v1.2-xml-experiment/res/app/webapp/static/previews/class.pdf'
+)
 $forbidden = @($sourceFiles | Where-Object {
     $_.path -match '(^|/)(tests?|corpus|gold|\.git|__pycache__|\.pytest_cache|\.venv)(/|$)' -or
     $_.path -match '(^|/)(private|uat|user-data)(/|$)' -or
-    ($_.path -match '\.(docx?|pdf|zip)$' -and $_.path -notin $allowedTemplatePaths)
+    ($_.path -match '\.(docx?|pdf|zip)$' -and
+        $_.path -notin ($allowedTemplatePaths + $allowedRuntimeDocuments))
 })
 if ($forbidden.Count -gt 0) {
     throw ('Source package contains forbidden or user-data files: ' + (($forbidden | ForEach-Object path) -join ', '))
@@ -118,7 +127,7 @@ try {
         build_commit = $BuildCommit.ToLowerInvariant()
         readme = 'README.md'
         onedir_file_count = $stagedFiles.Count
-        onedir_total_bytes = [long](($stagedFiles | Measure-Object -Property size_bytes -Sum).Sum)
+        onedir_total_bytes = $sourceTotalBytes
         files = $runtimeFiles
     }
     $manifest | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $stage 'PACKAGE_MANIFEST.json') -Encoding UTF8
@@ -139,11 +148,12 @@ try {
         $zipForbidden = @($entryNames | Where-Object {
             $_ -match '(^|/)(tests?|corpus|gold|\.git|__pycache__|\.pytest_cache|\.venv)(/|$)' -or
             $_ -match '(^|/)(private|uat|user-data)(/|$)' -or
-            ($_ -match '\.(docx?|pdf|zip)$' -and $_ -notin @(
+            ($_ -match '\.(docx?|pdf|zip)$' -and $_ -notin (@(
                 '讲义生成器/_internal/v1.1-stable/res/app/2025+1v1讲义模板(2).docx',
                 '讲义生成器/_internal/v1.1-stable/res/app/2025班课模板.docx',
                 '讲义生成器/_internal/v1.2-xml-experiment/res/app/v09_fallback_runtime/2025+1v1讲义模板(2).docx',
-                '讲义生成器/_internal/v1.2-xml-experiment/res/app/v09_fallback_runtime/2025班课模板.doc'))
+                '讲义生成器/_internal/v1.2-xml-experiment/res/app/v09_fallback_runtime/2025班课模板.doc'
+            ) + @($allowedRuntimeDocuments | ForEach-Object { '讲义生成器/' + $_ })))
         })
         if ($zipForbidden.Count -gt 0) {
             throw ('RC ZIP contains forbidden content: ' + ($zipForbidden -join ', '))
