@@ -27,7 +27,7 @@
     }
   };
   var MAX_BYTES = 500 * 1024 * 1024;
-  var state = {files: [], undo: [], jobs: [], selectedSubject: "数学", templateType: "1v1", engineMode: "stable_v09", currentJob: null, pollTimer: null, elapsedTimer: null, startedAt: 0, previewTemplate: "1v1"};
+  var state = {files: [], undo: [], jobs: [], selectedSubject: "数学", templateType: "1v1", currentJob: null, pollTimer: null, elapsedTimer: null, startedAt: 0, previewTemplate: "1v1"};
   var $ = function (id) { return document.getElementById(id); };
 
   function refreshIcons(root) {
@@ -61,8 +61,13 @@
     toast.timer = setTimeout(function () { node.hidden = true; }, 2600);
   }
   function requestJson(url, options) {
-    return fetch(url, options).then(function (response) {
-      return response.json().catch(function () { return {}; }).then(function (data) {
+    var controller = new AbortController();
+    var timeout = setTimeout(function () { controller.abort(); }, options && options.method === "POST" ? 120000 : 15000);
+    return fetch(url, Object.assign({}, options || {}, {signal: controller.signal, cache: "no-store"})).catch(function (error) {
+      error.connectionFailure = true;
+      throw error;
+    }).then(function (response) {
+      return response.json().then(function (data) {
         if (!response.ok) {
           var error = new Error(data.error || "服务暂时不可用");
           error.status = response.status;
@@ -71,7 +76,11 @@
         }
         return data;
       });
-    });
+    }).catch(function (error) {
+      if (error.name === "AbortError") error.message = "本地服务响应超时，请重新连接查看任务状态。";
+      else if (error instanceof TypeError) error.message = "暂时无法连接本地服务。后台任务不会因页面断线而取消。";
+      throw error;
+    }).finally(function () { clearTimeout(timeout); });
   }
 
   function initializeOptions() {
@@ -113,8 +122,6 @@
     if (GRADES[$("eduLevel").value].indexOf(prefs.grade) >= 0) $("gradeSelect").value = prefs.grade;
     if (HANDOUT_TYPES.indexOf(prefs.handoutType) >= 0) $("handoutType").value = prefs.handoutType;
     if (["1v1", "class"].indexOf(prefs.templateType) >= 0) state.templateType = prefs.templateType;
-    if (["stable_v09", "xml_restricted"].indexOf(prefs.engineMode) >= 0) state.engineMode = prefs.engineMode;
-    $("engineMode").value = state.engineMode;
     if (["smart", "full"].indexOf(prefs.splitMode) >= 0) $("splitMode").value = prefs.splitMode;
     if (["auto", "separate"].indexOf(prefs.docxMode) >= 0) $("docxMode").value = prefs.docxMode;
     $("compactFiles").checked = !!prefs.compactFiles;
@@ -124,26 +131,13 @@
     updateEngineModeNote();
   }
   function savePrefs() {
-    var prefs = {subject: state.selectedSubject, eduLevel: $("eduLevel").value, grade: $("gradeSelect").value, handoutType: $("handoutType").value, academicYear: $("academicYear").value, templateType: state.templateType, engineMode: state.engineMode, splitMode: $("splitMode").value, docxMode: $("docxMode").value, compactFiles: $("compactFiles").checked};
+    var prefs = {subject: state.selectedSubject, eduLevel: $("eduLevel").value, grade: $("gradeSelect").value, handoutType: $("handoutType").value, academicYear: $("academicYear").value, templateType: state.templateType, splitMode: $("splitMode").value, docxMode: $("docxMode").value, compactFiles: $("compactFiles").checked};
     localStorage.setItem("handout_workspace_prefs", JSON.stringify(prefs));
     setText("saveState", "配置已保存");
   }
   function updateEngineModeNote() {
-    state.engineMode = $("engineMode").value || "stable_v09";
-    var note = state.engineMode === "stable_v09"
-      ? "使用已验证的 V0.9 引擎。XML 模式需要你手动选择，遇到不支持的文件会提示原因，不会自动切换。"
-      : "受限实验模式：仅在 XML 能力范围内生成。遇到不支持的文件会显示原因；如需继续，请手动改选稳定模式（V0.9 引擎）。";
-    setText("engineModeNote", note);
-    $("splitMode").disabled = state.engineMode === "stable_v09";
-    $("splitTitle").textContent = state.engineMode === "stable_v09" ? "V0.9 原有分块规则" : "智能分块";
-    $("splitBadge").textContent = state.engineMode === "stable_v09" ? "稳定引擎" : "推荐";
-    $("splitDescription").textContent = state.engineMode === "stable_v09"
-      ? "稳定模式沿用 V0.9 引擎自己的处理规则，下面的分块选项不适用。"
-      : (SPLIT_HELP[$("splitMode").value] || SPLIT_HELP.smart).description;
-    if (state.engineMode === "stable_v09") setText("splitNote", "本任务使用 V0.9 原有规则；分块策略不会传入旧引擎。");
-    $("splitSteps").replaceChildren();
-    if (state.engineMode === "stable_v09") $("splitSteps").hidden = true;
-    else { $("splitSteps").hidden = false; updateSplitExplainer(); }
+    $("splitMode").closest("label").hidden = true;
+    $("splitExplainer").hidden = true;
   }
   function updateGrades(preferred) {
     var select = $("gradeSelect"), values = GRADES[$("eduLevel").value] || [];
@@ -281,6 +275,7 @@
   }
   function showJob(job) {
     state.currentJob = job.job_id;
+    localStorage.setItem("handout_current_job", job.job_id);
     $("idleState").hidden = true; $("progressWrap").hidden = false;
     var percent = job.total ? Math.round((job.progress || 0) / job.total * 100) : 0;
     if (job.status === "done") percent = 100;
@@ -300,7 +295,7 @@
       var itemRenderer = item.renderer || (!job.is_batch && job.renderer);
       var itemStatus = item.status || job.status;
       var itemRoute = item.renderer_route || (!job.is_batch && job.renderer_route);
-      renderer.textContent = itemRenderer === "XML" ? "XML 受限模式" : itemRenderer === "XML_UNSUPPORTED" ? "XML 不支持" : itemRenderer === "V0.9" ? (itemRoute === "STABLE_V09" ? "稳定模式（V0.9）" : "V0.9 回退") : itemStatus === "error" ? "未执行" : "待确定";
+      renderer.textContent = itemRenderer === "XML" ? "标准生成" : itemRenderer === "XML_UNSUPPORTED" ? "无法生成" : itemRenderer === "V0.9" ? "兼容生成" : itemStatus === "error" ? "未执行" : "待确定";
       if (item.renderer_reason_code || (!job.is_batch && job.renderer_reason_code)) renderer.title = "XML 未支持：" + (item.renderer_reason_code || job.renderer_reason_code) + (job.renderer_reason_detail ? "；" + job.renderer_reason_detail : "");
       else if (item.fallback_reason || (!job.is_batch && job.fallback_reason)) renderer.title = "回退原因：" + (item.fallback_detail || item.fallback_reason || job.fallback_reason);
       status.appendChild(statusCell(itemStatus === "done" ? "成功" : itemStatus === "error" ? "失败" : itemStatus === "running" ? "处理中" : "等待中"));
@@ -318,7 +313,7 @@
     $("openResult").hidden = !job.has_result; $("reconnect").hidden = true;
     $("configFields").disabled = isActiveStatus(job.status); $("startButton").disabled = isActiveStatus(job.status) || !state.files.length;
     if (isActiveStatus(job.status)) beginElapsed(job.created_at);
-    else { clearInterval(state.elapsedTimer); setText("elapsedLabel", job.produced ? "共 " + job.produced + " 份" : ""); localStorage.removeItem("handout_current_job"); }
+    else { clearInterval(state.elapsedTimer); setText("elapsedLabel", job.produced ? "共 " + job.produced + " 份" : ""); }
     refreshIcons(rows); renderHistory();
   }
   function pollJob(jobId, immediate) {
@@ -328,7 +323,8 @@
         setConnected(true); upsertJob(job); showJob(job);
         if (isActiveStatus(job.status)) state.pollTimer = setTimeout(poll, 1200);
       }).catch(function (error) {
-        setConnected(false); $("progressTrack").classList.add("disconnected"); $("reconnect").hidden = false;
+        setConnected(!error.connectionFailure); $("progressTrack").classList.add("disconnected");
+        $("reconnect").hidden = false;
         setText("progressStage", error.message); refreshIcons($("progressWrap"));
       });
     }
@@ -342,19 +338,35 @@
     event.preventDefault(); if (!state.files.length || activeJob()) return;
     var button = $("startButton"); button.disabled = true; setText("footerStatus", "正在上传素材");
     var data = new FormData(); state.files.forEach(function (file) { data.append("files", file); });
-    data.append("subject", state.selectedSubject); data.append("grade", $("gradeSelect").value); data.append("handout_type", $("handoutType").value); data.append("academic_year", $("academicYear").value); data.append("template_type", state.templateType); data.append("engine_mode", state.engineMode); data.append("split_mode", $("splitMode").value); data.append("docx_mode", $("docxMode").value);
+    data.append("subject", state.selectedSubject); data.append("grade", $("gradeSelect").value); data.append("handout_type", $("handoutType").value); data.append("academic_year", $("academicYear").value); data.append("template_type", state.templateType); data.append("split_mode", $("splitMode").value); data.append("docx_mode", $("docxMode").value);
     requestJson("/api/jobs", {method: "POST", body: data}).then(function (response) {
       state.currentJob = response.job_id; localStorage.setItem("handout_current_job", response.job_id); beginElapsed();
       upsertJob(response); showJob(response);
       pollJob(response.job_id, false);
     }).catch(function (error) {
-      button.disabled = false; setText("footerStatus", "就绪"); toast(error.message);
-      if (error.data && error.data.job_id) { localStorage.setItem("handout_current_job", error.data.job_id); pollJob(error.data.job_id, true); }
+      button.disabled = false; toast(error.message);
+      if (!error.status) {
+        setConnected(false);
+        setText("progressStage", "上传结果暂时无法确认，请重新连接恢复任务，避免重复提交。");
+      } else { setText("footerStatus", "提交失败：" + error.message); }
+      if (error.data && error.data.job_id) { state.currentJob = error.data.job_id; localStorage.setItem("handout_current_job", error.data.job_id); pollJob(error.data.job_id, true); }
     });
   }
   function setConnected(connected) {
     document.querySelector(".status-dot").classList.toggle("offline", !connected);
     setText("connectionLabel", connected ? "本地服务" : "连接中断");
+    $("reconnect").hidden = connected;
+    if (!connected) {
+      $("idleState").hidden = true; $("progressWrap").hidden = false;
+      setText("footerStatus", "连接中断，任务状态待确认");
+    }
+  }
+  function reconnect() {
+    var button = $("reconnect"); button.disabled = true;
+    setText("footerStatus", "正在恢复连接与任务状态");
+    return loadJobs().then(function () { toast("已重新连接，任务状态已恢复"); })
+      .catch(function (error) { toast("重连失败：" + error.message); })
+      .finally(function () { button.disabled = false; });
   }
   function loadJobs() {
     return requestJson("/api/jobs").then(function (data) {
@@ -362,7 +374,17 @@
       var stored = localStorage.getItem("handout_current_job"), active = state.jobs.find(function (job) { return isActiveStatus(job.status); });
       var target = state.jobs.find(function (job) { return job.job_id === stored; }) || active;
       if (target) { showJob(target); if (isActiveStatus(target.status)) pollJob(target.job_id, false); }
-    }).catch(function () { setConnected(false); renderHistory(); });
+      if (!target) {
+        if (stored) { localStorage.removeItem("handout_current_job"); toast("此前任务不在当前服务的记录中，请查看生成记录。"); }
+        state.currentJob = null; $("idleState").hidden = false; $("progressWrap").hidden = true;
+        setText("footerStatus", "就绪"); $("startButton").disabled = !state.files.length;
+      }
+    }).catch(function (error) {
+      setConnected(!error.connectionFailure); $("reconnect").hidden = false;
+      $("idleState").hidden = true; $("progressWrap").hidden = false;
+      setText("progressStage", error.connectionFailure ? error.message : "任务状态恢复失败：" + error.message);
+      throw error;
+    });
   }
 
   function renderHistory() {
@@ -400,11 +422,12 @@
     ["workspace", "history", "templates"].forEach(function (name) { $(name + "View").hidden = name !== view; });
     document.querySelectorAll("[data-view]").forEach(function (button) { var active = button.dataset.view === view; button.classList.toggle("active", active); if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current"); });
     setText("viewTitle", view === "workspace" ? "工作区" : view === "history" ? "生成记录" : "讲义模板");
-    if (view === "history") loadJobs();
+    if (view === "history") loadJobs().catch(function () {});
   }
   function newTask() {
     if (activeJob()) { navigate("workspace"); toast("当前讲义生成完成后即可开始新任务"); return; }
     state.files = []; state.undo = []; $("fileSearch").value = ""; $("undoFiles").disabled = true; renderFiles();
+    localStorage.removeItem("handout_current_job");
     $("idleState").hidden = false; $("progressWrap").hidden = true; state.currentJob = null; clearInterval(state.elapsedTimer); setText("elapsedLabel", ""); setText("footerStatus", "就绪"); navigate("workspace");
   }
 
@@ -435,13 +458,12 @@
     $("drop").addEventListener("drop", function (event) { addFiles(event.dataTransfer.files); });
     $("clearFiles").addEventListener("click", clearFiles); $("undoFiles").addEventListener("click", undoFiles); $("fileSearch").addEventListener("input", function () { renderFiles(); });
     $("docxMode").addEventListener("change", function () { configChanged(); updatePairing(); });
-    $("engineMode").addEventListener("change", function () { state.engineMode = this.value; updateEngineModeNote(); configChanged(); });
     $("eduLevel").addEventListener("change", function () { updateGrades(); configChanged(); });
     ["gradeSelect", "handoutType", "academicYear", "splitMode"].forEach(function (id) { $(id).addEventListener("change", configChanged); });
     document.querySelectorAll("[data-template]").forEach(function (button) { button.addEventListener("click", function () { setTemplate(button.dataset.template); }); });
-    $("configForm").addEventListener("submit", startJob); $("openResult").addEventListener("click", function () { if (state.currentJob) openJob(state.currentJob); }); $("reconnect").addEventListener("click", function () { if (state.currentJob) pollJob(state.currentJob, true); });
+    $("configForm").addEventListener("submit", startJob); $("openResult").addEventListener("click", function () { if (state.currentJob) openJob(state.currentJob); }); $("reconnect").addEventListener("click", reconnect);
     document.querySelectorAll("[data-view]").forEach(function (button) { button.addEventListener("click", function () { navigate(button.dataset.view); }); });
-    $("newTask").addEventListener("click", newTask); $("refreshHistory").addEventListener("click", loadJobs); $("historySearch").addEventListener("input", renderHistory); $("historyFilter").addEventListener("change", renderHistory);
+    $("newTask").addEventListener("click", newTask); $("refreshHistory").addEventListener("click", reconnect); $("historySearch").addEventListener("input", renderHistory); $("historyFilter").addEventListener("change", renderHistory);
     $("settingsButton").addEventListener("click", function () { $("settingsDialog").showModal(); });
     var exitApplication = $("exitApplication");
     if (exitApplication) exitApplication.addEventListener("click", function () {
@@ -453,7 +475,7 @@
     $("themeButton").addEventListener("click", function () { applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); });
     $("themeSelect").addEventListener("change", function () { applyTheme(this.value); });
     $("compactFiles").addEventListener("change", function () { applyCompact(); savePrefs(); });
-    $("resetConfig").addEventListener("click", function () { $("eduLevel").value = "高中"; updateGrades("高一"); $("handoutType").value = "复习讲义"; $("academicYear").value = academicYear(); $("engineMode").value = "stable_v09"; state.engineMode = "stable_v09"; updateEngineModeNote(); $("splitMode").value = "smart"; $("docxMode").value = "auto"; selectSubject("数学", true); setTemplate("1v1", true); configChanged(); updatePairing(); toast("已恢复默认配置"); });
+    $("resetConfig").addEventListener("click", function () { $("eduLevel").value = "高中"; updateGrades("高一"); $("handoutType").value = "复习讲义"; $("academicYear").value = academicYear(); updateEngineModeNote(); $("splitMode").value = "smart"; $("docxMode").value = "auto"; selectSubject("数学", true); setTemplate("1v1", true); configChanged(); updatePairing(); toast("已恢复默认配置"); });
     $("previewButton").addEventListener("click", function () { openPreview(state.templateType); });
     document.querySelectorAll("[data-preview]").forEach(function (button) { button.addEventListener("click", function () { openPreview(button.dataset.preview); }); });
     document.querySelectorAll("[data-use-template]").forEach(function (button) { button.addEventListener("click", function () { setTemplate(button.dataset.useTemplate); navigate("workspace"); }); });
@@ -464,7 +486,7 @@
   function initialize() {
     initializeOptions(); loadPrefs(); bindEvents();
     setText("todayLabel", new Intl.DateTimeFormat("zh-CN", {month: "long", day: "numeric", weekday: "long"}).format(new Date()));
-    applyTheme(localStorage.getItem("handout_theme") || "system"); updateFilename(); updateSplitExplainer(); updateEngineModeNote(); renderFiles(); refreshIcons(); loadJobs();
+    applyTheme(localStorage.getItem("handout_theme") || "system"); updateFilename(); updateSplitExplainer(); updateEngineModeNote(); renderFiles(); refreshIcons(); loadJobs().catch(function () {});
   }
   document.addEventListener("DOMContentLoaded", initialize);
 }());

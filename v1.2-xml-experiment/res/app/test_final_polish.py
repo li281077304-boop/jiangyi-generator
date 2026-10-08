@@ -2,7 +2,7 @@
 import hashlib
 from dataclasses import replace
 from pathlib import Path
-import sys
+from types import SimpleNamespace
 from unittest.mock import Mock
 
 from docx import Document
@@ -24,10 +24,6 @@ from template_slot_composer import (build_display_renumbering, render_slots,
 from renderer_xml_minimal import BlockSpan
 from slot_router import SlotRoutingError
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent / "v09_fallback_runtime"))
-from handout import _run_hidden_process
-
 
 def training_plan(tmp_path, role, *, cross_reference=False, field=False):
     doc = Document()
@@ -91,9 +87,9 @@ def test_generated_short_rule_retains_method_and_capability_targets():
     meta = LessonMetadata('完整目标'*30,'完整难点'*30,'TRAINING_TYPE_HEADINGS',
                           'NO_KNOWLEDGE_POINT',('物质的构成',))
     result=build_cover_display(meta,'class')
-    assert '题型方法' in result['objectives'] and '规范分析与解答' in result['objectives']
+    assert '题型及解题方法' in result['objectives'] and '规范分析与解答' in result['objectives']
     assert '重点：' in result['difficulties'] and '难点：' in result['difficulties']
-    assert result['compaction_methods']['objectives']=='SHORT_OFFLINE_RULE'
+    assert result['compaction_methods']['objectives']=='SHORT_TRAINING_RULE'
     assert display_width_units('中文')==4
     assert display_width_units('123')==3
 
@@ -344,19 +340,23 @@ def test_render_slots_reports_module2_end_anchor_evidence(tmp_path):
         assert result.module2_end_divider_anchor['spacer_pt']==MODULE2_END_DIVIDER_SPACER_PT[template]
 
 
-def test_v09_powershell_child_is_hidden_without_changing_capture_contract(monkeypatch):
-    import handout
+def test_v09_powershell_child_is_hidden_without_changing_capture_contract():
+    from renderer_orchestrator import _V09SubprocessProxy
 
-    runner = Mock(return_value=object())
-    monkeypatch.setattr(handout.subprocess, "run", runner)
-    monkeypatch.setattr(handout.os, "name", "nt")
-    result = _run_hidden_process(["powershell.exe", "-File", "test.ps1"],
-                                 capture_output=True, timeout=37, check=False)
-    assert result is runner.return_value
-    args, kwargs = runner.call_args
+    delegate = Mock()
+    delegate.CREATE_NO_WINDOW = 0x08000000
+    delegate.STARTF_USESHOWWINDOW = 1
+    delegate.SW_HIDE = 0
+    delegate.STARTUPINFO.return_value = SimpleNamespace(dwFlags=0, wShowWindow=0)
+    delegate.run = Mock(return_value=object())
+    result = _V09SubprocessProxy(delegate, windows=True).run(
+        ["powershell.exe", "-File", "test.ps1"],
+        capture_output=True, timeout=37, check=False)
+    assert result is delegate.run.return_value
+    args, kwargs = delegate.run.call_args
     assert args[0] == ["powershell.exe", "-File", "test.ps1"]
     assert kwargs["capture_output"] is True
     assert kwargs["timeout"] == 37
     assert kwargs["check"] is False
-    assert kwargs["creationflags"] & handout.subprocess.CREATE_NO_WINDOW
-    assert kwargs["startupinfo"].wShowWindow == handout.subprocess.SW_HIDE
+    assert kwargs["creationflags"] & delegate.CREATE_NO_WINDOW
+    assert kwargs["startupinfo"].wShowWindow == delegate.SW_HIDE

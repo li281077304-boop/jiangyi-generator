@@ -46,6 +46,7 @@ app.config.setdefault("LOCAL_OCR_MODEL_DIR", Path(os.environ.get(
 # V1.2 exposes two explicit modes. XML is restricted and never auto-switches;
 # the stable V0.9 route is selected by the submitted job option.
 _V09_FALLBACK_LOCK = threading.RLock()
+_JOB_SERVICE_LOCK = threading.RLock()
 
 
 def _jobs() -> JobService:
@@ -54,9 +55,12 @@ def _jobs() -> JobService:
     opener = app.config.get("OPEN_FOLDER")
     services = app.extensions.setdefault("c0_job_services", {})
     key = (str(root), str(runtime_root), id(opener) if opener is not None else None)
-    if key not in services:
-        services[key] = JobService(root, runtime_root=runtime_root, opener=opener)
-    return services[key]
+    # Initialization performs restart recovery; concurrent browser requests
+    # must never initialize another service while a live job is running.
+    with _JOB_SERVICE_LOCK:
+        if key not in services:
+            services[key] = JobService(root, runtime_root=runtime_root, opener=opener)
+        return services[key]
 
 
 def _submit_job(job_id: str) -> None:
@@ -1019,6 +1023,14 @@ def launcher_shutdown():
         return jsonify({"error": "launcher control unavailable"}), 404
     threading.Thread(target=shutdown, name="launcher-shutdown", daemon=True).start()
     return jsonify({"stopping": True})
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "本地服务处理请求失败，请重新连接查看任务状态。",
+                        "error_code": "LOCAL_SERVICE_ERROR"}), 500
+    return error
 
 
 @app.get("/api/jobs")

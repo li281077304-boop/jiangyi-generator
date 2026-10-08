@@ -82,7 +82,7 @@
                   <p class="progress-stage" id="progressStage"></p>
                   <div id="batchSummary" class="batch-summary" aria-live="polite" hidden><span>总数 <strong id="batchTotal">0</strong></span><span>已完成 <strong id="batchCompleted">0</strong></span><span>失败数 <strong id="batchFailed">0</strong></span><span class="batch-current">当前处理专题：<strong id="batchCurrent">等待处理</strong></span></div>
                   <div class="progress-track" id="progressTrack" role="progressbar" aria-label="生成进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="barfill"></div></div>
-                  <div class="result-table-wrap"><table><thead><tr><th>专题</th><th>教师版</th><th>学生版</th><th>生成方式</th><th>状态</th></tr></thead><tbody id="resultRows"></tbody></table></div>
+                  <div class="result-table-wrap"><table><thead><tr><th>专题</th><th>教师版</th><th>学生版</th><th>处理方式</th><th>状态</th></tr></thead><tbody id="resultRows"></tbody></table></div>
                   <div id="warnings" class="notice" hidden></div>
                   <p id="resultDelivery" class="notice" role="status" aria-live="polite" hidden></p>
                   <div class="result-actions">
@@ -104,8 +104,6 @@
                   <label class="field-label" id="templateLabel">讲义模板</label>
                   <div class="segmented" role="group" aria-labelledby="templateLabel" id="templateControl"><button type="button" data-template="1v1" aria-pressed="true"><i data-lucide="user-round"></i>1 对 1</button><button type="button" data-template="class" aria-pressed="false"><i data-lucide="users-round"></i>班课</button></div>
                   <button type="button" id="previewButton" class="template-preview"><img id="templateThumb" src="{{ url_for('static', filename='previews/1v1.png') }}" alt="1 对 1 讲义模板首页"><span><strong id="templateName">1 对 1 讲义</strong><small>点击查看真实模板首页</small></span><i data-lucide="scan-eye"></i></button>
-                  <label class="field">生成引擎<select id="engineMode"><option value="stable_v09">稳定模式（V0.9 引擎）</option><option value="xml_restricted">XML 受限模式</option></select></label>
-                  <p class="split-note" id="engineModeNote" aria-live="polite">使用已验证的 V0.9 引擎。XML 模式需要你手动选择，遇到不支持的文件会提示原因，不会自动切换。</p>
                   <label class="field">分块策略<select id="splitMode"><option value="smart">智能分块（推荐）</option><option value="full">完整保留</option></select></label>
                   <section class="split-explainer" id="splitExplainer" aria-live="polite">
                     <div class="split-heading"><strong id="splitTitle">智能分块</strong><span id="splitBadge">推荐</span></div>
@@ -140,7 +138,7 @@
     </div>
   </div>
 
-  <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="dialog-heading"><h2>偏好设置</h2><button class="icon-button" aria-label="关闭偏好设置"><i data-lucide="x"></i></button></div><div class="settings-row"><label for="themeSelect">外观</label><select id="themeSelect"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></div><div class="settings-row"><label for="compactFiles">紧凑文件列表</label><input id="compactFiles" type="checkbox" role="switch" class="switch"></div><div class="settings-row"><span>默认引擎</span><span class="green">稳定模式（V0.9 引擎）</span></div><div class="settings-row"><span>应用版本</span><span class="muted">讲义生成器 V1.2</span></div>{% if launcher_token %}<div class="settings-row"><span>本地服务</span><button type="button" class="secondary-button" id="exitApplication">退出讲义生成器</button></div>{% endif %}</form></dialog>
+  <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="dialog-heading"><h2>偏好设置</h2><button class="icon-button" aria-label="关闭偏好设置"><i data-lucide="x"></i></button></div><div class="settings-row"><label for="themeSelect">外观</label><select id="themeSelect"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></div><div class="settings-row"><label for="compactFiles">紧凑文件列表</label><input id="compactFiles" type="checkbox" role="switch" class="switch"></div><div class="settings-row"><span>应用版本</span><span class="muted">讲义生成器 V1.2</span></div>{% if launcher_token %}<div class="settings-row"><span>本地服务</span><button type="button" class="secondary-button" id="exitApplication">退出讲义生成器</button></div>{% endif %}</form></dialog>
   <dialog id="previewDialog" class="preview-dialog"><div class="dialog-heading"><h2 id="previewTitle">讲义模板</h2><div class="toolbar"><a id="templatePdf" class="icon-button" aria-label="打开完整模板 PDF" data-tooltip="完整模板" target="_blank" rel="noopener"><i data-lucide="external-link"></i></a><button id="closePreview" class="icon-button" aria-label="关闭模板预览"><i data-lucide="x"></i></button></div></div><div class="preview-paper"><img id="previewImage" alt="模板首页"></div><div class="preview-footer"><span class="muted small">模板首页</span><button id="usePreviewTemplate" class="primary-button">使用此模板<i data-lucide="arrow-right"></i></button></div></dialog>
   <div id="toast" class="toast" role="status" hidden></div>
 </body>

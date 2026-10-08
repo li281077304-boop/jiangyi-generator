@@ -1,0 +1,31 @@
+async page => {
+  const base = new URL(page.url()).origin;
+  const evidence = {scenario: 'RECONNECT_WITHOUT_CURRENT_JOB_AND_CORRUPT_INPUT'};
+  await page.locator('#newTask').click();
+  await page.context().setOffline(true);
+  await page.locator('[data-view="history"]').click();
+  await page.waitForFunction(() => document.getElementById('connectionLabel').textContent === '连接中断');
+  await page.locator('[data-view="workspace"]').click();
+  await page.locator('#reconnect').click();
+  await page.waitForFunction(() => document.getElementById('toast').textContent.startsWith('重连失败：'));
+  evidence.offline_failure = await page.locator('#toast').innerText();
+  await page.context().setOffline(false);
+  await page.locator('#reconnect').click();
+  await page.waitForFunction(() => document.getElementById('toast').textContent === '已重新连接，任务状态已恢复');
+  evidence.recovered_without_job_id = await page.locator('#connectionLabel').innerText() === '本地服务';
+  const before = await (await page.request.get(base + '/api/jobs')).json();
+  await page.locator('#fileInput').setInputFiles('C:/xml-uat/product-rescue-p0-20261008/corrupt.docx');
+  const submission = page.waitForResponse(response => response.url() === base + '/api/jobs' && response.request().method() === 'POST');
+  await page.locator('#startButton').click();
+  const response = await submission;
+  evidence.invalid_input_status = response.status();
+  evidence.invalid_input_response = await response.json();
+  if (response.ok()) throw new Error('Corrupt input incorrectly accepted');
+  await page.waitForFunction(() => document.getElementById('footerStatus').textContent.startsWith('提交失败：'));
+  evidence.user_feedback = await page.locator('#footerStatus').innerText();
+  const after = await (await page.request.get(base + '/api/jobs')).json();
+  evidence.no_phantom_job = before.jobs.length === after.jobs.length;
+  if (!evidence.no_phantom_job) throw new Error('Failed upload left a phantom job');
+  await page.screenshot({path: 'C:/xml-uat/product-rescue-p0-20261008/p0-invalid-input.png', fullPage: true});
+  return evidence;
+}

@@ -1,0 +1,188 @@
+{
+  "browser-1v1-evidence": {
+    "gate": "P0_REAL_EXE",
+    "started_at": "2026-10-08T08:13:11.137Z",
+    "template": "1v1",
+    "job_id": "e58f8bde256348afa71446b68949b1b4",
+    "status_before_refresh": "running",
+    "active_job_restored_after_refresh": true,
+    "failed_reconnect_feedback": "重连失败：暂时无法连接本地服务。后台任务不会因页面断线而取消。",
+    "backend_completed_while_disconnected": true,
+    "success_reconnect_feedback": "已重新连接，任务状态已恢复",
+    "completed_job_restored_after_refresh": true,
+    "open_result": {
+      "job_id": "e58f8bde256348afa71446b68949b1b4",
+      "opened": true,
+      "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（3）"
+    },
+    "reopened_browser_restores_job": true,
+    "job": {
+      "status": "done",
+      "generation_attempts": 1,
+      "input_version": "TEACHER_AND_STUDENT",
+      "renderer": "V0.9",
+      "output_paths": [
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（3）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 教师版.docx",
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（3）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 学生版.docx"
+      ],
+      "package_validation": {
+        "student": {
+          "errors": [],
+          "stats": {
+            "docPr_ids": 68,
+            "drawing_image_references": 68,
+            "errors": 0,
+            "image_media_targets": 68,
+            "num_references": 7,
+            "package_parts": 78,
+            "picture_ids": 68,
+            "relationship_references": 71,
+            "relationships": 75,
+            "style_references": 15,
+            "warnings": 0,
+            "xml_parts": 13
+          },
+          "valid": true,
+          "warnings": []
+        },
+        "teacher": {
+          "errors": [],
+          "stats": {
+            "docPr_ids": 87,
+            "drawing_image_references": 87,
+            "errors": 0,
+            "image_media_targets": 87,
+            "num_references": 7,
+            "package_parts": 97,
+            "picture_ids": 87,
+            "relationship_references": 90,
+            "relationships": 94,
+            "style_references": 15,
+            "warnings": 0,
+            "xml_parts": 13
+          },
+          "valid": true,
+          "warnings": []
+        }
+      },
+      "warnings": [
+        "封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。"
+      ]
+    },
+    "page_errors": [],
+    "final_files": [
+      {
+        "path": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（3）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 教师版.docx",
+        "size": 2836403,
+        "sha256": "d6c17c038357688b548f30736c2d74599948149ff7041b3411cb0c0a174a0520",
+        "package_valid": true
+      },
+      {
+        "path": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（3）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 学生版.docx",
+        "size": 2168690,
+        "sha256": "d853e08b33df9f24929776b904edbd6e97f13ed6931236f60584c5075eff3c5c",
+        "package_valid": true
+      }
+    ],
+    "result_dir_clean": true
+  },
+  "browser-class-evidence": {
+    "gate": "P0_REAL_EXE",
+    "started_at": "2026-10-08T08:11:22.642Z",
+    "template": "class",
+    "job_id": "ab02b472ebf0409f815552119be4fdee",
+    "failed_reconnect_feedback": "重连失败：暂时无法连接本地服务。后台任务不会因页面断线而取消。",
+    "backend_completed_while_disconnected": true,
+    "success_reconnect_feedback": "已重新连接，任务状态已恢复",
+    "completed_job_restored_after_refresh": true,
+    "open_result": {
+      "job_id": "ab02b472ebf0409f815552119be4fdee",
+      "opened": true,
+      "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（2）"
+    },
+    "reopened_browser_restores_job": true,
+    "job": {
+      "status": "done",
+      "input_version": "TEACHER_AND_STUDENT",
+      "renderer": "V0.9",
+      "output_paths": [
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（2）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 教师版.docx",
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（2）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 学生版.docx"
+      ],
+      "package_validation": {
+        "student": {
+          "errors": [],
+          "stats": {
+            "errors": 0,
+            "image_media_targets": 71,
+            "num_references": 6,
+            "package_parts": 84,
+            "relationship_references": 73,
+            "relationships": 79,
+            "style_references": 11,
+            "vml_image_references": 71,
+            "warnings": 0,
+            "xml_parts": 14
+          },
+          "valid": true,
+          "warnings": []
+        },
+        "teacher": {
+          "errors": [],
+          "stats": {
+            "errors": 0,
+            "image_media_targets": 215,
+            "num_references": 6,
+            "package_parts": 209,
+            "relationship_references": 217,
+            "relationships": 204,
+            "style_references": 11,
+            "vml_image_references": 215,
+            "warnings": 0,
+            "xml_parts": 14
+          },
+          "valid": true,
+          "warnings": []
+        }
+      },
+      "warnings": [
+        "封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。"
+      ]
+    },
+    "page_errors": [],
+    "final_files": [
+      {
+        "path": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（2）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 教师版.docx",
+        "size": 3526973,
+        "sha256": "52fa4b3fca701259d2c71bd4b7bdae1250009daa949628b998b96c76503ca961",
+        "package_valid": true
+      },
+      {
+        "path": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（2）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 学生版.docx",
+        "size": 2704691,
+        "sha256": "a1d60e7101616603a79921828139ad6fa58a73238fc8d1102e12d615629a5490",
+        "package_valid": true
+      }
+    ],
+    "result_dir_clean": true
+  },
+  "reconnect-without-job-evidence": {
+    "scenario": "RECONNECT_WITHOUT_CURRENT_JOB_AND_CORRUPT_INPUT",
+    "offline_failure": "重连失败：暂时无法连接本地服务。后台任务不会因页面断线而取消。",
+    "recovered_without_job_id": true,
+    "invalid_input_status": 415,
+    "invalid_input_response": {
+      "error": "上传文件不是有效的 DOCX 包"
+    },
+    "user_feedback": "提交失败：上传文件不是有效的 DOCX 包",
+    "no_phantom_job": true
+  },
+  "exe": {
+    "path": "C:\\xml-uat\\product-rescue-p0-20261008\\dist\\讲义生成器\\讲义生成器.exe",
+    "sha256": "b7c2c4e67b2ef9d7a6c767afcc3d865d214097d05b4352cecb536f5a25fe5344",
+    "size": 10094622,
+    "startup": "normal launcher entry; no --server or hidden-service shortcut",
+    "runtime": "C:\\xml-uat\\product-rescue-p0-20261008\\localappdata\\讲义生成器",
+    "base_commit": "ca5e825d4b43e7359d7c42a948c1bd29548a27a1"
+  }
+}
