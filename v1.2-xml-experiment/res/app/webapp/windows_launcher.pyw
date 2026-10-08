@@ -268,6 +268,27 @@ def _show_launch_error(message: str) -> None:
         pass
 
 
+def _open_workbench(url: str) -> bool:
+    """Open Chrome explicitly; never invoke the system default browser."""
+    candidates = []
+    for key in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
+        root = os.environ.get(key)
+        if root:
+            candidates.append(Path(root) / "Google" / "Chrome" / "Application" / "chrome.exe")
+    for chrome in candidates:
+        if chrome.is_file():
+            try:
+                subprocess.Popen([str(chrome), "--new-tab", url],
+                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                 stderr=subprocess.DEVNULL,
+                                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+                return True
+            except OSError:
+                continue
+    _show_launch_error("工作台服务已启动，但无法打开 Chrome。请用 Chrome 手动打开：\n" + url)
+    return False
+
+
 def _write_ready_file(path: Path, port: int) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = path.with_suffix(path.suffix + ".tmp")
@@ -334,8 +355,7 @@ def run_gui() -> int:
         try:
             runtime = local_runtime_root()
             url = _wait_for_existing_instance(runtime)
-            import webbrowser
-            webbrowser.open(url, new=2, autoraise=True)
+            _open_workbench(url)
             return 0
         except Exception as exc:
             _show_launch_error(str(exc))
@@ -358,8 +378,7 @@ def run_gui() -> int:
                                    stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                                    stderr=subprocess.DEVNULL)
         url = _wait_for_ready(process, ready_path, token)
-        import webbrowser
-        webbrowser.open(url, new=2, autoraise=True)
+        _open_workbench(url)
         while process.poll() is None:
             time.sleep(0.4)
         return int(process.returncode or 0)

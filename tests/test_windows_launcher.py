@@ -192,11 +192,10 @@ def test_second_launcher_reuses_authenticated_current_instance_url(monkeypatch):
         launcher._write_current_instance(
             launcher._current_instance_path(runtime), token=token, ready_path=ready_path)
         opened = []
-        import webbrowser
         monkeypatch.setattr(launcher, "_create_instance_mutex", lambda: (object(), True))
         monkeypatch.setattr(launcher, "_close_instance_mutex", lambda *_a, **_k: None)
         monkeypatch.setattr(launcher, "local_runtime_root", lambda: runtime)
-        monkeypatch.setattr(webbrowser, "open", lambda url, **_kw: opened.append(url) or True)
+        monkeypatch.setattr(launcher, "_open_workbench", lambda url: opened.append(url) or True)
         monkeypatch.setattr(subprocess, "Popen", lambda *_a, **_k: (_ for _ in ()).throw(
             AssertionError("second launch must not create a server")))
         try:
@@ -206,6 +205,28 @@ def test_second_launcher_reuses_authenticated_current_instance_url(monkeypatch):
             service.shutdown()
             service.server_close()
             service_thread.join(timeout=3)
+
+
+def test_workbench_opens_installed_chrome_without_default_browser(monkeypatch, tmp_path):
+    chrome = tmp_path / "Google/Chrome/Application/chrome.exe"
+    chrome.parent.mkdir(parents=True)
+    chrome.touch()
+    monkeypatch.setenv("PROGRAMFILES", str(tmp_path))
+    calls = []
+    monkeypatch.setattr(subprocess, "Popen", lambda args, **kwargs: calls.append((args, kwargs)))
+    assert launcher._open_workbench("http://127.0.0.1:5128")
+    assert calls[0][0] == [str(chrome), "--new-tab", "http://127.0.0.1:5128"]
+
+
+def test_missing_chrome_shows_manual_url_without_stopping_service(monkeypatch, tmp_path):
+    for key in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
+        monkeypatch.setenv(key, str(tmp_path))
+    messages = []
+    monkeypatch.setattr(launcher, "_show_launch_error", messages.append)
+    monkeypatch.setattr(subprocess, "Popen", lambda *_a, **_k: (_ for _ in ()).throw(
+        AssertionError("must not launch Edge or default browser")))
+    assert not launcher._open_workbench("http://127.0.0.1:5128")
+    assert "Chrome" in messages[0] and "http://127.0.0.1:5128" in messages[0]
 
 
 def test_stale_or_unavailable_instance_reports_actionable_feedback():
