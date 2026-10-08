@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "status": "FIVE_TOPIC_STATIC_PROTOTYPE_EXECUTED_PLAN_ONLY_BLOCKED",
+  "purpose": "Freeze five real topics for a possible isolated teaching-module-sync prototype after explicit design review PASS.",
+  "production_code_modified": false,
+  "generation_started": false,
+  "broad_evaluation_started": false,
+  "metadata_ocr_layout_rendering": "FROZEN_OUT_OF_SCOPE",
+  "canonical_pair_alignment_policy": "NO_SPECIAL_RULES_OR_PATCHES",
+  "provenance": {
+    "repository": "C:\\Users\\Administrator\\Desktop\\工作\\jiangyi-generator-splitter-audit",
+    "branch": "feature/v1.2-c4-release-engineering",
+    "review_head": "05bdcd9bdcaf085951d360a02ac68194312725dc",
+    "frozen_evaluation_manifest": "docs/v2/integration/fixtures/v12-finalization-evaluation/frozen_evaluation_manifest.json",
+    "frozen_evaluation_manifest_sha256": "c3efed7b9cd135f4b45c7092d9070013878badfcddc08ee872a2b06a9b6273b1",
+    "historical_r1b_evaluation": "C:\\xml-uat\\final-prepackage-20261007-r1b\\evaluation.json",
+    "historical_r1b_evaluation_sha256": "6edb657f0c1641d5a0e7d30fc76ff7d8722c0dfd50867ef22fe5614248470d1f",
+    "historical_r1b_outcome": "C:\\xml-uat\\final-prepackage-20261007-r1b\\R1-B-outcome.json",
+    "historical_r1b_outcome_sha256": "f1a8747440a64c4def2efd6e62b6dc52a35206590b8e9cadc9dc4470b2a04f00",
+    "input_hashes_from": "Historical R1-B evaluation records, independently checked against extracted DOCX bytes during this read-only review."
+  },
+  "topics": [
+    {
+      "case_id": "baseline-10",
+      "historical_topic_index": 10,
+      "topic_identity": "专题12.4 一次函数的实际应用（高效培优讲义）",
+      "role_question": "Repeated numbering across modules; numbered knowledge blocks must not become question identities.",
+      "inputs": [
+        {
+          "role": "student_or_original_paper",
+          "sample_id": "X015",
+          "filename": "专题12.4 一次函数的实际应用（高效培优讲义）（原卷版）.docx",
+          "sha256": "4929eaeb604962e34d866509782b2365693afbb95bd760af6618e9af1786e922",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X015.docx"
+        },
+        {
+          "role": "teacher_or_answer_rich",
+          "sample_id": "X016",
+          "filename": "专题12.4 一次函数的实际应用（高效培优讲义）（解析版）.docx",
+          "sha256": "6ac70b3647633f8562883e9c32729d10cfcb866794a2d80e4e12f9a979f8262d",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X016.docx"
+        }
+      ],
+      "evidence_note": "Original baseline PASS. R1-A promoted numbered knowledge blocks b8/b9 and caused a canonical section conflict; R1-B reported 21 student versus 20 teacher occurrences."
+    },
+    {
+      "case_id": "baseline-11",
+      "historical_topic_index": 11,
+      "topic_identity": "九年级上学期物理期末复习（易错精选60题27大考点）",
+      "role_question": "Preserve genuine subquestion differences and distinguish them from ambiguous grouping.",
+      "inputs": [
+        {
+          "role": "student_or_original_paper",
+          "sample_id": "X005",
+          "filename": "九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx",
+          "sha256": "c66f88d26f1fae9306442ef8e1f55a807d3e705edaa37e57334d4499d3c6a009",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X005.docx"
+        },
+        {
+          "role": "teacher_or_answer_rich",
+          "sample_id": "X006",
+          "filename": "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx",
+          "sha256": "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X006.docx"
+        }
+      ],
+      "evidence_note": "Original baseline PASS; R1-B reported question 20 student labels (1),(2) versus teacher label (2). The evidence does not isolate one candidate branch as cause."
+    },
+    {
+      "case_id": "failure-6",
+      "historical_topic_index": 6,
+      "topic_identity": "专题02 电压 电阻&欧姆定律（期末复习讲义）",
+      "role_question": "Keep numbered knowledge points outside question identity while retaining actual practice groups.",
+      "inputs": [
+        {
+          "role": "student_or_original_paper",
+          "sample_id": "X002",
+          "filename": "专题02 电压 电阻＆欧姆定律（期末复习讲义）（原卷版）.docx",
+          "sha256": "b01bee652e52fb8689ea5db63c2897d3b63cf650777cd43c6354e5ded50e17fe",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X002.docx"
+        },
+        {
+          "role": "teacher_or_answer_rich",
+          "sample_id": "X001",
+          "filename": "专题02 电压 电阻＆欧姆定律（期末复习讲义）（答案版）.docx",
+          "sha256": "cbd854ce5155e71bac9bf37a8e5f423019eb28a8133830cd6fe3ef0078d22021",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X001.docx"
+        }
+      ],
+      "evidence_note": "Historical R1-B unresolved candidate; its student numbered source candidate had no unique teacher occurrence. This is not a new PASS claim."
+    },
+    {
+      "case_id": "failure-7",
+      "historical_topic_index": 7,
+      "topic_identity": "专题04 电功率（期末专项训练）",
+      "role_question": "Aggregate complete questions, choices, continuations, and subquestions before role comparison.",
+      "inputs": [
+        {
+          "role": "student_or_original_paper",
+          "sample_id": "X003",
+          "filename": "专题04 电功率（期末专项训练）（原卷版）.docx",
+          "sha256": "c2ca024c794d60d0b68916592f38f4ed0d3b550c3e91057ac7efe06054d810ec",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X003.docx"
+        },
+        {
+          "role": "teacher_or_answer_rich",
+          "sample_id": "X004",
+          "filename": "专题04 电功率（期末专项训练）（解析版）.docx",
+          "sha256": "6e8ba62da63916b6e0bfa072c59102ab5074ba089f2b4c83a084264ccfaea755",
+          "path": "C:\\xml-uat\\stage3-expansion\\sources\\X004.docx"
+        }
+      ],
+      "evidence_note": "Historical R1-B unresolved candidate; question 9 had student subquestions (1),(2),(3) and no explicit teacher subquestions in the attempted extraction."
+    },
+    {
+      "case_id": "failure-26",
+      "historical_topic_index": 26,
+      "topic_identity": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册",
+      "role_question": "Assign teacher-only knowledge/example packets and practice to modules while preserving answer isolation and student-owned content.",
+      "inputs": [
+        {
+          "role": "student_or_original_paper",
+          "filename": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "sha256": "94dce92abd5a11ad0b42034c8e95b2356153fdea8779461c93943ab5f7d055dd",
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00015_d01\\15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（原卷版） .docx"
+        },
+        {
+          "role": "teacher_or_answer_rich",
+          "filename": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "sha256": "c4b4f3bb3b9730bca0701531af0ca429bc8977e6a4dd6f8047861e4239ce2746",
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00015_d01\\15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（解析版） .docx"
+        }
+      ],
+      "evidence_note": "Raw-corpus pair. Frozen source snapshots contain 115 student and 179 teacher top-level physical blocks (114/178 paragraph blocks plus one unclassified block in each role); the teacher has 17 `【答案】` and 17 `【详解】` markers, while the student has none. This structural difference motivates role-aware packet ownership but does not prove that any prior 10/10 practice count is correct."
+    }
+  ],
+  "excluded_evidence": [
+    {
+      "claim": "older external experiments reached 4/33",
+      "status": "UNVERIFIED_NOT_COUNTED",
+      "reason": "Those attempts are not retained with verifiable current source/evaluation lineage and may have treated knowledge-list items as questions."
+    }
+  ]
+}
