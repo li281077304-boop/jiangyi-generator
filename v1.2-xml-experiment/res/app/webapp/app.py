@@ -28,6 +28,7 @@ if str(APP_DIR) not in sys.path:
 from job_service import JobNotFound, JobService, UnsupportedInput  # noqa: E402
 from lesson_metadata import (build_cover_display, read_lesson_source_lines,
                              resolve_lesson_metadata)  # noqa: E402
+from disk_preflight import DiskSpaceError, check_disk_space
 
 
 app = Flask(__name__)
@@ -244,6 +245,9 @@ def _execute_job(job_id: str) -> None:
         record = service.start_job(job_id)
         if record.get("status") != "running":
             return
+        queued_input_size = sum(Path(p).stat().st_size for p in
+                                set((record.get('input_paths') or {}).values()))
+        check_disk_space(service.runtime_root, service.result_root, queued_input_size)
         runtime_dir = service._job_dir(job_id)
         result_dir = Path(record["result_dir"]).resolve()
         _cleanup_publication_temps(result_dir, job_id)
@@ -428,6 +432,7 @@ def _execute_job(job_id: str) -> None:
         plans = {}
         source_snapshots = {}
         source_image_evidence = {}
+        original_sources = dict(active_sources)
         metadata_source = teacher_source or student_source
         metadata_lines = read_lesson_source_lines(metadata_source)
         resolved_lesson_metadata = {}
@@ -472,12 +477,20 @@ def _execute_job(job_id: str) -> None:
         def xml_preflight(_job):
             if engine_mode == "auto":
                 from xml_degradation import build_degraded_plan, structural_snapshot
+                from xml_source_projection import project_equivalent_textboxes
                 degradation = {}
                 forced_reason = app.config.get("C0_FORCE_FALLBACK_REASON")
                 if forced_reason:
                     return {"supported": False, "reason_code": forced_reason,
                             "detail": "forced unsupported integration fixture"}
                 for role, source_path in active_sources.items():
+                    source_path, projection = project_equivalent_textboxes(
+                        source_path, work_dir / ("xml-source-%s-%s.docx" % (role, job_id)))
+                    active_sources[role] = source_path
+                    if projection['status'] == 'PROJECTED':
+                        service.update_route_evidence(job_id, {
+                            'xml_source_projection': {**(service.get(job_id).get('xml_source_projection') or {}),
+                                                      role: projection}})
                     preserve_only = split_mode == "full"
                     try:
                         snapshot = analyze_source(source_path)
@@ -934,7 +947,7 @@ def _execute_job(job_id: str) -> None:
         _persist_job_stage(service, job_id, 1, "outputs ready; before publication")
         integrity_reports = []
         for role, staged_path, _target in generated:
-            source_for_role = active_sources[role]
+            source_for_role = original_sources[role]
             try:
                 report = validate_product_integrity(
                     source_for_role, staged_path,
@@ -1003,7 +1016,7 @@ def _execute_job(job_id: str) -> None:
             digest = hashlib.sha256(target.read_bytes()).hexdigest()
             try:
                 final_integrity = validate_product_integrity(
-                    active_sources[role], target,
+                    original_sources[role], target,
                     plan=plans.get(role) if outcome.renderer == "XML" else None,
                 )
             except ProductIntegrityError as exc:
@@ -1158,6 +1171,11 @@ def list_jobs():
 
 @app.post("/api/jobs")
 def create_job():
+    try:
+        # Check before accessing request.files: multipart spooling itself needs disk.
+        check_disk_space(app.config['RUNTIME_ROOT'], app.config['RESULT_ROOT'], request.content_length or 0)
+    except DiskSpaceError as exc:
+        return jsonify(error=str(exc), error_code='INSUFFICIENT_DISK_SPACE', disk_space=exc.details), 507
     uploaded = request.files.getlist("files")
     if not uploaded:
         return jsonify({"error": "请选择 DOCX 或 ZIP 文件"}), 415
@@ -1169,6 +1187,11 @@ def create_job():
     except Exception as exc:
         from input_versions import UnknownInputVersion
         from batch_inputs import BatchInputError
+        if isinstance(exc, DiskSpaceError):
+            return jsonify(error=str(exc), error_code='INSUFFICIENT_DISK_SPACE', disk_space=exc.details), 507
+        if isinstance(exc, OSError) and (exc.errno == 28 or getattr(exc, 'winerror', None) == 112):
+            return jsonify(error='写入空间不足，任务未接收。请释放磁盘空间后重试。',
+                           error_code='INSUFFICIENT_DISK_SPACE'), 507
         if isinstance(exc, UnknownInputVersion):
             return jsonify({"error": str(exc), "error_code": "UNKNOWN_INPUT_VERSION"}), 422
         if isinstance(exc, (UnsupportedInput, BatchInputError)):
