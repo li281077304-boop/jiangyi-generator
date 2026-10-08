@@ -1,0 +1,17 @@
+{
+  "status": "PACKAGED",
+  "package_name": "讲义生成器_V1.2_产品抢救安全测试版.zip",
+  "package_path": "D:\\讲义生成器测试包\\20261008\\讲义生成器_V1.2_产品抢救安全测试版.zip",
+  "package_size_bytes": 133641424,
+  "package_sha256": "86b47e9fc72a481cab644a2310b4886011abc4da91b69a0cc5ea3ffd30ef4a35",
+  "exe_sha256": "aeb483a0755de8dfa54fb92ab3b81ab4ee6c73b706103099f0cc5612899403a3",
+  "build_commit": "6b426d642ef77dde0b626cd8d01724c8eb5ef32c",
+  "tested_onedir_source": "C:\\xml-uat\\product-rescue-safe-20261008\\dist\\讲义生成器",
+  "onedir_file_count": 1274,
+  "onedir_total_bytes": 288181750,
+  "package_manifest_sha256": "037dc08598a6bdb67b3ec30aeae26a051c6e5ebd634ad39866955890d2c8e993",
+  "readme_sha256": "43a37885c519db2c585f2a2a33ab3c413f9bd133adf2df907c500eb3629906fd",
+  "excluded_content_scan": "PASS",
+  "source_to_stage_hash_comparison": "PASS",
+  "frozen_v09_templates_verified": 2
+}

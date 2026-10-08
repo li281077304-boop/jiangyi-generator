@@ -1,0 +1,823 @@
+{
+  "code_head": "6cdbff191f10ce0645e9b3a4fceb32aa0959d87b",
+  "manifest_sha256": "c3efed7b9cd135f4b45c7092d9070013878badfcddc08ee872a2b06a9b6273b1",
+  "denominator_topics": 33,
+  "raw_all_member_envelopes": {
+    "submissions": 198,
+    "xml": 132,
+    "compatibility": 60,
+    "rejected_or_failed": 6
+  },
+  "supplemental_three_source_submissions": {
+    "submissions": 8,
+    "xml": 8,
+    "compatibility": 0,
+    "rejected_or_failed": 0
+  },
+  "canonical_frozen_pair": {
+    "submissions": 66,
+    "xml": 44,
+    "compatibility": 20,
+    "rejected_or_failed": 2
+  },
+  "individual_sources": {
+    "submissions": 134,
+    "xml": 94,
+    "compatibility": 40,
+    "rejected_or_failed": 0
+  },
+  "pair_by_template": {
+    "1v1": {
+      "submissions": 33,
+      "xml": 22,
+      "compatibility": 10,
+      "rejected_or_failed": 1
+    },
+    "class": {
+      "submissions": 33,
+      "xml": 22,
+      "compatibility": 10,
+      "rejected_or_failed": 1
+    }
+  },
+  "topics_xml_both_templates": 22,
+  "topics_delivered_both_templates": 32,
+  "xml_tiers_per_delivered_role": {
+    "NAVIGATION": 24,
+    "SEMANTIC": 148,
+    "PRESERVATION": 8,
+    "RULES": 4
+  },
+  "compatibility_reasons_per_submission": {
+    "UNSUPPORTED_BOOKMARK_SCOPE": 6,
+    "XML_RENDER_FAILED": 54
+  },
+  "topics": [
+    {
+      "topic": "1.1 物质的变化和性质 第1课时(讲义)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "7b96869a5c2f4b4db7b6df494ddd4b4c"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "b04cd6ee676f453e8afcdc24ec3f862c"
+        }
+      ]
+    },
+    {
+      "topic": "1.1 物质的变化和性质 第2课时(讲义)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "37c6506aa519456085916b248e21cbd0"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "542e2b773fe84b09a4a65924c148d9f6"
+        }
+      ]
+    },
+    {
+      "topic": "1.2 化学实验与科学探究(题型专练)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "d3054c1b39e04823a28f2bb15f246edf"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "f82a4b5052934e0a832eed1a602204ce"
+        }
+      ]
+    },
+    {
+      "topic": "13.3 热机效率(讲义)2026-2027年人教版物理九年级全一册",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "efe670e40c1740e1ae32875f135de964"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "79c7766c6a8747d0b967c0928d9745b2"
+        }
+      ]
+    },
+    {
+      "topic": "15.1 两种电荷(讲义)2026-2027年人教版物理九年级全一册",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "3cde8e63c6a542e3a652aee34541b4af"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "dbc41e3c7ed9498385d9e5e404911fb0"
+        }
+      ]
+    },
+    {
+      "topic": "15.2 电流和电路(讲义)2026-2027年人教版物理九年级全一册",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "f137167f9c844c4eb3944c4ef5eade4e"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "50d59cd35a624299be8556cc3b1b1b42"
+        }
+      ]
+    },
+    {
+      "topic": "15.3 串联电路和并联电路(讲义)2026-2027年人教版物理九年级全一册",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "01fae47754cd4979895c0089c318f785"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "9813cb7cb3d1436090653134aa82ea9d"
+        }
+      ]
+    },
+    {
+      "topic": "15.4 电流的测量(讲义)2026-2027年人教版物理九年级全一册",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "7d9af1764767408f8452998470d0de65"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "d8fa39b444504a7989592937781cae0e"
+        }
+      ]
+    },
+    {
+      "topic": "2.1 我们周围的空气 第1课时(讲义)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "e55f3f6756104a62ac75532b2a4672e1"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "814fafb399ea4396b4150195b1f7ffbe"
+        }
+      ]
+    },
+    {
+      "topic": "2.2 氧气(讲义)",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "UNSUPPORTED_BOOKMARK_SCOPE",
+          "error": null,
+          "job_id": "3dfba269e8954a01b3a026d64d94fed5"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "UNSUPPORTED_BOOKMARK_SCOPE",
+          "error": null,
+          "job_id": "b466adf571034b7aa844961f34f2d114"
+        }
+      ]
+    },
+    {
+      "topic": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 (讲义)",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "a765b0b134ae4333ba0bc0953d64690e"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "27b1f04fd97541b2ab6eed9bb93b992d"
+        }
+      ]
+    },
+    {
+      "topic": "2026-2027年人教版物理九年级第十三章第三节 内能 (讲义)",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "84988b2ad68040f8ab7c0e4cf38405b2"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "4d49198eaf4045e9906afec7202f66c4"
+        }
+      ]
+    },
+    {
+      "topic": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 (讲义)",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "80982639592249b294c9543525a35a6a"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "45c1b106b3ee42fa904206e85bfbdb3e"
+        }
+      ]
+    },
+    {
+      "topic": "2026-2027年人教版物理九年级第十四章第二节 热机 (讲义)",
+      "both_templates_xml": false,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "9913e0274d0e4667a783873f5cddf7ae"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "V0.9",
+          "fallback_reason": "XML_RENDER_FAILED",
+          "error": null,
+          "job_id": "b823c3bc68044e908797d3e49ff1df31"
+        }
+      ]
+    },
+    {
+      "topic": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优:知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+      "both_templates_xml": false,
+      "both_templates_delivered": false,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "rejected",
+          "renderer": null,
+          "fallback_reason": null,
+          "error": "DOCX 展开大小超过安全上限",
+          "job_id": null
+        },
+        {
+          "template": "class",
+          "status": "rejected",
+          "renderer": null,
+          "fallback_reason": null,
+          "error": "DOCX 展开大小超过安全上限",
+          "job_id": null
+        }
+      ]
+    },
+    {
+      "topic": "专题02 平行线模型和辅助线 专题专练【重难点培优:知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "6efb329fa2f743b9bf3a5346c5237bdd"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "e173d31a2d70424e8e17375b62e67839"
+        }
+      ]
+    },
+    {
+      "topic": "专题02 电压 电阻&欧姆定律(期末复习讲义)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "9981df616ad64cc5a7a49aabbc73fa07"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "b22f517713264b86a343f14bc259e274"
+        }
+      ]
+    },
+    {
+      "topic": "专题03 实数相关",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "be9128d47e534d06854e998231966aae"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "99132a778a934611a3196c538a753286"
+        }
+      ]
+    },
+    {
+      "topic": "专题04 平面直角坐标系",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "152fb5ae73a344c097c6d2e53bf29403"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "49315956325a480f8714f45c596ca5d2"
+        }
+      ]
+    },
+    {
+      "topic": "专题04 电功率(期末专项训练)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "b82e57eb5f17499686c3ed64ae686c62"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "e47976b713ae4809989e6a20aa77a096"
+        }
+      ]
+    },
+    {
+      "topic": "专题05 二元一次方程组",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "2886be81c5c34237896847319c13ddb6"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "408b038a9a5c464bbb893eff6f707107"
+        }
+      ]
+    },
+    {
+      "topic": "专题06 二元一次方程组的应用",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "bcd65f53700d412cb2118b827a4b1323"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "aebffe69f2654d62911c9316b9e8a48b"
+        }
+      ]
+    },
+    {
+      "topic": "专题07 不等式与不等式组",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "e17ce956b09e4e92afa249d8e1ab1c61"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "68352ca2e87747e2bac94e50dd825281"
+        }
+      ]
+    },
+    {
+      "topic": "专题08 不等式与不等式组应用",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "5a55214e37504ed2a8f91c9f5a225775"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "21160297c7a44d9797c7cbb651265803"
+        }
+      ]
+    },
+    {
+      "topic": "专题09 规律探索型",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "c87426a8f25f4bda8659387f7d09e170"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "6caf295f15124cdc868d8bfd034d7993"
+        }
+      ]
+    },
+    {
+      "topic": "专题1.5 有理数的乘除(高效培优讲义)数学新教材沪科版七年级上册",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "b00655d179a74a3292cd6d4b5b0d9f29"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "19bbdfbb0c394a27a72fd882a3af22a4"
+        }
+      ]
+    },
+    {
+      "topic": "专题1.6 有理数的乘方与近似数(高效培优讲义)数学新教材沪科版七年级上册",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "cb7cb88e14c94223bf80546a1aa71817"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "171b2c6a0c2a489f9e41cbba84bd5763"
+        }
+      ]
+    },
+    {
+      "topic": "专题10 新定义型答案",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "60f9b934a7c34d87b168d657204ba799"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "06ca972a99944e4988af9112f78daefb"
+        }
+      ]
+    },
+    {
+      "topic": "专题11 存在性问题",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "9041a9f2d1374f36b4f820545d962d09"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "6a3ef58afd0e4744a150435911efc6ed"
+        }
+      ]
+    },
+    {
+      "topic": "专题12.4 一次函数的实际应用(高效培优讲义)数学新教材沪科版八年级上册",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "2ddb3671c23d4212a6625714aced19f9"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "fb90d4f3c295472981b2cc6f36b71846"
+        }
+      ]
+    },
+    {
+      "topic": "九年级上学期物理期末复习(易错精选60题27大考点)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "b00bd8624cac47e38561f45feac54770"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "4eadfba7a31e411c9701fd29c3f288e1"
+        }
+      ]
+    },
+    {
+      "topic": "第2节 分子动理论的初步知识(培优考点练)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "e90525831ee746c595db8f2d176b79d1"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "7555f28964834901b4bcaeb6220e4688"
+        }
+      ]
+    },
+    {
+      "topic": "第3节 串联和并联 (培优考点练)",
+      "both_templates_xml": true,
+      "both_templates_delivered": true,
+      "templates": [
+        {
+          "template": "1v1",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "cec669e6c670432d9d5cffc44b7d8cd3"
+        },
+        {
+          "template": "class",
+          "status": "done",
+          "renderer": "XML",
+          "fallback_reason": null,
+          "error": null,
+          "job_id": "58c9395ddb6e4e208e80696553dac7ab"
+        }
+      ]
+    }
+  ],
+  "compatibility_exact_details": {
+    "ProjectionError: selected bookmark ID is missing or ambiguous: 18": 4,
+    "ProjectionError: unknown StructDoc block kind at b1: unknown": 54,
+    "ProjectionError: selected bookmark ID is missing or ambiguous: 25": 2
+  },
+  "evidence_scope": "Actual production API submissions and final DOCX; all 33 inputs counted. Not 33-topic visual WPS acceptance.",
+  "parameter_limit": "Batch harness inferred cover subject from filenames; ambiguous subjects defaulted to physics. This is not a subject recognition test. Browser representative cases selected their correct subject explicitly."
+}

@@ -1,0 +1,295 @@
+{
+  "roundtrip_records": [
+    {
+      "id": "core-1v1-0",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 化学 物质变化 复习讲义（4）\\2026-2027学年 九年级 化学 物质变化 复习讲义 教师版.docx",
+      "source_sha256": "FAFB0DD6636D83CFFFCA454A47DA1F2DE1E530F99DB3088EE77BB6E40DE216B1",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-1v1-0-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-1v1-0.pdf",
+      "error": null,
+      "before": {
+        "tables": 2,
+        "inline_shapes": 84,
+        "paragraphs": 598,
+        "text_length": 13497
+      },
+      "after": {
+        "tables": 2,
+        "inline_shapes": 84,
+        "paragraphs": 598,
+        "text_length": 13497
+      }
+    },
+    {
+      "id": "core-1v1-1",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 化学 物质变化 复习讲义（4）\\2026-2027学年 九年级 化学 物质变化 复习讲义 学生版.docx",
+      "source_sha256": "7EFA27CFA7DD272712D192279E5562A86A42449386616289CBDF9B794C289039",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-1v1-1-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-1v1-1.pdf",
+      "error": null,
+      "before": {
+        "tables": 2,
+        "inline_shapes": 78,
+        "paragraphs": 406,
+        "text_length": 7296
+      },
+      "after": {
+        "tables": 2,
+        "inline_shapes": 78,
+        "paragraphs": 406,
+        "text_length": 7296
+      }
+    },
+    {
+      "id": "core-class-0",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 化学 物质变化 复习讲义\\2026-2027学年 九年级 化学 物质变化 复习讲义 教师版.docx",
+      "source_sha256": "D07BE5A79360595ACEC868B0F09B618B2E16B47B36A73040E608393198092AB8",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-class-0-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-class-0.pdf",
+      "error": null,
+      "before": {
+        "tables": 1,
+        "inline_shapes": 84,
+        "paragraphs": 605,
+        "text_length": 13363
+      },
+      "after": {
+        "tables": 1,
+        "inline_shapes": 84,
+        "paragraphs": 605,
+        "text_length": 13363
+      }
+    },
+    {
+      "id": "core-class-1",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 化学 物质变化 复习讲义\\2026-2027学年 九年级 化学 物质变化 复习讲义 学生版.docx",
+      "source_sha256": "9607026CCBA806EBE24F6A726E371614FE85D7930AE75895D19615A94F07CE85",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-class-1-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\core-class-1.pdf",
+      "error": null,
+      "before": {
+        "tables": 1,
+        "inline_shapes": 78,
+        "paragraphs": 413,
+        "text_length": 7162
+      },
+      "after": {
+        "tables": 1,
+        "inline_shapes": 78,
+        "paragraphs": 413,
+        "text_length": 7162
+      }
+    },
+    {
+      "id": "browser-1v1-0",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（4）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 教师版.docx",
+      "source_sha256": "4E6710CE5C379939EC0255EB80FDAD9DCE6919642E9D5C97F79706F66B389E70",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-1v1-0-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-1v1-0.pdf",
+      "error": null,
+      "before": {
+        "tables": 2,
+        "inline_shapes": 86,
+        "paragraphs": 977,
+        "text_length": 38703
+      },
+      "after": {
+        "tables": 2,
+        "inline_shapes": 86,
+        "paragraphs": 977,
+        "text_length": 38703
+      }
+    },
+    {
+      "id": "browser-1v1-1",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（4）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 学生版.docx",
+      "source_sha256": "C3D92A7A13493220CE5D8E6C0C7670AF194BF18259DA88A8C361EE8E0FDCF0CF",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-1v1-1-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-1v1-1.pdf",
+      "error": null,
+      "before": {
+        "tables": 2,
+        "inline_shapes": 67,
+        "paragraphs": 473,
+        "text_length": 15517
+      },
+      "after": {
+        "tables": 2,
+        "inline_shapes": 67,
+        "paragraphs": 473,
+        "text_length": 15517
+      }
+    },
+    {
+      "id": "browser-class-0",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（5）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 教师版.docx",
+      "source_sha256": "B3AFC213294CA40FD4A2865D6BDF5EF07199A4E206A2327BA0032350B506D30F",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-class-0-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-class-0.pdf",
+      "error": null,
+      "before": {
+        "tables": 1,
+        "inline_shapes": 86,
+        "paragraphs": 984,
+        "text_length": 38569
+      },
+      "after": {
+        "tables": 1,
+        "inline_shapes": 86,
+        "paragraphs": 984,
+        "text_length": 38569
+      }
+    },
+    {
+      "id": "browser-class-1",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 物理 易错题精选 复习讲义（5）\\2026-2027学年 九年级 物理 易错题精选 复习讲义 学生版.docx",
+      "source_sha256": "748C26982F987BCF614B5EDE2749E3292673B2D9EBEE8554F5324AEEED6060E6",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-class-1-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\browser-class-1.pdf",
+      "error": null,
+      "before": {
+        "tables": 1,
+        "inline_shapes": 67,
+        "paragraphs": 480,
+        "text_length": 15383
+      },
+      "after": {
+        "tables": 1,
+        "inline_shapes": 67,
+        "paragraphs": 480,
+        "text_length": 15383
+      }
+    },
+    {
+      "id": "correct-chemistry-v09-0",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 化学 氧气 复习讲义\\2026-2027学年 九年级 化学 氧气 复习讲义 教师版.docx",
+      "source_sha256": "FC3BDA25587A4CD601AA5766F1095DB484485CC4D6ED5C66305E4D2117D85B32",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps-correct-fallback\\correct-chemistry-v09-0-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps-correct-fallback\\correct-chemistry-v09-0.pdf",
+      "error": null,
+      "before": {
+        "paragraphs": 687,
+        "inline_shapes": 121,
+        "text_length": 18520,
+        "tables": 1
+      },
+      "after": {
+        "paragraphs": 687,
+        "inline_shapes": 121,
+        "text_length": 18520,
+        "tables": 1
+      }
+    },
+    {
+      "id": "correct-chemistry-v09-1",
+      "source": "D:\\Documents\\生成讲义结果\\2026-2027学年 九年级 化学 氧气 复习讲义\\2026-2027学年 九年级 化学 氧气 复习讲义 学生版.docx",
+      "source_sha256": "426B86BCCAA7D7AE7935F49B5019004B6205AD81711D60626D97584BBF78B420",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps-correct-fallback\\correct-chemistry-v09-1-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps-correct-fallback\\correct-chemistry-v09-1.pdf",
+      "error": null,
+      "before": {
+        "paragraphs": 438,
+        "inline_shapes": 75,
+        "text_length": 9590,
+        "tables": 1
+      },
+      "after": {
+        "paragraphs": 438,
+        "inline_shapes": 75,
+        "text_length": 9590,
+        "tables": 1
+      }
+    }
+  ],
+  "historical_wrong_cover_parameters": [
+    {
+      "id": "v09-1v1-0",
+      "source": "C:\\xml-uat\\product-rescue-33-20261008\\results\\2026-2027学年 九年级 物理 2.2 氧气 复习讲义\\2026-2027学年 九年级 物理 2.2 氧气 复习讲义 教师版.docx",
+      "source_sha256": "9AA061E661B011F9AF9A78B066E0E9498C7FDE6B571326E60CC105438F53DEC7",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\v09-1v1-0-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\v09-1v1-0.pdf",
+      "error": null,
+      "before": {
+        "tables": 1,
+        "inline_shapes": 121,
+        "paragraphs": 687,
+        "text_length": 18532
+      },
+      "after": {
+        "tables": 1,
+        "inline_shapes": 121,
+        "paragraphs": 687,
+        "text_length": 18532
+      }
+    },
+    {
+      "id": "v09-1v1-1",
+      "source": "C:\\xml-uat\\product-rescue-33-20261008\\results\\2026-2027学年 九年级 物理 2.2 氧气 复习讲义\\2026-2027学年 九年级 物理 2.2 氧气 复习讲义 学生版.docx",
+      "source_sha256": "2CC6DED9650B5B4946C67F096B6A19D1645DC3C39EC7FFEC54CE999E9336743A",
+      "open": true,
+      "saveas": true,
+      "reopen": true,
+      "pdf": true,
+      "saved": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\v09-1v1-1-saved.docx",
+      "pdf_path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\v09-1v1-1.pdf",
+      "error": null,
+      "before": {
+        "tables": 1,
+        "inline_shapes": 75,
+        "paragraphs": 438,
+        "text_length": 9602
+      },
+      "after": {
+        "tables": 1,
+        "inline_shapes": 75,
+        "paragraphs": 438,
+        "text_length": 9602
+      }
+    }
+  ],
+  "scope": "Open/SaveAs/Close/Reopen/PDF success is not complete content acceptance. Oxygen teacher textbox omissions confirmed separately; no compatibility content PASS."
+}

@@ -1,0 +1,1137 @@
+{
+  "measurement_head": "6cdbff191f10ce0645e9b3a4fceb32aa0959d87b",
+  "safeguard_head": "3a76f9aaf3867dfe90f4f740025562ba4ef6103f",
+  "corpus_outputs_checked": 254,
+  "rejected_on_current_safeguard": [
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_sha256": "fdc96b41a6d2f660f9a3db7c2623db0a055923d9571879b43b73fe518a59c360",
+      "final_sha256": "dd4610946127cc38e7d7a04d9074e073ad517a24513dc5a833304e94acbcc328",
+      "checked_unique_paragraphs": 15,
+      "unproven": [
+        {
+          "sha256": "be6f6f6fcdbf43f241a93ca42ac2984946b918336015688c1c6abb0ebf16ee33",
+          "text_chars": 63
+        },
+        {
+          "sha256": "ee33670df29870cdf3b19807cf6fed8df5b3d71378b2711b2273ce9e5d10e836",
+          "text_chars": 64
+        }
+      ]
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_sha256": "fdc96b41a6d2f660f9a3db7c2623db0a055923d9571879b43b73fe518a59c360",
+      "final_sha256": "9aa061e661b011f9af9a78b066e0e9498c7fde6b571326e60cc105438f53dec7",
+      "checked_unique_paragraphs": 15,
+      "unproven": [
+        {
+          "sha256": "be6f6f6fcdbf43f241a93ca42ac2984946b918336015688c1c6abb0ebf16ee33",
+          "text_chars": 63
+        },
+        {
+          "sha256": "ee33670df29870cdf3b19807cf6fed8df5b3d71378b2711b2273ce9e5d10e836",
+          "text_chars": 64
+        }
+      ]
+    }
+  ],
+  "long_text_classification": [
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 86,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "90ebf1905d5f7402359ce004fe4d31ae7dc12aad4f3a59f66c9c2340e6de5184"
+    },
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 89,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "be6f6f6fcdbf43f241a93ca42ac2984946b918336015688c1c6abb0ebf16ee33"
+    },
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 90,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "ee33670df29870cdf3b19807cf6fed8df5b3d71378b2711b2273ce9e5d10e836"
+    },
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 93,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "be6f6f6fcdbf43f241a93ca42ac2984946b918336015688c1c6abb0ebf16ee33"
+    },
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 94,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "ee33670df29870cdf3b19807cf6fed8df5b3d71378b2711b2273ce9e5d10e836"
+    },
+    {
+      "job_id": "0c61ed9f428f490eb5cbd61e4f54998c",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 146,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "8ed2742d790ff0076feb1844695124527e9d7b3c20382ccb8f88145128cf2204"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "19bbdfbb0c394a27a72fd882a3af22a4",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "271d48b4b8c5480d829b3279ce0795cc",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "2ddb3671c23d4212a6625714aced19f9",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 86,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "90ebf1905d5f7402359ce004fe4d31ae7dc12aad4f3a59f66c9c2340e6de5184"
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 89,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "be6f6f6fcdbf43f241a93ca42ac2984946b918336015688c1c6abb0ebf16ee33"
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 90,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "ee33670df29870cdf3b19807cf6fed8df5b3d71378b2711b2273ce9e5d10e836"
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 93,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "be6f6f6fcdbf43f241a93ca42ac2984946b918336015688c1c6abb0ebf16ee33"
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 94,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "ee33670df29870cdf3b19807cf6fed8df5b3d71378b2711b2273ce9e5d10e836"
+    },
+    {
+      "job_id": "3dfba269e8954a01b3a026d64d94fed5",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 146,
+      "classification": "UNPROVEN_TEXT_CONSERVATION",
+      "sha256": "8ed2742d790ff0076feb1844695124527e9d7b3c20382ccb8f88145128cf2204"
+    },
+    {
+      "job_id": "45c1b106b3ee42fa904206e85bfbdb3e",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 12,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "f599fd2b6aeebcc004c6900ebaaffc4a9385fe788920377a9845cb6f3db43249"
+    },
+    {
+      "job_id": "45c1b106b3ee42fa904206e85bfbdb3e",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 12,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "f599fd2b6aeebcc004c6900ebaaffc4a9385fe788920377a9845cb6f3db43249"
+    },
+    {
+      "job_id": "65590225d4dd427cbefe30978bf7d2a3",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "65590225d4dd427cbefe30978bf7d2a3",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "65590225d4dd427cbefe30978bf7d2a3",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "65590225d4dd427cbefe30978bf7d2a3",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "8d1e6428b6354c30a31fa627413bc908",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "8d1e6428b6354c30a31fa627413bc908",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "8d1e6428b6354c30a31fa627413bc908",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "8d1e6428b6354c30a31fa627413bc908",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "a99b9011efa549b681e063fd14085b45",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "b00655d179a74a3292cd6d4b5b0d9f29",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "b1a67ec4fbf74f469a65135fe38c6e2f",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 12,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "f599fd2b6aeebcc004c6900ebaaffc4a9385fe788920377a9845cb6f3db43249"
+    },
+    {
+      "job_id": "b466adf571034b7aa844961f34f2d114",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 101,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "acb76183a2a62fd8e9859edfad7fa9a25a6277dc849566d4a438b1bdfd247733"
+    },
+    {
+      "job_id": "b466adf571034b7aa844961f34f2d114",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 246,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "b7e2b358abebfbd6869ab097328a2f21e0245d529af4abddc85c9c51dfd1be59"
+    },
+    {
+      "job_id": "b466adf571034b7aa844961f34f2d114",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 264,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "78e890f455000db5d177d749ec2e4406f9c467a002a2165aea5eae8b67893b26"
+    },
+    {
+      "job_id": "b466adf571034b7aa844961f34f2d114",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 286,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "6fb5f4e620ceb5c3ff6806291266d29030cda1e7035dff5977e2f9d4d3e49a58"
+    },
+    {
+      "job_id": "b9c8552daa4e45e79ed206c1c8e6f707",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "b9c8552daa4e45e79ed206c1c8e6f707",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "b9c8552daa4e45e79ed206c1c8e6f707",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "b9c8552daa4e45e79ed206c1c8e6f707",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "bd0fe280df7349188f45b7462838b2e8",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "c23bcc196c604b5997b33f934f1c0ec0",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "04685d90e62a2ef11ab15be59725a1939a4080b74be290da994cdccf260ad482"
+    },
+    {
+      "job_id": "c23bcc196c604b5997b33f934f1c0ec0",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "00e86d5e595e5bbab4bb287ffe2b541d825fc67cfbcb1dc566c3257930aa8f4a"
+    },
+    {
+      "job_id": "c23bcc196c604b5997b33f934f1c0ec0",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "aab452d85fbacceebcba24aa514979494020ee839cfb207b545b0b3b013e57fb"
+    },
+    {
+      "job_id": "c23bcc196c604b5997b33f934f1c0ec0",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "5d210879d98bf9acc6a24d29152239a574384c23f60b0b13134ac862866651b4"
+    },
+    {
+      "job_id": "c26e11380dd945feb45ca6bb8390f9b7",
+      "role": "teacher",
+      "renderer": "V0.9",
+      "source_paragraph": 101,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "acb76183a2a62fd8e9859edfad7fa9a25a6277dc849566d4a438b1bdfd247733"
+    },
+    {
+      "job_id": "ce465278e952415e8cab230ea9b3118e",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 246,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "b7e2b358abebfbd6869ab097328a2f21e0245d529af4abddc85c9c51dfd1be59"
+    },
+    {
+      "job_id": "ce465278e952415e8cab230ea9b3118e",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 264,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "78e890f455000db5d177d749ec2e4406f9c467a002a2165aea5eae8b67893b26"
+    },
+    {
+      "job_id": "ce465278e952415e8cab230ea9b3118e",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 286,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "6fb5f4e620ceb5c3ff6806291266d29030cda1e7035dff5977e2f9d4d3e49a58"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "d8241121f9fd4557850410999ab47cd8",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "e5cc37938d6845ae81309d58d2b26914",
+      "role": "student",
+      "renderer": "V0.9",
+      "source_paragraph": 12,
+      "classification": "ANCESTOR_ALTERNATECONTENT_DUPLICATE_EXTRACTION_LEAVES_RETAINED",
+      "sha256": "f599fd2b6aeebcc004c6900ebaaffc4a9385fe788920377a9845cb6f3db43249"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "teacher",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 5,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "76875fad869a12e41736dafaa84a9c7b812846d143bcd2388ddbfb26f3fee9b8"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 6,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0f015c806c97f99b0efa9c3d8965518ad63e56934980e108f6a38ade0bab43f6"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 7,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "2b7f751957bdc450f319becde167cd88d7ec83da5a6a299f6658fab44ce33331"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 8,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "8472c58d125f007f244b6d82419df3b4d120ce03e3fe2a6df462091a38fc316a"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 9,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "0c14b79b6ff09b89297745f2dc8c9b197331e06320dd8fe1a62818ec92939757"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 10,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "ce4ebcf99c33ae1f4cbdba89329d0f7f30d35b5616d5a34f568286fefc100fc7"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 16,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "f85044d8f19d70958dbfdac897ce1a927b166dff0f419ebf618ec9f94b3ccead"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 18,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "867cb81f3ed543e7eed40f1a945307ce144b6b218341a26e98a64ca7b810192e"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 19,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "92fff81900adb058a4ef5133e62ac06dcab9d08a8829e77bd89f115c6400c857"
+    },
+    {
+      "job_id": "fb90d4f3c295472981b2cc6f36b71846",
+      "role": "student",
+      "renderer": "XML",
+      "source_paragraph": 21,
+      "classification": "SOURCE_METADATA_RETAINED_IN_FULL_JOB_FIELDS_SHORTENED_ON_COVER",
+      "sha256": "447e6621fe5b2ce11083c98f49efe6b442ef1e225a4bd86699f7020ccff80c7a"
+    }
+  ],
+  "exact_source_evidence": "wps-source-check/oxygen-original-teacher.pdf page 3",
+  "exact_output_evidence": "wps-correct-fallback/correct-chemistry-v09-0.pdf page 5",
+  "conclusion": "Confirmed omission of two substantive textbox paragraphs in oxygen 1v1 teacher compatibility outputs. Current publication gate refuses these outputs; frozen Writer unchanged.",
+  "limitation": "Other changed V0.9 media hashes are not all individually visually proved. Corpus route counts are not complete content acceptance."
+}

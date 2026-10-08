@@ -1,0 +1,97 @@
+[
+  {
+    "path": "C:\\xml-uat\\product-rescue-safe-20261008\\browser-final-p0.log",
+    "bytes": 7263,
+    "sha256": "0d987e4eab317fa42b58ca79c87363c8534e07854ce491cd718de79966e205b3"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-safe-20261008\\browser-final-core-class.log",
+    "bytes": 231,
+    "sha256": "fafab27b0a1963ddbbdaa64947602e2964e03280cdf3c89de933fc0a59102d9e"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-safe-20261008\\browser-final-core-class-retry.log",
+    "bytes": 69217,
+    "sha256": "1d0b99bd7efda53d9cbf5b82ff8b1cee5d9836fc2ec7bcf50019d52a55dd45e8"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-safe-20261008\\browser-final-content-refusal.log",
+    "bytes": 6691,
+    "sha256": "08b6e6c1c526a0833af93117271829ae09f1756298df509e48f63177e652b3cc"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-safe-20261008\\p0-disconnected-1v1.png",
+    "bytes": 92355,
+    "sha256": "6d36a9704b853039161d0f23bd6b63fcda9b860141870f755c1cd3d537027967"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-safe-20261008\\content-refused.png",
+    "bytes": 111582,
+    "sha256": "1f98e228cc744ee502e5d1cfd0a0c4d82648d6ba9b9ee8eed79675a81f60e7c4"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\wps\\wps_evidence.json",
+    "bytes": 8503,
+    "sha256": "32e5bb8acd570aeb949ff54634e022c56f573470e5df4079583bad5ceecbe6d1"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\wps-correct-fallback\\wps_evidence.json",
+    "bytes": 1799,
+    "sha256": "ea067543f4606fd4ac14c696db943f7de3817191434375593f39e461ba3ef667"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\wps-source-check\\wps_evidence.json",
+    "bytes": 839,
+    "sha256": "cd49c11483cd6ab0846fefd123b9dbdbd00a974a0446ba55f6d71302723822e1"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\oxygen-source-page-3.png",
+    "bytes": 124234,
+    "sha256": "dfa932e1aed21fa6631a86683a1e45ec42547d09ab2b5b224b72b181f4991e52"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\oxygen-check-page-5.png",
+    "bytes": 185880,
+    "sha256": "3122690125afb2d83108cfa1919cf582c3b83dc205bcce361de00923fe904c1b"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\resource-audit-corpus.json",
+    "bytes": 293185,
+    "sha256": "3a8677ca3d77296c8b27959018a799c816603dbb36b9c4c93ab4f59f550f8096"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\textbox-conservation-final.json",
+    "bytes": 88529,
+    "sha256": "b866877e35a0a5aefcf0fbc5311f495022fd1def7c2555332ad4df493baf307c"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-final-20261008\\long-text-classification.json",
+    "bytes": 41693,
+    "sha256": "e68e00d6fc4932bf3c9eb74c967659282ec877d32f40dc3f94c1e3d0a44c12ee"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-baseline-studentizer.log",
+    "bytes": 42703,
+    "sha256": "1d94d46dfbe653b9a0b0103ffda5c5142ed115427db8b7d55aa6ba14ee4fdc67"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-baseline-v11.log",
+    "bytes": 3094,
+    "sha256": "e64d71281fd110301974e550ff0b59b4d1eb6339ea4289311cc8e60f83d26cff"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-regression-pinned.log",
+    "bytes": 57361,
+    "sha256": "c539d4237bdcc71553578f48cd2288c8ecb7729744d8f90a79739237339bdc2a"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-regression-rest.log",
+    "bytes": 34413,
+    "sha256": "c539082a68d198b3d9fc442338e461355edd64e3c9ae69226b3f9454d0a19cc6"
+  },
+  {
+    "path": "C:\\xml-uat\\product-rescue-v09-hashes.json",
+    "bytes": 131,
+    "sha256": "b01d60fc7f2b5e8675505d6fcaa2189c2bd4dd23661d61a3b7b4b4963d3a2313"
+  }
+]

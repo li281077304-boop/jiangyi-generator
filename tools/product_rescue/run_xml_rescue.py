@@ -17,7 +17,7 @@ def run_topic(topic, template, folder, *, mode='pair'):
     grade = next((name for name in ('高三', '高二', '高一', '九年级', '八年级', '七年级') if name in names), '九年级')
     uploads = []
     for member in members:
-        path = Path(member['materialized_path'])
+        path = Path(member.get('materialized_path') or member['path'])
         payload = path.read_bytes()
         if hashlib.sha256(payload).hexdigest() != member['sha256']:
             raise RuntimeError('SOURCE_HASH_CHANGED: ' + str(path))
@@ -53,6 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('--templates', nargs='+', default=['1v1', 'class'])
     parser.add_argument('--modes', nargs='+', default=['pair'])
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--resume', action='store_true', help='Reuse completed submissions at the same code/source HEAD')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     app.config.update(TESTING=False, C0_RUN_JOBS_SYNCHRONOUSLY=True,
@@ -60,18 +61,28 @@ if __name__ == '__main__':
         RUNTIME_ROOT=args.output / 'jobs', C0_FORCE_FALLBACK_REASON=None)
     manifest = ROOT / 'docs/v2/integration/fixtures/v12-finalization-evaluation/frozen_evaluation_manifest.json'
     data = json.loads(manifest.read_text(encoding='utf-8'))
+    topics = data['fixed_topics'] + data.get('additional_topics', [])
     rows = []
     head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-    for topic in data['fixed_topics'][:args.limit]:
+    manifest_hash = hashlib.sha256(manifest.read_bytes()).hexdigest()
+    if args.resume and (args.output / 'summary.json').exists():
+        previous = json.loads((args.output / 'summary.json').read_text(encoding='utf-8'))
+        if previous['head'] != head or previous['manifest_sha256'] != manifest_hash:
+            raise RuntimeError('RESUME_HEAD_OR_SOURCE_MANIFEST_CHANGED')
+        rows = previous['results']
+    completed = {(row['topic'], row['template'], row['mode']) for row in rows}
+    for topic in topics[:args.limit]:
         for template in args.templates:
             for mode in args.modes:
+                if (topic['topic_identity'], template, mode) in completed:
+                    continue
                 rows.append(run_topic(topic, template, args.output, mode=mode))
                 (args.output / 'summary.json').write_text(json.dumps({'head': head,
-                    'denominator_topics': len(data['fixed_topics']),
+                    'denominator_topics': len(topics),
                     'submitted_topics': len({row['topic'] for row in rows}),
                     'manifest_sha256': hashlib.sha256(manifest.read_bytes()).hexdigest(),
                     'results': rows}, ensure_ascii=False, indent=2), encoding='utf-8')
-    (args.output / 'summary.json').write_text(json.dumps({'head': head, 'denominator_topics': len(data['fixed_topics']),
-        'submitted_topics': min(args.limit, len(data['fixed_topics'])),
+    (args.output / 'summary.json').write_text(json.dumps({'head': head, 'denominator_topics': len(topics),
+        'submitted_topics': len({row['topic'] for row in rows}),
         'manifest_sha256': hashlib.sha256(manifest.read_bytes()).hexdigest(),
         'results': rows}, ensure_ascii=False, indent=2), encoding='utf-8')
