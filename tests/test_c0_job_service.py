@@ -67,7 +67,7 @@ def post_one(client, name="课件.docx", content=None):
     form = {key: value for key, value in {
         "subject": "数学", "grade": "七年级", "handout_type": "课时讲义",
         "academic_year": "2026", "template_type": "class",
-        "split_mode": "smart", "docx_mode": "auto",
+        "split_mode": "smart", "docx_mode": "auto", "engine_mode": "xml_restricted",
     }.items()}
     form["files"] = (io.BytesIO(content or make_docx()), name)
     return client.post("/api/jobs", data=form, content_type="multipart/form-data")
@@ -209,7 +209,7 @@ def test_legacy_download_metadata_is_removed_without_losing_local_outputs(client
     assert client.get("/api/download/" + created["job_id"]).status_code == 404
 
 
-def test_pair_alignment_failure_uses_v09_only_in_explicit_diagnostic_mode(
+def test_selected_xml_pair_failure_never_auto_switches_to_v09(
         client, tmp_path, monkeypatch):
     import renderer_orchestrator
 
@@ -217,51 +217,27 @@ def test_pair_alignment_failure_uses_v09_only_in_explicit_diagnostic_mode(
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False,
                       C0_RUN_JOBS_SYNCHRONOUSLY=True,
                       V12_ALLOW_DIAGNOSTIC_V09=True)
-    fallback_observed = {}
+    def forbidden_fallback(*_args, **_kwargs):
+        pytest.fail("an explicitly selected XML job must never auto-switch to V0.9")
 
-    def successful_fallback(job, reason):
-        record = make_service(root).list()[0]
-        fallback_observed.update({
-            "renderer": record["renderer"],
-            "fallback_reason": record["fallback_reason"],
-            "baseline_sha": record["baseline_sha"],
-            "reason_arg": reason,
-            "plan_summary": record.get("plan_summary"),
-        })
-        outputs = [Path(job.output_doc), Path(job.student_output_doc)]
-        for output in outputs:
-            write_product_fixture(output, "class")
-        return {"output_paths": [str(path) for path in outputs], "whole_job": True,
-                "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
-
-    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", successful_fallback)
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", forbidden_fallback)
     response = _post_files(client, [("Unit 教师版.docx", make_docx()),
                                     ("Unit 学生版.docx", make_student_docx())])
     assert response.status_code == 202
     job_id = response.get_json()["job_id"]
     final = make_service(root).get(job_id)
-    assert fallback_observed == {
-        "renderer": "V0.9",
-        "fallback_reason": "ALIGNMENT_UNRESOLVED",
-        "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA,
-        "reason_arg": "ALIGNMENT_UNRESOLVED",
-        "plan_summary": None,
-    }
-    assert final["status"] == "done", final.get("error")
-    assert final["renderer"] == "V0.9"
-    assert final["fallback_reason"] == "ALIGNMENT_UNRESOLVED"
-    assert final["renderer_route"] == "V09_WHOLE_JOB"
-    assert final["fallback_phase"] == "ROUTER"
-    assert final["fallback_reason_code"] == "ALIGNMENT_UNRESOLVED"
+    assert final["status"] == "error"
+    assert final["renderer"] == "XML_UNSUPPORTED"
+    assert final["fallback_reason"] is None
+    assert final["renderer_route"] == "XML_UNSUPPORTED"
+    assert final["renderer_reason_code"] == "ALIGNMENT_UNRESOLVED"
     assert final["student_preparation_route"] == "BYPASS"
-    assert final["baseline_sha"] == renderer_orchestrator.V09_BASELINE_SHA
+    assert final["baseline_sha"] is None
     assert final.get("plan_summary") is None
-    assert len(final["output_paths"]) == 2
-    assert all(Path(path).is_file() for path in final["output_paths"])
+    assert final["output_paths"] == []
 
 
-def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp_path, monkeypatch):
-    import shutil
+def test_forced_xml_unsupported_fails_closed_before_v09(client, tmp_path, monkeypatch):
     import renderer_orchestrator
 
     root = tmp_path / "results"
@@ -269,39 +245,19 @@ def test_failed_fallback_attempt_is_persisted_before_runtime_failure(client, tmp
                       C0_RUN_JOBS_SYNCHRONOUSLY=True,
                       C0_FORCE_FALLBACK_REASON="UNSUPPORTED_REVISION_MARKUP",
                       V12_ALLOW_DIAGNOSTIC_V09=True)
-    engine = SimpleNamespace(make_student=lambda source, target: write_product_fixture(
-                                 target, "class"),
-                             CLASS_TEMPLATE="unused-class-template.docx",
-                             DEFAULT_TEMPLATE="unused-1v1-template.docx")
-    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
-    observed = {}
+    def forbidden_fallback(*_args, **_kwargs):
+        pytest.fail("forced unsupported XML must fail closed without V0.9")
 
-    def fail_fallback(_job, reason):
-        record = make_service(root).list()[0]
-        observed.update({"renderer": record["renderer"],
-                         "fallback_reason": record["fallback_reason"],
-                         "baseline_sha": record["baseline_sha"],
-                         "reason_arg": reason})
-        raise RuntimeError("simulated whole-job fallback failure")
-
-    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fail_fallback)
-    response = post_one(client)
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", forbidden_fallback)
+    response = _post_files(client, [("Unit 学生版.docx", make_student_docx())])
     job_id = response.get_json()["job_id"]
     final = make_service(root).get(job_id)
-    expected = renderer_orchestrator.V09_BASELINE_SHA
-    assert observed == {"renderer": "V0.9",
-                        "fallback_reason": "UNSUPPORTED_REVISION_MARKUP",
-                        "baseline_sha": expected,
-                        "reason_arg": "UNSUPPORTED_REVISION_MARKUP"}
     assert final["status"] == "error"
-    assert final["renderer"] == "V0.9"
-    assert final["fallback_reason"] == "UNSUPPORTED_REVISION_MARKUP"
-    assert final["renderer_route"] == "V09_WHOLE_JOB"
-    # Metadata now resolves before renderer selection so every output path
-    # receives the same cover normalization and field-level warnings.
-    assert final["fallback_phase"] == "METADATA"
-    assert final["fallback_reason_code"] == "UNSUPPORTED_REVISION_MARKUP"
-    assert final["baseline_sha"] == expected
+    assert final["renderer"] == "XML_UNSUPPORTED"
+    assert final["fallback_reason"] is None
+    assert final["renderer_route"] == "XML_UNSUPPORTED"
+    assert final["renderer_reason_code"] == "UNSUPPORTED_REVISION_MARKUP"
+    assert final["baseline_sha"] is None
 
 
 def test_synthetic_pair_without_question_skeleton_fails_closed_without_summary(
@@ -465,11 +421,11 @@ def _fake_slot_plan():
     )
 
 
-def _post_files(client, files, *, template_type="class"):
+def _post_files(client, files, *, template_type="class", engine_mode="xml_restricted"):
     data = {
         "subject": "物理", "grade": "九年级", "handout_type": "复习讲义",
         "academic_year": "2026-2027学年", "template_type": template_type,
-        "split_mode": "smart", "docx_mode": "auto",
+        "split_mode": "smart", "docx_mode": "auto", "engine_mode": engine_mode,
         "files": [(io.BytesIO(content), name) for name, content in files],
     }
     return client.post("/api/jobs", data=data, content_type="multipart/form-data")
@@ -485,75 +441,37 @@ def _fake_render_slots(source, _plan, output):
 
 
 @pytest.mark.parametrize("template_type", ["1v1", "class"])
-def test_paired_teacher_student_routes_each_input_without_make_student(
+def test_real_pair_uses_explicit_stable_engine_without_xml_or_studentizer(
         client, monkeypatch, template_type):
     import renderer_orchestrator
-    import template_slot_composer
 
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
-    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
-                        lambda: (_ for _ in ()).throw(AssertionError("make_student engine loaded")))
-    seen_sources = []
-    seen_cover_metadata = []
+    teacher = next(INCIDENT_FIXTURE.glob("*解析版*.docx")).read_bytes()
+    student = next(INCIDENT_FIXTURE.glob("*原卷版*.docx")).read_bytes()
+    observed = {}
 
-    def render(source, plan, output, *, cover_metadata=None):
-        seen_sources.append(Path(source).read_bytes())
-        seen_cover_metadata.append(cover_metadata)
-        return _fake_render_slots(source, plan, output)
+    def selected(job):
+        observed["sources"] = [Path(job.source_doc).read_bytes(),
+                               Path(job.student_source_doc).read_bytes()]
+        outputs = [Path(job.output_doc), Path(job.student_output_doc)]
+        for output in outputs:
+            write_product_fixture(output, template_type)
+        return {"output_paths": [str(path) for path in outputs], "selected_engine": "V0.9",
+                "fallback_reason": None}
 
-    monkeypatch.setattr(template_slot_composer, "render_slots", render)
-    teacher_path = next(INCIDENT_FIXTURE.glob("*解析版*.docx"))
-    student_path = next(INCIDENT_FIXTURE.glob("*原卷版*.docx"))
-    teacher = teacher_path.read_bytes()
-    student = student_path.read_bytes()
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_selected", selected)
     response = _post_files(client, [("Unit 教师版.docx", teacher), ("Unit 学生版.docx", student)],
-                           template_type=template_type)
-    job = response.get_json()
-    final = make_service().get(job["job_id"])
+                           template_type=template_type, engine_mode="stable_v09")
+    final = make_service().get(response.get_json()["job_id"])
     assert final["status"] == "done", final.get("error")
     assert final["input_version"] == "TEACHER_AND_STUDENT"
-    assert final["renderer"] == "XML"
-    assert final["renderer_route"] == "XML"
-    assert final["canonical_alignment"]["unmatched_real_question_count"] == 0
-    assert final["canonical_alignment"]["ambiguous_real_question_count"] == 0
-    assert len(final["canonical_occurrence_routes"]) == 60
-    projection = final["canonical_projection"]
-    assert projection["status"] == "PROJECTED"
-    assert projection["source_block_counts"] == {"student": 356, "teacher": 860}
-    assert len(projection["student_block_routes"]) == 356
-    assert len(projection["teacher_block_routes"]) == 860
-    for occurrence in final["canonical_occurrence_routes"]:
-        assert projection["student_block_routes"][occurrence["student_node"][1:]] == \
-            occurrence["destination_slot"]
-        assert projection["teacher_block_routes"][occurrence["teacher_node"][1:]] == \
-            occurrence["destination_slot"]
+    assert final["renderer"] == "V0.9" and final["renderer_route"] == "STABLE_V09"
+    assert final["selected_engine"] == "V0.9" and final["fallback_reason"] is None
     assert final["student_preparation"]["make_student_called"] is False
-    assert seen_sources == [teacher, student]
-    assert len(seen_cover_metadata) == 2
-    # The incident source has no reliable cover fields. Both outputs must use
-    # the same teacher-owned metadata result, including an explicit empty state.
-    assert seen_cover_metadata[0] == seen_cover_metadata[1]
-    metadata = final["lesson_metadata"]
-    assert metadata["status"] == "UNAVAILABLE"
-    assert metadata["objectives"] == metadata["difficulties"] == ""
-    assert metadata["warning"]
-    assert metadata["full_objectives"] == metadata["objectives"]
-    assert metadata["full_difficulties"] == metadata["difficulties"]
-    assert metadata["cover_display"] == seen_cover_metadata[0]["cover_display"]
-    renumbering = final["display_renumbering"]
-    assert renumbering["status"] == "DISPLAY_RENUMBER_APPLIED"
-    assert set(renumbering["slots"]) == {"knowledge", "immediate", "final"}
-    assert sum(len(items) for items in renumbering["slots"].values()) == 60
-    for items in renumbering["slots"].values():
-        assert [item["new_number"] for item in items] == list(range(1, len(items) + 1))
-        assert all(item["source_nodes"]["teacher"] and item["source_nodes"]["student"]
-                   for item in items)
-    assert final["items"][0]["topic"] == "Unit"
-    result_dir = Path(final["result_dir"])
-    assert {path.name for path in result_dir.iterdir()} == {
-        Path(final["teacher_output_path"]).name, Path(final["student_output_path"]).name}
-    assert all("_" not in path.name for path in result_dir.iterdir())
-    assert not any(path.name in {"work", "job.json"} for path in result_dir.iterdir())
+    assert observed["sources"] == [teacher, student]
+    assert final["display_renumbering"]["status"] == "NOT_APPLICABLE"
+    assert len(final["output_paths"]) == 2
+    assert all(Path(path).is_file() for path in final["output_paths"])
 
 
 def test_student_only_creates_no_teacher_output_and_never_calls_make_student(client, monkeypatch):
@@ -602,23 +520,14 @@ def test_unrelated_teacher_student_pair_is_rejected_without_result_folder(client
 
 
 def test_failed_make_student_attempt_is_persisted_truthfully(client, monkeypatch):
-    import renderer_orchestrator
-
     app.config.update(C0_DISABLE_JOB_SUBMISSION=False, C0_RUN_JOBS_SYNCHRONOUSLY=True)
-    app.config["V12_ALLOW_DIAGNOSTIC_V09"] = True
-    engine = SimpleNamespace(
-        make_student=lambda *_args: (_ for _ in ()).throw(RuntimeError("simulated COM failure")),
-        CLASS_TEMPLATE="unused-class-template.docx",
-        DEFAULT_TEMPLATE="unused-1v1-template.docx",
-    )
-    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
-    def failed_whole_job(job, _reason):
-        engine.make_student(job.source_doc, job.student_output_doc)
-    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", failed_whole_job)
+    import renderer_orchestrator
+    monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
+                        lambda: pytest.fail("XML mode must not call V0.9 make_student"))
     response = post_one(client, "Chapter 教师版.docx", make_docx())
     job_id = response.get_json()["job_id"]
     final = make_service().get(job_id)
     assert final["status"] == "error"
-    assert final["student_preparation"]["make_student_called"] is True
-    assert final["student_preparation"]["wps_com_started"] is None
-    assert final["student_preparation"]["elapsed_seconds"] is not None
+    assert final["student_preparation"]["make_student_called"] is False
+    assert final["student_preparation_route"] == "XML_UNSUPPORTED"
+    assert "手动选择" in final["error"] and "稳定模式" in final["error"]

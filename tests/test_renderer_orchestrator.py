@@ -12,6 +12,7 @@ from renderer_orchestrator import (  # noqa: E402
     RenderJob,
     XmlUnsupportedError,
     render_v09_whole_job,
+    render_v09_selected,
     render_xml_or_fallback,
 )
 import renderer_orchestrator as orchestrator  # noqa: E402
@@ -92,6 +93,77 @@ class RendererOrchestratorTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertEqual(student_output.read_bytes(), b"keep-existing-student-file")
         self.assertEqual(calls, [])
+
+    def test_v09_process_proxy_hides_children_without_mutating_stdlib(self):
+        class StartupInfo:
+            def __init__(self):
+                self.dwFlags = 0
+                self.wShowWindow = None
+
+        class Delegate:
+            CREATE_NO_WINDOW = 0x08000000
+            STARTF_USESHOWWINDOW = 1
+            SW_HIDE = 0
+
+            def __init__(self):
+                self.calls = []
+
+            def STARTUPINFO(self):
+                return StartupInfo()
+
+            def run(self, *args, **kwargs):
+                self.calls.append((args, kwargs))
+                return "ok"
+
+        delegate = Delegate()
+        original_stdlib_run = orchestrator._stdlib_subprocess.run
+        proxy = orchestrator._V09SubprocessProxy(delegate, windows=True)
+        result = proxy.run(["powershell.exe", "-File", "_fill_com.ps1"], check=True)
+        self.assertEqual(result, "ok")
+        args, kwargs = delegate.calls[0]
+        self.assertEqual(args[0][0], "powershell.exe")
+        self.assertEqual(kwargs["creationflags"], delegate.CREATE_NO_WINDOW)
+        self.assertEqual(kwargs["startupinfo"].dwFlags, delegate.STARTF_USESHOWWINDOW)
+        self.assertEqual(kwargs["startupinfo"].wShowWindow, delegate.SW_HIDE)
+        self.assertIs(orchestrator._stdlib_subprocess.run, original_stdlib_run)
+
+    def test_copied_v09_handout_matches_frozen_manifest_hash(self):
+        import hashlib
+        import json
+
+        manifest = APP / "v09_fallback_runtime" / "ASSET_MANIFEST.json"
+        assets = json.loads(manifest.read_text(encoding="utf-8"))["assets"]
+        handout = next(item for item in assets if item["target"] == "handout.py")
+        copied = manifest.parent / handout["target"]
+        self.assertEqual(len(copied.read_bytes()), handout["size_bytes"])
+        self.assertEqual(hashlib.sha256(copied.read_bytes()).hexdigest(), handout["sha256"])
+
+    def test_v09_selected_route_is_not_reported_as_fallback(self):
+        source = Path(self.temp.name) / "source.docx"
+        template = Path(self.temp.name) / "template.docx"
+        source.write_bytes(b"source")
+        template.write_bytes(b"template")
+        calls = []
+
+        def build(label, _source, output, _topic, **_kwargs):
+            calls.append(label)
+            Path(output).write_bytes(b"V0.9 output")
+            return "version", "log"
+
+        fake_engine = SimpleNamespace(
+            CLASS_TEMPLATE=str(template), DEFAULT_TEMPLATE=str(template),
+            build_version=build,
+        )
+        original_loader = orchestrator._load_v09_engine
+        orchestrator._load_v09_engine = lambda: fake_engine
+        try:
+            result = render_v09_selected(RenderJob(
+                str(source), str(self.output), template_path=str(template), student_only=True))
+        finally:
+            orchestrator._load_v09_engine = original_loader
+        self.assertIsNone(result["fallback_reason"])
+        self.assertEqual(result["selected_engine"], "V0.9")
+        self.assertEqual(calls, ["学生版"])
 
     def test_forced_unsupported_preflight_invokes_fallback_and_records_reason(self):
         result = render_xml_or_fallback(

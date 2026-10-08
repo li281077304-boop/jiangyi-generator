@@ -16,7 +16,7 @@
       badge: "推荐",
       description: "优先按原文明确的教学栏目分配内容；没有明确栏目时，仅将能够确认完整的练习块整体安排到训练区域。",
       steps: ["目录与正文标题定位", "知识类栏目进入“知识精讲”", "即时训练类栏目进入“即时训练”", "巩固或测试栏目及完整后部练习块进入“巩固练习”"],
-      note: "每个槽内保持原文顺序；完整练习块、共享材料和不可拆表格不会被强拆。无法安全分配时会切换兼容回退。"
+      note: "每个槽内保持原文顺序；完整练习块、共享材料和不可拆表格不会被强拆。XML 受限模式遇到不支持内容会停止并说明原因；如需继续，请手动选择稳定模式（V0.9 引擎）。"
     },
     full: {
       title: "完整保留",
@@ -27,7 +27,7 @@
     }
   };
   var MAX_BYTES = 500 * 1024 * 1024;
-  var state = {files: [], undo: [], jobs: [], selectedSubject: "数学", templateType: "1v1", currentJob: null, pollTimer: null, elapsedTimer: null, startedAt: 0, previewTemplate: "1v1"};
+  var state = {files: [], undo: [], jobs: [], selectedSubject: "数学", templateType: "1v1", engineMode: "stable_v09", currentJob: null, pollTimer: null, elapsedTimer: null, startedAt: 0, previewTemplate: "1v1"};
   var $ = function (id) { return document.getElementById(id); };
 
   function refreshIcons(root) {
@@ -113,17 +113,37 @@
     if (GRADES[$("eduLevel").value].indexOf(prefs.grade) >= 0) $("gradeSelect").value = prefs.grade;
     if (HANDOUT_TYPES.indexOf(prefs.handoutType) >= 0) $("handoutType").value = prefs.handoutType;
     if (["1v1", "class"].indexOf(prefs.templateType) >= 0) state.templateType = prefs.templateType;
+    if (["stable_v09", "xml_restricted"].indexOf(prefs.engineMode) >= 0) state.engineMode = prefs.engineMode;
+    $("engineMode").value = state.engineMode;
     if (["smart", "full"].indexOf(prefs.splitMode) >= 0) $("splitMode").value = prefs.splitMode;
     if (["auto", "separate"].indexOf(prefs.docxMode) >= 0) $("docxMode").value = prefs.docxMode;
     $("compactFiles").checked = !!prefs.compactFiles;
     applyCompact();
     selectSubject(state.selectedSubject, true);
     setTemplate(state.templateType, true);
+    updateEngineModeNote();
   }
   function savePrefs() {
-    var prefs = {subject: state.selectedSubject, eduLevel: $("eduLevel").value, grade: $("gradeSelect").value, handoutType: $("handoutType").value, academicYear: $("academicYear").value, templateType: state.templateType, splitMode: $("splitMode").value, docxMode: $("docxMode").value, compactFiles: $("compactFiles").checked};
+    var prefs = {subject: state.selectedSubject, eduLevel: $("eduLevel").value, grade: $("gradeSelect").value, handoutType: $("handoutType").value, academicYear: $("academicYear").value, templateType: state.templateType, engineMode: state.engineMode, splitMode: $("splitMode").value, docxMode: $("docxMode").value, compactFiles: $("compactFiles").checked};
     localStorage.setItem("handout_workspace_prefs", JSON.stringify(prefs));
     setText("saveState", "配置已保存");
+  }
+  function updateEngineModeNote() {
+    state.engineMode = $("engineMode").value || "stable_v09";
+    var note = state.engineMode === "stable_v09"
+      ? "使用已验证的 V0.9 引擎。XML 模式需要你手动选择，遇到不支持的文件会提示原因，不会自动切换。"
+      : "受限实验模式：仅在 XML 能力范围内生成。遇到不支持的文件会显示原因；如需继续，请手动改选稳定模式（V0.9 引擎）。";
+    setText("engineModeNote", note);
+    $("splitMode").disabled = state.engineMode === "stable_v09";
+    $("splitTitle").textContent = state.engineMode === "stable_v09" ? "V0.9 原有分块规则" : "智能分块";
+    $("splitBadge").textContent = state.engineMode === "stable_v09" ? "稳定引擎" : "推荐";
+    $("splitDescription").textContent = state.engineMode === "stable_v09"
+      ? "稳定模式沿用 V0.9 引擎自己的处理规则，下面的分块选项不适用。"
+      : (SPLIT_HELP[$("splitMode").value] || SPLIT_HELP.smart).description;
+    if (state.engineMode === "stable_v09") setText("splitNote", "本任务使用 V0.9 原有规则；分块策略不会传入旧引擎。");
+    $("splitSteps").replaceChildren();
+    if (state.engineMode === "stable_v09") $("splitSteps").hidden = true;
+    else { $("splitSteps").hidden = false; updateSplitExplainer(); }
   }
   function updateGrades(preferred) {
     var select = $("gradeSelect"), values = GRADES[$("eduLevel").value] || [];
@@ -155,6 +175,7 @@
     savePrefs();
     updateFilename();
     updateSplitExplainer();
+    updateEngineModeNote();
   }
   function updateFilename() {
     setText("filenamePreview", [$("academicYear").value, $("gradeSelect").value, state.selectedSubject, "专题名", $("handoutType").value, "教师版.docx"].filter(Boolean).join(" "));
@@ -278,7 +299,8 @@
       topic.textContent = item.topic || "识别中"; teacher.appendChild(statusCell(item.teacher)); student.appendChild(statusCell(item.student));
       var itemRenderer = item.renderer || (!job.is_batch && job.renderer);
       var itemStatus = item.status || job.status;
-      renderer.textContent = itemRenderer === "XML" ? "XML" : itemRenderer === "XML_UNSUPPORTED" ? "XML 不支持" : itemRenderer === "V0.9" ? "fallback（V0.9）" : itemStatus === "error" ? "未执行" : "待确定";
+      var itemRoute = item.renderer_route || (!job.is_batch && job.renderer_route);
+      renderer.textContent = itemRenderer === "XML" ? "XML 受限模式" : itemRenderer === "XML_UNSUPPORTED" ? "XML 不支持" : itemRenderer === "V0.9" ? (itemRoute === "STABLE_V09" ? "稳定模式（V0.9）" : "V0.9 回退") : itemStatus === "error" ? "未执行" : "待确定";
       if (item.renderer_reason_code || (!job.is_batch && job.renderer_reason_code)) renderer.title = "XML 未支持：" + (item.renderer_reason_code || job.renderer_reason_code) + (job.renderer_reason_detail ? "；" + job.renderer_reason_detail : "");
       else if (item.fallback_reason || (!job.is_batch && job.fallback_reason)) renderer.title = "回退原因：" + (item.fallback_detail || item.fallback_reason || job.fallback_reason);
       status.appendChild(statusCell(itemStatus === "done" ? "成功" : itemStatus === "error" ? "失败" : itemStatus === "running" ? "处理中" : "等待中"));
@@ -320,7 +342,7 @@
     event.preventDefault(); if (!state.files.length || activeJob()) return;
     var button = $("startButton"); button.disabled = true; setText("footerStatus", "正在上传素材");
     var data = new FormData(); state.files.forEach(function (file) { data.append("files", file); });
-    data.append("subject", state.selectedSubject); data.append("grade", $("gradeSelect").value); data.append("handout_type", $("handoutType").value); data.append("academic_year", $("academicYear").value); data.append("template_type", state.templateType); data.append("split_mode", $("splitMode").value); data.append("docx_mode", $("docxMode").value);
+    data.append("subject", state.selectedSubject); data.append("grade", $("gradeSelect").value); data.append("handout_type", $("handoutType").value); data.append("academic_year", $("academicYear").value); data.append("template_type", state.templateType); data.append("engine_mode", state.engineMode); data.append("split_mode", $("splitMode").value); data.append("docx_mode", $("docxMode").value);
     requestJson("/api/jobs", {method: "POST", body: data}).then(function (response) {
       state.currentJob = response.job_id; localStorage.setItem("handout_current_job", response.job_id); beginElapsed();
       upsertJob(response); showJob(response);
@@ -413,6 +435,7 @@
     $("drop").addEventListener("drop", function (event) { addFiles(event.dataTransfer.files); });
     $("clearFiles").addEventListener("click", clearFiles); $("undoFiles").addEventListener("click", undoFiles); $("fileSearch").addEventListener("input", function () { renderFiles(); });
     $("docxMode").addEventListener("change", function () { configChanged(); updatePairing(); });
+    $("engineMode").addEventListener("change", function () { state.engineMode = this.value; updateEngineModeNote(); configChanged(); });
     $("eduLevel").addEventListener("change", function () { updateGrades(); configChanged(); });
     ["gradeSelect", "handoutType", "academicYear", "splitMode"].forEach(function (id) { $(id).addEventListener("change", configChanged); });
     document.querySelectorAll("[data-template]").forEach(function (button) { button.addEventListener("click", function () { setTemplate(button.dataset.template); }); });
@@ -430,7 +453,7 @@
     $("themeButton").addEventListener("click", function () { applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); });
     $("themeSelect").addEventListener("change", function () { applyTheme(this.value); });
     $("compactFiles").addEventListener("change", function () { applyCompact(); savePrefs(); });
-    $("resetConfig").addEventListener("click", function () { $("eduLevel").value = "高中"; updateGrades("高一"); $("handoutType").value = "复习讲义"; $("academicYear").value = academicYear(); $("splitMode").value = "smart"; $("docxMode").value = "auto"; selectSubject("数学", true); setTemplate("1v1", true); configChanged(); updatePairing(); toast("已恢复默认配置"); });
+    $("resetConfig").addEventListener("click", function () { $("eduLevel").value = "高中"; updateGrades("高一"); $("handoutType").value = "复习讲义"; $("academicYear").value = academicYear(); $("engineMode").value = "stable_v09"; state.engineMode = "stable_v09"; updateEngineModeNote(); $("splitMode").value = "smart"; $("docxMode").value = "auto"; selectSubject("数学", true); setTemplate("1v1", true); configChanged(); updatePairing(); toast("已恢复默认配置"); });
     $("previewButton").addEventListener("click", function () { openPreview(state.templateType); });
     document.querySelectorAll("[data-preview]").forEach(function (button) { button.addEventListener("click", function () { openPreview(button.dataset.preview); }); });
     document.querySelectorAll("[data-use-template]").forEach(function (button) { button.addEventListener("click", function () { setTemplate(button.dataset.useTemplate); navigate("workspace"); }); });
@@ -441,7 +464,7 @@
   function initialize() {
     initializeOptions(); loadPrefs(); bindEvents();
     setText("todayLabel", new Intl.DateTimeFormat("zh-CN", {month: "long", day: "numeric", weekday: "long"}).format(new Date()));
-    applyTheme(localStorage.getItem("handout_theme") || "system"); updateFilename(); updateSplitExplainer(); renderFiles(); refreshIcons(); loadJobs();
+    applyTheme(localStorage.getItem("handout_theme") || "system"); updateFilename(); updateSplitExplainer(); updateEngineModeNote(); renderFiles(); refreshIcons(); loadJobs();
   }
   document.addEventListener("DOMContentLoaded", initialize);
 }());

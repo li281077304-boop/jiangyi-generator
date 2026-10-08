@@ -43,9 +43,8 @@ app.config.setdefault("STUDENTIZER_EVIDENCE_PROVIDER", None)  # trusted server c
 app.config.setdefault("STUDENTIZER_REVIEWED_MANIFEST_DIR", None)  # None => packaged reviewed evidence
 app.config.setdefault("LOCAL_OCR_MODEL_DIR", Path(os.environ.get(
     "JIANGYI_OCR_MODEL_DIR", str(APP_DIR / "ocr_models"))))
-# The user-facing V1.2 path is XML-only. V0.9 remains available only when an
-# operator explicitly enables the diagnostic/emergency mode for this process.
-app.config.setdefault("V12_ALLOW_DIAGNOSTIC_V09", False)
+# V1.2 exposes two explicit modes. XML is restricted and never auto-switches;
+# the stable V0.9 route is selected by the submitted job option.
 _V09_FALLBACK_LOCK = threading.RLock()
 
 
@@ -58,11 +57,6 @@ def _jobs() -> JobService:
     if key not in services:
         services[key] = JobService(root, runtime_root=runtime_root, opener=opener)
     return services[key]
-
-
-def _v09_diagnostic_mode_enabled() -> bool:
-    """Permit V0.9 only when an operator explicitly enables diagnostic mode."""
-    return bool(app.config.get("V12_ALLOW_DIAGNOSTIC_V09", False))
 
 
 def _submit_job(job_id: str) -> None:
@@ -227,7 +221,8 @@ def _execute_job(job_id: str) -> None:
         _execute_batch(job_id)
         return
     from renderer_orchestrator import (
-        RenderJob, XmlUnsupportedError, V09_BASELINE_SHA, _load_v09_engine, render_v09_whole_job,
+        RenderJob, RenderOutcome, XmlUnsupportedError, V09_BASELINE_SHA, _load_v09_engine,
+        render_v09_selected, render_v09_whole_job,
         render_xml_or_fallback,
     )
     from package_validator import validate_package
@@ -311,6 +306,9 @@ def _execute_job(job_id: str) -> None:
                           if student_source else None)
         template_type = options.get("template_type") or "1v1"
         split_mode = options.get("split_mode") or "smart"
+        engine_mode = options.get("engine_mode") or "stable_v09"
+        if engine_mode not in ("stable_v09", "xml_restricted"):
+            raise ValueError("不支持的生成引擎模式：%s" % engine_mode)
         if template_type not in ("1v1", "class"):
             raise ValueError("不支持的模板类型：%s" % template_type)
 
@@ -324,7 +322,48 @@ def _execute_job(job_id: str) -> None:
                        "reviewed_evidence": None, "registry_error": None,
                        "studentizer_fallback": False}
         studentizer_rejected = False
-        if input_version == "TEACHER_ONLY":
+        if input_version == "TEACHER_ONLY" and engine_mode == "stable_v09":
+            _persist_job_stage(service, job_id, 0, "V0.9 make_student preparation")
+            make_started = time.perf_counter()
+            preparation.update({"engine": "V09_MAKE_STUDENT", "status": "V09_STUDENT_PREPARED",
+                                "student_preparation": "V09_MAKE_STUDENT",
+                                "student_preparation_route": "V09_MAKE_STUDENT",
+                                "make_student_called": False, "com_used": None,
+                                "wps_com_started": None, "com_observation": "NOT_ENTERED"})
+            service.update_student_preparation(job_id, preparation)
+            try:
+                with _V09_FALLBACK_LOCK:
+                    engine = _load_v09_engine()
+                    original_make_student = engine.make_student
+
+                    def observed_stable_make_student(*args, **kwargs):
+                        preparation.update({"make_student_called": True, "com_used": None,
+                                            "wps_com_started": None,
+                                            "com_observation": "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY"})
+                        service.update_student_preparation(job_id, preparation)
+                        return original_make_student(*args, **kwargs)
+
+                    engine.make_student = observed_stable_make_student
+                    try:
+                        engine.make_student(str(teacher_source), str(student_source))
+                    finally:
+                        engine.make_student = original_make_student
+            except Exception as exc:
+                preparation.update({"preparation_error_code": "V09_MAKE_STUDENT_FAILED",
+                                    "preparation_error_detail": "%s: %s" % (type(exc).__name__, exc)})
+                raise
+            finally:
+                preparation["make_student_elapsed_seconds"] = round(time.perf_counter()-make_started, 6)
+                preparation["elapsed_seconds"] = preparation["make_student_elapsed_seconds"]
+                service.update_student_preparation(job_id, preparation)
+            if not student_source.is_file() or student_source.stat().st_size == 0:
+                raise RuntimeError("V0.9 make_student did not produce a non-empty student source")
+            validation = validate_package(str(student_source))
+            if validation.get("valid") is not True:
+                raise RuntimeError("V0.9 make_student produced an invalid student source: %s" %
+                                   "; ".join(validation.get("errors", [])[:5]))
+            preparation["student_source_package_valid"] = True
+        elif input_version == "TEACHER_ONLY" and engine_mode == "xml_restricted":
             _persist_job_stage(service, job_id, 0, "Studentizer preparation")
             provider, reviewed, registry_error = _reviewed_provider()
             preparation["registry_error"] = registry_error
@@ -338,70 +377,19 @@ def _execute_job(job_id: str) -> None:
             studentizer_rejected = prepared.status != "XML_PREPARED"
             preparation["studentizer_fallback"] = studentizer_rejected
             if studentizer_rejected:
-                if not _v09_diagnostic_mode_enabled():
-                    reason = prepared.reason_code or "STUDENTIZER_UNSUPPORTED"
-                    detail = prepared.reason_detail or "XML Studentizer capability gate rejected input"
-                    preparation.update({"student_preparation": "XML_UNSUPPORTED",
-                                        "student_preparation_route": "XML_UNSUPPORTED",
-                                        "preparation_error_code": reason,
-                                        "preparation_error_detail": detail})
-                    service.update_student_preparation(job_id, preparation)
-                    service.update_route_evidence(job_id, {
-                        "renderer_route": "XML_UNSUPPORTED",
-                        "renderer_reason_code": reason,
-                        "renderer_reason_detail": detail,
-                    })
-                    raise XmlUnsupportedError(reason, detail)
-                # Studentizer capability refusal is a preparation decision,
-                # not a renderer decision. Use the frozen V0.9 preparation
-                # step to create a student source, then continue through the
-                # shared A-Line / Slot Router / XML Renderer route.
-                _persist_job_stage(service, job_id, 0, "V0.9 make_student preparation")
-                make_started = time.perf_counter()
-                preparation.update({"student_preparation": "V09_MAKE_STUDENT",
-                                    "student_preparation_route": "V09_MAKE_STUDENT",
-                                    "preparation_error_code": None,
-                                    "preparation_error_detail": None})
+                reason = prepared.reason_code or "STUDENTIZER_UNSUPPORTED"
+                detail = prepared.reason_detail or "XML Studentizer capability gate rejected input"
+                preparation.update({"student_preparation": "XML_UNSUPPORTED",
+                                    "student_preparation_route": "XML_UNSUPPORTED",
+                                    "preparation_error_code": reason,
+                                    "preparation_error_detail": detail})
                 service.update_student_preparation(job_id, preparation)
-                try:
-                    with _V09_FALLBACK_LOCK:
-                        engine = _load_v09_engine()
-                        original_make_student = engine.make_student
-
-                        def observed_make_student(*args, **kwargs):
-                            # The frozen callable can fail in its python-docx
-                            # phase before attempting a PowerShell/COM script.
-                            preparation.update({
-                                "make_student_called": True,
-                                "com_used": None,
-                                "wps_com_started": None,
-                                "com_observation": "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY",
-                            })
-                            service.update_student_preparation(job_id, preparation)
-                            return original_make_student(*args, **kwargs)
-
-                        engine.make_student = observed_make_student
-                        try:
-                            engine.make_student(str(teacher_source), str(student_source))
-                        finally:
-                            engine.make_student = original_make_student
-                except Exception as exc:
-                    preparation["preparation_error_code"] = "V09_MAKE_STUDENT_FAILED"
-                    preparation["preparation_error_detail"] = "%s: %s" % (type(exc).__name__, exc)
-                    raise
-                finally:
-                    make_elapsed = round(time.perf_counter() - make_started, 6)
-                    preparation.update({"make_student_elapsed_seconds": make_elapsed,
-                                        "elapsed_seconds": round(
-                                            preparation["studentizer_elapsed_seconds"] + make_elapsed, 6)})
-                    service.update_student_preparation(job_id, preparation)
-                if not student_source.is_file() or student_source.stat().st_size == 0:
-                    raise RuntimeError("V0.9 make_student did not produce a non-empty student source")
-                validation = validate_package(str(student_source))
-                if validation.get("valid") is not True:
-                    raise RuntimeError("V0.9 make_student produced an invalid student source: %s" %
-                                       "; ".join(validation.get("errors", [])[:5]))
-                preparation["student_source_package_valid"] = True
+                service.update_route_evidence(job_id, {
+                    "renderer_route": "XML_UNSUPPORTED",
+                    "renderer_reason_code": reason,
+                    "renderer_reason_detail": detail,
+                })
+                raise XmlUnsupportedError(reason, detail)
             else:
                 preparation["package_valid"] = prepared.validation.get("valid") is True
                 preparation["student_preparation"] = "XML_STUDENTIZER"
@@ -763,10 +751,29 @@ def _execute_job(job_id: str) -> None:
                     renderer_fallback_preparation["elapsed_seconds"] = round(time.perf_counter()-stamp, 6)
                     service.update_renderer_fallback_preparation(job_id, renderer_fallback_preparation)
 
-        outcome = render_xml_or_fallback(
-            render_job, xml_preflight=xml_preflight, xml_render=xml_render,
-            fallback=fallback, package_validator=validate_package,
-            allow_v09_fallback=_v09_diagnostic_mode_enabled())
+        if engine_mode == "stable_v09":
+            service.update_route_evidence(job_id, {
+                "selected_engine": "V0.9", "renderer_route": "STABLE_V09",
+                "xml_renderer_attempted": False, "fallback_reason_code": None,
+            })
+            _persist_job_stage(service, job_id, 1, "稳定模式（V0.9 引擎）生成中")
+            with _V09_FALLBACK_LOCK:
+                with redirect_stdout(StringIO()):
+                    stable_result = render_v09_selected(render_job)
+            outcome = RenderOutcome(
+                "V0.9", tuple(stable_result.get("output_paths", ())),
+                details={"selected_engine": "V0.9", "route": "STABLE_V09",
+                         "baseline_sha": V09_BASELINE_SHA},
+            )
+        else:
+            service.update_route_evidence(job_id, {
+                "selected_engine": "XML", "renderer_route": "XML_RESTRICTED",
+                "xml_renderer_attempted": False,
+            })
+            outcome = render_xml_or_fallback(
+                render_job, xml_preflight=xml_preflight, xml_render=xml_render,
+                fallback=fallback, package_validator=validate_package,
+                allow_v09_fallback=False)
         if outcome.renderer == "XML":
             generated = []
             if teacher_source:
@@ -951,10 +958,11 @@ def _execute_job(job_id: str) -> None:
     except XmlUnsupportedError as exc:
         service.update_route_evidence(job_id, {
             "renderer_route": "XML_UNSUPPORTED",
+            "selected_engine": "XML",
             "renderer_reason_code": exc.reason_code,
             "renderer_reason_detail": exc.detail,
         })
-        service.fail_job(job_id, "XML_UNSUPPORTED: %s" % exc)
+        service.fail_job(job_id, "XML 模式暂不支持此文件（%s）。请手动选择“稳定模式（V0.9 引擎）”后重新提交。" % exc)
     except Exception as exc:
         # Published role DOCX files are durable progress. A failed/restarted
         # item may resume against its recorded publication plan; never clean

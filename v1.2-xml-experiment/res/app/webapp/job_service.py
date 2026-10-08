@@ -22,8 +22,9 @@ from topic_normalization import normalize_display_topic
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 FORM_FIELDS = (
     "subject", "grade", "handout_type", "academic_year", "template_type",
-    "split_mode", "docx_mode",
+    "split_mode", "docx_mode", "engine_mode",
 )
+ENGINE_MODES = {"stable_v09", "xml_restricted"}
 
 
 class JobNotFound(KeyError):
@@ -193,6 +194,9 @@ class JobService:
         validated = [(filename or "source.docx", self.validate_docx(filename or "source.docx", data), data)
                      for filename, data in files]
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
+        form_options["engine_mode"] = form_options["engine_mode"] or "stable_v09"
+        if form_options["engine_mode"] not in ENGINE_MODES:
+            raise UnsupportedInput("不支持的生成引擎模式：%s" % form_options["engine_mode"])
         try:
             if _classification is not None:
                 classification = _classification
@@ -290,13 +294,16 @@ class JobService:
             "items": [{"topic": topic, "original_topic": original_topic,
                        "teacher": "处理中" if teacher_source else "未提供",
                        "student": "处理中" if student_source or version == "TEACHER_ONLY" else "未提供"}],
-            "warnings": [],
+            "warnings": (["自动生成的学生版可能仍含有答案或解析，请在使用前检查。"]
+                         if version == "TEACHER_ONLY" else []),
             "produced": 0,
             "result_dir": str(result_dir),
             "output_paths": [],
             "has_result": False,
             "renderer": None,
-            "renderer_route": None,
+            "renderer_route": ("STABLE_V09" if form_options["engine_mode"] == "stable_v09"
+                               else "XML_RESTRICTED"),
+            "selected_engine": ("V0.9" if form_options["engine_mode"] == "stable_v09" else "XML"),
             "fallback_reason": None,
             "fallback_detail": None,
             "fallback_phase": "NONE",
@@ -332,6 +339,9 @@ class JobService:
         """Persist a parent plus isolated C1 jobs; never route a whole batch to COM."""
         logical = resolve_batch(files, str(options.get("docx_mode") or "auto"))
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
+        form_options["engine_mode"] = form_options["engine_mode"] or "stable_v09"
+        if form_options["engine_mode"] not in ENGINE_MODES:
+            raise UnsupportedInput("不支持的生成引擎模式：%s" % form_options["engine_mode"])
         job_id = uuid.uuid4().hex
         job_dir = self._job_dir(job_id)
         job_dir.mkdir(parents=True)
@@ -392,7 +402,12 @@ class JobService:
             "updated_at": now.timestamp(), "updated_at_iso": now.isoformat(timespec="seconds"),
             "stage": "批量任务已接收，等待生成", "result_dir": str(result_dir),
             "output_paths": [], "produced": 0, "has_result": False,
-            "generation_attempts": 0, "warnings": [],
+            "generation_attempts": 0,
+            "selected_engine": ("V0.9" if form_options["engine_mode"] == "stable_v09" else "XML"),
+            "renderer_route": ("STABLE_V09" if form_options["engine_mode"] == "stable_v09"
+                               else "XML_RESTRICTED"),
+            "warnings": (["自动生成的学生版可能仍含有答案或解析，请在使用前检查。"]
+                         if any(item.input_version == "TEACHER_ONLY" for item in logical) else []),
         }
         with self._lock:
             self._write_json(job_dir / "job.json", record)
@@ -414,7 +429,8 @@ class JobService:
                     raise ValueError("child result directory escaped batch")
                 roles = child.get("items", [{}])[0]
                 item.update({key: child.get(key) for key in (
-                    "status", "renderer", "fallback_reason", "fallback_detail", "output_paths",
+                    "status", "renderer", "renderer_route", "selected_engine",
+                    "fallback_reason", "fallback_detail", "output_paths",
                     "error", "plan_summary", "student_preparation", "student_preparation_route",
                     "package_validation", "lesson_metadata", "product_normalization", "warnings",
                     "started_at", "updated_at", "elapsed_seconds")})
@@ -423,6 +439,9 @@ class JobService:
                 item.update(status="error", error="GENERATION_FAILED: " + str(exc), output_paths=[])
         successes = [item for item in record["items"] if item["status"] == "done"]
         failures = [item for item in record["items"] if item["status"] == "error"]
+        child_warnings = [warning for item in record.get("items", [])
+                          for warning in item.get("warnings", [])]
+        record["warnings"] = list(dict.fromkeys(record.get("warnings", []) + child_warnings))
         record["completed"], record["failed"] = len(successes), len(failures)
         record["progress"] = len(successes) + len(failures)
         record["output_paths"] = [path for item in successes for path in item["output_paths"]]
@@ -792,7 +811,11 @@ class JobService:
             "has_result": True,
             "produced": len(paths),
             "renderer": renderer,
-            "renderer_route": "XML" if renderer == "XML" else "V09_WHOLE_JOB",
+            "renderer_route": ("XML" if renderer == "XML" else
+                               "STABLE_V09" if record.get("options", {}).get("engine_mode") == "stable_v09"
+                               and not fallback_reason else "V09_WHOLE_JOB"),
+            "selected_engine": ("XML" if record.get("options", {}).get("engine_mode") == "xml_restricted"
+                                else "V0.9"),
             "fallback_reason": fallback_reason,
             "fallback_reason_code": fallback_reason,
             "fallback_phase": (record.get("fallback_phase", "PREFLIGHT")

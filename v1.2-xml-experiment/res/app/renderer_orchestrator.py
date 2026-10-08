@@ -14,6 +14,7 @@ import contextlib
 import io
 import json
 import os
+import subprocess as _stdlib_subprocess
 import sys
 import uuid
 
@@ -235,10 +236,49 @@ def _load_v09_engine():
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
         spec.loader.exec_module(module)
+    # Keep the archived module byte-for-byte frozen. Its subprocess namespace
+    # is locally proxied so Windows helper processes never create a console
+    # window; the process-wide stdlib function remains untouched.
+    module.subprocess = _V09SubprocessProxy(_stdlib_subprocess)
     return module
 
 
+class _V09SubprocessProxy:
+    """Delegate subprocess APIs while hiding only V0.9 child processes."""
+
+    def __init__(self, delegate, *, windows: bool | None = None):
+        self._delegate = delegate
+        self._windows = os.name == "nt" if windows is None else windows
+
+    def __getattr__(self, name):
+        return getattr(self._delegate, name)
+
+    def run(self, *args, **kwargs):
+        if self._windows:
+            kwargs["creationflags"] = (kwargs.get("creationflags", 0) |
+                                       self._delegate.CREATE_NO_WINDOW)
+            startupinfo = kwargs.get("startupinfo")
+            if startupinfo is None:
+                startupinfo = self._delegate.STARTUPINFO()
+                kwargs["startupinfo"] = startupinfo
+            startupinfo.dwFlags |= self._delegate.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = self._delegate.SW_HIDE
+        return self._delegate.run(*args, **kwargs)
+
+
+def render_v09_selected(job: RenderJob) -> dict[str, Any]:
+    """Run the explicitly selected frozen V0.9 engine without fallback status."""
+    return _render_v09(job, None)
+
+
 def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
+    """Run V0.9 as an explicit XML fallback, retaining its reason code."""
+    if reason_code not in REASON_CODES:
+        raise ValueError("fallback reason code is required")
+    return _render_v09(job, reason_code)
+
+
+def _render_v09(job: RenderJob, reason_code: Optional[str]) -> dict[str, Any]:
     """Run the archived V0.9 source scan, split, and Writer for the full job.
 
     An optional paired student source is rendered as supplied by the user. If
@@ -246,8 +286,6 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
     source in a unique output-local scratch path, then the same V0.9
     scan/split/Writer chain renders it. No V1.2 block/span data is accepted.
     """
-    if reason_code not in REASON_CODES:
-        raise ValueError("fallback reason code is required")
     source = Path(job.source_doc).resolve()
     output = Path(job.output_doc).resolve()
     if not source.is_file():
@@ -275,7 +313,8 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
                 fmt=True)
         _require_v09_output(output, log)
         return {"output_paths": [str(output)], "fallback_reason": reason_code,
-                "logs": [str(log)], "baseline_sha": V09_BASELINE_SHA, "whole_job": True}
+                "selected_engine": "V0.9", "logs": [str(log)],
+                "baseline_sha": V09_BASELINE_SHA, "whole_job": True}
 
     student_output = Path(job.student_output_doc).resolve() if job.student_output_doc else output.with_name(
         output.stem + "-学生版.docx")
@@ -334,7 +373,8 @@ def render_v09_whole_job(job: RenderJob, reason_code: str) -> dict[str, Any]:
             pass
         outputs.append(str(student_output))
         logs.append(str(student_log))
-    return {"output_paths": outputs, "fallback_reason": reason_code, "logs": logs,
+    return {"output_paths": outputs, "fallback_reason": reason_code,
+            "selected_engine": "V0.9", "logs": logs,
             "baseline_sha": V09_BASELINE_SHA, "whole_job": True}
 
 

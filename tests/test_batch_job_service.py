@@ -55,7 +55,7 @@ def service():
 def post(client, files, **options):
     data = {"subject": "数学", "grade": "高一", "handout_type": "复习讲义",
             "academic_year": "2026-2027学年", "template_type": "1v1",
-            "docx_mode": "auto", **options,
+            "docx_mode": "auto", "engine_mode": "stable_v09", **options,
             "files": [(io.BytesIO(content), name) for name, content in files]}
     response = client.post("/api/jobs", data=data, content_type="multipart/form-data")
     assert response.status_code == 202, response.get_json()
@@ -67,7 +67,7 @@ def renderer(monkeypatch):
     import renderer_orchestrator
     import slot_router
     import template_slot_composer
-    calls = {"xml": [], "fallback": [], "make_student": []}
+    calls = {"xml": [], "fallback": [], "selected": [], "make_student": []}
     plan = SimpleNamespace(template_sha256="fixture-template", slots={
         name: () for name in ("knowledge", "immediate", "final")}, units=(),
         slot_labels={"knowledge": "知识精讲", "immediate": "即时训练", "final": "六、巩固练习"},
@@ -103,6 +103,24 @@ def renderer(monkeypatch):
         return {"output_paths": outputs, "whole_job": True,
                 "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
 
+    def selected(job):
+        calls["selected"].append(job.topic)
+        running_batch = next((record for record in app_module._jobs().list()
+                              if record.get("is_batch") and record.get("status") == "running"), None)
+        if running_batch:
+            parent = app_module._jobs().get(running_batch["job_id"])
+            calls.setdefault("batch_progress", []).append(
+                (parent.get("current_topic"), parent.get("completed"), parent.get("total")))
+        outputs = [job.output_doc]
+        write_product_fixture(job.output_doc, job.template_type)
+        if not job.student_only:
+            if not job.student_source_doc:
+                raise AssertionError("stable paired render requires a prepared/supplied student source")
+            write_product_fixture(job.student_output_doc, job.template_type)
+            outputs.append(job.student_output_doc)
+        return {"output_paths": outputs, "fallback_reason": None,
+                "selected_engine": "V0.9", "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
+
     def make_student(source, output):
         calls["make_student"].append(source)
         write_product_fixture(output, getattr(plan, "template_type", "1v1"),
@@ -111,6 +129,7 @@ def renderer(monkeypatch):
     monkeypatch.setattr(slot_router, "build_slot_routing_plan", build)
     monkeypatch.setattr(template_slot_composer, "render_slots", render)
     monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fallback)
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_selected", selected)
     engine = SimpleNamespace(make_student=make_student)
     monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", lambda: engine)
     return calls
@@ -124,17 +143,19 @@ def assert_clean(job):
     assert len([path for path in files if path.is_file()]) == len(job["output_paths"])
 
 
-def test_three_supplied_pairs_are_independent_xml_items(client, renderer):
+def test_three_supplied_pairs_are_independent_stable_v09_items(client, renderer):
     teacher, student = docx("教师独有内容"), docx("学生独有内容")
     files = [(f"专题{i} 教师版.docx", teacher) for i in (1, 2, 3)]
     files += [(f"专题{i} 学生版.docx", student) for i in (3, 1, 2)]
     final = post(client, files)
     assert final["status"] == "done" and final["batch_outcome"] == "ALL_SUCCESS"
     assert (final["total"], final["completed"], final["failed"], final["produced"]) == (3, 3, 0, 6)
-    assert all(item["renderer"] == "XML" and item["input_version"] == "TEACHER_AND_STUDENT"
+    assert all(item["renderer"] == "V0.9" and item["renderer_route"] == "STABLE_V09"
+               and item["input_version"] == "TEACHER_AND_STUDENT"
                for item in final["items"])
     assert not renderer["fallback"] and not renderer["make_student"]
-    assert renderer["xml"] == [teacher, student] * 3
+    assert renderer["selected"] == ["专题1", "专题2", "专题3"]
+    assert not renderer["xml"]
     assert all(not item["student_preparation"]["make_student_called"] for item in final["items"])
     assert len(client.get("/api/jobs").get_json()["jobs"]) == 1  # child jobs are internal
     assert_clean(final)
@@ -142,18 +163,22 @@ def test_three_supplied_pairs_are_independent_xml_items(client, renderer):
 
 def test_product_integrity_gate_blocks_duplicate_staged_output_before_publication(
         client, renderer, monkeypatch):
-    import template_slot_composer
+    import renderer_orchestrator
 
     source = docx(*["block-%02d %s" % (index, "长题干内容" * 18) for index in range(14)])
 
-    def duplicate_all_blocks(source_path, _plan, output_path):
+    def duplicate_all_blocks(job):
+        source_path, output_path = job.source_doc, job.output_doc
         original = Document(source_path)
         paragraphs = [paragraph.text for paragraph in original.paragraphs]
         write_product_fixture(output_path, "1v1", paragraphs=paragraphs * 2)
-        return SimpleNamespace(output_path=str(output_path), resource_report={"unsupported": []},
-                               package_report={"valid": True, "errors": []})
+        if not job.student_only:
+            write_product_fixture(job.student_output_doc, "1v1", paragraphs=paragraphs * 2)
+            return {"output_paths": [str(output_path), job.student_output_doc],
+                    "selected_engine": "V0.9", "fallback_reason": None}
+        return {"output_paths": [str(output_path)], "selected_engine": "V0.9", "fallback_reason": None}
 
-    monkeypatch.setattr(template_slot_composer, "render_slots", duplicate_all_blocks)
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_selected", duplicate_all_blocks)
     result = post(client, [("专题 教师版.docx", source)])
     assert result["status"] == "error"
     assert "PRODUCT_INTEGRITY_GATE" in result["error"]
@@ -174,7 +199,7 @@ def test_recursive_generated_input_is_rejected_before_any_renderer(client, rende
     assert result["status"] == "error"
     assert "POSSIBLE_GENERATED_OUTPUT_REINGESTION" in result["error"]
     assert result["product_integrity"]["accepted"] is False
-    assert not renderer["xml"] and not renderer["fallback"] and not renderer["make_student"]
+    assert not renderer["xml"] and not renderer["fallback"] and not renderer["selected"] and not renderer["make_student"]
     assert result["output_paths"] == []
 
 
@@ -285,31 +310,38 @@ def test_corrupt_item_does_not_remove_two_successful_outputs(client, renderer):
     assert_clean(final)
 
 
-def test_mixed_renderer_falls_back_only_for_one_item(client, renderer):
-    final = post(client, [(f"专题{i} 学生版.docx", docx("FORCED_UNSUPPORTED" if i == 4 else "XML"))
-                          for i in range(1, 5)])
-    assert final["status"] == "done"
-    assert [item["renderer"] for item in final["items"]] == ["XML", "XML", "XML", "V0.9"]
-    assert renderer["fallback"] == [("专题4", "XML_RENDER_FAILED")]
-    fallback_item = final["items"][-1]
-    assert fallback_item["fallback_reason"] == "XML_RENDER_FAILED"
-    assert "UNSUPPORTED_BOOKMARK_SCOPE" in fallback_item["fallback_detail"]
-    assert not renderer["make_student"]
-
-
-def test_failed_generation_keeps_fallback_intent_and_valid_siblings(client, renderer, monkeypatch):
+def test_stable_engine_item_failure_keeps_successful_siblings(client, renderer, monkeypatch):
     import renderer_orchestrator
-    def fail(_job, _reason):
-        raise RuntimeError("fixture COM failure")
-    monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fail)
-    final = post(client, [("A 学生版.docx", docx()),
-                          ("B 学生版.docx", docx("FORCED_UNSUPPORTED")),
-                          ("C 学生版.docx", docx())])
+
+    original = renderer_orchestrator.render_v09_selected
+
+    def fail_one(job):
+        if job.topic == "专题4":
+            raise RuntimeError("simulated selected V0.9 failure")
+        return original(job)
+
+    monkeypatch.setattr(renderer_orchestrator, "render_v09_selected", fail_one)
+    final = post(client, [(f"专题{i} 学生版.docx", docx("source %d" % i)) for i in range(1, 5)])
     assert final["status"] == "partial"
-    assert [item["status"] for item in final["items"]] == ["done", "error", "done"]
-    assert final["items"][1]["renderer"] == "V0.9"
-    assert final["items"][1]["fallback_reason"] == "XML_RENDER_FAILED"
-    assert all(Path(path).is_file() for path in final["output_paths"])
+    assert [item["status"] for item in final["items"]] == ["done", "done", "done", "error"]
+    assert all(item["renderer"] == "V0.9" for item in final["items"][:3])
+    failed = final["items"][-1]
+    assert "simulated selected V0.9 failure" in failed["error"]
+    assert failed["renderer_route"] == "STABLE_V09"
+    assert failed["fallback_reason"] is None
+    assert not renderer["fallback"]
+    assert len(renderer["selected"]) == 3
+    assert len(final["output_paths"]) == 3
+
+
+def test_selected_xml_never_switches_to_v09_when_unsupported(client, renderer):
+    final = post(client, [("Unsupported 学生版.docx", docx("FORCED_UNSUPPORTED"))],
+                 engine_mode="xml_restricted")
+    assert final["status"] == "error"
+    assert final["renderer"] == "XML_UNSUPPORTED"
+    assert final["fallback_reason"] is None
+    assert "手动选择" in final["error"] and "稳定模式" in final["error"]
+    assert not renderer["fallback"] and not renderer["selected"]
 
 
 def test_zip_mixed_input_versions_preserves_user_student(client, renderer):
@@ -328,7 +360,8 @@ def test_zip_mixed_input_versions_preserves_user_student(client, renderer):
     assert final["items"][0]["student_preparation"]["make_student_called"] is True
     assert final["items"][0]["student_preparation"]["wps_com_started"] is None
     assert all(not item["student_preparation"]["make_student_called"] for item in final["items"][1:])
-    assert renderer["xml"].count(student) == 2
+    assert not renderer["xml"]
+    assert len(renderer["selected"]) == 3
     child = service().get(final["items"][0]["child_job_id"])
     assert child["source_provenance"]["0"]["origin"].startswith(
         "中文混合输入.zip:第一层/专题A 教师用.docx")
@@ -365,7 +398,7 @@ def test_batch_parent_restart_skips_already_completed_child(client, renderer):
     assert recovered["status"] == "queued" and recovered["completed"] == 1
     app_module._execute_batch(final["job_id"])
     assert service().get(final["job_id"])["status"] == "done"
-    assert len(renderer["xml"]) == 3  # the first child wasn't rendered twice
+    assert len(renderer["selected"]) == 3  # the first child wasn't rendered twice
 
 
 def test_batch_restart_reruns_incomplete_child_with_fresh_private_paths(client, renderer, monkeypatch):
@@ -406,7 +439,7 @@ def test_batch_restart_reruns_incomplete_child_with_fresh_private_paths(client, 
     assert [Path(path).read_bytes() for path in first_outputs] == first_bytes
     assert all(path.is_file() and path.read_bytes() == content for path, content in stale.items())
     assert len(renderer["make_student"]) == 3  # completed child was not prepared again
-    assert len(renderer["xml"]) == 6  # two role renders per child, including only one retry
+    assert len(renderer["selected"]) == 3  # completed child wasn't rendered twice
     resumed_work = Path(restarted._job_dir(interrupted_child)) / "work"
     assert (resumed_work / ("teacher-output-attempt-2-%s.docx" % interrupted_child)).is_file()
     assert (resumed_work / ("derived-student-source-attempt-2-%s.docx" % interrupted_child)).is_file()
@@ -423,17 +456,9 @@ def test_local_outputs_have_no_name_collisions_for_same_topic_separate_mode(clie
 
 
 def test_batch_metadata_exposes_current_topic_and_serial_order(client, renderer, monkeypatch):
-    import template_slot_composer
-    original = template_slot_composer.render_slots
-    seen = []
-    def observe(source, plan, output):
-        parent = service().list()[0]
-        seen.append((parent["current_topic"], parent["completed"], parent["total"]))
-        return original(source, plan, output)
-    monkeypatch.setattr(template_slot_composer, "render_slots", observe)
     final = post(client, [(f"专题{i} 学生版.docx", docx()) for i in range(1, 4)])
     assert final["status"] == "done"
-    assert seen == [("专题1", 0, 3), ("专题2", 1, 3), ("专题3", 2, 3)]
+    assert renderer["batch_progress"] == [("专题1", 0, 3), ("专题2", 1, 3), ("专题3", 2, 3)]
     assert final["current_topic"] is None
 
 

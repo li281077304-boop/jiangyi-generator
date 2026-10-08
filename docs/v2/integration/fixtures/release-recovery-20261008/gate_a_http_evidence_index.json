@@ -1,0 +1,208 @@
+{
+  "title": "V1.2 Release Recovery Gate A HTTP stable-engine evidence index",
+  "run_date": "2026-10-08",
+  "evidence_root": "C:\\xml-uat\\release-recovery-20261008",
+  "scope": "real HTTP submissions to local development service; stable_v09 selected; not EXE/WPS visual acceptance",
+  "submissions": [
+    {
+      "scenario": "x12_4_1v1",
+      "job_id": "12c76457c42f46e7b317dee2c1658716",
+      "status": "done",
+      "engine": "V0.9",
+      "renderer": "STABLE_V09",
+      "elapsed_seconds": 51.276,
+      "raw_terminal_path": "C:\\xml-uat\\release-recovery-20261008\\http_matrix\\x12_4_1v1\\terminal.json",
+      "raw_terminal_sha256": "532994f35b0a9ab5baf3091ea2409cea07580848eee9d2155268e5b43df9bf62",
+      "result_dir": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义",
+      "final_files": [
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义 教师版.docx",
+          "bytes": 1407770,
+          "sha256": "7410f4d48579da6e8a1dc4c27b23b4f85e6776fdbd06e7b2f4387a7f578931b4"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义 学生版.docx",
+          "bytes": 1197004,
+          "sha256": "8574d0e1b57f83ebb2d737e709743f4845d266d9c5a58c1fe62fb7f22e1c084b"
+        }
+      ],
+      "warning_codes_or_text": []
+    },
+    {
+      "scenario": "x12_4_class",
+      "job_id": "d6581397b2444abd824227e8d8366db1",
+      "status": "done",
+      "engine": "V0.9",
+      "renderer": "STABLE_V09",
+      "elapsed_seconds": 62.391,
+      "raw_terminal_path": "C:\\xml-uat\\release-recovery-20261008\\http_matrix\\x12_4_class\\terminal.json",
+      "raw_terminal_sha256": "eebc1dd70537730b10be55350f3eb68a976b5be429c3f97e4079f448a843dc2c",
+      "result_dir": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义（2）",
+      "final_files": [
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义（2）\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义 教师版.docx",
+          "bytes": 2836830,
+          "sha256": "40b47a8b2bac8805838c601a5319318d673949d4a67d51fec6a16990b9c4c28e"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义（2）\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义 学生版.docx",
+          "bytes": 1865802,
+          "sha256": "22cc1eac4e9749e33739dfcd3098b35171ae7029644a45977faa70d39a003b35"
+        }
+      ],
+      "warning_codes_or_text": []
+    },
+    {
+      "scenario": "x008_teacher_only",
+      "job_id": "8dfc97faa08b4c06af30b5352d0cd050",
+      "status": "done",
+      "engine": "V0.9",
+      "renderer": "STABLE_V09",
+      "elapsed_seconds": 30.725,
+      "raw_terminal_path": "C:\\xml-uat\\release-recovery-20261008\\http_matrix\\x008_teacher_only\\terminal.json",
+      "raw_terminal_sha256": "3d075bb1319afc425222593061220b95074fef737b47bcb378684776a266d3fb",
+      "result_dir": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 第2节 分子动理论的初步知识（培优考点练） 同步讲义",
+      "final_files": [
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 第2节 分子动理论的初步知识（培优考点练） 同步讲义\\2026-2027学年 九年级 物理 第2节 分子动理论的初步知识（培优考点练） 同步讲义 教师版.docx",
+          "bytes": 6597817,
+          "sha256": "344dd819f564893c9b36dd1c7b9802e34bab0089e4f041a3e8ad5be9437459eb"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 第2节 分子动理论的初步知识（培优考点练） 同步讲义\\2026-2027学年 九年级 物理 第2节 分子动理论的初步知识（培优考点练） 同步讲义 学生版.docx",
+          "bytes": 6591201,
+          "sha256": "0d04653920fccbd8a41aee7a8e852e5a678cf43cbe316fbdc7389582b814fbcc"
+        }
+      ],
+      "warning_codes_or_text": [
+        "自动生成的学生版可能仍含有答案或解析，请在使用前检查。",
+        "封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。"
+      ]
+    },
+    {
+      "scenario": "x015_student_only",
+      "job_id": "1d53c4bf5cbe4d99ad94cd03466bc35b",
+      "status": "done",
+      "engine": "V0.9",
+      "renderer": "STABLE_V09",
+      "elapsed_seconds": 16.791,
+      "raw_terminal_path": "C:\\xml-uat\\release-recovery-20261008\\http_matrix\\x015_student_only\\terminal.json",
+      "raw_terminal_sha256": "1c2b9c52231371edda71f617811702f0fe312969257be46a53f8039cbab6afbf",
+      "result_dir": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义（3）",
+      "final_files": [
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义（3）\\2026-2027学年 八年级 数学 专题12.4 一次函数的实际应用 专题讲义 学生版.docx",
+          "bytes": 1197004,
+          "sha256": "3b6642cdbbab352f3c807485411999cfa50ccc8d00bc0786aa348216e3e24816"
+        }
+      ],
+      "warning_codes_or_text": []
+    },
+    {
+      "scenario": "s04_batch",
+      "job_id": "4c22848bf6ff47119d7cd916c6b316d8",
+      "status": "partial",
+      "engine": "V0.9",
+      "renderer": "STABLE_V09",
+      "elapsed_seconds": 51.479,
+      "raw_terminal_path": "C:\\xml-uat\\release-recovery-20261008\\http_matrix\\s04_batch\\terminal.json",
+      "raw_terminal_sha256": "5275a6178f01100396eb8885a506b7ea24f88fcea24663b2228db886c8828abd",
+      "result_dir": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义（2）",
+      "final_files": [
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义（2）\\易错题精选\\2026-2027学年 九年级 物理 易错题精选 同步讲义 教师版.docx",
+          "bytes": 3526964,
+          "sha256": "0fc5e65ffc78832adae22938ea137004617d5ee30ca9a1fb3194106f7ab0d4cd"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义（2）\\易错题精选\\2026-2027学年 九年级 物理 易错题精选 同步讲义 学生版.docx",
+          "bytes": 2704674,
+          "sha256": "2961d5d692458575042417abe1e2b5c84301020beca41778170236a357fbe30b"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义（2）\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容\\2026-2027学年 九年级 物理 2026-2027年人教版物理九年级第十三章第一节 热量 比热容 同步讲义 教师版.docx",
+          "bytes": 4655202,
+          "sha256": "5df71a2d165b06fc26e0fafc0291a6f0c1d1eb6a7b2fd1d9e4704dedfb2021c9"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义（2）\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容\\2026-2027学年 九年级 物理 2026-2027年人教版物理九年级第十三章第一节 热量 比热容 同步讲义 学生版.docx",
+          "bytes": 4495776,
+          "sha256": "55b1806d0981fe0202a0e1b90e7d48f3ed5091bbe9218fb4f31131329bc70639"
+        }
+      ],
+      "warning_codes_or_text": [
+        "封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。"
+      ]
+    },
+    {
+      "scenario": "s04_batch_first",
+      "job_id": "845916fce28f419a90915e00a19bb38e",
+      "status": "partial",
+      "engine": "V0.9",
+      "renderer": "STABLE_V09",
+      "elapsed_seconds": 57.383,
+      "raw_terminal_path": "C:\\xml-uat\\release-recovery-20261008\\http_matrix\\s04_batch_first\\terminal.json",
+      "raw_terminal_sha256": "5b1967d644a7ac462d89defcf1f4446ff6bfa2c62a8200e4590959faa6c52beb",
+      "result_dir": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义",
+      "final_files": [
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义\\易错题精选\\2026-2027学年 九年级 物理 易错题精选 同步讲义 教师版.docx",
+          "bytes": 3526966,
+          "sha256": "5f67d3508cb28da698281db1eefcf5219e9a361afc784371dd1c44434e479a38"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义\\易错题精选\\2026-2027学年 九年级 物理 易错题精选 同步讲义 学生版.docx",
+          "bytes": 2704668,
+          "sha256": "87715d2adeed5ab88794d7b621c6e3dda579b91c6a3f6e5fd50f3656753ee6e8"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容\\2026-2027学年 九年级 物理 2026-2027年人教版物理九年级第十三章第一节 热量 比热容 同步讲义 教师版.docx",
+          "bytes": 4655200,
+          "sha256": "75fe081c921541c84189d453ad65b206066de4b516708934d752b40e7bb35a04"
+        },
+        {
+          "path": "C:\\xml-uat\\release-recovery-20261008\\source-results\\2026-2027学年 九年级 物理 批量讲义 同步讲义\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容\\2026-2027学年 九年级 物理 2026-2027年人教版物理九年级第十三章第一节 热量 比热容 同步讲义 学生版.docx",
+          "bytes": 4495791,
+          "sha256": "0fa2618464329783268f23af00c70e3fff32e7adbf4d796b2a0690d74f34ab03"
+        }
+      ],
+      "warning_codes_or_text": [
+        "封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。"
+      ]
+    }
+  ],
+  "content_comparison_report": "C:\\xml-uat\\release-recovery-20261008\\gate_a_stable_mode_structural_report.json",
+  "media_comparison_report": "C:\\xml-uat\\release-recovery-20261008\\gate_a_stable_media_report.json",
+  "v09_original_controls": "C:\\xml-uat\\release-recovery-20261008\\gate_a_original_v09_structural_report.json",
+  "notes": [
+    "Two ZIP submissions are retained; both end partial with two valid DOCX logical items done and one deliberately corrupt item rejected.",
+    "The teacher-only X008 job used V09_MAKE_STUDENT and displayed the required review warning; COM observation is unknown, so this evidence does not claim zero COM or safe answer deletion.",
+    "All source and output DOCX remain outside the repository; only path/hash/measurements are indexed here.",
+    "No WPS automation was run during Gate A source/content comparison."
+  ],
+  "comparison_artifacts": {
+    "gate_a_stable_mode_structural_report.json": {
+      "path": "C:\\xml-uat\\release-recovery-20261008\\gate_a_stable_mode_structural_report.json",
+      "sha256": "8bc7722f737f1d423be3bc9dc73152f5f4197c065cbeb65efc727f08216df5ae",
+      "bytes": 16989
+    },
+    "gate_a_stable_media_report.json": {
+      "path": "C:\\xml-uat\\release-recovery-20261008\\gate_a_stable_media_report.json",
+      "sha256": "f278fe0ee4bff5ece579aa491a96beba202e0053b0ac515c27bac824200e9575",
+      "bytes": 4438
+    },
+    "gate_a_original_v09_structural_report.json": {
+      "path": "C:\\xml-uat\\release-recovery-20261008\\gate_a_original_v09_structural_report.json",
+      "sha256": "24bf040e06c3a04872c92dc1105ab42b8773ff6e0bbd1d06f9b35a34938f43a3",
+      "bytes": 21026
+    }
+  },
+  "inherited_x008_content_review": {
+    "source_sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+    "frozen_question_groups": 29,
+    "manually_reviewed_physical_questions": 34,
+    "authority": "docs/v2/integration/C3_X008_INDEPENDENT_GOLDEN_APPROVAL.md",
+    "gate_a_teacher_only_student_route": "V09_MAKE_STUDENT",
+    "answer_removal_accuracy_proven_by_this_gate_a_run": false
+  }
+}
