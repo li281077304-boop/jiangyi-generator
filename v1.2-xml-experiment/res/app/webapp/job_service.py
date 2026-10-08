@@ -17,7 +17,7 @@ from package_validator import validate_package
 from input_versions import classify_inputs, UnknownInputVersion, InputClassification
 from batch_inputs import resolve_batch
 from topic_normalization import normalize_display_topic
-from disk_preflight import check_disk_space
+from disk_preflight import check_disk_space, estimate_input_bytes
 
 
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
@@ -192,7 +192,7 @@ class JobService:
                       _source_origins: list[str] | None = None) -> dict:
         if not files or len(files) > 2:
             raise UnsupportedInput("本轮只支持一个 DOCX，或一组教师版和学生版 DOCX")
-        check_disk_space(self.runtime_root, self.result_root, sum(len(data) for _, data in files))
+        check_disk_space(self.runtime_root, self.result_root, estimate_input_bytes(files))
         validated = [(filename or "source.docx", self.validate_docx(filename or "source.docx", data), data)
                      for filename, data in files]
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
@@ -339,7 +339,7 @@ class JobService:
 
     def create_batch(self, files: list[tuple[str, bytes]], options: dict) -> dict:
         """Persist a parent plus isolated C1 jobs; never route a whole batch to COM."""
-        check_disk_space(self.runtime_root, self.result_root, sum(len(data) for _, data in files))
+        check_disk_space(self.runtime_root, self.result_root, estimate_input_bytes(files))
         logical = resolve_batch(files, str(options.get("docx_mode") or "auto"))
         form_options = {field: str(options.get(field, "")) for field in FORM_FIELDS}
         form_options["engine_mode"] = form_options["engine_mode"] or "auto"

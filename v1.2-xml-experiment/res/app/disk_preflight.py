@@ -3,8 +3,25 @@ from pathlib import Path
 import os
 import shutil
 import tempfile
+import io
+import zipfile
 
 RESERVE_BYTES = 256 * 1024 * 1024
+
+
+def estimate_input_bytes(files):
+    """Use bounded ZIP directory sizes without expanding any uploaded payload."""
+    total = 0
+    for name, data in files:
+        estimate = len(data)
+        try:
+            with zipfile.ZipFile(io.BytesIO(data)) as archive:
+                estimate = max(estimate, min(200 * 1024 * 1024,
+                                             sum(i.file_size for i in archive.infolist())))
+        except zipfile.BadZipFile:
+            pass  # The existing input validator supplies the corrupt-file reason.
+        total += estimate
+    return total
 
 
 class DiskSpaceError(ValueError):
