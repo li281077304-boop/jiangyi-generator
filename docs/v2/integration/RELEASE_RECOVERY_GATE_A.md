@@ -1,8 +1,8 @@
 # V1.2 Release Recovery — Gate A Original V0.9 Stability Control
 
-Status: **ORIGINAL_V09_PAIR_CONTROL_COMPLETE; WPS VISUAL REVIEW PENDING**  
-Run date: 2026-10-08 (Asia/Shanghai)  
-Product repository HEAD at run start: `a7c37d8e0c55322b3d90246aa1117eb0065c02f2`  
+Status: **ORIGINAL_V09_PAIR_CONTROL_COMPLETE; WPS VISUAL REVIEW PENDING**
+Run date: 2026-10-08 (Asia/Shanghai)
+Product repository HEAD at run start: `a7c37d8e0c55322b3d90246aa1117eb0065c02f2`
 Evidence root: `C:\xml-uat\release-recovery-20261008`
 
 ## Engine and source integrity

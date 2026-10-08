@@ -135,4 +135,3 @@ def test_batch_children_keep_selected_engine_mode(tmp_path):
         child = service.get(item["child_job_id"])
         assert child["options"]["engine_mode"] == "xml_restricted"
         assert child["selected_engine"] == "XML"
-
