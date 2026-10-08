@@ -15,7 +15,7 @@ import zipfile
 from werkzeug.utils import secure_filename
 from package_validator import validate_package
 from input_versions import classify_inputs, UnknownInputVersion, InputClassification
-from batch_inputs import resolve_batch
+from batch_inputs import resolve_batch, MAX_EXPANDED_BYTES
 from topic_normalization import normalize_display_topic
 from disk_preflight import check_disk_space, estimate_input_bytes
 
@@ -126,6 +126,8 @@ class JobService:
             safe = "source.docx"
         try:
             with zipfile.ZipFile(__import__("io").BytesIO(data)) as package:
+                if sum(part.file_size for part in package.infolist()) > MAX_EXPANDED_BYTES:
+                    raise UnsupportedInput("DOCX 展开大小超过安全上限")
                 names = set(package.namelist())
                 if "[Content_Types].xml" not in names or "word/document.xml" not in names:
                     raise UnsupportedInput("上传文件不是有效的 DOCX 包")

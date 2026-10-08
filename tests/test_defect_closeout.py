@@ -59,3 +59,11 @@ def test_http_space_refusal_happens_before_multipart_parse(monkeypatch):
     r=app.test_client().post('/api/jobs',data=b'bad multipart',content_type='multipart/form-data; boundary=x')
     assert r.status_code==507
     assert r.get_json()['error_code']=='INSUFFICIENT_DISK_SPACE'
+
+
+def test_single_docx_expansion_cap_cannot_be_bypassed(tmp_path,monkeypatch):
+    import job_service
+    p=source(tmp_path/'source.docx')
+    monkeypatch.setattr(job_service,'MAX_EXPANDED_BYTES',1)
+    with pytest.raises(job_service.UnsupportedInput,match='展开大小超过安全上限'):
+        job_service.JobService.validate_docx(p.name,p.read_bytes())
