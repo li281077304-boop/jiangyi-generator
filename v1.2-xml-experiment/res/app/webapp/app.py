@@ -43,8 +43,8 @@ app.config.setdefault("STUDENTIZER_EVIDENCE_PROVIDER", None)  # trusted server c
 app.config.setdefault("STUDENTIZER_REVIEWED_MANIFEST_DIR", None)  # None => packaged reviewed evidence
 app.config.setdefault("LOCAL_OCR_MODEL_DIR", Path(os.environ.get(
     "JIANGYI_OCR_MODEL_DIR", str(APP_DIR / "ocr_models"))))
-# V1.2 exposes two explicit modes. XML is restricted and never auto-switches;
-# the stable V0.9 route is selected by the submitted job option.
+# Ordinary jobs use automatic XML degradation followed by compatibility only
+# on technical XML failure. Legacy modes remain internal diagnostic seams.
 _V09_FALLBACK_LOCK = threading.RLock()
 _JOB_SERVICE_LOCK = threading.RLock()
 
@@ -310,8 +310,8 @@ def _execute_job(job_id: str) -> None:
                           if student_source else None)
         template_type = options.get("template_type") or "1v1"
         split_mode = options.get("split_mode") or "smart"
-        engine_mode = options.get("engine_mode") or "stable_v09"
-        if engine_mode not in ("stable_v09", "xml_restricted"):
+        engine_mode = options.get("engine_mode") or "auto"
+        if engine_mode not in ("auto", "stable_v09", "xml_restricted"):
             raise ValueError("不支持的生成引擎模式：%s" % engine_mode)
         if template_type not in ("1v1", "class"):
             raise ValueError("不支持的模板类型：%s" % template_type)
@@ -326,7 +326,26 @@ def _execute_job(job_id: str) -> None:
                        "reviewed_evidence": None, "registry_error": None,
                        "studentizer_fallback": False}
         studentizer_rejected = False
-        if input_version == "TEACHER_ONLY" and engine_mode == "stable_v09":
+        if input_version == "TEACHER_ONLY" and engine_mode == "auto":
+            provider, reviewed, registry_error = _reviewed_provider()
+            started = time.perf_counter()
+            prepared, coverage = prepare_complete_student(teacher_source, student_source, provider)
+            preparation.update({"engine": prepared.engine, "status": prepared.status,
+                                "reason_code": prepared.reason_code, "reason_detail": prepared.reason_detail,
+                                "registry_error": registry_error, "coverage": coverage,
+                                "elapsed_seconds": round(time.perf_counter()-started, 6)})
+            if prepared.status == "XML_PREPARED":
+                preparation.update({"student_preparation": "XML_STUDENTIZER",
+                                    "student_preparation_route": "XML_STUDENTIZER",
+                                    "package_valid": prepared.validation.get("valid") is True})
+            else:
+                # Unproven answer removal is not a deliverable student source.
+                student_source = None
+                student_output = None
+                preparation.update({"student_preparation": "NOT_GENERATED_SAFETY_UNPROVEN",
+                                    "student_preparation_route": "NOT_GENERATED_SAFETY_UNPROVEN"})
+                service.add_warning(job_id, "仅生成教师版：无法安全确认自动去答案结果，请提供原始学生版并复核后生成。")
+        elif input_version == "TEACHER_ONLY" and engine_mode == "stable_v09":
             _persist_job_stage(service, job_id, 0, "V0.9 make_student preparation")
             make_started = time.perf_counter()
             preparation.update({"engine": "V09_MAKE_STUDENT", "status": "V09_STUDENT_PREPARED",
@@ -412,6 +431,7 @@ def _execute_job(job_id: str) -> None:
         metadata_source = teacher_source or student_source
         metadata_lines = read_lesson_source_lines(metadata_source)
         resolved_lesson_metadata = {}
+        role_lesson_metadata = {}
         display_renumbering = {}
         canonical_state = {"occurrences": None}
         fallback_detail = {"value": None, "phase": "PREFLIGHT"}
@@ -435,11 +455,72 @@ def _execute_job(job_id: str) -> None:
                 "training_titles": list(metadata.training_titles),
             })
             details, warning = _lesson_metadata_record(metadata, template_type, topic)
+            if engine_mode == "auto":
+                for role, role_source in active_sources.items():
+                    role_metadata = resolve_lesson_metadata(
+                        role_source, subject=options.get("subject", ""), topic=topic,
+                        knowledge_point_status=knowledge_status,
+                        source_lines=(metadata_lines if role_source == metadata_source else
+                                      read_lesson_source_lines(role_source)))
+                    role_details, _ = _lesson_metadata_record(role_metadata, template_type, topic)
+                    role_lesson_metadata[role] = role_details
+                details["by_role"] = dict(role_lesson_metadata)
             service.update_lesson_metadata(job_id, details, warning=warning)
 
         persist_lesson_metadata("UNKNOWN")
 
         def xml_preflight(_job):
+            if engine_mode == "auto":
+                from xml_degradation import build_degraded_plan, structural_snapshot
+                degradation = {}
+                forced_reason = app.config.get("C0_FORCE_FALLBACK_REASON")
+                if forced_reason:
+                    return {"supported": False, "reason_code": forced_reason,
+                            "detail": "forced unsupported integration fixture"}
+                for role, source_path in active_sources.items():
+                    preserve_only = split_mode == "full"
+                    try:
+                        snapshot = analyze_source(source_path)
+                    except Exception:
+                        snapshot = structural_snapshot(source_path)
+                        preserve_only = True
+                    source_snapshots[role] = snapshot
+                    if not preserve_only:
+                        try:
+                            plans[role], degradation[role] = build_degraded_plan(
+                                source_path, template_type, snapshot=snapshot, navigation_only=True)
+                            continue
+                        except SlotRoutingError:
+                            pass
+                    if not preserve_only and any(block.images for block in snapshot.document.blocks):
+                        try:
+                            from image_role_evidence import (get_local_ocr_recognizer,
+                                                             inspect_document_images, requires_local_ocr)
+                            recognizer = (get_local_ocr_recognizer(Path(app.config["LOCAL_OCR_MODEL_DIR"]))
+                                          if requires_local_ocr(snapshot) else None)
+                            source_image_evidence[role] = inspect_document_images(source_path, snapshot, recognizer)
+                        except Exception as exc:
+                            preserve_only = True
+                            degradation[role] = {"image_inspection_unavailable": str(exc)}
+                            service.add_warning(job_id, "图片内文字未能可靠识别，已按原文顺序完整保留，请复核。")
+                    plans[role], routing = build_degraded_plan(
+                        source_path, template_type, snapshot=snapshot,
+                        image_role_evidence=source_image_evidence.get(role), preserve_only=preserve_only)
+                    degradation[role] = {**degradation.get(role, {}), **routing}
+                statuses = {classify_knowledge_point_status(snapshot, source_image_evidence.get(role))
+                            for role, snapshot in source_snapshots.items()}
+                persist_lesson_metadata(next(iter(statuses)) if len(statuses) == 1 else "UNKNOWN")
+                display_renumbering.update({"status": "DISPLAY_RENUMBER_SKIPPED_INDEPENDENT_SOURCES",
+                                           "slots": {}, "warning": "原文题号保留，未执行双版本对应重编号。"})
+                service.update_route_evidence(job_id, {
+                    "xml_degradation": degradation, "pair_alignment_status": "NOT_REQUIRED_NOT_VERIFIED",
+                    "display_renumbering": display_renumbering,
+                    "image_role_evidence": source_image_evidence})
+                if len(active_sources) == 2:
+                    service.add_warning(job_id, "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。")
+                if any(value["selected_tier"] == "PRESERVATION" for value in degradation.values()):
+                    service.add_warning(job_id, "部分资料无法可靠分槽，已按原文顺序完整保留，未重排题目。")
+                return {"supported": True, "template_sha256": next(iter(plans.values())).template_sha256}
             try:
                 fallback_detail["phase"] = "ROUTER"
                 for role, source_path in active_sources.items():
@@ -618,6 +699,8 @@ def _execute_job(job_id: str) -> None:
                         "difficulties": resolved_lesson_metadata["difficulties"],
                         "cover_display": resolved_lesson_metadata["cover_display"],
                     }
+                    if role in role_lesson_metadata:
+                        metadata.update(role_lesson_metadata[role])
                     # Keep the existing three-argument renderer seam usable by
                     # injected test doubles and compatible integrations. The
                     # production Slot Composer advertises cover_metadata.
@@ -632,11 +715,30 @@ def _execute_job(job_id: str) -> None:
                             if key in parameters or any(parameter.kind is inspect.Parameter.VAR_KEYWORD
                                                         for parameter in parameters.values()):
                                 presentation_args[key] = value
-                        results[role] = render_slots(
-                            str(source_path), plans[role], staging,
-                            cover_metadata=metadata,
-                            **presentation_args,
-                        )
+                        try:
+                            results[role] = render_slots(
+                                str(source_path), plans[role], staging,
+                                cover_metadata=metadata, **presentation_args)
+                        except Exception as first_error:
+                            if engine_mode != "auto":
+                                raise
+                            previous = service.get(job_id).get("xml_degradation", {})
+                            if previous.get(role, {}).get("selected_tier") == "PRESERVATION":
+                                raise
+                            from xml_degradation import build_degraded_plan
+                            plans[role], routing = build_degraded_plan(
+                                source_path, template_type, preserve_only=True)
+                            previous.setdefault(role, {}).setdefault("attempts", []).append({
+                                "tier": "XML_RENDER", "status": "DEGRADED",
+                                "reason_code": getattr(first_error, "reason_code", "XML_RENDER_FAILED"),
+                                "detail": str(first_error)})
+                            previous[role]["attempts"].extend(routing["attempts"])
+                            previous[role]["selected_tier"] = "PRESERVATION"
+                            service.update_route_evidence(job_id, {"xml_degradation": previous})
+                            service.add_warning(job_id, "分槽渲染未能完成，已尝试按原文顺序完整保留，请复核。")
+                            results[role] = render_slots(
+                                str(source_path), plans[role], staging,
+                                cover_metadata=metadata, **presentation_args)
                     else:
                         results[role] = render_slots(str(source_path), plans[role], staging)
             except SlotRoutingError as exc:
@@ -684,6 +786,7 @@ def _execute_job(job_id: str) -> None:
             student_source_doc=(str(student_source) if teacher_source and student_source else None),
             student_output_doc=(str(internal_student) if teacher_source and internal_student else None),
             student_only=teacher_source is None, label=("学生版" if teacher_source is None else "教师版"),
+            teacher_only_output=bool(teacher_source and student_source is None),
         )
 
         def fallback(original_job, reason_code):
@@ -705,7 +808,7 @@ def _execute_job(job_id: str) -> None:
             service.update_renderer_fallback_preparation(job_id, renderer_fallback_preparation)
             # Teacher-only fallback always starts from the original teacher,
             # even if a later renderer gate rejected a validated XML derivative.
-            if input_version == "TEACHER_ONLY":
+            if input_version == "TEACHER_ONLY" and engine_mode != "auto":
                 original_job = replace(original_job, student_source_doc=None)
             original_job = replace(
                 original_job,
@@ -771,13 +874,13 @@ def _execute_job(job_id: str) -> None:
             )
         else:
             service.update_route_evidence(job_id, {
-                "selected_engine": "XML", "renderer_route": "XML_RESTRICTED",
+                "selected_engine": "XML", "renderer_route": "XML_AUTO" if engine_mode == "auto" else "XML_RESTRICTED",
                 "xml_renderer_attempted": False,
             })
             outcome = render_xml_or_fallback(
                 render_job, xml_preflight=xml_preflight, xml_render=xml_render,
                 fallback=fallback, package_validator=validate_package,
-                allow_v09_fallback=False)
+                allow_v09_fallback=engine_mode == "auto")
         if outcome.renderer == "XML":
             generated = []
             if teacher_source:
@@ -787,10 +890,12 @@ def _execute_job(job_id: str) -> None:
             else:
                 generated.append(("student", outcome.output_paths[0], student_output))
         else:
-            targets = ([teacher_output, student_output] if teacher_source else [student_output])
+            targets = ([teacher_output] + ([student_output] if student_source else [])
+                       if teacher_source else [student_output])
             if len(outcome.output_paths) != len(targets):
                 raise RuntimeError("Renderer outputs do not match classified input roles")
-            roles = (["teacher", "student"] if teacher_source else ["student"])
+            roles = (["teacher"] + (["student"] if student_source else [])
+                     if teacher_source else ["student"])
             generated = [(role, source, target) for role, source, target in zip(roles, outcome.output_paths, targets)]
 
         from product_normalizer import normalize_product_docx
@@ -808,6 +913,13 @@ def _execute_job(job_id: str) -> None:
                 "difficulties": resolved_lesson_metadata.get("difficulties", ""),
                 "cover_display": resolved_lesson_metadata.get("cover_display", {}),
             }
+            if role in role_lesson_metadata:
+                normalization_metadata.update(role_lesson_metadata[role])
+                missing = [label for field, label in (("objectives", "教学目标"), ("difficulties", "重点难点"))
+                           if not role_lesson_metadata[role].get(field)]
+                if missing:
+                    service.add_warning(job_id, ("教师版" if role == "teacher" else "学生版") +
+                                        "原文缺少可靠的" + "、".join(missing) + "，已留空，请使用前补充。")
             evidence = normalize_product_docx(
                 renderer_path, normalized_path, template_type=template_type,
                 metadata=normalization_metadata,

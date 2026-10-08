@@ -77,6 +77,7 @@ class RenderJob:
     student_source_doc: Optional[str] = None
     student_output_doc: Optional[str] = None
     student_only: bool = False
+    teacher_only_output: bool = False
 
 
 @dataclass(frozen=True)
@@ -311,6 +312,18 @@ def _render_v09(job: RenderJob, reason_code: Optional[str]) -> dict[str, Any]:
                 objectives=job.objectives, difficulties=job.difficulties,
                 grade=job.grade, subject=job.subject, handout_type=job.handout_type,
                 fmt=True)
+        _require_v09_output(output, log)
+        return {"output_paths": [str(output)], "fallback_reason": reason_code,
+                "selected_engine": "V0.9", "logs": [str(log)],
+                "baseline_sha": V09_BASELINE_SHA, "whole_job": True}
+
+    if job.teacher_only_output:
+        with contextlib.redirect_stdout(io.StringIO()):
+            _version, log = engine.build_version(
+                job.label, str(source), str(output), job.topic,
+                template=str(template), template_type=job.template_type,
+                objectives=job.objectives, difficulties=job.difficulties,
+                grade=job.grade, subject=job.subject, handout_type=job.handout_type, fmt=True)
         _require_v09_output(output, log)
         return {"output_paths": [str(output)], "fallback_reason": reason_code,
                 "selected_engine": "V0.9", "logs": [str(log)],

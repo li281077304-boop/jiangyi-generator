@@ -1,0 +1,111 @@
+{
+  "previous_failure": "ALIGNMENT_UNRESOLVED: explicit student subquestion has no unique complete teacher counterpart",
+  "source_samples": [
+    "X017",
+    "X018"
+  ],
+  "runtime": "pinned C4 CPython build venv (including offline OCR dependencies)",
+  "submitted_via": "production app POST /api/jobs, synchronous test-client runner; not an EXE UAT claim",
+  "results": [
+    {
+      "topic": "1.1 物质的变化和性质 第1课时(讲义)",
+      "template": "1v1",
+      "job_id": "80f411b75b534974a35b147fa321d4fa",
+      "status": "done",
+      "renderer": "XML",
+      "renderer_route": "XML",
+      "degradation": {
+        "student": {
+          "attempts": [
+            {
+              "status": "SELECTED",
+              "tier": "NAVIGATION"
+            }
+          ],
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "selected_tier": "NAVIGATION",
+          "source_sha256": "37a122a04516764af8f4d89844d7b4724500104f94b514b186191566223a2ab3"
+        },
+        "teacher": {
+          "attempts": [
+            {
+              "status": "SELECTED",
+              "tier": "NAVIGATION"
+            }
+          ],
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "selected_tier": "NAVIGATION",
+          "source_sha256": "c2ca52c3967b650fd16aad965fa46687cce309a8b03905b57757da4fcb247e8c"
+        }
+      },
+      "warnings": [
+        "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+      ],
+      "elapsed_seconds": 4.75,
+      "outputs": [
+        {
+          "path": "C:\\xml-uat\\product-rescue-p1-candidate-first-20261008\\results\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义 教师版.docx",
+          "sha256": "df294d6bb23a7965442a3b8a61d7f8cd7e73b912b803d01d5da2a4de76bd13cc",
+          "bytes": 3276326
+        },
+        {
+          "path": "C:\\xml-uat\\product-rescue-p1-candidate-first-20261008\\results\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义 学生版.docx",
+          "sha256": "ce8128431db865ed74c6984666ad55787d6c3b21fdf92211f57b722c6d7af927",
+          "bytes": 3256072
+        }
+      ],
+      "product_integrity_accepted": true,
+      "package_valid": true
+    },
+    {
+      "topic": "1.1 物质的变化和性质 第1课时(讲义)",
+      "template": "class",
+      "job_id": "be8ed8cfd3bd4205a4c0f6104d564980",
+      "status": "done",
+      "renderer": "XML",
+      "renderer_route": "XML",
+      "degradation": {
+        "student": {
+          "attempts": [
+            {
+              "status": "SELECTED",
+              "tier": "NAVIGATION"
+            }
+          ],
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "selected_tier": "NAVIGATION",
+          "source_sha256": "37a122a04516764af8f4d89844d7b4724500104f94b514b186191566223a2ab3"
+        },
+        "teacher": {
+          "attempts": [
+            {
+              "status": "SELECTED",
+              "tier": "NAVIGATION"
+            }
+          ],
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "selected_tier": "NAVIGATION",
+          "source_sha256": "c2ca52c3967b650fd16aad965fa46687cce309a8b03905b57757da4fcb247e8c"
+        }
+      },
+      "warnings": [
+        "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+      ],
+      "elapsed_seconds": 4.678,
+      "outputs": [
+        {
+          "path": "C:\\xml-uat\\product-rescue-p1-candidate-first-20261008\\results\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义（2）\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义 教师版.docx",
+          "sha256": "d6d3ef0442c385fcd1402d856e3fc100d92491092163f9996bf5fbe46186b08c",
+          "bytes": 3813093
+        },
+        {
+          "path": "C:\\xml-uat\\product-rescue-p1-candidate-first-20261008\\results\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义（2）\\2026-2027学年 九年级 化学 1.1 物质的变化和性质 第1课时 复习讲义 学生版.docx",
+          "sha256": "153699ff7a7716f0bdc81e55702cfab38c616bd4929303e29cbb46259d706df8",
+          "bytes": 3792957
+        }
+      ],
+      "product_integrity_accepted": true,
+      "package_valid": true
+    }
+  ]
+}
