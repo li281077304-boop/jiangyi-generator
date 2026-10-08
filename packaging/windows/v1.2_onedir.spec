@@ -50,12 +50,27 @@ if {source.name for source in ocr_models.glob("*.onnx")} != {
 
 ocr_hiddenimports = []
 binaries = []
+
+
+def is_test_artifact(path: str) -> bool:
+    """Reject vendored test trees and fixtures from the onedir package."""
+    parts = Path(path.replace("\\", "/")).parts
+    return any(
+        component.lower() in {"test", "tests", "testing"}
+        for part in parts for component in part.split(".")
+    )
+
+
 for ocr_package in ("rapidocr_onnxruntime", "onnxruntime", "cv2", "numpy", "shapely",
                     "pyclipper", "yaml", "PIL"):
     package_datas, package_binaries, package_hidden = collect_all(ocr_package)
-    datas.extend(package_datas)
+    # collect_all includes large third-party self-test corpora (notably
+    # NumPy/Shapely). They are neither runtime resources nor appropriate for
+    # the user package. Keep the package audit as a second line of defense.
+    datas.extend((source, destination) for source, destination in package_datas
+                 if not is_test_artifact(source) and not is_test_artifact(destination))
     binaries.extend(package_binaries)
-    ocr_hiddenimports.extend(package_hidden)
+    ocr_hiddenimports.extend(name for name in package_hidden if not is_test_artifact(name))
 
 # The web entry and job service are discovered as imports, while preserving
 # their source files beside the other dynamically loaded app modules is useful
