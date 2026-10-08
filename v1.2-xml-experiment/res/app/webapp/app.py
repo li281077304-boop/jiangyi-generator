@@ -954,7 +954,11 @@ def _execute_job(job_id: str) -> None:
         service.update_product_integrity(job_id, integrity_record)
         if not integrity_record["accepted"]:
             codes = sorted({item["reason_code"] for item in integrity_record["errors"]})
-            raise ValueError("PRODUCT_INTEGRITY_GATE: " + ", ".join(codes))
+            message = "PRODUCT_INTEGRITY_GATE: " + ", ".join(codes)
+            if "PRODUCT_TEXTBOX_CONTENT_UNPROVEN" in codes:
+                message = ("原文文本框中的部分正文未能完整保留，已停止交付以避免漏内容。"
+                           "请保留原稿，等待修复。 " + message)
+            raise ValueError(message)
         planned_paths = {role: str(Path(target).resolve()) for role, _source, target in generated}
         staged_hashes = {role: hashlib.sha256(Path(source).read_bytes()).hexdigest()
                          for role, source, _target in generated}
