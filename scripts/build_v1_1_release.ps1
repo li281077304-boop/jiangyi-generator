@@ -1,7 +1,8 @@
 ﻿[CmdletBinding()]
 param(
     [string]$OutputDirectory = '',
-    [string]$Python312 = ''
+    [string]$Python312 = '',
+    [string]$BuildRoot = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -79,7 +80,23 @@ if (-not (Test-Path -LiteralPath $requirementsFile -PathType Leaf)) {
     throw "找不到依赖锁文件：$requirementsFile"
 }
 
-$buildRoot = Join-Path ([IO.Path]::GetTempPath()) ("jiangyi-v1.1-build-" + [Guid]::NewGuid().ToString('N'))
+# Build scratch root. Resolution order:
+#   -BuildRoot  ->  $env:JY_BUILD_ROOT  ->  H:\AI-Workspace\tmp\build (if present)
+#   ->  system temp directory.
+# Rationale: packaging used to write its whole intermediate tree under
+# [IO.Path]::GetTempPath(), which filled the C: drive.
+if (-not $BuildRoot) {
+    if ($env:JY_BUILD_ROOT) {
+        $BuildRoot = $env:JY_BUILD_ROOT
+    } elseif (Test-Path 'H:\AI-Workspace\tmp\build') {
+        $BuildRoot = 'H:\AI-Workspace\tmp\build'
+    } else {
+        $BuildRoot = [IO.Path]::GetTempPath()
+    }
+}
+$BuildRoot = [IO.Path]::GetFullPath($BuildRoot)
+New-Item -ItemType Directory -Path $BuildRoot -Force | Out-Null
+$buildRoot = Join-Path $BuildRoot ("jiangyi-v1.1-build-" + [Guid]::NewGuid().ToString('N'))
 $packageRoot = Join-Path $buildRoot 'package'
 $releaseRoot = Join-Path $packageRoot 'v1.1-stable'
 $runtimeRoot = Join-Path $releaseRoot 'res\python'
