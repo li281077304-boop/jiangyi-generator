@@ -49,3 +49,13 @@ Until actual EXE startup is available, new Chrome task/reconnect/restart evidenc
 Resume with the built candidate and H profile; complete the original defect gates. Do not repeat the already approved Golden/capability research, expand alignment/OOXML scope, create tags, or merge main.
 
 Full regression attempted 2026-10-09 14:24–14:30 China time: 569 tests collected; 360-second deadline exceeded before final summary, with failure markers already present. Scoped owned pytest processes were stopped. This is INCOMPLETE/NOT PASS; exact failure classification remains pending, and no new failures are labelled baseline-known without evidence. Raw partial log is committed in fixtures/product-defect-closeout-20261009/full-regression-incomplete.log.
+
+## Follow-up regression and extracted ZIP verification
+
+At 2026-10-09 14:36 China time, the bounded follow-up completed in 113.09s: **540 passed, 26 failed, 3 deselected, 15 subtests passed**. Deselected: two parameterizations of `test_math_pair_repeated_numbers_align_as_ordered_occurrences` and the old COM `test_real_contract_with_docutils`. These are explicit omissions; full regression remains NOT PASS.
+
+All 26 failed node IDs match the previously reproduced baseline failure lists: 23 Studentizer integration/registry cases and 3 V1.1 API cases. The baseline logs contained 27 failures; `test_job_list_hides_server_path` did not fail in this combined run. This comparison establishes no new failing node IDs in the completed subset, not universal equivalence of failure causes or acceptance of the omitted checks. No algorithm was changed to make these tests pass.
+
+Raw results and node-ID classification are committed under this checkpoint's fixture directory. Baseline source logs are retained under `H:\AI-Workspace\uat\xml-uat\product-rescue-baseline-studentizer.log` and `product-rescue-baseline-v11.log`.
+
+The QA ZIP was extracted to `H:\AI-Workspace\uat\product-defect-closeout-20261009\extracted`. All 1277 listed files (including the package README) match manifest sizes and SHA-256 values; EXE hash matches the original build. This is extraction/hash verification only. EXE startup, browser task, current-binary WPS and updated 33-topic coverage remain pending because the service is not running.

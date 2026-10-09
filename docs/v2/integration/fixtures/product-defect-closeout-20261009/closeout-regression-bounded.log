@@ -1,0 +1,730 @@
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+................................................................. [ 36%]
+........................................................................ [ 49%]
+..................FFFFFFFFFF.FFFFF..........F......................FFFFF [ 62%]
+FF...................................................................... [ 75%]
+.....FFF................................................................ [ 87%]
+................................................................ [ 99%]
+.....                                                                    [100%]
+================================== FAILURES ===================================
+________ test_exact_complete_golden_uses_real_studentizer_without_com _________
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_exact_complete_golden_use0\\runtime\\d7099c05f2ae47fe91ed9e7910b474e0\\work\\input-1.docx']}
+
+    def test_exact_complete_golden_uses_real_studentizer_without_com(client, renderer):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = evidence
+        original = source()
+        final = post(client, [("ר�� ��ʦ��.docx", original)])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML'
+E       AssertionError: assert 'V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9
+
+tests\test_studentizer_integration.py:49: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[incomplete-STUDENTIZER_COVERAGE_INCOMPLETE] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide0\\runtime\\5ca696ed428740ab8f2e06049098bf91\\work\\input-1.docx']}
+mutation = <function incomplete at 0x000001B589869EE0>
+reason = 'STUDENTIZER_COVERAGE_INCOMPLETE'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[unanswered-STUDENTIZER_COVERAGE_INCOMPLETE] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide1\\runtime\\1e01dbde61bf4073a5f8e27921de6bd0\\work\\input-1.docx']}
+mutation = <function unanswered at 0x000001B589869F80>
+reason = 'STUDENTIZER_COVERAGE_INCOMPLETE'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[unreviewed_candidate-STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide2\\runtime\\03f8792c6df94e5783cc49d4617932a8\\work\\input-1.docx']}
+mutation = <function unreviewed_candidate at 0x000001B58986A020>
+reason = 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_COVERAGE_INCOMPLETE] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide3\\runtime\\118fe055533746bab849f216dc2099df\\work\\input-1.docx']}
+mutation = <function <lambda> at 0x000001B58986A0C0>
+reason = 'STUDENTIZER_COVERAGE_INCOMPLETE'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_SOURCE_IDENTITY_MISMATCH0] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide4\\runtime\\4d5b8e4209c94e92bf9f2045699e5610\\work\\input-1.docx']}
+mutation = <function <lambda> at 0x000001B58986A160>
+reason = 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_SOURCE_IDENTITY_MISMATCH1] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide5\\runtime\\7996d2c82272469981091e0b7790f22d\\work\\input-1.docx']}
+mutation = <function <lambda> at 0x000001B58986A200>
+reason = 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_GOLDEN_COMPARISON_FAILED] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide6\\runtime\\bfd4d97dcb1949409e5660aca8bc5df8\\work\\input-1.docx']}
+mutation = <function <lambda> at 0x000001B58986A2A0>
+reason = 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_COVERAGE_UNPROVEN] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide7\\runtime\\848535bfa96c40019d27e280da9a5f9e\\work\\input-1.docx']}
+mutation = <function <lambda> at 0x000001B58986A340>
+reason = 'STUDENTIZER_COVERAGE_UNPROVEN'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+_ test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_incomplete_or_stale_evide8\\runtime\\09aa020284eb48a5b630abb70c7b9256\\work\\input-1.docx']}
+mutation = <function <lambda> at 0x000001B58986A3E0>
+reason = 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'
+
+    @pytest.mark.parametrize('mutation,reason', [
+        (incomplete, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unanswered, 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (unreviewed_candidate, 'STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE'),
+        (lambda e: replace(e, question_ids=e.question_ids[:1]), 'STUDENTIZER_COVERAGE_INCOMPLETE'),
+        (lambda e: replace(e, semantic_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, source_sha256='stale'), 'STUDENTIZER_SOURCE_IDENTITY_MISMATCH'),
+        (lambda e: replace(e, golden_document_sha256='wrong'), 'STUDENTIZER_GOLDEN_COMPARISON_FAILED'),
+        (lambda e: replace(e, coverage_basis='ROLE_ONLY'), 'STUDENTIZER_COVERAGE_UNPROVEN'),
+        (lambda e: replace(e, bindings=(replace(e.bindings[0], owner_id='section'), *e.bindings[1:])), 'STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN'),
+    ])
+    def test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml(client, renderer, mutation, reason):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: mutation(evidence(s, d))
+        final = post(client, [("ר�� ��ʦ��.docx", source())])
+        assert final['status'] == 'done', final.get('error')
+>       assert final['renderer'] == 'XML' and final['fallback_reason'] is None
+E       AssertionError: assert ('V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:92: AssertionError
+______________ test_supplied_student_never_calls_provider[True] _______________
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': []}
+paired = True
+
+    @pytest.mark.parametrize('paired', [True, False])
+    def test_supplied_student_never_calls_provider(client, renderer, paired):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda *_: pytest.fail('provider must be bypassed')
+        student = docx('�����û�ѧ����')
+        files = [('ר�� ѧ����.docx', student)]
+        if paired:
+            files.insert(0, ('ר�� ��ʦ��.docx', source()))
+        final = post(client, files)
+>       assert final['status'] == 'done' and final['renderer'] == 'XML'
+E       AssertionError: assert ('done' == 'done'
+E         
+E           done and 'V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:121: AssertionError
+______________ test_supplied_student_never_calls_provider[False] ______________
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': []}
+paired = False
+
+    @pytest.mark.parametrize('paired', [True, False])
+    def test_supplied_student_never_calls_provider(client, renderer, paired):
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda *_: pytest.fail('provider must be bypassed')
+        student = docx('�����û�ѧ����')
+        files = [('ר�� ѧ����.docx', student)]
+        if paired:
+            files.insert(0, ('ר�� ��ʦ��.docx', source()))
+        final = post(client, files)
+>       assert final['status'] == 'done' and final['renderer'] == 'XML'
+E       AssertionError: assert ('done' == 'done'
+E         
+E           done and 'V0.9' == 'XML'
+E         
+E         - XML
+E         + V0.9)
+
+tests\test_studentizer_integration.py:121: AssertionError
+_____ test_mixed_batch_keeps_xml_and_fallback_independent_and_persistent ______
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['A', 'B', 'C'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Admin...rator\\pytest-3\\test_mixed_batch_keeps_xml_and0\\runtime\\c1fbd14360134bc0a1b244ade1a4ad47\\work\\input-1.docx'], ...}
+
+    def test_mixed_batch_keeps_xml_and_fallback_independent_and_persistent(client, renderer):
+        original = source()
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = lambda s, d: evidence(s, d) if d == original else None
+        final = post(client, [('A ��ʦ��.docx', original), ('B ��ʦ��.docx', docx('unknown')),
+                              ('C ѧ����.docx', docx('supplied'))])
+        assert final['status'] == 'done' and final['produced'] == 5
+>       assert [i['renderer'] for i in final['items']] == ['XML', 'XML', 'XML']
+E       AssertionError: assert ['V0.9', 'V0.9', 'V0.9'] == ['XML', 'XML', 'XML']
+E         
+E         At index 0 diff: 'V0.9' != 'XML'
+E         Use -v to get more diff
+
+tests\test_studentizer_integration.py:133: AssertionError
+_ test_later_xml_failure_fallback_starts_original_and_restores_observer[False] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_later_xml_failure_fallbac0\\runtime\\23c9ce40ba224d32a2af014c3e4b80d2\\work\\input-1.docx']}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58DDBC9E0>
+fail = False
+
+    @pytest.mark.parametrize('fail', [False, True])
+    def test_later_xml_failure_fallback_starts_original_and_restores_observer(client, renderer, monkeypatch, fail):
+        import renderer_orchestrator
+        import template_slot_composer
+        engine = renderer_orchestrator._load_v09_engine()
+        original_callable = engine.make_student
+        seen = []
+        original_fallback = renderer_orchestrator.render_v09_whole_job
+        def fallback(job, reason):
+            seen.append(job)
+            assert job.student_source_doc is None
+            if fail:
+                engine.make_student(job.source_doc, job.student_output_doc)
+                raise RuntimeError('safe fallback failure')
+            return original_fallback(job, reason)
+        def render(*_args):
+            raise RuntimeError('safe XML failure')
+        monkeypatch.setattr(renderer_orchestrator, 'render_v09_whole_job', fallback)
+        monkeypatch.setattr(template_slot_composer, 'render_slots', render)
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = evidence
+        original = source()
+        final = post(client, [('ר�� ��ʦ��.docx', original)])
+        assert final['status'] == ('error' if fail else 'done')
+>       assert seen and Path(seen[0].source_doc).read_bytes() == original
+E       assert ([])
+
+tests\test_studentizer_integration.py:163: AssertionError
+_ test_later_xml_failure_fallback_starts_original_and_restores_observer[True] _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_later_xml_failure_fallbac1\\runtime\\a4685d534e3a47e79d25252278af084a\\work\\input-1.docx']}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58DC758B0>
+fail = True
+
+    @pytest.mark.parametrize('fail', [False, True])
+    def test_later_xml_failure_fallback_starts_original_and_restores_observer(client, renderer, monkeypatch, fail):
+        import renderer_orchestrator
+        import template_slot_composer
+        engine = renderer_orchestrator._load_v09_engine()
+        original_callable = engine.make_student
+        seen = []
+        original_fallback = renderer_orchestrator.render_v09_whole_job
+        def fallback(job, reason):
+            seen.append(job)
+            assert job.student_source_doc is None
+            if fail:
+                engine.make_student(job.source_doc, job.student_output_doc)
+                raise RuntimeError('safe fallback failure')
+            return original_fallback(job, reason)
+        def render(*_args):
+            raise RuntimeError('safe XML failure')
+        monkeypatch.setattr(renderer_orchestrator, 'render_v09_whole_job', fallback)
+        monkeypatch.setattr(template_slot_composer, 'render_slots', render)
+        app.config['STUDENTIZER_EVIDENCE_PROVIDER'] = evidence
+        original = source()
+        final = post(client, [('ר�� ��ʦ��.docx', original)])
+>       assert final['status'] == ('error' if fail else 'done')
+E       AssertionError: assert 'done' == 'error'
+E         
+E         - error
+E         + done
+
+tests\test_studentizer_integration.py:162: AssertionError
+___ test_restart_reuses_normalized_hash_after_renderer_zip_metadata_changes ___
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��', 'ר��'], 'make_student': []}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58E169F70>
+
+    def test_restart_reuses_normalized_hash_after_renderer_zip_metadata_changes(
+            client, renderer, monkeypatch):
+        import app as app_module
+        import template_slot_composer
+    
+        app.config['C0_DISABLE_JOB_SUBMISSION'] = True
+        created = post(client, [('ר�� ��ʦ��.docx', docx('teacher fixture')),
+                               ('ר�� ѧ����.docx', docx('student fixture'))])
+        job_id = created['job_id']
+        interrupted_once = {'done': False}
+    
+        def interrupt_after_teacher(_job_id, stage):
+            if stage == 'published teacher; before next role' and not interrupted_once['done']:
+                interrupted_once['done'] = True
+                raise SystemExit('simulated abrupt process termination')
+    
+        app.config['C35_TEST_STAGE_HOOK'] = interrupt_after_teacher
+        with pytest.raises(SystemExit, match='simulated abrupt process termination'):
+            app_module._execute_job(job_id)
+        interrupted = service().get(job_id)
+        assert interrupted['status'] == 'running'
+        published_teacher = Path(interrupted['publication']['role_paths']['teacher'])
+        teacher_bytes_before = published_teacher.read_bytes()
+        teacher_hash_before = sha256(teacher_bytes_before).hexdigest()
+        old_expected = dict(interrupted['publication']['expected_sha256'])
+        assert interrupted['publication']['published']['teacher']['sha256'] == teacher_hash_before
+        assert not Path(interrupted['publication']['role_paths']['student']).exists()
+    
+        # Startup recovery clears staging; the renderer then regenerates valid DOCX
+        # packages with different ZIP timestamps and therefore different byte hashes.
+        JobService(app.config['RESULT_ROOT'], runtime_root=app.config['RUNTIME_ROOT'])
+        app.extensions.pop('c0_job_services', None)
+        app.config['C35_TEST_STAGE_HOOK'] = None
+        original_render = template_slot_composer.render_slots
+        regenerate = {'with_new_zip_metadata': True}
+        regenerated_hashes = {}
+    
+        def render_with_new_zip_metadata(source_path, plan, output_path):
+            result = original_render(source_path, plan, output_path)
+            if regenerate['with_new_zip_metadata']:
+                output = Path(output_path)
+                temp = output.with_suffix('.rewritten.docx')
+                with zipfile.ZipFile(output, 'r') as source_package:
+                    entries = [(info.filename, source_package.read(info.filename), info.compress_type)
+                               for info in source_package.infolist()]
+                with zipfile.ZipFile(temp, 'w') as target_package:
+                    for name, data, compression in entries:
+                        info = zipfile.ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0))
+                        info.compress_type = compression
+                        target_package.writestr(info, data)
+                temp.replace(output)
+                role = 'student' if output.name.startswith('student-stage-') else 'teacher'
+                regenerated_hashes[role] = sha256(output.read_bytes()).hexdigest()
+            return result
+    
+        monkeypatch.setattr(template_slot_composer, 'render_slots', render_with_new_zip_metadata)
+        app_module._execute_job(job_id)
+    
+        final = service().get(job_id)
+        assert final['status'] == 'done', final.get('error')
+>       assert old_expected['student'] != regenerated_hashes['student']
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'student'
+
+tests\test_studentizer_integration.py:441: KeyError
+_________ test_unloadable_registry_falls_back_and_reports_the_reason __________
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_unloadable_registry_falls0\\runtime\\f3a7e282d94a42ca9a077ed0fe51ddc9\\work\\input-1.docx']}
+tmp_path = WindowsPath('H:/AI-Workspace/tmp/dev/pytest-of-Administrator/pytest-3/test_unloadable_registry_falls0')
+
+    def test_unloadable_registry_falls_back_and_reports_the_reason(client, renderer, tmp_path):  # noqa: F811
+        write_manifest(tmp_path, mutate(lambda m: m.update(contract="ROLE_INFERENCE")))
+        app_module.app.config["STUDENTIZER_REVIEWED_MANIFEST_DIR"] = str(tmp_path)
+        try:
+            final = post(client, [("ר�� ��ʦ��.docx", docx("֪ʶ��"))])
+            assert final["status"] == "done", final.get("error")
+            preparation = final["student_preparation"]
+>           assert preparation["status"] == "STUDENTIZER_FALLBACK_REQUIRED"
+E           AssertionError: assert 'V09_STUDENT_PREPARED' == 'STUDENTIZER_...BACK_REQUIRED'
+E             
+E             - STUDENTIZER_FALLBACK_REQUIRED
+E             + V09_STUDENT_PREPARED
+
+tests\test_studentizer_production_registry.py:168: AssertionError
+____ test_production_teacher_only_supported_path_never_calls_make_student _____
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_production_teacher_only_s0\\runtime\\478998b8048544218d748d64ae49ec53\\work\\input-1.docx']}
+
+    def test_production_teacher_only_supported_path_never_calls_make_student(client, renderer):  # noqa: F811
+        data = approved_source().read_bytes()
+        final = post(client, [("ר�� ��ʦ��.docx", data)])
+        assert final["status"] == "done", final.get("error")
+        preparation = final["student_preparation"]
+>       assert preparation["status"] == "XML_PREPARED"
+E       AssertionError: assert 'V09_STUDENT_PREPARED' == 'XML_PREPARED'
+E         
+E         - XML_PREPARED
+E         + V09_STUDENT_PREPARED
+
+tests\test_studentizer_production_registry.py:184: AssertionError
+____ test_unreviewed_source_uses_v09_student_preparation_then_xml_renderer ____
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_unreviewed_source_uses_v00\\runtime\\c657a852c6f843c6b3dcd4faff3ff782\\work\\input-1.docx']}
+
+    def test_unreviewed_source_uses_v09_student_preparation_then_xml_renderer(client, renderer):  # noqa: F811
+        final = post(client, [("ר�� ��ʦ��.docx", docx("֪ʶ�㣺�ӷ�", "1���� 2+3��", "���𰸡�5"))])
+        assert final["status"] == "done", final.get("error")
+        preparation = final["student_preparation"]
+>       assert preparation["status"] == "STUDENTIZER_FALLBACK_REQUIRED"
+E       AssertionError: assert 'V09_STUDENT_PREPARED' == 'STUDENTIZER_...BACK_REQUIRED'
+E         
+E         - STUDENTIZER_FALLBACK_REQUIRED
+E         + V09_STUDENT_PREPARED
+
+tests\test_studentizer_production_registry.py:208: AssertionError
+_ test_v09_engine_loader_failure_records_selected_route_without_claiming_call_or_com _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': [], 'make_student': []}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58EDEF200>
+
+    def test_v09_engine_loader_failure_records_selected_route_without_claiming_call_or_com(
+            client, renderer, monkeypatch):  # noqa: F811
+        import renderer_orchestrator
+    
+        def fail_loader():
+            raise ImportError("fixture engine loader failure")
+    
+        monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine", fail_loader)
+        final = post(client, [("ר�� ��ʦ��.docx", docx("֪ʶ��"))])
+        assert final["status"] == "error"
+        preparation = final["student_preparation"]
+        assert preparation["student_preparation_route"] == "V09_MAKE_STUDENT"
+        assert preparation["make_student_called"] is False
+>       assert preparation["com_used"] is False and preparation["wps_com_started"] is False
+E       assert (None is False)
+
+tests\test_studentizer_production_registry.py:235: AssertionError
+_____ test_v09_make_student_entry_failure_marks_call_but_not_observed_com _____
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': [], 'make_student': []}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58EDEE330>
+
+    def test_v09_make_student_entry_failure_marks_call_but_not_observed_com(
+            client, renderer, monkeypatch):  # noqa: F811
+        from types import SimpleNamespace
+        import renderer_orchestrator
+    
+        def fail_before_com(*_args, **_kwargs):
+            raise ValueError("fixture strip_red failed before COM")
+    
+        monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
+                            lambda: SimpleNamespace(make_student=fail_before_com))
+        final = post(client, [("ר�� ��ʦ��.docx", docx("֪ʶ��"))])
+        assert final["status"] == "error"
+        preparation = final["student_preparation"]
+        assert preparation["student_preparation_route"] == "V09_MAKE_STUDENT"
+        assert preparation["make_student_called"] is True, repr(preparation)
+        assert preparation["com_used"] is None and preparation["wps_com_started"] is None
+        assert preparation["com_observation"] == "UNKNOWN_AFTER_MAKE_STUDENT_ENTRY"
+>       assert preparation["reason_code"] == "STUDENTIZER_COVERAGE_UNPROVEN"
+E       AssertionError: assert None == 'STUDENTIZER_COVERAGE_UNPROVEN'
+
+tests\test_studentizer_production_registry.py:260: AssertionError
+_ test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback _
+
+client = <FlaskClient <Flask 'app'>>
+renderer = {'xml': [], 'fallback': [], 'selected': ['ר��'], 'make_student': ['H:\\AI-Workspace\\tmp\\dev\\pytest-of-Administrator\\pytest-3\\test_renderer_failure_after_v00\\runtime\\223275ba27da4035b84da38e1a25720a\\work\\input-1.docx']}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58F970140>
+
+    def test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback(
+            client, renderer, monkeypatch):
+        import template_slot_composer
+    
+        def fail_render(*_args):
+            raise RuntimeError("renderer fixture refusal")
+    
+        monkeypatch.setattr(template_slot_composer, "render_slots", fail_render)
+        final = post(client, [("ר�� ��ʦ��.docx", docx("֪ʶ��"))])
+        assert final["status"] == "done" and final["renderer"] == "V0.9"
+>       assert final["fallback_reason"] == "XML_RENDER_FAILED"
+E       AssertionError: assert None == 'XML_RENDER_FAILED'
+
+tests\test_studentizer_production_registry.py:276: AssertionError
+___ test_forced_renderer_refusal_persists_reason_and_uses_original_teacher ____
+
+client = <FlaskClient <Flask 'app'>>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B58E180A70>
+
+    def test_forced_renderer_refusal_persists_reason_and_uses_original_teacher(
+            client, monkeypatch):
+        """A renderer refusal must fall back from the original source, without COM."""
+        from types import SimpleNamespace
+        import renderer_orchestrator
+        import template_slot_composer
+        data = approved_source().read_bytes()
+        seen = []
+        com_entries = []
+    
+        def make_student(*args, **kwargs):
+            com_entries.append(args)
+            raise AssertionError("substituted fallback must not enter the COM-capable path")
+    
+        def fallback(job, reason):
+            seen.append((job, reason, Path(job.source_doc).read_bytes()))
+            assert job.student_source_doc is None
+            outputs = [job.output_doc]
+            write_product_fixture(job.output_doc, job.template_type)
+            student = Path(job.student_output_doc)
+            write_product_fixture(student, job.template_type)
+            outputs.append(str(student))
+            return {"output_paths": outputs, "whole_job": True,
+                    "baseline_sha": renderer_orchestrator.V09_BASELINE_SHA}
+    
+        monkeypatch.setattr(renderer_orchestrator, "render_v09_whole_job", fallback)
+        monkeypatch.setattr(renderer_orchestrator, "_load_v09_engine",
+                            lambda: SimpleNamespace(make_student=make_student))
+        monkeypatch.setattr(template_slot_composer, "render_slots", lambda *_args, **_kwargs: (
+            (_ for _ in ()).throw(renderer_orchestrator.FallbackRequired(
+                "UNSUPPORTED_BOOKMARK_SCOPE", "forced renderer refusal fixture"))))
+        final = post(client, [("ר�� ��ʦ��.docx", data)])
+>       assert final["status"] == "done", final.get("error")
+E       AssertionError: GENERATION_FAILED: AssertionError: substituted fallback must not enter the COM-capable path
+E       assert 'error' == 'done'
+E         
+E         - done
+E         + error
+
+tests\test_studentizer_production_registry.py:317: AssertionError
+_________ AppApiTests.test_rejects_invalid_files_and_duplicate_names __________
+
+self = <test_app_api.AppApiTests testMethod=test_rejects_invalid_files_and_duplicate_names>
+
+    def test_rejects_invalid_files_and_duplicate_names(self):
+        invalid = self.client.post(
+            "/api/jobs", data={"files": (io.BytesIO(b"x"), "notes.txt")},
+            content_type="multipart/form-data")
+>       self.assertEqual(invalid.status_code, 400)
+E       AssertionError: 415 != 400
+
+v1.1-stable\res\app\webapp\test_app_api.py:73: AssertionError
+____ AppApiTests.test_running_job_is_returned_instead_of_starting_another _____
+
+self = <test_app_api.AppApiTests testMethod=test_running_job_is_returned_instead_of_starting_another>
+
+    def test_running_job_is_returned_instead_of_starting_another(self):
+        jobs.JOBS["active-job"] = {"status": "running", "result_zip": None}
+        response = self.client.post(
+            "/api/jobs", data={"files": (io.BytesIO(b"x"), "new.docx")},
+            content_type="multipart/form-data")
+>       self.assertEqual(response.status_code, 409)
+E       AssertionError: 415 != 409
+
+v1.1-stable\res\app\webapp\test_app_api.py:87: AssertionError
+_______ AppApiTests.test_two_docx_can_be_paired_or_processed_separately _______
+
+self = <test_app_api.AppApiTests testMethod=test_two_docx_can_be_paired_or_processed_separately>
+
+    def test_two_docx_can_be_paired_or_processed_separately(self):
+        paired = self._post_pair("auto")
+>       self.assertEqual(paired.status_code, 200)
+E       AssertionError: 415 != 200
+
+v1.1-stable\res\app\webapp\test_app_api.py:58: AssertionError
+============================== warnings summary ===============================
+v1.2-xml-experiment/res/app/test_canonical_pair_alignment.py::test_teacher_omml_blank_fill_must_be_between_xml_delimiters
+  H:\AI-Workspace\work\jiangyi-generator\v1.2-xml-experiment\res\app\test_canonical_pair_alignment.py:600: DeprecationWarning: Testing an element's truth value will always return True in future versions.  Use specific 'len(elem)' or 'elem is not None' test instead.
+    insert_at = 1 if paragraph and paragraph[0].tag == w + "pPr" else 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_studentizer_integration.py::test_exact_complete_golden_uses_real_studentizer_without_com
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[incomplete-STUDENTIZER_COVERAGE_INCOMPLETE]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[unanswered-STUDENTIZER_COVERAGE_INCOMPLETE]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[unreviewed_candidate-STUDENTIZER_UNHANDLED_ANSWER_CANDIDATE]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_COVERAGE_INCOMPLETE]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_SOURCE_IDENTITY_MISMATCH0]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_SOURCE_IDENTITY_MISMATCH1]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_GOLDEN_COMPARISON_FAILED]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_COVERAGE_UNPROVEN]
+FAILED tests/test_studentizer_integration.py::test_incomplete_or_stale_evidence_uses_v09_preparation_then_xml[<lambda>-STUDENTIZER_ANSWER_OWNERSHIP_UNPROVEN]
+FAILED tests/test_studentizer_integration.py::test_supplied_student_never_calls_provider[True]
+FAILED tests/test_studentizer_integration.py::test_supplied_student_never_calls_provider[False]
+FAILED tests/test_studentizer_integration.py::test_mixed_batch_keeps_xml_and_fallback_independent_and_persistent
+FAILED tests/test_studentizer_integration.py::test_later_xml_failure_fallback_starts_original_and_restores_observer[False]
+FAILED tests/test_studentizer_integration.py::test_later_xml_failure_fallback_starts_original_and_restores_observer[True]
+FAILED tests/test_studentizer_integration.py::test_restart_reuses_normalized_hash_after_renderer_zip_metadata_changes
+FAILED tests/test_studentizer_production_registry.py::test_unloadable_registry_falls_back_and_reports_the_reason
+FAILED tests/test_studentizer_production_registry.py::test_production_teacher_only_supported_path_never_calls_make_student
+FAILED tests/test_studentizer_production_registry.py::test_unreviewed_source_uses_v09_student_preparation_then_xml_renderer
+FAILED tests/test_studentizer_production_registry.py::test_v09_engine_loader_failure_records_selected_route_without_claiming_call_or_com
+FAILED tests/test_studentizer_production_registry.py::test_v09_make_student_entry_failure_marks_call_but_not_observed_com
+FAILED tests/test_studentizer_production_registry.py::test_renderer_failure_after_v09_student_preparation_uses_whole_job_fallback
+FAILED tests/test_studentizer_production_registry.py::test_forced_renderer_refusal_persists_reason_and_uses_original_teacher
+FAILED v1.1-stable/res/app/webapp/test_app_api.py::AppApiTests::test_rejects_invalid_files_and_duplicate_names
+FAILED v1.1-stable/res/app/webapp/test_app_api.py::AppApiTests::test_running_job_is_returned_instead_of_starting_another
+FAILED v1.1-stable/res/app/webapp/test_app_api.py::AppApiTests::test_two_docx_can_be_paired_or_processed_separately
+26 failed, 540 passed, 3 deselected, 1 warning, 15 subtests passed in 113.09s (0:01:53)

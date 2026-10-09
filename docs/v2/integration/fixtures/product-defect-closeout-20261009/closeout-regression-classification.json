@@ -1,0 +1,17 @@
+{
+  "current_failed": 26,
+  "previously_reproduced_failures": 26,
+  "new_failure_nodeids": [],
+  "baseline_failures_not_failing_in_this_run": [
+    "v1.1-stable/res/app/webapp/test_app_api.py::AppApiTests::test_job_list_hides_server_path"
+  ],
+  "deselected": [
+    "test_math_pair_repeated_numbers_align_as_ordered_occurrences[1v1]",
+    "test_math_pair_repeated_numbers_align_as_ordered_occurrences[class]",
+    "test_real_contract_with_docutils"
+  ],
+  "passed": 540,
+  "failed": 26,
+  "subtests_passed": 15,
+  "full_suite_pass": false
+}
