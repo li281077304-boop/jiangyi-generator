@@ -74,6 +74,7 @@ $allowedRuntimeDocuments = @(
     '_internal/v1.2-xml-experiment/res/app/webapp/static/previews/class.pdf'
 )
 $forbidden = @($sourceFiles | Where-Object {
+    $_.path -match '(?i)(ocr_models|image_role_evidence|rapidocr|onnxruntime|opencv|/cv2/|/numpy[/.\-]|/shapely[/.\-]|/pyclipper/|\.onnx$)' -or
     $_.path -match '(^|/)(tests?|corpus|gold|\.git|__pycache__|\.pytest_cache|\.venv)(/|$)' -or
     $_.path -match '(^|/)(private|uat|user-data)(/|$)' -or
     ($_.path -match '\.(docx?|pdf|zip)$' -and
@@ -146,6 +147,7 @@ try {
             if ($requiredEntry -notin $entryNames) { throw "RC ZIP is missing required entry: $requiredEntry" }
         }
         $zipForbidden = @($entryNames | Where-Object {
+            $_ -match '(?i)(ocr_models|image_role_evidence|rapidocr|onnxruntime|opencv|/cv2/|/numpy[/.\-]|/shapely[/.\-]|/pyclipper/|\.onnx$)' -or
             $_ -match '(^|/)(tests?|corpus|gold|\.git|__pycache__|\.pytest_cache|\.venv)(/|$)' -or
             $_ -match '(^|/)(private|uat|user-data)(/|$)' -or
             ($_ -match '\.(docx?|pdf|zip)$' -and $_ -notin (@(

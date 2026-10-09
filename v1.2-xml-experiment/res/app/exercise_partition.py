@@ -89,8 +89,18 @@ def partition_exercises(source, template_type, snapshot):
                      and not re.match(r'^\s*\d+[.．、)）]\s*(?:答案|解析|解答)', blocks[seq].text))
         groups.append({'start': start, 'end': end, 'weight': max(1, weight),
                        'intent': contexts.get(start, 'unknown')})
-    candidates = [g for g in groups if g['intent'] not in ('knowledge', 'immediate', 'final')]
+    proven_knowledge = any(route == 'knowledge' for route in heads.values())
+    example_start = None
+    if not proven_knowledge:
+        if len(groups) < 3:
+            raise SlotRoutingError('INSUFFICIENT_COMPLETE_GROUPS_FOR_THREE_SLOTS',
+                                   'one source example and two training slots require three whole groups')
+        example_start = groups[0]['start']
+    candidates = [g for g in groups if g['intent'] not in ('knowledge', 'immediate', 'final')
+                  and g['start'] != example_start]
     fixed = {g['start']: g['intent'] for g in groups if g['intent'] in ('knowledge', 'immediate', 'final')}
+    if example_start is not None:
+        fixed[example_start] = 'knowledge'
     if len(candidates) >= 2:
         weights = [g['weight'] for g in candidates]
         total = sum(weights)
@@ -100,8 +110,7 @@ def partition_exercises(source, template_type, snapshot):
         fixed[candidates[0]['start']] = 'immediate'
     # Preamble only constitutes knowledge when it contains an actual knowledge
     # section. Otherwise it follows the first exercise, without inventing text.
-    proven_knowledge = any(route == 'knowledge' for route in heads.values())
-    current = 'knowledge' if proven_knowledge else fixed[groups[0]['start']]
+    current = 'knowledge'
     routes = {}
     for seq in range(len(blocks)):
         if seq in fixed:
@@ -140,10 +149,12 @@ def partition_exercises(source, template_type, snapshot):
                     for u in units),
         explicit_final_heading=any(v=='final' for v in heads.values()),
         knowledge_point_status='KNOWLEDGE_POINT_PRESENT' if proven_knowledge else 'NO_KNOWLEDGE_POINT',
-        omitted_slots=() if slot_blocks['knowledge'] else ('knowledge',),
+        omitted_slots=(),
         cover_metadata_blocks=tuple('b%d'%s for s in sorted(cover)),
         training_split_strategy='WHOLE_COMPONENT_70_30', training_question_routes=signatures)
     evidence={'selected_tier':'RULES','method':'WHOLE_COMPONENT_70_30','groups':groups,
               'group_routes':fixed,'protected_components':protected,
-              'pair_alignment':'NOT_REQUIRED_NOT_VERIFIED','source_sha256':snapshot.source_sha256}
+              'pair_alignment':'NOT_REQUIRED_NOT_VERIFIED','source_sha256':snapshot.source_sha256,
+              'knowledge_content_mode':'SOURCE_KNOWLEDGE' if proven_knowledge else 'SOURCE_EXAMPLE',
+              'source_example_group':groups[0] if example_start is not None else None}
     return plan, evidence

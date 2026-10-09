@@ -13,7 +13,7 @@ if str(APP_DIR) not in sys.path:
 
 
 def write_product_fixture(output_path, template_type="1v1", *, source_path=None,
-                          paragraphs=None):
+                          paragraphs=None, knowledge_paragraphs=None):
     """Write the frozen V1.2 template shape plus optional source text blocks.
 
     Renderer doubles must return a DOCX that satisfies the production
@@ -35,6 +35,19 @@ def write_product_fixture(output_path, template_type="1v1", *, source_path=None,
         source = Document(str(source_path))
         content.extend(paragraph.text for paragraph in source.paragraphs if paragraph.text)
     cell = carrier_table.cell(5, 0)
+    if knowledge_paragraphs:
+        from docx.oxml import OxmlElement
+        from template_slot_composer import _paragraph_text, W_P
+        anchor = next(p for p in carrier.iter(W_P)
+                      if _paragraph_text(p) == '知识精讲&例题讲解')
+        for text in knowledge_paragraphs:
+            paragraph = OxmlElement('w:p')
+            run = OxmlElement('w:r')
+            node = OxmlElement('w:t')
+            node.text = str(text)
+            run.append(node); paragraph.append(run)
+            anchor.addnext(paragraph)
+            anchor = paragraph
     for text in content:
         cell.add_paragraph(str(text))
     document.save(str(output_path))

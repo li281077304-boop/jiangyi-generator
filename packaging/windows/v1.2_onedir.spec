@@ -2,7 +2,6 @@
 """Pinned Windows x64 onedir recipe. All output paths are supplied externally."""
 from pathlib import Path
 import os
-from PyInstaller.utils.hooks import collect_all
 
 ROOT = Path(os.environ["C4_REPO_ROOT"]).resolve()
 APP = ROOT / "v1.2-xml-experiment" / "res" / "app"
@@ -12,9 +11,10 @@ if not ENTRY.is_file():
     raise SystemExit("C4 launcher entry is missing: %s" % ENTRY)
 
 datas = []
+EXPERIMENT_ONLY_MODULES = {"struct_dump", "image_role_evidence"}
 runtime_module_names = [
     source.stem for source in sorted(APP.glob("*.py"))
-    if not source.name.startswith("test_") and source.name != "struct_dump.py"
+    if not source.name.startswith("test_") and source.stem not in EXPERIMENT_ONLY_MODULES
 ]
 
 
@@ -28,7 +28,7 @@ def add_file(source: Path, relative_destination: str) -> None:
 # source-file A-Line loader, and frozen V0.9 runtime loader.
 app_rel = Path("v1.2-xml-experiment/res/app")
 for source in sorted(APP.glob("*.py")):
-    if source.name.startswith("test_") or source.name == "struct_dump.py":
+    if source.name.startswith("test_") or source.stem in EXPERIMENT_ONLY_MODULES:
         continue
     add_file(source, str(app_rel))
 
@@ -39,28 +39,9 @@ for source in sorted((WEBAPP / "static").rglob("*")):
     if source.is_file():
         add_file(source, str(app_rel / "webapp" / "static" / source.relative_to(WEBAPP / "static").parent))
 
-ocr_hiddenimports = []
+# Pillow's standard PyInstaller hook collects ordinary image support.
+# OCR experiment modules and their model/runtime closure stay outside the package.
 binaries = []
-
-
-def is_test_artifact(path: str) -> bool:
-    """Reject vendored test trees and fixtures from the onedir package."""
-    parts = Path(path.replace("\\", "/")).parts
-    return any(
-        component.lower() in {"test", "tests", "testing"}
-        for part in parts for component in part.split(".")
-    )
-
-
-for ocr_package in ("PIL",):
-    package_datas, package_binaries, package_hidden = collect_all(ocr_package)
-    # collect_all includes large third-party self-test corpora (notably
-    # NumPy/Shapely). They are neither runtime resources nor appropriate for
-    # the user package. Keep the package audit as a second line of defense.
-    datas.extend((source, destination) for source, destination in package_datas
-                 if not is_test_artifact(source) and not is_test_artifact(destination))
-    binaries.extend(package_binaries)
-    ocr_hiddenimports.extend(name for name in package_hidden if not is_test_artifact(name))
 
 # The web entry and job service are discovered as imports, while preserving
 # their source files beside the other dynamically loaded app modules is useful
@@ -102,12 +83,13 @@ analysis = Analysis(
     # Flask sees the correct template root. Analyze the source-loaded runtime
     # closure separately, avoiding test modules and retaining their source data
     # for the two audited path-based loaders.
-    hiddenimports=runtime_module_names + ["job_service", "flask"] + ocr_hiddenimports,
+    hiddenimports=runtime_module_names + ["job_service", "flask"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=["pytest", "unittest", "tests", "test_app_api", "app",
-              "rapidocr_onnxruntime", "onnxruntime", "cv2", "numpy", "shapely", "pyclipper"],
+              "rapidocr_onnxruntime", "onnxruntime", "cv2", "numpy", "shapely", "pyclipper", "image_role_evidence",
+              "PIL.AvifImagePlugin", "PIL._avif"],
     noarchive=False,
     optimize=1,
 )

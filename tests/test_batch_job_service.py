@@ -10,7 +10,14 @@ import zipfile
 
 from docx import Document
 import pytest
-from product_fixture_utils import write_product_fixture
+from product_fixture_utils import write_product_fixture as _write_product_fixture
+
+
+def write_product_fixture(*args, **kwargs):
+    # These renderer doubles exercise lifecycle, not semantic extraction.
+    # Return a populated knowledge section under the new product contract.
+    kwargs.setdefault('knowledge_paragraphs', ['测试替身的知识讲解内容'])
+    return _write_product_fixture(*args, **kwargs)
 
 ROOT = Path(__file__).resolve().parents[1]
 WEBAPP = ROOT / "v1.2-xml-experiment" / "res" / "app" / "webapp"

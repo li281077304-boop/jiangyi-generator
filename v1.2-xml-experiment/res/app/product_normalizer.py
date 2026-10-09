@@ -41,11 +41,12 @@ def inspect_delivered_slots(path: str | Path, template_type: str, *,
         return False
     paragraphs = list(document.element.body.iter(W_P))
     labels = {
+        "knowledge": {"知识精讲", "知识精讲&例题讲解", "三、知识精讲"},
         "immediate": {"即时训练", "三、即时训练", "四、即时训练"},
         "final": {"六、巩固练习", "五、巩固练习"} if template_type == "1v1"
                  else {"六、出门测试", "五、出门测试"},
     }
-    stops = {"归纳总结", "四、归纳总结", "五、归纳总结"} | labels["final"]
+    stops = {"归纳总结", "四、归纳总结", "五、归纳总结"} | labels["final"] | labels["immediate"]
     sections = {}
     for slot, names in labels.items():
         anchors = [p for p in paragraphs if _paragraph_text(p) in names]
@@ -154,14 +155,13 @@ def normalize_product_docx(source_path: str | Path, output_path: str | Path, *,
 
     # Import lazily to share the single tested structural implementation with
     # the XML composer without making Renderer selection part of this module.
-    from template_slot_composer import _anchor_module2_end_divider, _fill_cover_metadata, omit_empty_knowledge
+    from template_slot_composer import _anchor_module2_end_divider, _fill_cover_metadata
 
     document = Document(str(source))
     _fill_cover_metadata(document, template_type, dict(metadata))
     title_projection = _project_short_source_title(
         document, metadata.get("topic", ""), template_type)
     anchor = _anchor_module2_end_divider(document, template_type)
-    omitted = omit_empty_knowledge(document, template_type)
     temporary = output.with_name(".%s.normalize-%s.docx" % (output.stem, uuid.uuid4().hex))
     canonical = output.with_name(".%s.canonical-%s.docx" % (output.stem, uuid.uuid4().hex))
     try:
@@ -174,7 +174,7 @@ def normalize_product_docx(source_path: str | Path, output_path: str | Path, *,
                              "; ".join(package.get("errors", [])[:5]))
         return {
             "status": "NORMALIZED",
-            "empty_knowledge_module": omitted,
+            "empty_knowledge_module": {"status": "REQUIRED", "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE"},
             "version": "V1.2_PRODUCT_NORMALIZATION_V1",
             "source_path": str(source),
             "output_path": str(output),

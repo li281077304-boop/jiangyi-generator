@@ -896,8 +896,6 @@ def render_slots(
             page_layout = {"status": "NATIVE_TEMPLATE_PAGE_TWO",
                            "page_break": "TEMPLATE_FLOW"}
 
-        if not blocks_by_slot['knowledge']:
-            omit_empty_knowledge(document, plan.template_type)
         output.parent.mkdir(parents=True, exist_ok=True)
         fd, temp_name = tempfile.mkstemp(prefix=".slot-composer-", suffix=".docx",
                                          dir=str(output.parent))

@@ -8,7 +8,6 @@ $ErrorActionPreference = 'Stop'
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $spec = Join-Path $repo 'packaging\windows\v1.2_onedir.spec'
 $lock = Join-Path $PSScriptRoot 'C4_ONEDIR_REQUIREMENTS-WIN64.lock'
-$ocrLock = Join-Path $repo 'packaging\windows\ocr-requirements.lock'
 $python = (& py -3.12 -c "import platform,sys; print(sys.executable); print(sys.version_info.major,sys.version_info.minor,sys.version_info.micro,platform.machine())").Trim().Split("`n")
 if ($LASTEXITCODE -ne 0 -or $python.Count -lt 2 -or $python[1].Trim() -ne '3 12 10 AMD64') {
     throw 'Build requires CPython 3.12.10 x64 (AMD64); no alternate runtime is accepted.'
@@ -26,11 +25,11 @@ try {
     & $basePython (Join-Path $repo 'tools\verify_v09_fallback_assets.py')
     if ($LASTEXITCODE -ne 0) { throw 'Frozen V0.9 asset verification failed.' }
     if (-not $SkipBuild) {
-        if (Test-Path -LiteralPath $venv) { Remove-Item -LiteralPath $venv -Recurse -Force }
+        if (Test-Path -LiteralPath $venv) { throw 'Use a fresh BuildRoot; existing environments are preserved.' }
         & $basePython -m venv $venv
         if ($LASTEXITCODE -ne 0) { throw 'Could not create isolated build venv.' }
         $venvPython = Join-Path $venv 'Scripts\python.exe'
-        & $venvPython -m pip install --disable-pip-version-check --requirement $lock --requirement $ocrLock
+        & $venvPython -m pip install --disable-pip-version-check --requirement $lock
         if ($LASTEXITCODE -ne 0) { throw 'Pinned dependency installation failed.' }
         & $venvPython -m pip check
         if ($LASTEXITCODE -ne 0) { throw 'Pinned build environment failed pip check.' }
@@ -43,22 +42,18 @@ try {
     $exe = Join-Path $package '讲义生成器.exe'
     if (-not (Test-Path -LiteralPath $exe)) { throw "Expected onedir executable is missing: $exe" }
     if (-not (Test-Path -LiteralPath (Join-Path $package '_internal'))) { throw 'PyInstaller _internal directory is missing.' }
-    $versions = (& (Join-Path $venv 'Scripts\python.exe') -c "import sys,platform,flask,lxml,docx,PyInstaller,rapidocr_onnxruntime,onnxruntime,cv2,numpy,flatbuffers,google.protobuf; import importlib.metadata as m; print('\n'.join([sys.version.split()[0],platform.machine(),'Flask '+flask.__version__,'lxml '+lxml.__version__,'python-docx '+docx.__version__,'PyInstaller '+PyInstaller.__version__,'rapidocr-onnxruntime '+m.version('rapidocr-onnxruntime'),'onnxruntime '+onnxruntime.__version__,'opencv-python '+cv2.__version__,'numpy '+numpy.__version__,'flatbuffers '+m.version('flatbuffers'),'protobuf '+m.version('protobuf')]))").Trim()
+    $versions = (& (Join-Path $venv 'Scripts\python.exe') -c "import sys,platform,flask,lxml,docx,PyInstaller; import importlib.metadata as m; print('\n'.join([sys.version.split()[0],platform.machine(),'Flask '+flask.__version__,'lxml '+lxml.__version__,'python-docx '+docx.__version__,'PyInstaller '+PyInstaller.__version__]))").Trim()
     $files = Get-ChildItem -LiteralPath $package -File -Recurse | Sort-Object FullName | ForEach-Object {
         $relative = $_.FullName.Substring($package.Length + 1).Replace('\','/')
         [ordered]@{ path=$relative; size_bytes=$_.Length; sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath $_.FullName).Hash.ToLowerInvariant() }
     }
-    $excluded = @($files | Where-Object { $_.path -match '(^|/)(tests?|corpus|gold|\.git|__pycache__|\.pytest_cache|\.venv)(/|$)' -or $_.path -match '(^|/)(private|uat)(/|$)' })
+    $excluded = @($files | Where-Object { $_.path -match '(?i)(ocr_models|image_role_evidence|rapidocr|onnxruntime|opencv|/cv2/|/numpy[/.\-]|/shapely[/.\-]|/pyclipper/|\.onnx$)' -or $_.path -match '(^|/)(tests?|corpus|gold|\.git|__pycache__|\.pytest_cache|\.venv)(/|$)' -or $_.path -match '(^|/)(private|uat)(/|$)' })
     if ($excluded.Count) { throw ('Forbidden package content found: ' + (($excluded | ForEach-Object path) -join ', ')) }
     $required = @(
         '_internal/v1.2-xml-experiment/res/app/webapp/templates/index.html',
         '_internal/v1.2-xml-experiment/res/app/webapp/static/workspace.js',
         '_internal/v1.2-xml-experiment/res/app/webapp/static/workspace.css',
         '_internal/v1.2-xml-experiment/res/app/reviewed_studentizer/X008.json',
-        '_internal/v1.2-xml-experiment/res/app/ocr_models/ch_PP-OCRv4_det_infer.onnx',
-        '_internal/v1.2-xml-experiment/res/app/ocr_models/ch_PP-OCRv4_rec_infer.onnx',
-        '_internal/v1.2-xml-experiment/res/app/ocr_models/ch_ppocr_mobile_v2.0_cls_infer.onnx',
-        '_internal/v1.2-xml-experiment/res/app/ocr_models/NOTICE.md',
         '_internal/tools/stage2_baseline/run_baseline.py',
         '_internal/v1.1-stable/res/app/2025+1v1讲义模板(2).docx',
         '_internal/v1.1-stable/res/app/2025班课模板.docx'

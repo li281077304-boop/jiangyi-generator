@@ -13,7 +13,7 @@ from template_slot_composer import omit_empty_knowledge, render_slots, _paragrap
 
 
 @pytest.mark.parametrize('template', ['1v1', 'class'])
-def test_training_only_final_sections_and_continuous_headings(tmp_path, template):
+def test_training_only_keeps_knowledge_with_source_example_and_original_modules(tmp_path, template):
     source = tmp_path / 'source.docx'
     doc = Document()
     for i in range(1, 21):
@@ -27,14 +27,17 @@ def test_training_only_final_sections_and_continuous_headings(tmp_path, template
     output = Document(final)
     texts = [_paragraph_text(p) for p in output.element.body.iter(
         '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p')]
-    assert not any(t in ('知识精讲', '知识精讲&例题讲解') for t in texts)
-    assert '三、即时训练' in texts
-    assert '四、归纳总结' in texts
-    assert ('五、巩固练习' if template == '1v1' else '五、出门测试') in texts
+    assert any(t in ('知识精讲', '知识精讲&例题讲解') for t in texts)
+    assert '即时训练' in texts
+    assert '五、归纳总结' in texts
+    assert ('六、巩固练习' if template == '1v1' else '六、出门测试') in texts
     assert inspect_delivered_slots(final, template)['verified']
-    before = output.element.xml
-    omit_empty_knowledge(output, template)
-    assert output.element.xml == before
+    for i in range(1, 21):
+        assert texts.count(f'{i}. Independent exercise number {i}?') == 1
+    assert len(plan.slots['knowledge']) == 1
+    assert len(plan.slots['immediate']) == 13
+    assert len(plan.slots['final']) == 6
+
 
 
 def test_duplicate_slot_heading_is_not_verified(tmp_path):
@@ -75,6 +78,8 @@ def test_image_only_slots_require_source_media_provenance(tmp_path):
     doc.save(source)
     final = tmp_path / 'final.docx'
     output = Document()
+    output.add_paragraph('知识精讲')
+    output.add_picture(str(image))
     output.add_paragraph('即时训练')
     output.add_picture(str(image))
     output.add_paragraph('五、归纳总结')
@@ -88,6 +93,8 @@ def test_image_only_slots_require_source_media_provenance(tmp_path):
 def test_product_package_excludes_ocr_and_production_does_not_call_it():
     root = Path(__file__).resolve().parents[1]
     spec = (root / 'packaging/windows/v1.2_onedir.spec').read_text(encoding='utf-8')
+    assert 'collect_all' not in spec
+    assert 'image_role_evidence' in spec
     assert 'ocr_models' not in spec
     for package in ('rapidocr_onnxruntime', 'onnxruntime', 'cv2', 'numpy', 'shapely'):
         assert '"' + package + '"' in spec.split('excludes=')[1]

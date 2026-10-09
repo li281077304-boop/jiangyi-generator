@@ -16,12 +16,14 @@ def make_source(tmp_path, lines):
     return p, analyze_source(p)
 
 
-def test_twenty_independent_questions_split_fourteen_six(tmp_path):
+def test_twenty_independent_questions_reserve_one_example_then_split_thirteen_six(tmp_path):
     p,s = make_source(tmp_path, ['%d. Solve independent item %d?'%(i,i) for i in range(1,21)])
     plan, evidence = partition_exercises(p, '1v1', s)
-    assert len(plan.slots['immediate']) == 14
+    assert len(plan.slots['knowledge']) == 1
+    assert len(plan.slots['immediate']) == 13
     assert len(plan.slots['final']) == 6
-    assert plan.omitted_slots == ('knowledge',)
+    assert plan.omitted_slots == ()
+    assert evidence['knowledge_content_mode'] == 'SOURCE_EXAMPLE'
     ids = [span.start for spans in plan.slots.values() for span in spans]
     assert len(set(ids)) == len(ids) == 20
 
@@ -54,3 +56,25 @@ def test_real_knowledge_is_preserved_without_using_exercises_as_knowledge(tmp_pa
     plan,e = partition_exercises(p,'1v1',s)
     assert {span.start for span in plan.slots['knowledge']} == {'b0','b1','b2'}
     assert plan.slots['immediate'] and plan.slots['final']
+
+
+def test_source_example_keeps_entire_passage_and_its_answers(tmp_path):
+    lines = []
+    for n in range(1, 6):
+        lines += [f'Passage {n}', 'A complete shared passage.', '1. First question?',
+                  '2. Second question?', '参考答案', '1. A', '2. B']
+    path, snapshot = make_source(tmp_path, lines)
+    plan, evidence = partition_exercises(path, '1v1', snapshot)
+    assert evidence['knowledge_content_mode'] == 'SOURCE_EXAMPLE'
+    assert {span.start for span in plan.slots['knowledge']} == {f'b{i}' for i in range(7)}
+    ids = [span.start for spans in plan.slots.values() for span in spans]
+    assert len(ids) == len(set(ids)) == len(lines)
+
+
+def test_two_groups_cannot_fake_three_filled_slots(tmp_path):
+    from slot_router import SlotRoutingError
+    import pytest
+    path, snapshot = make_source(tmp_path, ['1. Independent question?', '2. Another question?'])
+    with pytest.raises(SlotRoutingError) as failure:
+        partition_exercises(path, '1v1', snapshot)
+    assert failure.value.reason_code == 'INSUFFICIENT_COMPLETE_GROUPS_FOR_THREE_SLOTS'

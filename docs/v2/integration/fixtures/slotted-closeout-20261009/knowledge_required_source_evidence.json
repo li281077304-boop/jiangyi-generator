@@ -1,0 +1,2590 @@
+[
+  {
+    "job_id": "5a82285860e94b188b945efb970f8a07",
+    "status": "done",
+    "renderer": "XML",
+    "slot_status": "SLOTTED",
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 16,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 15,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 193,
+              "verified": true
+            }
+          },
+          "sha256": "07da4bf6626c4697ce49144303af5491bcefcafdb97105c35a2a957342be222b",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 97,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 53,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 325,
+              "verified": true
+            }
+          },
+          "sha256": "71be3dbdea23f41a999efa4bd74ef4b3527421e4f79dd9ffaa2368ec1bbc196a",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "204": "immediate",
+            "209": "immediate",
+            "213": "immediate",
+            "218": "final",
+            "225": "final"
+          },
+          "groups": [
+            {
+              "end": 208,
+              "intent": "practice",
+              "start": 204,
+              "weight": 1
+            },
+            {
+              "end": 212,
+              "intent": "practice",
+              "start": 209,
+              "weight": 1
+            },
+            {
+              "end": 217,
+              "intent": "practice",
+              "start": 213,
+              "weight": 1
+            },
+            {
+              "end": 224,
+              "intent": "practice",
+              "start": 218,
+              "weight": 1
+            },
+            {
+              "end": 234,
+              "intent": "practice",
+              "start": 225,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "5de439a0ffd3d3e3cef358d9a1eb270eb712f7d2100ef1f62ef61fb44d997acd"
+        },
+        "source_block_counts": {
+          "final": 17,
+          "immediate": 15,
+          "knowledge": 203
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "341": "immediate",
+            "361": "immediate",
+            "373": "immediate",
+            "395": "final",
+            "438": "final"
+          },
+          "groups": [
+            {
+              "end": 360,
+              "intent": "practice",
+              "start": 341,
+              "weight": 1
+            },
+            {
+              "end": 372,
+              "intent": "practice",
+              "start": 361,
+              "weight": 1
+            },
+            {
+              "end": 394,
+              "intent": "practice",
+              "start": 373,
+              "weight": 1
+            },
+            {
+              "end": 437,
+              "intent": "practice",
+              "start": 395,
+              "weight": 1
+            },
+            {
+              "end": 491,
+              "intent": "practice",
+              "start": 438,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "729ee50db5f87f89838054dcb5296201d26fb474826fdf0d09551d207b1c476a"
+        },
+        "source_block_counts": {
+          "final": 97,
+          "immediate": 55,
+          "knowledge": 340
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "options": {
+      "academicYear": "",
+      "academic_year": "",
+      "docxMode": "",
+      "docx_mode": "",
+      "engine_mode": "auto",
+      "grade": "高三",
+      "handoutType": "",
+      "handout_type": "",
+      "splitMode": "",
+      "split_mode": "",
+      "subject": "英语",
+      "templateType": "1v1",
+      "template_type": "1v1"
+    },
+    "source_provenance": {
+      "0": {
+        "bytes": 71113,
+        "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+        "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\input-1.docx",
+        "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17"
+      },
+      "1": {
+        "bytes": 90931,
+        "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+        "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\input-2.docx",
+        "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a"
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0311,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 605,
+            "repeated_sequences": [],
+            "sha256": "71be3dbdea23f41a999efa4bd74ef4b3527421e4f79dd9ffaa2368ec1bbc196a",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 24618,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 554,
+            "repeated_sequences": [],
+            "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 23876,
+            "top_level_blocks": 492
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0558,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 348,
+            "repeated_sequences": [],
+            "sha256": "07da4bf6626c4697ce49144303af5491bcefcafdb97105c35a2a957342be222b",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 14040,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 297,
+            "repeated_sequences": [],
+            "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13298,
+            "top_level_blocks": 235
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 71113,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 297,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 13298,
+              "top_level_blocks": 235
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\input-1.docx",
+            "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17"
+          },
+          "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+          "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\input-1.docx",
+          "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17"
+        },
+        "teacher": {
+          "bytes": 90931,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 554,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 23876,
+              "top_level_blocks": 492
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\input-2.docx",
+            "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a"
+          },
+          "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+          "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\input-2.docx",
+          "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0311,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 605,
+            "repeated_sequences": [],
+            "sha256": "71be3dbdea23f41a999efa4bd74ef4b3527421e4f79dd9ffaa2368ec1bbc196a",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 24618,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 554,
+            "repeated_sequences": [],
+            "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 23876,
+            "top_level_blocks": 492
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0558,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 348,
+            "repeated_sequences": [],
+            "sha256": "07da4bf6626c4697ce49144303af5491bcefcafdb97105c35a2a957342be222b",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 14040,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 297,
+            "repeated_sequences": [],
+            "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13298,
+            "top_level_blocks": 235
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "product_normalization": {
+      "outputs": {
+        "student": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 76,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 19,
+            "spacer_intervals": 13,
+            "spacer_pt": 19.65,
+            "target_y": 760.3
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\normalized-student-5a82285860e94b188b945efb970f8a07.docx",
+          "output_sha256": "07da4bf6626c4697ce49144303af5491bcefcafdb97105c35a2a957342be222b",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 31,
+              "drawing_image_references": 15,
+              "errors": 0,
+              "image_media_targets": 15,
+              "num_references": 7,
+              "package_parts": 19,
+              "picture_ids": 15,
+              "relationship_references": 18,
+              "relationships": 16,
+              "style_references": 23,
+              "warnings": 0,
+              "xml_parts": 13
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\student-stage-5a82285860e94b188b945efb970f8a07.docx",
+          "source_sha256": "faf1ef14d7fb66107701f3bac1b9784f13acf0ac226f5dd6955415aa738178c4",
+          "source_title_projection": {
+            "candidate": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "1v1",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        },
+        "teacher": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 76,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 19,
+            "spacer_intervals": 13,
+            "spacer_pt": 19.65,
+            "target_y": 760.3
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\normalized-teacher-5a82285860e94b188b945efb970f8a07.docx",
+          "output_sha256": "71be3dbdea23f41a999efa4bd74ef4b3527421e4f79dd9ffaa2368ec1bbc196a",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 32,
+              "drawing_image_references": 15,
+              "errors": 0,
+              "image_media_targets": 15,
+              "num_references": 7,
+              "package_parts": 19,
+              "picture_ids": 15,
+              "relationship_references": 18,
+              "relationships": 16,
+              "style_references": 23,
+              "warnings": 0,
+              "xml_parts": 13
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\5a82285860e94b188b945efb970f8a07\\work\\teacher-output-5a82285860e94b188b945efb970f8a07.docx",
+          "source_sha256": "3fb025fc3f3c60e9937377824659c8c2cf0e58e23925223834f13be12cf42c3e",
+          "source_title_projection": {
+            "candidate": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "1v1",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        }
+      },
+      "renderer": "XML",
+      "status": "NORMALIZED",
+      "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 学生版.docx"
+    ],
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "unclassified section at b28: 四、综合训练：以“语境”代“规则”",
+            "reason_code": "SLOT_ROUTING_AMBIGUOUS",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "204": "immediate",
+            "209": "immediate",
+            "213": "immediate",
+            "218": "final",
+            "225": "final"
+          },
+          "groups": [
+            {
+              "end": 208,
+              "intent": "practice",
+              "start": 204,
+              "weight": 1
+            },
+            {
+              "end": 212,
+              "intent": "practice",
+              "start": 209,
+              "weight": 1
+            },
+            {
+              "end": 217,
+              "intent": "practice",
+              "start": 213,
+              "weight": 1
+            },
+            {
+              "end": 224,
+              "intent": "practice",
+              "start": 218,
+              "weight": 1
+            },
+            {
+              "end": 234,
+              "intent": "practice",
+              "start": 225,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "5de439a0ffd3d3e3cef358d9a1eb270eb712f7d2100ef1f62ef61fb44d997acd"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "5de439a0ffd3d3e3cef358d9a1eb270eb712f7d2100ef1f62ef61fb44d997acd"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "unclassified section at b29: 四、综合训练：以“语境”代“规则”",
+            "reason_code": "SLOT_ROUTING_AMBIGUOUS",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "341": "immediate",
+            "361": "immediate",
+            "373": "immediate",
+            "395": "final",
+            "438": "final"
+          },
+          "groups": [
+            {
+              "end": 360,
+              "intent": "practice",
+              "start": 341,
+              "weight": 1
+            },
+            {
+              "end": 372,
+              "intent": "practice",
+              "start": 361,
+              "weight": 1
+            },
+            {
+              "end": 394,
+              "intent": "practice",
+              "start": 373,
+              "weight": 1
+            },
+            {
+              "end": 437,
+              "intent": "practice",
+              "start": 395,
+              "weight": 1
+            },
+            {
+              "end": 491,
+              "intent": "practice",
+              "start": 438,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "729ee50db5f87f89838054dcb5296201d26fb474826fdf0d09551d207b1c476a"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "729ee50db5f87f89838054dcb5296201d26fb474826fdf0d09551d207b1c476a"
+      }
+    },
+    "warnings": [
+      "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+    ]
+  },
+  {
+    "job_id": "6af8d10660154debbb3ced3ea11c156c",
+    "status": "done",
+    "renderer": "XML",
+    "slot_status": "SLOTTED",
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 16,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 15,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 193,
+              "verified": true
+            }
+          },
+          "sha256": "d9d04959f3e9b36e63250151fdab96e5cdc837d955944815d4bf01b2d9adbf31",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 97,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 53,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 325,
+              "verified": true
+            }
+          },
+          "sha256": "a06a71c63e845f19d78ada67438769e0a28d7d03328b9a62136e2c7b6ec60161",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "204": "immediate",
+            "209": "immediate",
+            "213": "immediate",
+            "218": "final",
+            "225": "final"
+          },
+          "groups": [
+            {
+              "end": 208,
+              "intent": "practice",
+              "start": 204,
+              "weight": 1
+            },
+            {
+              "end": 212,
+              "intent": "practice",
+              "start": 209,
+              "weight": 1
+            },
+            {
+              "end": 217,
+              "intent": "practice",
+              "start": 213,
+              "weight": 1
+            },
+            {
+              "end": 224,
+              "intent": "practice",
+              "start": 218,
+              "weight": 1
+            },
+            {
+              "end": 234,
+              "intent": "practice",
+              "start": 225,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "5de439a0ffd3d3e3cef358d9a1eb270eb712f7d2100ef1f62ef61fb44d997acd"
+        },
+        "source_block_counts": {
+          "final": 17,
+          "immediate": 15,
+          "knowledge": 203
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "341": "immediate",
+            "361": "immediate",
+            "373": "immediate",
+            "395": "final",
+            "438": "final"
+          },
+          "groups": [
+            {
+              "end": 360,
+              "intent": "practice",
+              "start": 341,
+              "weight": 1
+            },
+            {
+              "end": 372,
+              "intent": "practice",
+              "start": 361,
+              "weight": 1
+            },
+            {
+              "end": 394,
+              "intent": "practice",
+              "start": 373,
+              "weight": 1
+            },
+            {
+              "end": 437,
+              "intent": "practice",
+              "start": 395,
+              "weight": 1
+            },
+            {
+              "end": 491,
+              "intent": "practice",
+              "start": 438,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "729ee50db5f87f89838054dcb5296201d26fb474826fdf0d09551d207b1c476a"
+        },
+        "source_block_counts": {
+          "final": 97,
+          "immediate": 55,
+          "knowledge": 340
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "options": {
+      "academicYear": "",
+      "academic_year": "",
+      "docxMode": "",
+      "docx_mode": "",
+      "engine_mode": "auto",
+      "grade": "高三",
+      "handoutType": "",
+      "handout_type": "",
+      "splitMode": "",
+      "split_mode": "",
+      "subject": "英语",
+      "templateType": "class",
+      "template_type": "class"
+    },
+    "source_provenance": {
+      "0": {
+        "bytes": 71113,
+        "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+        "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\input-1.docx",
+        "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17"
+      },
+      "1": {
+        "bytes": 90931,
+        "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+        "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\input-2.docx",
+        "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a"
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0256,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 613,
+            "repeated_sequences": [],
+            "sha256": "a06a71c63e845f19d78ada67438769e0a28d7d03328b9a62136e2c7b6ec60161",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 24487,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 554,
+            "repeated_sequences": [],
+            "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 23876,
+            "top_level_blocks": 492
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0459,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 356,
+            "repeated_sequences": [],
+            "sha256": "d9d04959f3e9b36e63250151fdab96e5cdc837d955944815d4bf01b2d9adbf31",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13909,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 297,
+            "repeated_sequences": [],
+            "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13298,
+            "top_level_blocks": 235
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 71113,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 297,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 13298,
+              "top_level_blocks": 235
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\input-1.docx",
+            "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17"
+          },
+          "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+          "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\input-1.docx",
+          "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17"
+        },
+        "teacher": {
+          "bytes": 90931,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 554,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 23876,
+              "top_level_blocks": 492
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\input-2.docx",
+            "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a"
+          },
+          "origin": "direct_upload:专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+          "original_filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\input-2.docx",
+          "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0256,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 613,
+            "repeated_sequences": [],
+            "sha256": "a06a71c63e845f19d78ada67438769e0a28d7d03328b9a62136e2c7b6ec60161",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 24487,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 554,
+            "repeated_sequences": [],
+            "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 23876,
+            "top_level_blocks": 492
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0459,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 356,
+            "repeated_sequences": [],
+            "sha256": "d9d04959f3e9b36e63250151fdab96e5cdc837d955944815d4bf01b2d9adbf31",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13909,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 297,
+            "repeated_sequences": [],
+            "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13298,
+            "top_level_blocks": 235
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "product_normalization": {
+      "outputs": {
+        "student": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 68,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 16,
+            "spacer_intervals": 10,
+            "spacer_pt": 22.0,
+            "target_y": 740.1
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\normalized-student-6af8d10660154debbb3ced3ea11c156c.docx",
+          "output_sha256": "d9d04959f3e9b36e63250151fdab96e5cdc837d955944815d4bf01b2d9adbf31",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 25,
+              "drawing_image_references": 9,
+              "errors": 0,
+              "image_media_targets": 16,
+              "num_references": 6,
+              "package_parts": 23,
+              "picture_ids": 9,
+              "relationship_references": 18,
+              "relationships": 18,
+              "style_references": 18,
+              "vml_image_references": 7,
+              "warnings": 0,
+              "xml_parts": 14
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\student-stage-6af8d10660154debbb3ced3ea11c156c.docx",
+          "source_sha256": "f1b3fa305cc4b98f17ea0677c618516c10c2f0633d787aeb9974117589435085",
+          "source_title_projection": {
+            "candidate": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "class",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        },
+        "teacher": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 68,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 16,
+            "spacer_intervals": 10,
+            "spacer_pt": 22.0,
+            "target_y": 740.1
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\normalized-teacher-6af8d10660154debbb3ced3ea11c156c.docx",
+          "output_sha256": "a06a71c63e845f19d78ada67438769e0a28d7d03328b9a62136e2c7b6ec60161",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 26,
+              "drawing_image_references": 9,
+              "errors": 0,
+              "image_media_targets": 16,
+              "num_references": 6,
+              "package_parts": 23,
+              "picture_ids": 9,
+              "relationship_references": 18,
+              "relationships": 18,
+              "style_references": 18,
+              "vml_image_references": 7,
+              "warnings": 0,
+              "xml_parts": 14
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\6af8d10660154debbb3ced3ea11c156c\\work\\teacher-output-6af8d10660154debbb3ced3ea11c156c.docx",
+          "source_sha256": "1b79085030ba89cb05ddfe10dc168d133dd420c9bff40ebe51f049339d61b909",
+          "source_title_projection": {
+            "candidate": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "class",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        }
+      },
+      "renderer": "XML",
+      "status": "NORMALIZED",
+      "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（2）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（2）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 学生版.docx"
+    ],
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "unclassified section at b28: 四、综合训练：以“语境”代“规则”",
+            "reason_code": "SLOT_ROUTING_AMBIGUOUS",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "204": "immediate",
+            "209": "immediate",
+            "213": "immediate",
+            "218": "final",
+            "225": "final"
+          },
+          "groups": [
+            {
+              "end": 208,
+              "intent": "practice",
+              "start": 204,
+              "weight": 1
+            },
+            {
+              "end": 212,
+              "intent": "practice",
+              "start": 209,
+              "weight": 1
+            },
+            {
+              "end": 217,
+              "intent": "practice",
+              "start": 213,
+              "weight": 1
+            },
+            {
+              "end": 224,
+              "intent": "practice",
+              "start": 218,
+              "weight": 1
+            },
+            {
+              "end": 234,
+              "intent": "practice",
+              "start": 225,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "5de439a0ffd3d3e3cef358d9a1eb270eb712f7d2100ef1f62ef61fb44d997acd"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "5de439a0ffd3d3e3cef358d9a1eb270eb712f7d2100ef1f62ef61fb44d997acd"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "unclassified section at b29: 四、综合训练：以“语境”代“规则”",
+            "reason_code": "SLOT_ROUTING_AMBIGUOUS",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "341": "immediate",
+            "361": "immediate",
+            "373": "immediate",
+            "395": "final",
+            "438": "final"
+          },
+          "groups": [
+            {
+              "end": 360,
+              "intent": "practice",
+              "start": 341,
+              "weight": 1
+            },
+            {
+              "end": 372,
+              "intent": "practice",
+              "start": 361,
+              "weight": 1
+            },
+            {
+              "end": 394,
+              "intent": "practice",
+              "start": 373,
+              "weight": 1
+            },
+            {
+              "end": 437,
+              "intent": "practice",
+              "start": 395,
+              "weight": 1
+            },
+            {
+              "end": 491,
+              "intent": "practice",
+              "start": 438,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "729ee50db5f87f89838054dcb5296201d26fb474826fdf0d09551d207b1c476a"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "729ee50db5f87f89838054dcb5296201d26fb474826fdf0d09551d207b1c476a"
+      }
+    },
+    "warnings": [
+      "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+    ]
+  },
+  {
+    "job_id": "d1a2374e24ae4697bf5b51ae21c3432b",
+    "status": "done",
+    "renderer": "XML",
+    "slot_status": "SLOTTED",
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 14,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 47,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 180,
+              "verified": true
+            }
+          },
+          "sha256": "b47609f6f54f5624558d9030c03913528ce9c0d1bffe913fcfcbf22e928699bc",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 36,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 146,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 355,
+              "verified": true
+            }
+          },
+          "sha256": "79f78bd6e0f6bd432a9f17289b479654832069e5a9f49fede87e1816407e6c3d",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "189": "immediate",
+            "236": "final"
+          },
+          "groups": [
+            {
+              "end": 235,
+              "intent": "practice",
+              "start": 189,
+              "weight": 14
+            },
+            {
+              "end": 250,
+              "intent": "practice",
+              "start": 236,
+              "weight": 7
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              189,
+              235,
+              "u047"
+            ],
+            [
+              236,
+              250,
+              "u049"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "925791b2c66d127707ceb9267f35988a34d476ae542b95bde712fe4cb8dccdfa"
+        },
+        "source_block_counts": {
+          "final": 15,
+          "immediate": 48,
+          "knowledge": 188
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "365": "immediate",
+            "457": "immediate",
+            "511": "final"
+          },
+          "groups": [
+            {
+              "end": 456,
+              "intent": "practice",
+              "start": 365,
+              "weight": 1
+            },
+            {
+              "end": 510,
+              "intent": "practice",
+              "start": 457,
+              "weight": 15
+            },
+            {
+              "end": 546,
+              "intent": "practice",
+              "start": 511,
+              "weight": 8
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              457,
+              477,
+              "u076"
+            ],
+            [
+              511,
+              524,
+              "u107"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "9e60ac578a0bfa221c363d07468a75aea311392cfb5a59b847adbc4287ec8143"
+        },
+        "source_block_counts": {
+          "final": 36,
+          "immediate": 147,
+          "knowledge": 364
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "options": {
+      "academicYear": "",
+      "academic_year": "",
+      "docxMode": "",
+      "docx_mode": "",
+      "engine_mode": "auto",
+      "grade": "高三",
+      "handoutType": "",
+      "handout_type": "",
+      "splitMode": "",
+      "split_mode": "",
+      "subject": "英语",
+      "templateType": "1v1",
+      "template_type": "1v1"
+    },
+    "source_provenance": {
+      "0": {
+        "bytes": 354586,
+        "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+        "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\input-1.docx",
+        "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5"
+      },
+      "1": {
+        "bytes": 378932,
+        "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+        "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\input-2.docx",
+        "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3"
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0205,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 649,
+            "repeated_sequences": [],
+            "sha256": "79f78bd6e0f6bd432a9f17289b479654832069e5a9f49fede87e1816407e6c3d",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 36421,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 598,
+            "repeated_sequences": [],
+            "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 35689,
+            "top_level_blocks": 547
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0325,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 353,
+            "repeated_sequences": [],
+            "sha256": "b47609f6f54f5624558d9030c03913528ce9c0d1bffe913fcfcbf22e928699bc",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 23287,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 302,
+            "repeated_sequences": [],
+            "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 22555,
+            "top_level_blocks": 251
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 354586,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 302,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 22555,
+              "top_level_blocks": 251
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\input-1.docx",
+            "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5"
+          },
+          "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+          "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\input-1.docx",
+          "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5"
+        },
+        "teacher": {
+          "bytes": 378932,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 598,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 35689,
+              "top_level_blocks": 547
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\input-2.docx",
+            "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3"
+          },
+          "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+          "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\input-2.docx",
+          "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0205,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 649,
+            "repeated_sequences": [],
+            "sha256": "79f78bd6e0f6bd432a9f17289b479654832069e5a9f49fede87e1816407e6c3d",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 36421,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 598,
+            "repeated_sequences": [],
+            "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 35689,
+            "top_level_blocks": 547
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0325,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 353,
+            "repeated_sequences": [],
+            "sha256": "b47609f6f54f5624558d9030c03913528ce9c0d1bffe913fcfcbf22e928699bc",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 23287,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 302,
+            "repeated_sequences": [],
+            "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 22555,
+            "top_level_blocks": 251
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "product_normalization": {
+      "outputs": {
+        "student": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 76,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 19,
+            "spacer_intervals": 13,
+            "spacer_pt": 19.65,
+            "target_y": 760.3
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\normalized-student-d1a2374e24ae4697bf5b51ae21c3432b.docx",
+          "output_sha256": "b47609f6f54f5624558d9030c03913528ce9c0d1bffe913fcfcbf22e928699bc",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 32,
+              "drawing_image_references": 16,
+              "errors": 0,
+              "image_media_targets": 16,
+              "num_references": 7,
+              "package_parts": 20,
+              "picture_ids": 16,
+              "relationship_references": 19,
+              "relationships": 17,
+              "style_references": 23,
+              "warnings": 0,
+              "xml_parts": 13
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\student-stage-d1a2374e24ae4697bf5b51ae21c3432b.docx",
+          "source_sha256": "e5d45dfd167cf92d3ef8cc2a33351bbdc2b522d260c9d99e8837ef45bccc99bc",
+          "source_title_projection": {
+            "candidate": "专题12完形填空之记叙文（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "1v1",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        },
+        "teacher": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 76,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 19,
+            "spacer_intervals": 13,
+            "spacer_pt": 19.65,
+            "target_y": 760.3
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\normalized-teacher-d1a2374e24ae4697bf5b51ae21c3432b.docx",
+          "output_sha256": "79f78bd6e0f6bd432a9f17289b479654832069e5a9f49fede87e1816407e6c3d",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 32,
+              "drawing_image_references": 16,
+              "errors": 0,
+              "image_media_targets": 16,
+              "num_references": 7,
+              "package_parts": 20,
+              "picture_ids": 16,
+              "relationship_references": 19,
+              "relationships": 17,
+              "style_references": 23,
+              "warnings": 0,
+              "xml_parts": 13
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\d1a2374e24ae4697bf5b51ae21c3432b\\work\\teacher-output-d1a2374e24ae4697bf5b51ae21c3432b.docx",
+          "source_sha256": "984509f417a95517c946ac49863a18cd9da019774881ec4e51e8a3221ddf0a90",
+          "source_title_projection": {
+            "candidate": "专题12完形填空之记叙文（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "1v1",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        }
+      },
+      "renderer": "XML",
+      "status": "NORMALIZED",
+      "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 学生版.docx"
+    ],
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "shared material u047 serves question groups in multiple slots",
+            "reason_code": "SHARED_MATERIAL_SLOT_CONFLICT",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "189": "immediate",
+            "236": "final"
+          },
+          "groups": [
+            {
+              "end": 235,
+              "intent": "practice",
+              "start": 189,
+              "weight": 14
+            },
+            {
+              "end": 250,
+              "intent": "practice",
+              "start": 236,
+              "weight": 7
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              189,
+              235,
+              "u047"
+            ],
+            [
+              236,
+              250,
+              "u049"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "925791b2c66d127707ceb9267f35988a34d476ae542b95bde712fe4cb8dccdfa"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "925791b2c66d127707ceb9267f35988a34d476ae542b95bde712fe4cb8dccdfa"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "question group has no generic training-section owner",
+            "reason_code": "TRAINING_QUESTIONS_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "365": "immediate",
+            "457": "immediate",
+            "511": "final"
+          },
+          "groups": [
+            {
+              "end": 456,
+              "intent": "practice",
+              "start": 365,
+              "weight": 1
+            },
+            {
+              "end": 510,
+              "intent": "practice",
+              "start": 457,
+              "weight": 15
+            },
+            {
+              "end": 546,
+              "intent": "practice",
+              "start": 511,
+              "weight": 8
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              457,
+              477,
+              "u076"
+            ],
+            [
+              511,
+              524,
+              "u107"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "9e60ac578a0bfa221c363d07468a75aea311392cfb5a59b847adbc4287ec8143"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "9e60ac578a0bfa221c363d07468a75aea311392cfb5a59b847adbc4287ec8143"
+      }
+    },
+    "warnings": [
+      "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+    ]
+  },
+  {
+    "job_id": "e298510f732749c48725c1f2ad903438",
+    "status": "done",
+    "renderer": "XML",
+    "slot_status": "SLOTTED",
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 14,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 47,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 180,
+              "verified": true
+            }
+          },
+          "sha256": "1079a33ef1e6e715cc824b2819d6bbfe4e2d4696533b82938297567ce334db57",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 36,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 146,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 355,
+              "verified": true
+            }
+          },
+          "sha256": "bb2bc90ec3e0918e258f6d0af0ff19bdb4ea5bd3d7b3c2aecf1f6103b9261644",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "189": "immediate",
+            "236": "final"
+          },
+          "groups": [
+            {
+              "end": 235,
+              "intent": "practice",
+              "start": 189,
+              "weight": 14
+            },
+            {
+              "end": 250,
+              "intent": "practice",
+              "start": 236,
+              "weight": 7
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              189,
+              235,
+              "u047"
+            ],
+            [
+              236,
+              250,
+              "u049"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "925791b2c66d127707ceb9267f35988a34d476ae542b95bde712fe4cb8dccdfa"
+        },
+        "source_block_counts": {
+          "final": 15,
+          "immediate": 48,
+          "knowledge": 188
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "365": "immediate",
+            "457": "immediate",
+            "511": "final"
+          },
+          "groups": [
+            {
+              "end": 456,
+              "intent": "practice",
+              "start": 365,
+              "weight": 1
+            },
+            {
+              "end": 510,
+              "intent": "practice",
+              "start": 457,
+              "weight": 15
+            },
+            {
+              "end": 546,
+              "intent": "practice",
+              "start": 511,
+              "weight": 8
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              457,
+              477,
+              "u076"
+            ],
+            [
+              511,
+              524,
+              "u107"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "9e60ac578a0bfa221c363d07468a75aea311392cfb5a59b847adbc4287ec8143"
+        },
+        "source_block_counts": {
+          "final": 36,
+          "immediate": 147,
+          "knowledge": 364
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "options": {
+      "academicYear": "",
+      "academic_year": "",
+      "docxMode": "",
+      "docx_mode": "",
+      "engine_mode": "auto",
+      "grade": "高三",
+      "handoutType": "",
+      "handout_type": "",
+      "splitMode": "",
+      "split_mode": "",
+      "subject": "英语",
+      "templateType": "class",
+      "template_type": "class"
+    },
+    "source_provenance": {
+      "0": {
+        "bytes": 354586,
+        "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+        "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\input-1.docx",
+        "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5"
+      },
+      "1": {
+        "bytes": 378932,
+        "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+        "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\input-2.docx",
+        "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3"
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0168,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 657,
+            "repeated_sequences": [],
+            "sha256": "bb2bc90ec3e0918e258f6d0af0ff19bdb4ea5bd3d7b3c2aecf1f6103b9261644",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 36290,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 598,
+            "repeated_sequences": [],
+            "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 35689,
+            "top_level_blocks": 547
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0266,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 361,
+            "repeated_sequences": [],
+            "sha256": "1079a33ef1e6e715cc824b2819d6bbfe4e2d4696533b82938297567ce334db57",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 23156,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 302,
+            "repeated_sequences": [],
+            "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 22555,
+            "top_level_blocks": 251
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 354586,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 302,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 22555,
+              "top_level_blocks": 251
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\input-1.docx",
+            "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5"
+          },
+          "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+          "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\input-1.docx",
+          "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5"
+        },
+        "teacher": {
+          "bytes": 378932,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 598,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 35689,
+              "top_level_blocks": 547
+            },
+            "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\input-2.docx",
+            "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3"
+          },
+          "origin": "direct_upload:专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+          "original_filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\input-2.docx",
+          "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0168,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 657,
+            "repeated_sequences": [],
+            "sha256": "bb2bc90ec3e0918e258f6d0af0ff19bdb4ea5bd3d7b3c2aecf1f6103b9261644",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 36290,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 598,
+            "repeated_sequences": [],
+            "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 35689,
+            "top_level_blocks": 547
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0266,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 361,
+            "repeated_sequences": [],
+            "sha256": "1079a33ef1e6e715cc824b2819d6bbfe4e2d4696533b82938297567ce334db57",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 23156,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 302,
+            "repeated_sequences": [],
+            "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 22555,
+            "top_level_blocks": 251
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 0,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "product_normalization": {
+      "outputs": {
+        "student": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 68,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 16,
+            "spacer_intervals": 10,
+            "spacer_pt": 22.0,
+            "target_y": 740.1
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\normalized-student-e298510f732749c48725c1f2ad903438.docx",
+          "output_sha256": "1079a33ef1e6e715cc824b2819d6bbfe4e2d4696533b82938297567ce334db57",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 26,
+              "drawing_image_references": 10,
+              "errors": 0,
+              "image_media_targets": 17,
+              "num_references": 6,
+              "package_parts": 24,
+              "picture_ids": 10,
+              "relationship_references": 19,
+              "relationships": 19,
+              "style_references": 18,
+              "vml_image_references": 7,
+              "warnings": 0,
+              "xml_parts": 14
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\student-stage-e298510f732749c48725c1f2ad903438.docx",
+          "source_sha256": "a8d09c18f7d869ef51c793ee734f85bafa173812b46afb1d53b57dfc45bb08c1",
+          "source_title_projection": {
+            "candidate": "专题12完形填空之记叙文（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "class",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        },
+        "teacher": {
+          "cover_fields": {
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 68,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握本专题概念与方法；规范推理与解答。"
+            },
+            "difficulties": "POPULATED",
+            "objectives": "POPULATED"
+          },
+          "empty_knowledge_module": {
+            "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+            "status": "REQUIRED"
+          },
+          "module2_end_divider_anchor": {
+            "anchor_node": "MODULE2_END_DIVIDER",
+            "anchor_paragraph_index": 16,
+            "spacer_intervals": 10,
+            "spacer_pt": 22.0,
+            "target_y": 740.1
+          },
+          "output_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\normalized-teacher-e298510f732749c48725c1f2ad903438.docx",
+          "output_sha256": "bb2bc90ec3e0918e258f6d0af0ff19bdb4ea5bd3d7b3c2aecf1f6103b9261644",
+          "package_validation": {
+            "errors": [],
+            "stats": {
+              "docPr_ids": 26,
+              "drawing_image_references": 10,
+              "errors": 0,
+              "image_media_targets": 17,
+              "num_references": 6,
+              "package_parts": 24,
+              "picture_ids": 10,
+              "relationship_references": 19,
+              "relationships": 19,
+              "style_references": 18,
+              "vml_image_references": 7,
+              "warnings": 0,
+              "xml_parts": 14
+            },
+            "valid": true,
+            "warnings": []
+          },
+          "source_path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\jobs-knowledge-required\\e298510f732749c48725c1f2ad903438\\work\\teacher-output-e298510f732749c48725c1f2ad903438.docx",
+          "source_sha256": "df50080a0cdde7ad9f6ae984efdba23e2e284fa4d396402c1ca3311f2373efde",
+          "source_title_projection": {
+            "candidate": "专题12完形填空之记叙文（培优讲义）",
+            "reason": "TITLE_NOT_EXACTLY_BOUND",
+            "status": "UNCHANGED"
+          },
+          "status": "NORMALIZED",
+          "template_type": "class",
+          "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+        }
+      },
+      "renderer": "XML",
+      "status": "NORMALIZED",
+      "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）（2）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-knowledge-required\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）（2）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 学生版.docx"
+    ],
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "shared material u047 serves question groups in multiple slots",
+            "reason_code": "SHARED_MATERIAL_SLOT_CONFLICT",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "189": "immediate",
+            "236": "final"
+          },
+          "groups": [
+            {
+              "end": 235,
+              "intent": "practice",
+              "start": 189,
+              "weight": 14
+            },
+            {
+              "end": 250,
+              "intent": "practice",
+              "start": 236,
+              "weight": 7
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              189,
+              235,
+              "u047"
+            ],
+            [
+              236,
+              250,
+              "u049"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "925791b2c66d127707ceb9267f35988a34d476ae542b95bde712fe4cb8dccdfa"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "925791b2c66d127707ceb9267f35988a34d476ae542b95bde712fe4cb8dccdfa"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "question group has no generic training-section owner",
+            "reason_code": "TRAINING_QUESTIONS_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "365": "immediate",
+            "457": "immediate",
+            "511": "final"
+          },
+          "groups": [
+            {
+              "end": 456,
+              "intent": "practice",
+              "start": 365,
+              "weight": 1
+            },
+            {
+              "end": 510,
+              "intent": "practice",
+              "start": 457,
+              "weight": 15
+            },
+            {
+              "end": 546,
+              "intent": "practice",
+              "start": 511,
+              "weight": 8
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [
+            [
+              457,
+              477,
+              "u076"
+            ],
+            [
+              511,
+              524,
+              "u107"
+            ]
+          ],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "9e60ac578a0bfa221c363d07468a75aea311392cfb5a59b847adbc4287ec8143"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "9e60ac578a0bfa221c363d07468a75aea311392cfb5a59b847adbc4287ec8143"
+      }
+    },
+    "warnings": [
+      "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+    ]
+  }
+]

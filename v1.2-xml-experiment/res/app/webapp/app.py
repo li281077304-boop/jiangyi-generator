@@ -42,8 +42,6 @@ app.config.setdefault("C0_FORCE_FALLBACK_REASON", None)  # integration-test hook
 app.config.setdefault("C0_DISABLE_JOB_SUBMISSION", False)
 app.config.setdefault("STUDENTIZER_EVIDENCE_PROVIDER", None)  # trusted server config only; no upload/UI API
 app.config.setdefault("STUDENTIZER_REVIEWED_MANIFEST_DIR", None)  # None => packaged reviewed evidence
-app.config.setdefault("LOCAL_OCR_MODEL_DIR", Path(os.environ.get(
-    "JIANGYI_OCR_MODEL_DIR", str(APP_DIR / "ocr_models"))))
 # Ordinary jobs use automatic XML degradation followed by compatibility only
 # on technical XML failure. Legacy modes remain internal diagnostic seams.
 _V09_FALLBACK_LOCK = threading.RLock()
@@ -523,6 +521,9 @@ def _execute_job(job_id: str) -> None:
                         for role, plan in plans.items()}})
                 if len(active_sources) == 2:
                     service.add_warning(job_id, "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。")
+                if any((value.get('partition') or {}).get('knowledge_content_mode') == 'SOURCE_EXAMPLE'
+                       for value in degradation.values()):
+                    service.add_warning(job_id, "原文无独立知识讲解，知识精讲采用原文完整题组作为例题研读；未生成知识总结。")
                 if any(value["selected_tier"] == "PRESERVATION" for value in degradation.values()):
                     service.add_warning(job_id, "部分资料无法可靠分槽，已按原文顺序完整保留，未重排题目。")
                 return {"supported": True, "template_sha256": next(iter(plans.values())).template_sha256}
@@ -942,6 +943,12 @@ def _execute_job(job_id: str) -> None:
                 message = ("原文文本框中的部分正文未能完整保留，已停止交付以避免漏内容。"
                            "请保留原稿，等待修复。 " + message)
             raise ValueError(message)
+        from product_normalizer import inspect_delivered_slots
+        for role, staged_path, _target in generated:
+            sections = inspect_delivered_slots(staged_path, template_type,
+                                               source_path=original_sources[role])
+            if not sections['sections']['knowledge']['verified']:
+                raise ValueError('PRODUCT_KNOWLEDGE_CONTENT_MISSING: 知识精讲缺少可验证的原文内容，已停止交付。')
         planned_paths = {role: str(Path(target).resolve()) for role, _source, target in generated}
         staged_hashes = {role: hashlib.sha256(Path(source).read_bytes()).hexdigest()
                          for role, source, _target in generated}
