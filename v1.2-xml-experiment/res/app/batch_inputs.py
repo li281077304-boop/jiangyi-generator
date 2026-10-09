@@ -44,8 +44,8 @@ class LogicalInput:
     error: str | None = None
 
 
-_TEACHER_LABELS = {"教师版", "解析版", "答案版", "教师用", "教师", "老师", "teacher", "answer", "solution"}
-_STRONG_LABEL = r"教师版|解析版|答案版|教师用|学生版|原卷版|空白版|学生用"
+_TEACHER_LABELS = {"教师版", "解析版", "答案版", "教师用", "背诵版", "教师", "老师", "teacher", "answer", "solution"}
+_STRONG_LABEL = r"教师版|解析版|答案版|教师用|背诵版|学生版|原卷版|空白版|学生用|默写版"
 _SHORT_LABEL = r"教师|老师|学生|原卷|无答案|teacher|answer|solution|student|blank"
 _SUFFIX_LABEL = re.compile(
     r"(?:[（(\[【](?P<wrapped>" + _STRONG_LABEL + "|" + _SHORT_LABEL + r")[）)\]】]"

@@ -58,6 +58,21 @@ def test_real_knowledge_is_preserved_without_using_exercises_as_knowledge(tmp_pa
     assert plan.slots['immediate'] and plan.slots['final']
 
 
+def test_explicit_practice_column_ends_knowledge_context_and_keeps_answers(tmp_path):
+    lines = ['知识点1 副词的分类', '真实知识讲解。', '优题精练·专题实战通关']
+    for i in range(1, 16):
+        lines += [f'{i}. Exercise {i}?', f'【答案】answer {i}', f'【解析】explanation {i}']
+    p, snapshot = make_source(tmp_path, lines)
+    plan, evidence = partition_exercises(p, '1v1', snapshot)
+    assert len(evidence['groups']) == 15
+    routes = {r['source_index']: r['destination_slot'] for r in plan.block_records}
+    assert routes[0] == routes[1] == 'knowledge'
+    for start in range(3, len(lines), 3):
+        assert len({routes[start], routes[start + 1], routes[start + 2]}) == 1
+    assert routes[2] == routes[3] == 'immediate'
+    assert plan.slots['knowledge'] and plan.slots['immediate'] and plan.slots['final']
+
+
 def test_source_example_keeps_entire_passage_and_its_answers(tmp_path):
     lines = []
     for n in range(1, 6):

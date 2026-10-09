@@ -281,7 +281,7 @@ class RendererMinimalTests(unittest.TestCase):
         self.assertIn("\u76ee\u5f55\u6807\u9898", "".join(imported.itertext()))
         self.assertEqual(1, result.resource_report["stats"]["dangling_toc_anchors_dropped"])
 
-    def test_non_toc_missing_internal_anchor_remains_fail_closed(self):
+    def test_missing_internal_anchor_preserves_visible_content(self):
         source, template, output = self._paths()
         source_doc = Document()
         paragraph = source_doc.add_paragraph()
@@ -292,9 +292,12 @@ class RendererMinimalTests(unittest.TestCase):
         source_doc.save(source)
         Document().save(template)
 
-        with self.assertRaisesRegex(ProjectionError, "custom_missing_target"):
-            render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
-                           str(output), TemplateTarget(0))
+        result = render_minimal(str(source), str(template), [BlockSpan("b0", "b0")],
+                                str(output), TemplateTarget(0))
+        link = next(Document(str(output)).element.body.iter("{%s}hyperlink" % W))
+        self.assertIsNone(link.get("{%s}anchor" % W))
+        self.assertIn("custom link", "".join(link.itertext()))
+        self.assertEqual(1, result.resource_report["stats"]["dangling_internal_anchors_dropped"])
 
     def test_partial_bookmark_pair_and_unresolved_anchor_fail_closed(self):
         source, template, output = self._paths()
@@ -321,7 +324,7 @@ class RendererMinimalTests(unittest.TestCase):
         def add_unresolved_anchor(root):
             paragraph = root.find(".//{%s}body/{%s}p" % (W, W))
             link = etree.SubElement(paragraph, "{%s}hyperlink" % W)
-            link.set("{%s}anchor" % W, "missing")
+            link.set("{%s}anchor" % W, "")
         _rewrite_document(source, add_unresolved_anchor)
         with self.assertRaisesRegex(ProjectionError, "anchor is missing or ambiguous"):
             render_minimal(str(source), str(template), [BlockSpan("b0", "b0")], str(output),

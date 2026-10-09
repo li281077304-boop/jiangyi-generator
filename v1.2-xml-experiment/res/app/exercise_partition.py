@@ -14,7 +14,7 @@ PASSAGE = re.compile(r'^(?:Passage|Text|阅读材料|阅读理解|完形填空)\
 QUESTION = re.compile(r'^\s*(?:第\s*)?(\d{1,3})\s*[.．、)）]\s*\S')
 DECIMAL = re.compile(r'^\s*\d+\.\d+(?:\s*(?:V|A|m|cm|秒|伏|安)|\s*$)', re.I)
 KNOWLEDGE_FAMILY = re.compile(r'^(?:基础|重难|考情|知识|方法|技巧)[·・]')
-PRACTICE_FAMILY = re.compile(r'^(?:拔高|训练|练习|真题|进阶|能力|综合|素养)[·・]')
+PRACTICE_FAMILY = re.compile(r'^(?:拔高|训练|练习|真题|进阶|能力|综合|素养|优题精练)[·・]')
 PRACTICE_TITLE = re.compile(r'^(?:基础演练|能力进阶|分层集训|综合训练|综合练习|专项训练|巩固训练|习题|练习题)\s*$')
 
 
@@ -32,7 +32,11 @@ def partition_exercises(source, template_type, snapshot):
         cleaned = _clean(text)
         if block.kind == 'paragraph':
             intent = _heading_route(text, template_type)
-            if len(text) <= 35 and intent == 'answer_area':
+            # Inline 【答案】/【解析】 belongs to the preceding question, not
+            # a global answer section that suppresses every later question.
+            if (len(text) <= 35 and intent == 'answer_area'
+                    and re.fullmatch(r'(?:参考)?(?:答案|解析|答案解析|答案与解析)[：:]?',
+                                     text.strip().strip('【】[]').strip())):
                 in_answers = True
             # Long narrative sentences and incidental words are not boundaries.
             if len(text) <= 90 and KNOWLEDGE_FAMILY.match(text):

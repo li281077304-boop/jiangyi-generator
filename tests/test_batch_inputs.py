@@ -38,6 +38,26 @@ def test_five_teacher_sources_are_five_independent_items():
                for item in items)
 
 
+def test_recitation_dictation_zip_is_one_pair_with_untouched_role_sources():
+    teacher, student = docx("副词知识清单", "【答案】quickly", "【解析】副词"), docx("副词知识清单", "请默写：____")
+    topic = "专题04 副词（知识清单）（全国通用）"
+    items = resolve_batch([("英语资料.zip", archive([
+        (topic + "（默写版）.docx", student),
+        (topic + "（背诵版）.docx", teacher),
+    ]))])
+    assert len(items) == 1 and items[0].error is None
+    assert items[0].topic == topic
+    assert items[0].input_version == "TEACHER_AND_STUDENT"
+    assert items[0].teacher_source.data == teacher
+    assert items[0].student_source.data == student
+
+
+def test_recitation_dictation_labels_do_not_merge_different_topics():
+    items = resolve_batch([("副词（背诵版）.docx", docx()), ("名词（默写版）.docx", docx())])
+    assert len(items) == 2
+    assert [item.input_version for item in items] == ["TEACHER_ONLY", "STUDENT_ONLY"]
+
+
 def test_three_pairs_preserve_exact_student_bytes_without_order_pairing():
     teacher, student = docx("【答案】A", "【解析】过程"), docx("学生独有内容")
     uploads = [(f"专题{i} 学生版.docx", student) for i in (3, 1, 2)]

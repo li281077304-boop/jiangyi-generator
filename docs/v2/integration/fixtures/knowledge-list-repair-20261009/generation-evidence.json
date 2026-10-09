@@ -1,0 +1,2990 @@
+[
+  {
+    "job_id": "beef298ece184fd59e8bf129975e8438",
+    "filenames": [
+      "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+      "专题04 副词（知识清单）（全国通用）（背诵版）.docx"
+    ],
+    "template": "1v1",
+    "status": "done",
+    "slot_status": "SLOTTED",
+    "renderer": "XML",
+    "source_provenance": {
+      "0": {
+        "bytes": 781737,
+        "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+        "original_filename": "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\beef298ece184fd59e8bf129975e8438\\work\\input-1.docx",
+        "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+      },
+      "1": {
+        "bytes": 785495,
+        "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+        "original_filename": "专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\beef298ece184fd59e8bf129975e8438\\work\\input-2.docx",
+        "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+      }
+    },
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "188": "immediate",
+            "189": "immediate",
+            "190": "immediate",
+            "191": "immediate",
+            "192": "immediate",
+            "193": "immediate",
+            "194": "immediate",
+            "195": "immediate",
+            "196": "immediate",
+            "197": "final",
+            "198": "final",
+            "199": "final",
+            "200": "final",
+            "201": "final"
+          },
+          "groups": [
+            {
+              "end": 187,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 188,
+              "intent": "practice",
+              "start": 188,
+              "weight": 1
+            },
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 189,
+              "weight": 1
+            },
+            {
+              "end": 190,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 191,
+              "intent": "practice",
+              "start": 191,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 192,
+              "weight": 1
+            },
+            {
+              "end": 193,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 194,
+              "intent": "practice",
+              "start": 194,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 195,
+              "weight": 1
+            },
+            {
+              "end": 196,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 197,
+              "intent": "practice",
+              "start": 197,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 198,
+              "weight": 1
+            },
+            {
+              "end": 199,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 200,
+              "intent": "practice",
+              "start": 200,
+              "weight": 1
+            },
+            {
+              "end": 202,
+              "intent": "practice",
+              "start": 201,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "190": "immediate",
+            "193": "immediate",
+            "196": "immediate",
+            "199": "immediate",
+            "202": "immediate",
+            "205": "immediate",
+            "208": "immediate",
+            "211": "immediate",
+            "214": "immediate",
+            "217": "final",
+            "220": "final",
+            "223": "final",
+            "226": "final",
+            "229": "final"
+          },
+          "groups": [
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 201,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 204,
+              "intent": "practice",
+              "start": 202,
+              "weight": 1
+            },
+            {
+              "end": 207,
+              "intent": "practice",
+              "start": 205,
+              "weight": 1
+            },
+            {
+              "end": 210,
+              "intent": "practice",
+              "start": 208,
+              "weight": 1
+            },
+            {
+              "end": 213,
+              "intent": "practice",
+              "start": 211,
+              "weight": 1
+            },
+            {
+              "end": 216,
+              "intent": "practice",
+              "start": 214,
+              "weight": 1
+            },
+            {
+              "end": 219,
+              "intent": "practice",
+              "start": 217,
+              "weight": 1
+            },
+            {
+              "end": 222,
+              "intent": "practice",
+              "start": 220,
+              "weight": 1
+            },
+            {
+              "end": 225,
+              "intent": "practice",
+              "start": 223,
+              "weight": 1
+            },
+            {
+              "end": 228,
+              "intent": "practice",
+              "start": 226,
+              "weight": 1
+            },
+            {
+              "end": 231,
+              "intent": "practice",
+              "start": 229,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+      }
+    },
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 5,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 11,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 145,
+              "verified": true
+            }
+          },
+          "sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 15,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 31,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 145,
+              "verified": true
+            }
+          },
+          "sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "188": "immediate",
+            "189": "immediate",
+            "190": "immediate",
+            "191": "immediate",
+            "192": "immediate",
+            "193": "immediate",
+            "194": "immediate",
+            "195": "immediate",
+            "196": "immediate",
+            "197": "final",
+            "198": "final",
+            "199": "final",
+            "200": "final",
+            "201": "final"
+          },
+          "groups": [
+            {
+              "end": 187,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 188,
+              "intent": "practice",
+              "start": 188,
+              "weight": 1
+            },
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 189,
+              "weight": 1
+            },
+            {
+              "end": 190,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 191,
+              "intent": "practice",
+              "start": 191,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 192,
+              "weight": 1
+            },
+            {
+              "end": 193,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 194,
+              "intent": "practice",
+              "start": 194,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 195,
+              "weight": 1
+            },
+            {
+              "end": 196,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 197,
+              "intent": "practice",
+              "start": 197,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 198,
+              "weight": 1
+            },
+            {
+              "end": 199,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 200,
+              "intent": "practice",
+              "start": 200,
+              "weight": 1
+            },
+            {
+              "end": 202,
+              "intent": "practice",
+              "start": 201,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+        },
+        "source_block_counts": {
+          "final": 6,
+          "immediate": 11,
+          "knowledge": 186
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "190": "immediate",
+            "193": "immediate",
+            "196": "immediate",
+            "199": "immediate",
+            "202": "immediate",
+            "205": "immediate",
+            "208": "immediate",
+            "211": "immediate",
+            "214": "immediate",
+            "217": "final",
+            "220": "final",
+            "223": "final",
+            "226": "final",
+            "229": "final"
+          },
+          "groups": [
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 201,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 204,
+              "intent": "practice",
+              "start": 202,
+              "weight": 1
+            },
+            {
+              "end": 207,
+              "intent": "practice",
+              "start": 205,
+              "weight": 1
+            },
+            {
+              "end": 210,
+              "intent": "practice",
+              "start": 208,
+              "weight": 1
+            },
+            {
+              "end": 213,
+              "intent": "practice",
+              "start": 211,
+              "weight": 1
+            },
+            {
+              "end": 216,
+              "intent": "practice",
+              "start": 214,
+              "weight": 1
+            },
+            {
+              "end": 219,
+              "intent": "practice",
+              "start": 217,
+              "weight": 1
+            },
+            {
+              "end": 222,
+              "intent": "practice",
+              "start": 220,
+              "weight": 1
+            },
+            {
+              "end": 225,
+              "intent": "practice",
+              "start": 223,
+              "weight": 1
+            },
+            {
+              "end": 228,
+              "intent": "practice",
+              "start": 226,
+              "weight": 1
+            },
+            {
+              "end": 231,
+              "intent": "practice",
+              "start": 229,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+        },
+        "source_block_counts": {
+          "final": 15,
+          "immediate": 31,
+          "knowledge": 186
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "package_validation": {
+      "student": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 43,
+          "drawing_image_references": 28,
+          "errors": 0,
+          "image_media_targets": 28,
+          "num_references": 72,
+          "package_parts": 20,
+          "picture_ids": 28,
+          "relationship_references": 31,
+          "relationships": 17,
+          "style_references": 312,
+          "warnings": 0,
+          "xml_parts": 13
+        },
+        "valid": true,
+        "warnings": []
+      },
+      "teacher": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 43,
+          "drawing_image_references": 28,
+          "errors": 0,
+          "image_media_targets": 28,
+          "num_references": 72,
+          "package_parts": 20,
+          "picture_ids": 28,
+          "relationship_references": 31,
+          "relationships": 17,
+          "style_references": 327,
+          "warnings": 0,
+          "xml_parts": 13
+        },
+        "valid": true,
+        "warnings": []
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.051,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 616,
+            "repeated_sequences": [],
+            "sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 15406,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 565,
+            "repeated_sequences": [],
+            "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 14659,
+            "top_level_blocks": 232
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0582,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 587,
+            "repeated_sequences": [],
+            "sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 13593,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 536,
+            "repeated_sequences": [],
+            "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 12846,
+            "top_level_blocks": 203
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 12,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 781737,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 536,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 12846,
+              "top_level_blocks": 203
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\beef298ece184fd59e8bf129975e8438\\work\\input-1.docx",
+            "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+          },
+          "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+          "original_filename": "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\beef298ece184fd59e8bf129975e8438\\work\\input-1.docx",
+          "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+        },
+        "teacher": {
+          "bytes": 785495,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 565,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 14659,
+              "top_level_blocks": 232
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\beef298ece184fd59e8bf129975e8438\\work\\input-2.docx",
+            "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+          },
+          "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+          "original_filename": "专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\beef298ece184fd59e8bf129975e8438\\work\\input-2.docx",
+          "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.051,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 616,
+            "repeated_sequences": [],
+            "sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 15406,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 565,
+            "repeated_sequences": [],
+            "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 14659,
+            "top_level_blocks": 232
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0582,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 587,
+            "repeated_sequences": [],
+            "sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 13593,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 536,
+            "repeated_sequences": [],
+            "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 12846,
+            "top_level_blocks": 203
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 12,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 教师版.docx",
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 学生版.docx"
+    ]
+  },
+  {
+    "job_id": "e7e8d29f22cc4c88a5099587c7e1b917",
+    "filenames": [
+      "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+      "专题04 副词（知识清单）（全国通用）（背诵版）.docx"
+    ],
+    "template": "class",
+    "status": "done",
+    "slot_status": "SLOTTED",
+    "renderer": "XML",
+    "source_provenance": {
+      "0": {
+        "bytes": 781737,
+        "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+        "original_filename": "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\e7e8d29f22cc4c88a5099587c7e1b917\\work\\input-1.docx",
+        "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+      },
+      "1": {
+        "bytes": 785495,
+        "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+        "original_filename": "专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\e7e8d29f22cc4c88a5099587c7e1b917\\work\\input-2.docx",
+        "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+      }
+    },
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "188": "immediate",
+            "189": "immediate",
+            "190": "immediate",
+            "191": "immediate",
+            "192": "immediate",
+            "193": "immediate",
+            "194": "immediate",
+            "195": "immediate",
+            "196": "immediate",
+            "197": "final",
+            "198": "final",
+            "199": "final",
+            "200": "final",
+            "201": "final"
+          },
+          "groups": [
+            {
+              "end": 187,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 188,
+              "intent": "practice",
+              "start": 188,
+              "weight": 1
+            },
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 189,
+              "weight": 1
+            },
+            {
+              "end": 190,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 191,
+              "intent": "practice",
+              "start": 191,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 192,
+              "weight": 1
+            },
+            {
+              "end": 193,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 194,
+              "intent": "practice",
+              "start": 194,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 195,
+              "weight": 1
+            },
+            {
+              "end": 196,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 197,
+              "intent": "practice",
+              "start": 197,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 198,
+              "weight": 1
+            },
+            {
+              "end": 199,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 200,
+              "intent": "practice",
+              "start": 200,
+              "weight": 1
+            },
+            {
+              "end": 202,
+              "intent": "practice",
+              "start": 201,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "190": "immediate",
+            "193": "immediate",
+            "196": "immediate",
+            "199": "immediate",
+            "202": "immediate",
+            "205": "immediate",
+            "208": "immediate",
+            "211": "immediate",
+            "214": "immediate",
+            "217": "final",
+            "220": "final",
+            "223": "final",
+            "226": "final",
+            "229": "final"
+          },
+          "groups": [
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 201,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 204,
+              "intent": "practice",
+              "start": 202,
+              "weight": 1
+            },
+            {
+              "end": 207,
+              "intent": "practice",
+              "start": 205,
+              "weight": 1
+            },
+            {
+              "end": 210,
+              "intent": "practice",
+              "start": 208,
+              "weight": 1
+            },
+            {
+              "end": 213,
+              "intent": "practice",
+              "start": 211,
+              "weight": 1
+            },
+            {
+              "end": 216,
+              "intent": "practice",
+              "start": 214,
+              "weight": 1
+            },
+            {
+              "end": 219,
+              "intent": "practice",
+              "start": 217,
+              "weight": 1
+            },
+            {
+              "end": 222,
+              "intent": "practice",
+              "start": 220,
+              "weight": 1
+            },
+            {
+              "end": 225,
+              "intent": "practice",
+              "start": 223,
+              "weight": 1
+            },
+            {
+              "end": 228,
+              "intent": "practice",
+              "start": 226,
+              "weight": 1
+            },
+            {
+              "end": 231,
+              "intent": "practice",
+              "start": 229,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+      }
+    },
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 5,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 11,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 145,
+              "verified": true
+            }
+          },
+          "sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 15,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 31,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 145,
+              "verified": true
+            }
+          },
+          "sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "188": "immediate",
+            "189": "immediate",
+            "190": "immediate",
+            "191": "immediate",
+            "192": "immediate",
+            "193": "immediate",
+            "194": "immediate",
+            "195": "immediate",
+            "196": "immediate",
+            "197": "final",
+            "198": "final",
+            "199": "final",
+            "200": "final",
+            "201": "final"
+          },
+          "groups": [
+            {
+              "end": 187,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 188,
+              "intent": "practice",
+              "start": 188,
+              "weight": 1
+            },
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 189,
+              "weight": 1
+            },
+            {
+              "end": 190,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 191,
+              "intent": "practice",
+              "start": 191,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 192,
+              "weight": 1
+            },
+            {
+              "end": 193,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 194,
+              "intent": "practice",
+              "start": 194,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 195,
+              "weight": 1
+            },
+            {
+              "end": 196,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 197,
+              "intent": "practice",
+              "start": 197,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 198,
+              "weight": 1
+            },
+            {
+              "end": 199,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 200,
+              "intent": "practice",
+              "start": 200,
+              "weight": 1
+            },
+            {
+              "end": 202,
+              "intent": "practice",
+              "start": 201,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+        },
+        "source_block_counts": {
+          "final": 6,
+          "immediate": 11,
+          "knowledge": 186
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "187": "immediate",
+            "190": "immediate",
+            "193": "immediate",
+            "196": "immediate",
+            "199": "immediate",
+            "202": "immediate",
+            "205": "immediate",
+            "208": "immediate",
+            "211": "immediate",
+            "214": "immediate",
+            "217": "final",
+            "220": "final",
+            "223": "final",
+            "226": "final",
+            "229": "final"
+          },
+          "groups": [
+            {
+              "end": 189,
+              "intent": "practice",
+              "start": 187,
+              "weight": 1
+            },
+            {
+              "end": 192,
+              "intent": "practice",
+              "start": 190,
+              "weight": 1
+            },
+            {
+              "end": 195,
+              "intent": "practice",
+              "start": 193,
+              "weight": 1
+            },
+            {
+              "end": 198,
+              "intent": "practice",
+              "start": 196,
+              "weight": 1
+            },
+            {
+              "end": 201,
+              "intent": "practice",
+              "start": 199,
+              "weight": 1
+            },
+            {
+              "end": 204,
+              "intent": "practice",
+              "start": 202,
+              "weight": 1
+            },
+            {
+              "end": 207,
+              "intent": "practice",
+              "start": 205,
+              "weight": 1
+            },
+            {
+              "end": 210,
+              "intent": "practice",
+              "start": 208,
+              "weight": 1
+            },
+            {
+              "end": 213,
+              "intent": "practice",
+              "start": 211,
+              "weight": 1
+            },
+            {
+              "end": 216,
+              "intent": "practice",
+              "start": 214,
+              "weight": 1
+            },
+            {
+              "end": 219,
+              "intent": "practice",
+              "start": 217,
+              "weight": 1
+            },
+            {
+              "end": 222,
+              "intent": "practice",
+              "start": 220,
+              "weight": 1
+            },
+            {
+              "end": 225,
+              "intent": "practice",
+              "start": 223,
+              "weight": 1
+            },
+            {
+              "end": 228,
+              "intent": "practice",
+              "start": 226,
+              "weight": 1
+            },
+            {
+              "end": 231,
+              "intent": "practice",
+              "start": 229,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+        },
+        "source_block_counts": {
+          "final": 15,
+          "immediate": 31,
+          "knowledge": 186
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "package_validation": {
+      "student": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 37,
+          "drawing_image_references": 22,
+          "errors": 0,
+          "image_media_targets": 29,
+          "num_references": 71,
+          "package_parts": 24,
+          "picture_ids": 22,
+          "relationship_references": 31,
+          "relationships": 19,
+          "style_references": 307,
+          "vml_image_references": 7,
+          "warnings": 0,
+          "xml_parts": 14
+        },
+        "valid": true,
+        "warnings": []
+      },
+      "teacher": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 37,
+          "drawing_image_references": 22,
+          "errors": 0,
+          "image_media_targets": 29,
+          "num_references": 71,
+          "package_parts": 24,
+          "picture_ids": 22,
+          "relationship_references": 31,
+          "relationships": 19,
+          "style_references": 322,
+          "vml_image_references": 7,
+          "warnings": 0,
+          "xml_parts": 14
+        },
+        "valid": true,
+        "warnings": []
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0422,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 624,
+            "repeated_sequences": [],
+            "sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 15277,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 565,
+            "repeated_sequences": [],
+            "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 14659,
+            "top_level_blocks": 232
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0481,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 595,
+            "repeated_sequences": [],
+            "sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13464,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 536,
+            "repeated_sequences": [],
+            "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 12846,
+            "top_level_blocks": 203
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 12,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 781737,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 536,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 12846,
+              "top_level_blocks": 203
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\e7e8d29f22cc4c88a5099587c7e1b917\\work\\input-1.docx",
+            "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+          },
+          "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+          "original_filename": "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\e7e8d29f22cc4c88a5099587c7e1b917\\work\\input-1.docx",
+          "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+        },
+        "teacher": {
+          "bytes": 785495,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 565,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 14659,
+              "top_level_blocks": 232
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\e7e8d29f22cc4c88a5099587c7e1b917\\work\\input-2.docx",
+            "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+          },
+          "origin": "direct_upload:专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+          "original_filename": "专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\e7e8d29f22cc4c88a5099587c7e1b917\\work\\input-2.docx",
+          "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0422,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 624,
+            "repeated_sequences": [],
+            "sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 15277,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 565,
+            "repeated_sequences": [],
+            "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 14659,
+            "top_level_blocks": 232
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0481,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 595,
+            "repeated_sequences": [],
+            "sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 13464,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 536,
+            "repeated_sequences": [],
+            "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 12846,
+            "top_level_blocks": 203
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 12,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义（2）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 教师版.docx",
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义（2）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 学生版.docx"
+    ]
+  },
+  {
+    "job_id": "cf3fbf0fd4c74d4eb64a2e95aa0d44af",
+    "filenames": [
+      "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+      "专题05 代词（知识清单）（全国通用）（背诵版）.docx"
+    ],
+    "template": "1v1",
+    "status": "done",
+    "slot_status": "SLOTTED",
+    "renderer": "XML",
+    "source_provenance": {
+      "0": {
+        "bytes": 1371307,
+        "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+        "original_filename": "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\cf3fbf0fd4c74d4eb64a2e95aa0d44af\\work\\input-1.docx",
+        "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+      },
+      "1": {
+        "bytes": 1371558,
+        "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+        "original_filename": "专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\cf3fbf0fd4c74d4eb64a2e95aa0d44af\\work\\input-2.docx",
+        "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+      }
+    },
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "264": "immediate",
+            "265": "immediate",
+            "266": "immediate",
+            "267": "final",
+            "268": "final"
+          },
+          "groups": [
+            {
+              "end": 264,
+              "intent": "practice",
+              "start": 264,
+              "weight": 1
+            },
+            {
+              "end": 265,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 266,
+              "intent": "practice",
+              "start": 266,
+              "weight": 1
+            },
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 267,
+              "weight": 1
+            },
+            {
+              "end": 269,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "265": "immediate",
+            "268": "immediate",
+            "269": "immediate",
+            "272": "immediate",
+            "275": "immediate",
+            "278": "immediate",
+            "279": "immediate",
+            "280": "immediate",
+            "281": "final",
+            "282": "final",
+            "283": "final",
+            "284": "final"
+          },
+          "groups": [
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 268,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            },
+            {
+              "end": 271,
+              "intent": "practice",
+              "start": 269,
+              "weight": 1
+            },
+            {
+              "end": 274,
+              "intent": "practice",
+              "start": 272,
+              "weight": 1
+            },
+            {
+              "end": 277,
+              "intent": "practice",
+              "start": 275,
+              "weight": 1
+            },
+            {
+              "end": 278,
+              "intent": "practice",
+              "start": 278,
+              "weight": 1
+            },
+            {
+              "end": 279,
+              "intent": "practice",
+              "start": 279,
+              "weight": 1
+            },
+            {
+              "end": 280,
+              "intent": "practice",
+              "start": 280,
+              "weight": 1
+            },
+            {
+              "end": 281,
+              "intent": "practice",
+              "start": 281,
+              "weight": 1
+            },
+            {
+              "end": 282,
+              "intent": "practice",
+              "start": 282,
+              "weight": 1
+            },
+            {
+              "end": 283,
+              "intent": "practice",
+              "start": 283,
+              "weight": 1
+            },
+            {
+              "end": 286,
+              "intent": "practice",
+              "start": 284,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+      }
+    },
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 2,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 4,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 208,
+              "verified": true
+            }
+          },
+          "sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 6,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 17,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 208,
+              "verified": true
+            }
+          },
+          "sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "264": "immediate",
+            "265": "immediate",
+            "266": "immediate",
+            "267": "final",
+            "268": "final"
+          },
+          "groups": [
+            {
+              "end": 264,
+              "intent": "practice",
+              "start": 264,
+              "weight": 1
+            },
+            {
+              "end": 265,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 266,
+              "intent": "practice",
+              "start": 266,
+              "weight": 1
+            },
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 267,
+              "weight": 1
+            },
+            {
+              "end": 269,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+        },
+        "source_block_counts": {
+          "final": 3,
+          "immediate": 4,
+          "knowledge": 263
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "265": "immediate",
+            "268": "immediate",
+            "269": "immediate",
+            "272": "immediate",
+            "275": "immediate",
+            "278": "immediate",
+            "279": "immediate",
+            "280": "immediate",
+            "281": "final",
+            "282": "final",
+            "283": "final",
+            "284": "final"
+          },
+          "groups": [
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 268,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            },
+            {
+              "end": 271,
+              "intent": "practice",
+              "start": 269,
+              "weight": 1
+            },
+            {
+              "end": 274,
+              "intent": "practice",
+              "start": 272,
+              "weight": 1
+            },
+            {
+              "end": 277,
+              "intent": "practice",
+              "start": 275,
+              "weight": 1
+            },
+            {
+              "end": 278,
+              "intent": "practice",
+              "start": 278,
+              "weight": 1
+            },
+            {
+              "end": 279,
+              "intent": "practice",
+              "start": 279,
+              "weight": 1
+            },
+            {
+              "end": 280,
+              "intent": "practice",
+              "start": 280,
+              "weight": 1
+            },
+            {
+              "end": 281,
+              "intent": "practice",
+              "start": 281,
+              "weight": 1
+            },
+            {
+              "end": 282,
+              "intent": "practice",
+              "start": 282,
+              "weight": 1
+            },
+            {
+              "end": 283,
+              "intent": "practice",
+              "start": 283,
+              "weight": 1
+            },
+            {
+              "end": 286,
+              "intent": "practice",
+              "start": 284,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+        },
+        "source_block_counts": {
+          "final": 6,
+          "immediate": 17,
+          "knowledge": 264
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "package_validation": {
+      "student": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 29,
+          "drawing_image_references": 19,
+          "errors": 0,
+          "image_media_targets": 19,
+          "num_references": 39,
+          "package_parts": 21,
+          "picture_ids": 19,
+          "relationship_references": 22,
+          "relationships": 18,
+          "style_references": 320,
+          "warnings": 0,
+          "xml_parts": 13
+        },
+        "valid": true,
+        "warnings": []
+      },
+      "teacher": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 29,
+          "drawing_image_references": 19,
+          "errors": 0,
+          "image_media_targets": 19,
+          "num_references": 39,
+          "package_parts": 21,
+          "picture_ids": 19,
+          "relationship_references": 22,
+          "relationships": 18,
+          "style_references": 319,
+          "warnings": 0,
+          "xml_parts": 13
+        },
+        "valid": true,
+        "warnings": []
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0413,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 931,
+            "repeated_sequences": [],
+            "sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 18823,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 880,
+            "repeated_sequences": [],
+            "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18076,
+            "top_level_blocks": 287
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 8,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0429,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 914,
+            "repeated_sequences": [],
+            "sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 18174,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 863,
+            "repeated_sequences": [],
+            "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 17427,
+            "top_level_blocks": 270
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 1371307,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 863,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 17427,
+              "top_level_blocks": 270
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\cf3fbf0fd4c74d4eb64a2e95aa0d44af\\work\\input-1.docx",
+            "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+          },
+          "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+          "original_filename": "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\cf3fbf0fd4c74d4eb64a2e95aa0d44af\\work\\input-1.docx",
+          "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+        },
+        "teacher": {
+          "bytes": 1371558,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 880,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 18076,
+              "top_level_blocks": 287
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\cf3fbf0fd4c74d4eb64a2e95aa0d44af\\work\\input-2.docx",
+            "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+          },
+          "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+          "original_filename": "专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\cf3fbf0fd4c74d4eb64a2e95aa0d44af\\work\\input-2.docx",
+          "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0413,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 931,
+            "repeated_sequences": [],
+            "sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 18823,
+            "top_level_blocks": 6
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 880,
+            "repeated_sequences": [],
+            "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18076,
+            "top_level_blocks": 287
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 8,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0429,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 914,
+            "repeated_sequences": [],
+            "sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+            "template_cycles": 1,
+            "template_title_count": 1,
+            "text_chars": 18174,
+            "top_level_blocks": 6
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 863,
+            "repeated_sequences": [],
+            "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 17427,
+            "top_level_blocks": 270
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 教师版.docx",
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 学生版.docx"
+    ]
+  },
+  {
+    "job_id": "d4da6973ac96434bb07c68f46ba71f29",
+    "filenames": [
+      "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+      "专题05 代词（知识清单）（全国通用）（背诵版）.docx"
+    ],
+    "template": "class",
+    "status": "done",
+    "slot_status": "SLOTTED",
+    "renderer": "XML",
+    "source_provenance": {
+      "0": {
+        "bytes": 1371307,
+        "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+        "original_filename": "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\d4da6973ac96434bb07c68f46ba71f29\\work\\input-1.docx",
+        "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+      },
+      "1": {
+        "bytes": 1371558,
+        "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+        "original_filename": "专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+        "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\d4da6973ac96434bb07c68f46ba71f29\\work\\input-2.docx",
+        "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+      }
+    },
+    "xml_degradation": {
+      "student": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "264": "immediate",
+            "265": "immediate",
+            "266": "immediate",
+            "267": "final",
+            "268": "final"
+          },
+          "groups": [
+            {
+              "end": 264,
+              "intent": "practice",
+              "start": 264,
+              "weight": 1
+            },
+            {
+              "end": 265,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 266,
+              "intent": "practice",
+              "start": 266,
+              "weight": 1
+            },
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 267,
+              "weight": 1
+            },
+            {
+              "end": 269,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+      },
+      "teacher": {
+        "attempts": [
+          {
+            "detail": "no explicit teaching-slot boundary",
+            "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+            "status": "DEGRADED",
+            "tier": "NAVIGATION"
+          },
+          {
+            "detail": "knowledge and both training slots require source blocks; continue degradation",
+            "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+            "status": "DEGRADED",
+            "tier": "SEMANTIC"
+          },
+          {
+            "detail": "global answers must stay in source order",
+            "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+            "status": "DEGRADED",
+            "tier": "RULES"
+          },
+          {
+            "status": "SELECTED",
+            "tier": "PARTITION"
+          }
+        ],
+        "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+        "partition": {
+          "group_routes": {
+            "265": "immediate",
+            "268": "immediate",
+            "269": "immediate",
+            "272": "immediate",
+            "275": "immediate",
+            "278": "immediate",
+            "279": "immediate",
+            "280": "immediate",
+            "281": "final",
+            "282": "final",
+            "283": "final",
+            "284": "final"
+          },
+          "groups": [
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 268,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            },
+            {
+              "end": 271,
+              "intent": "practice",
+              "start": 269,
+              "weight": 1
+            },
+            {
+              "end": 274,
+              "intent": "practice",
+              "start": 272,
+              "weight": 1
+            },
+            {
+              "end": 277,
+              "intent": "practice",
+              "start": 275,
+              "weight": 1
+            },
+            {
+              "end": 278,
+              "intent": "practice",
+              "start": 278,
+              "weight": 1
+            },
+            {
+              "end": 279,
+              "intent": "practice",
+              "start": 279,
+              "weight": 1
+            },
+            {
+              "end": 280,
+              "intent": "practice",
+              "start": 280,
+              "weight": 1
+            },
+            {
+              "end": 281,
+              "intent": "practice",
+              "start": 281,
+              "weight": 1
+            },
+            {
+              "end": 282,
+              "intent": "practice",
+              "start": 282,
+              "weight": 1
+            },
+            {
+              "end": 283,
+              "intent": "practice",
+              "start": 283,
+              "weight": 1
+            },
+            {
+              "end": 286,
+              "intent": "practice",
+              "start": 284,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+        },
+        "selected_tier": "PARTITION",
+        "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+      }
+    },
+    "slot_evidence": {
+      "final_outputs": {
+        "student": {
+          "sections": {
+            "final": {
+              "content_blocks": 2,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 4,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 208,
+              "verified": true
+            }
+          },
+          "sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+          "verified": true
+        },
+        "teacher": {
+          "sections": {
+            "final": {
+              "content_blocks": 6,
+              "verified": true
+            },
+            "immediate": {
+              "content_blocks": 17,
+              "verified": true
+            },
+            "knowledge": {
+              "content_blocks": 208,
+              "verified": true
+            }
+          },
+          "sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+          "verified": true
+        }
+      },
+      "renderer": "XML",
+      "student": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "264": "immediate",
+            "265": "immediate",
+            "266": "immediate",
+            "267": "final",
+            "268": "final"
+          },
+          "groups": [
+            {
+              "end": 264,
+              "intent": "practice",
+              "start": 264,
+              "weight": 1
+            },
+            {
+              "end": 265,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 266,
+              "intent": "practice",
+              "start": 266,
+              "weight": 1
+            },
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 267,
+              "weight": 1
+            },
+            {
+              "end": 269,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+        },
+        "source_block_counts": {
+          "final": 3,
+          "immediate": 4,
+          "knowledge": 263
+        }
+      },
+      "teacher": {
+        "method": "PARTITION",
+        "partition": {
+          "group_routes": {
+            "265": "immediate",
+            "268": "immediate",
+            "269": "immediate",
+            "272": "immediate",
+            "275": "immediate",
+            "278": "immediate",
+            "279": "immediate",
+            "280": "immediate",
+            "281": "final",
+            "282": "final",
+            "283": "final",
+            "284": "final"
+          },
+          "groups": [
+            {
+              "end": 267,
+              "intent": "practice",
+              "start": 265,
+              "weight": 1
+            },
+            {
+              "end": 268,
+              "intent": "practice",
+              "start": 268,
+              "weight": 1
+            },
+            {
+              "end": 271,
+              "intent": "practice",
+              "start": 269,
+              "weight": 1
+            },
+            {
+              "end": 274,
+              "intent": "practice",
+              "start": 272,
+              "weight": 1
+            },
+            {
+              "end": 277,
+              "intent": "practice",
+              "start": 275,
+              "weight": 1
+            },
+            {
+              "end": 278,
+              "intent": "practice",
+              "start": 278,
+              "weight": 1
+            },
+            {
+              "end": 279,
+              "intent": "practice",
+              "start": 279,
+              "weight": 1
+            },
+            {
+              "end": 280,
+              "intent": "practice",
+              "start": 280,
+              "weight": 1
+            },
+            {
+              "end": 281,
+              "intent": "practice",
+              "start": 281,
+              "weight": 1
+            },
+            {
+              "end": 282,
+              "intent": "practice",
+              "start": 282,
+              "weight": 1
+            },
+            {
+              "end": 283,
+              "intent": "practice",
+              "start": 283,
+              "weight": 1
+            },
+            {
+              "end": 286,
+              "intent": "practice",
+              "start": 284,
+              "weight": 1
+            }
+          ],
+          "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+          "method": "WHOLE_COMPONENT_70_30",
+          "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+          "protected_components": [],
+          "selected_tier": "RULES",
+          "source_example_group": null,
+          "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+        },
+        "source_block_counts": {
+          "final": 6,
+          "immediate": 17,
+          "knowledge": 264
+        }
+      },
+      "verification": "FINAL_DOCX_SECTIONS"
+    },
+    "package_validation": {
+      "student": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 23,
+          "drawing_image_references": 13,
+          "errors": 0,
+          "image_media_targets": 20,
+          "num_references": 38,
+          "package_parts": 25,
+          "picture_ids": 13,
+          "relationship_references": 22,
+          "relationships": 20,
+          "style_references": 315,
+          "vml_image_references": 7,
+          "warnings": 0,
+          "xml_parts": 14
+        },
+        "valid": true,
+        "warnings": []
+      },
+      "teacher": {
+        "errors": [],
+        "stats": {
+          "docPr_ids": 23,
+          "drawing_image_references": 13,
+          "errors": 0,
+          "image_media_targets": 20,
+          "num_references": 38,
+          "package_parts": 25,
+          "picture_ids": 13,
+          "relationship_references": 22,
+          "relationships": 20,
+          "style_references": 314,
+          "vml_image_references": 7,
+          "warnings": 0,
+          "xml_parts": 14
+        },
+        "valid": true,
+        "warnings": []
+      }
+    },
+    "product_integrity": {
+      "accepted": true,
+      "errors": [],
+      "final_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0342,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 939,
+            "repeated_sequences": [],
+            "sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18694,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 880,
+            "repeated_sequences": [],
+            "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18076,
+            "top_level_blocks": 287
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 8,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0355,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 922,
+            "repeated_sequences": [],
+            "sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18045,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 863,
+            "repeated_sequences": [],
+            "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 17427,
+            "top_level_blocks": 270
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "gate": "PRODUCT_INTEGRITY_GATE",
+      "input_sources": {
+        "student": {
+          "bytes": 1371307,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 863,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 17427,
+              "top_level_blocks": 270
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\d4da6973ac96434bb07c68f46ba71f29\\work\\input-1.docx",
+            "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+          },
+          "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+          "original_filename": "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+          "role": "student",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\d4da6973ac96434bb07c68f46ba71f29\\work\\input-1.docx",
+          "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+        },
+        "teacher": {
+          "bytes": 1371558,
+          "inspection": {
+            "accepted": true,
+            "errors": [],
+            "metrics": {
+              "main_story_paragraphs": 880,
+              "repeated_sequences": [],
+              "template_cycles": 0,
+              "template_title_count": 0,
+              "text_chars": 18076,
+              "top_level_blocks": 287
+            },
+            "path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\d4da6973ac96434bb07c68f46ba71f29\\work\\input-2.docx",
+            "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+          },
+          "origin": "direct_upload:专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+          "original_filename": "专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+          "role": "teacher",
+          "runtime_path": "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-jobs\\d4da6973ac96434bb07c68f46ba71f29\\work\\input-2.docx",
+          "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+        }
+      },
+      "staged_outputs": [
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0342,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 939,
+            "repeated_sequences": [],
+            "sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18694,
+            "top_level_blocks": 3
+          },
+          "role": "teacher",
+          "source": {
+            "main_story_paragraphs": 880,
+            "repeated_sequences": [],
+            "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18076,
+            "top_level_blocks": 287
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 8,
+            "unproven": []
+          },
+          "warnings": []
+        },
+        {
+          "accepted": true,
+          "errors": [],
+          "expansion_ratio": 1.0355,
+          "gate": "PRODUCT_INTEGRITY_GATE",
+          "output": {
+            "main_story_paragraphs": 922,
+            "repeated_sequences": [],
+            "sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 18045,
+            "top_level_blocks": 3
+          },
+          "role": "student",
+          "source": {
+            "main_story_paragraphs": 863,
+            "repeated_sequences": [],
+            "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+            "template_cycles": 0,
+            "template_title_count": 0,
+            "text_chars": 17427,
+            "top_level_blocks": 270
+          },
+          "textbox_conservation": {
+            "checked_unique_paragraphs": 9,
+            "unproven": []
+          },
+          "warnings": []
+        }
+      ],
+      "warnings": []
+    },
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义（2）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 教师版.docx",
+      "H:\\AI-Workspace\\uat\\knowledge-list-repair-20261009\\final-results\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义（2）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 学生版.docx"
+    ]
+  }
+]

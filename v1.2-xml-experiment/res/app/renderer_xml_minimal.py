@@ -103,6 +103,9 @@ def render_minimal(source_doc: str, template_doc: str,
     if bookmark_preflight["dangling_toc_anchors_dropped"]:
         resource_report["stats"]["dangling_toc_anchors_dropped"] = bookmark_preflight[
             "dangling_toc_anchors_dropped"]
+    if bookmark_preflight["dangling_internal_anchors_dropped"]:
+        resource_report["stats"]["dangling_internal_anchors_dropped"] = bookmark_preflight[
+            "dangling_internal_anchors_dropped"]
 
     insert_at = target.body_child_index
     body_children = list(tpl_body)
@@ -308,6 +311,7 @@ def _validate_bookmark_scope(source_body, selected_elements):
 
     permitted_drops = 0
     dangling_toc_anchors_dropped = 0
+    dangling_internal_anchors_dropped = 0
     relevant_ids = {node.get("{%s}id" % W) for node in selected_starts + selected_ends}
     for bookmark_id in relevant_ids:
         if not bookmark_id:
@@ -337,13 +341,17 @@ def _validate_bookmark_scope(source_body, selected_elements):
         anchor = hyperlink.get("{%s}anchor" % W)
         matches = starts_by_name.get(anchor, [])
         if not anchor or len(matches) != 1:
-            # Word's generated TOC links sometimes outlive their bookmark
-            # targets after editing. Keep their visible text, but drop only
-            # the broken navigation attribute; all other missing anchors and
-            # every ambiguous anchor remain fail-closed.
-            if not matches and re.fullmatch(r"_Toc\d+", anchor or ""):
+            # A target absent from the entire immutable source is already a
+            # broken navigation link. Preserve all visible children/resources
+            # and external relationship attributes; remove only that anchor.
+            # Existing targets outside the projection and ambiguous targets
+            # still fail closed below: this never hides a cut bookmark.
+            if anchor and not matches:
                 del hyperlink.attrib["{%s}anchor" % W]
-                dangling_toc_anchors_dropped += 1
+                if re.fullmatch(r"_Toc\d+", anchor):
+                    dangling_toc_anchors_dropped += 1
+                else:
+                    dangling_internal_anchors_dropped += 1
                 continue
             raise ProjectionError("selected hyperlink anchor is missing or ambiguous: %s" % anchor)
         start = matches[0]
@@ -353,4 +361,5 @@ def _validate_bookmark_scope(source_body, selected_elements):
                 or ends[0] not in selected_nodes):
             raise ProjectionError("selected hyperlink anchor is outside selected scope: %s" % anchor)
     return {"bookmark_markers_dropped": permitted_drops,
-            "dangling_toc_anchors_dropped": dangling_toc_anchors_dropped}
+            "dangling_toc_anchors_dropped": dangling_toc_anchors_dropped,
+            "dangling_internal_anchors_dropped": dangling_internal_anchors_dropped}
