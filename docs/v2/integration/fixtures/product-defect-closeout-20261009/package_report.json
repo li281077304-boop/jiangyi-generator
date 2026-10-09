@@ -1,0 +1,17 @@
+{
+  "status": "PACKAGED",
+  "package_name": "讲义生成器_V1.2_缺陷修复测试版_20261009.zip",
+  "package_path": "H:\\AI-Workspace\\build\\closeout-20261009\\package\\讲义生成器_V1.2_缺陷修复测试版_20261009.zip",
+  "package_size_bytes": 133652128,
+  "package_sha256": "ef0b1c2750f9c07dc81449ca086d42f4176ff1e55ee294ccae3200d1cb253ebe",
+  "exe_sha256": "4a6c55d06e11c342428d6d025c6e86c13c97997052db196988de48c98a340757",
+  "build_commit": "92dce149302c73fafef49b9eddac63a100b1edab",
+  "tested_onedir_source": "H:\\AI-Workspace\\build\\closeout-20261009\\dist\\讲义生成器",
+  "onedir_file_count": 1276,
+  "onedir_total_bytes": 288203722,
+  "package_manifest_sha256": "9ef0c4207ee59e82dbb04717b82149e485cc01853cc38e4ddc3dd99c13b1bf7a",
+  "readme_sha256": "f22e2dd0ec73b6036014804df11ff5ee56f1157c06dc87b01898cc10d0d13f3f",
+  "excluded_content_scan": "PASS",
+  "source_to_stage_hash_comparison": "PASS",
+  "frozen_v09_templates_verified": 2
+}

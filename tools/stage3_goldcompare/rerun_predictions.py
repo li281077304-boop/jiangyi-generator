@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.join(ROOT, "tools", "stage2_baseline"))
 from run_baseline import predict  # noqa: E402
 from struct_doc import read_struct_doc_bytes  # noqa: E402
 
-STAGE3 = r"C:\xml-uat\stage3-expansion"
+STAGE3 = os.environ.get("JIANGYI_STAGE3_ROOT", r"H:\AI-Workspace\uat\xml-uat\stage3-expansion")
 SOURCES = os.path.join(STAGE3, "sources")
 INPUTS = os.path.join(STAGE3, "baseline_inputs.json")
 SAMPLES = ["X003", "X004", "X006", "X012", "X013", "X019", "X021", "X025"]

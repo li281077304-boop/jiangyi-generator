@@ -29,7 +29,7 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-BASE = r"C:\xml-uat\stage3-expansion"
+BASE = os.environ.get("JIANGYI_STAGE3_ROOT", r"H:\AI-Workspace\uat\xml-uat\stage3-expansion")
 APPROVED = os.path.join(BASE, "gold_preparation_01", "APPROVED_GOLD")
 BASELINE = os.path.join(BASE, "STAGE3_EXPANSION_BASELINE")
 INPUTS = os.path.join(BASE, "baseline_inputs.json")

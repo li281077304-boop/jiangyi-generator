@@ -1,0 +1,639 @@
+{
+  "baseline_commit": "ceaaf8b424738245fa9f6762cdb27bfd022d0905",
+  "overall": {
+    "question_group": {
+      "gold_n": 408,
+      "pred_n": 408,
+      "matched_gold": 408,
+      "matched_pred": 408,
+      "exact": 358,
+      "precision": 1.0,
+      "recall": 1.0,
+      "exact_rate": 0.8774509803921569,
+      "miss": 0,
+      "fp": 0
+    },
+    "section": {
+      "gold_n": 369,
+      "pred_n": 369,
+      "matched_gold": 369,
+      "matched_pred": 369,
+      "exact": 369,
+      "precision": 1.0,
+      "recall": 1.0,
+      "exact_rate": 1.0,
+      "miss": 0,
+      "fp": 0
+    },
+    "merge_n": 0,
+    "split_n": 0,
+    "subquestion": {
+      "total": 328,
+      "inside_parent": 328,
+      "rate": 1.0,
+      "orphan_parent": 0,
+      "parent_present_but_outside": 0
+    },
+    "error_counts": {},
+    "samples": 8
+  },
+  "by_subject": {
+    "mathematics": {
+      "question_group": {
+        "gold_n": 94,
+        "pred_n": 94,
+        "matched_gold": 94,
+        "matched_pred": 94,
+        "exact": 90,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.9574468085106383,
+        "miss": 0,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 74,
+        "pred_n": 74,
+        "matched_gold": 74,
+        "matched_pred": 74,
+        "exact": 74,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 54,
+        "inside_parent": 54,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {},
+      "samples": 2
+    },
+    "physics": {
+      "question_group": {
+        "gold_n": 216,
+        "pred_n": 216,
+        "matched_gold": 216,
+        "matched_pred": 216,
+        "exact": 171,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.7916666666666666,
+        "miss": 0,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 236,
+        "pred_n": 236,
+        "matched_gold": 236,
+        "matched_pred": 236,
+        "exact": 236,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 206,
+        "inside_parent": 206,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {},
+      "samples": 3
+    },
+    "chemistry": {
+      "question_group": {
+        "gold_n": 98,
+        "pred_n": 98,
+        "matched_gold": 98,
+        "matched_pred": 98,
+        "exact": 97,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.9897959183673469,
+        "miss": 0,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 59,
+        "pred_n": 59,
+        "matched_gold": 59,
+        "matched_pred": 59,
+        "exact": 59,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 68,
+        "inside_parent": 68,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {},
+      "samples": 3
+    }
+  },
+  "by_doc_type": {
+    "原卷": {
+      "question_group": {
+        "gold_n": 180,
+        "pred_n": 180,
+        "matched_gold": 180,
+        "matched_pred": 180,
+        "exact": 180,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 114,
+        "pred_n": 114,
+        "matched_gold": 114,
+        "matched_pred": 114,
+        "exact": 114,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 134,
+        "inside_parent": 134,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {},
+      "samples": 4
+    },
+    "解析版": {
+      "question_group": {
+        "gold_n": 228,
+        "pred_n": 228,
+        "matched_gold": 228,
+        "matched_pred": 228,
+        "exact": 178,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.7807017543859649,
+        "miss": 0,
+        "fp": 0
+      },
+      "section": {
+        "gold_n": 255,
+        "pred_n": 255,
+        "matched_gold": 255,
+        "matched_pred": 255,
+        "exact": 255,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0,
+        "miss": 0,
+        "fp": 0
+      },
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 194,
+        "inside_parent": 194,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0
+      },
+      "error_counts": {},
+      "samples": 4
+    }
+  },
+  "samples": [
+    {
+      "sample_id": "X003",
+      "question_group": {
+        "gold_n": 78,
+        "pred_n": 78,
+        "matched_gold": 78,
+        "matched_pred": 78,
+        "exact": 78,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 33,
+        "pred_n": 33,
+        "matched_gold": 33,
+        "matched_pred": 33,
+        "exact": 33,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 78,
+        "inside_parent": 78,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 78,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "physics",
+      "doc_type": "原卷",
+      "name": "专题04 电功率（期末专项训练）（原卷版）.docx"
+    },
+    {
+      "sample_id": "X004",
+      "question_group": {
+        "gold_n": 78,
+        "pred_n": 78,
+        "matched_gold": 78,
+        "matched_pred": 78,
+        "exact": 63,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.8076923076923077
+      },
+      "section": {
+        "gold_n": 34,
+        "pred_n": 34,
+        "matched_gold": 34,
+        "matched_pred": 34,
+        "exact": 34,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 72,
+        "inside_parent": 72,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 78,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "physics",
+      "doc_type": "解析版",
+      "name": "专题04 电功率（期末专项训练）（解析版）.docx"
+    },
+    {
+      "sample_id": "X006",
+      "question_group": {
+        "gold_n": 60,
+        "pred_n": 60,
+        "matched_gold": 60,
+        "matched_pred": 60,
+        "exact": 30,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.5
+      },
+      "section": {
+        "gold_n": 169,
+        "pred_n": 169,
+        "matched_gold": 169,
+        "matched_pred": 169,
+        "exact": 169,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 56,
+        "inside_parent": 56,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 60,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "physics",
+      "doc_type": "解析版",
+      "name": "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx"
+    },
+    {
+      "sample_id": "X012",
+      "question_group": {
+        "gold_n": 56,
+        "pred_n": 56,
+        "matched_gold": 56,
+        "matched_pred": 56,
+        "exact": 52,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.9285714285714286
+      },
+      "section": {
+        "gold_n": 34,
+        "pred_n": 34,
+        "matched_gold": 34,
+        "matched_pred": 34,
+        "exact": 34,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 40,
+        "inside_parent": 40,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 56,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "mathematics",
+      "doc_type": "解析版",
+      "name": "专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册（解析版）.docx"
+    },
+    {
+      "sample_id": "X013",
+      "question_group": {
+        "gold_n": 38,
+        "pred_n": 38,
+        "matched_gold": 38,
+        "matched_pred": 38,
+        "exact": 38,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 40,
+        "pred_n": 40,
+        "matched_gold": 40,
+        "matched_pred": 40,
+        "exact": 40,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 14,
+        "inside_parent": 14,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 38,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "mathematics",
+      "doc_type": "原卷",
+      "name": "专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册（原卷版）.docx"
+    },
+    {
+      "sample_id": "X019",
+      "question_group": {
+        "gold_n": 20,
+        "pred_n": 20,
+        "matched_gold": 20,
+        "matched_pred": 20,
+        "exact": 20,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 12,
+        "pred_n": 12,
+        "matched_gold": 12,
+        "matched_pred": 12,
+        "exact": 12,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 20,
+        "inside_parent": 20,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 1,
+        "pred_qg_with_binding": 2,
+        "pred_qg_total": 20,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "chemistry",
+      "doc_type": "原卷",
+      "name": "1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（原卷版）.docx"
+    },
+    {
+      "sample_id": "X021",
+      "question_group": {
+        "gold_n": 44,
+        "pred_n": 44,
+        "matched_gold": 44,
+        "matched_pred": 44,
+        "exact": 44,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "section": {
+        "gold_n": 29,
+        "pred_n": 29,
+        "matched_gold": 29,
+        "matched_pred": 29,
+        "exact": 29,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 22,
+        "inside_parent": 22,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 44,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "chemistry",
+      "doc_type": "原卷",
+      "name": "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（原卷版）.docx"
+    },
+    {
+      "sample_id": "X025",
+      "question_group": {
+        "gold_n": 34,
+        "pred_n": 34,
+        "matched_gold": 34,
+        "matched_pred": 34,
+        "exact": 33,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 0.9705882352941176
+      },
+      "section": {
+        "gold_n": 18,
+        "pred_n": 18,
+        "matched_gold": 18,
+        "matched_pred": 18,
+        "exact": 18,
+        "miss": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "exact_rate": 1.0
+      },
+      "merge": [],
+      "split": [],
+      "merge_n": 0,
+      "split_n": 0,
+      "subquestion": {
+        "total": 26,
+        "inside_parent": 26,
+        "rate": 1.0,
+        "orphan_parent": 0,
+        "parent_present_but_outside": 0,
+        "bad": []
+      },
+      "diagnostic": {
+        "gold_shared_material": 0,
+        "pred_shared_material": 0,
+        "pred_qg_with_binding": 0,
+        "pred_qg_total": 34,
+        "note": "Gold 侧本样本无顶层 shared_material"
+      },
+      "errors": {},
+      "error_counts": {},
+      "subject": "chemistry",
+      "doc_type": "解析版",
+      "name": "2.1  我们周围的空气 第1课时（讲义）（解析版）.docx"
+    }
+  ]
+}
