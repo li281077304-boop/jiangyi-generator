@@ -1,0 +1,17 @@
+{
+  "status": "PACKAGED",
+  "package_name": "讲义生成器_V1.2_无OCR测试版_20261009.zip",
+  "package_path": "H:\\AI-Workspace\\build\\slim-knowledge-20261009\\package\\讲义生成器_V1.2_无OCR测试版_20261009.zip",
+  "package_size_bytes": 21268740,
+  "package_sha256": "87bf5334fa0c70aaa29938bfbd0cbe50382082bdc1657c963ecc74bab686be11",
+  "exe_sha256": "86b96187238892b335d6a79e392e6c8cd1f0aaeae2b15b7f5a53b0cc6858e513",
+  "build_commit": "b8d773a09433e8dc67c39ce57e6ee996da41f2c8",
+  "tested_onedir_source": "H:\\AI-Workspace\\build\\slim-knowledge-20261009\\output\\dist\\讲义生成器",
+  "onedir_file_count": 209,
+  "onedir_total_bytes": 40684102,
+  "package_manifest_sha256": "06b93e407fbc04e7ed1a6b2285c39d37733e3b130b5f6ad074273624a1accc8b",
+  "readme_sha256": "a7a7acc821ecca2a474254d7fc406ff8f18166331cc2fa7a5ca9a16d435112a6",
+  "excluded_content_scan": "PASS",
+  "source_to_stage_hash_comparison": "PASS",
+  "frozen_v09_templates_verified": 2
+}
