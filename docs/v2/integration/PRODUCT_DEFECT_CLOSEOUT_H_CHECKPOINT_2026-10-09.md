@@ -47,3 +47,5 @@ Automatic approval rejected the operation to start the EXE and open its workbenc
 Until actual EXE startup is available, new Chrome task/reconnect/restart evidence, oxygen final-binary checks, geometry singles, all 33 topics × both templates, and current-package WPS/content comparisons remain pending. Historical 22 XML / 10 compatibility / 1 rejection and 31/33 shared safety results are references only, not updated counts.
 
 Resume with the built candidate and H profile; complete the original defect gates. Do not repeat the already approved Golden/capability research, expand alignment/OOXML scope, create tags, or merge main.
+
+Full regression attempted 2026-10-09 14:24–14:30 China time: 569 tests collected; 360-second deadline exceeded before final summary, with failure markers already present. Scoped owned pytest processes were stopped. This is INCOMPLETE/NOT PASS; exact failure classification remains pending, and no new failures are labelled baseline-known without evidence. Raw partial log is committed in fixtures/product-defect-closeout-20261009/full-regression-incomplete.log.
