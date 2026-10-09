@@ -1,0 +1,17 @@
+{
+  "status": "PACKAGED",
+  "package_name": "讲义生成器_V1.2_知识清单修复测试版_20261009.zip",
+  "package_path": "H:\\AI-Workspace\\build\\knowledge-list-repair-20261009\\package\\讲义生成器_V1.2_知识清单修复测试版_20261009.zip",
+  "package_size_bytes": 21268472,
+  "package_sha256": "13b7c0347036dd31424792c01170fe8ea7680c61b0a6a116681803312d04bf0f",
+  "exe_sha256": "acef8a3d16983c7713b93da2788b6e3774d3d1a0ccf6e20fb49ac0a7028f0cc0",
+  "build_commit": "b3b1e660bcb06a2c98e1d20d32924632e436e54c",
+  "tested_onedir_source": "H:\\AI-Workspace\\build\\knowledge-list-repair-20261009\\dist\\讲义生成器",
+  "onedir_file_count": 209,
+  "onedir_total_bytes": 40685304,
+  "package_manifest_sha256": "33234d77a86eff990db0f1464cf24a6ea1fb089b208ff3e6028d329ddc27d7a6",
+  "readme_sha256": "a7a7acc821ecca2a474254d7fc406ff8f18166331cc2fa7a5ca9a16d435112a6",
+  "excluded_content_scan": "PASS",
+  "source_to_stage_hash_comparison": "PASS",
+  "frozen_v09_templates_verified": 2
+}

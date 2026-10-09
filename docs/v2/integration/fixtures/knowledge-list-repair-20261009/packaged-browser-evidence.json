@@ -1,0 +1,4582 @@
+[
+  {
+    "case": "zip-04-1v1",
+    "template": "1v1",
+    "http_status": 202,
+    "job": {
+      "batch_outcome": "ALL_SUCCESS",
+      "completed": 1,
+      "created_at": 1791539247.615749,
+      "created_at_iso": "2026-10-09T09:47:27+00:00",
+      "current_topic": null,
+      "elapsed_seconds": 7.264,
+      "failed": 0,
+      "filenames": [
+        "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip"
+      ],
+      "generation_attempts": 1,
+      "has_result": true,
+      "is_batch": true,
+      "items": [
+        {
+          "child_job_id": "da8601ac5e09498aa1f671f6bbd4a361",
+          "elapsed_seconds": 6.882,
+          "error": null,
+          "fallback_detail": null,
+          "fallback_reason": null,
+          "input_version": "TEACHER_AND_STUDENT",
+          "item_id": "1",
+          "lesson_metadata": {
+            "by_role": {
+              "student": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 76,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "副词的分类及句法功能",
+                  "副词的的比较级和最高级",
+                  "副词构成"
+                ],
+                "warning": null
+              },
+              "teacher": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 76,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "副词的分类及句法功能",
+                  "副词的的比较级和最高级",
+                  "副词构成"
+                ],
+                "warning": null
+              }
+            },
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 76,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+            },
+            "difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "difficulties_reason": "",
+            "difficulties_source": "V09_OFFLINE_RULE",
+            "full_difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "full_objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+            "objectives_reason": "",
+            "objectives_source": "V09_OFFLINE_RULE",
+            "source": "V09_OFFLINE_RULE",
+            "status": "RESOLVED",
+            "training_titles": [
+              "副词的分类及句法功能",
+              "副词的的比较级和最高级",
+              "副词构成"
+            ],
+            "warning": null
+          },
+          "original_topic": "专题04 副词（知识清单）（全国通用）",
+          "output_paths": [
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 教师版.docx",
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 学生版.docx"
+          ],
+          "package_validation": {
+            "student": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 43,
+                "drawing_image_references": 28,
+                "errors": 0,
+                "image_media_targets": 28,
+                "num_references": 72,
+                "package_parts": 20,
+                "picture_ids": 28,
+                "relationship_references": 31,
+                "relationships": 17,
+                "style_references": 312,
+                "warnings": 0,
+                "xml_parts": 13
+              },
+              "valid": true,
+              "warnings": []
+            },
+            "teacher": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 43,
+                "drawing_image_references": 28,
+                "errors": 0,
+                "image_media_targets": 28,
+                "num_references": 72,
+                "package_parts": 20,
+                "picture_ids": 28,
+                "relationship_references": 31,
+                "relationships": 17,
+                "style_references": 327,
+                "warnings": 0,
+                "xml_parts": 13
+              },
+              "valid": true,
+              "warnings": []
+            }
+          },
+          "pair_alignment_status": "NOT_REQUIRED_NOT_VERIFIED",
+          "plan_summary": {
+            "cover_metadata_blocks": [],
+            "destination_slots": {
+              "final": {
+                "label": "六、巩固练习",
+                "student_blocks": 6,
+                "teacher_blocks": 15
+              },
+              "immediate": {
+                "label": "即时训练",
+                "student_blocks": 11,
+                "teacher_blocks": 31
+              },
+              "knowledge": {
+                "label": "知识精讲",
+                "student_blocks": 186,
+                "teacher_blocks": 186
+              }
+            },
+            "explicit_final_heading": false,
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "omitted_slots": [],
+            "routing_applied": true,
+            "student_units": 97,
+            "teacher_units": 127,
+            "template_sha256": "1318fceabaa957b12e371310902fd81a0db08be09cee2121f6cd2606d8fd6a1a",
+            "training_question_routes": [
+              {
+                "question_number": 1,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 2,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 3,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 4,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 5,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 6,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 7,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 8,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 9,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 10,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 11,
+                "slot": "final"
+              },
+              {
+                "question_number": 12,
+                "slot": "final"
+              },
+              {
+                "question_number": 13,
+                "slot": "final"
+              },
+              {
+                "question_number": 14,
+                "slot": "final"
+              },
+              {
+                "question_number": 15,
+                "slot": "final"
+              }
+            ],
+            "training_split_strategy": "WHOLE_COMPONENT_70_30"
+          },
+          "product_integrity": {
+            "accepted": true,
+            "errors": [],
+            "final_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.051,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 616,
+                  "repeated_sequences": [],
+                  "sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 15406,
+                  "top_level_blocks": 6
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 565,
+                  "repeated_sequences": [],
+                  "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 14659,
+                  "top_level_blocks": 232
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0582,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 587,
+                  "repeated_sequences": [],
+                  "sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 13593,
+                  "top_level_blocks": 6
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 536,
+                  "repeated_sequences": [],
+                  "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 12846,
+                  "top_level_blocks": 203
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 12,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "gate": "PRODUCT_INTEGRITY_GATE",
+            "input_sources": {
+              "student": {
+                "bytes": 781737,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 536,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 12846,
+                    "top_level_blocks": 203
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\input-1.docx",
+                  "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+                },
+                "origin": "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+                "original_filename": "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+                "role": "student",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\input-1.docx",
+                "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+              },
+              "teacher": {
+                "bytes": 785495,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 565,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 14659,
+                    "top_level_blocks": 232
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\input-2.docx",
+                  "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+                },
+                "origin": "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+                "original_filename": "专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+                "role": "teacher",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\input-2.docx",
+                "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+              }
+            },
+            "staged_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.051,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 616,
+                  "repeated_sequences": [],
+                  "sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 15406,
+                  "top_level_blocks": 6
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 565,
+                  "repeated_sequences": [],
+                  "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 14659,
+                  "top_level_blocks": 232
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0582,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 587,
+                  "repeated_sequences": [],
+                  "sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 13593,
+                  "top_level_blocks": 6
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 536,
+                  "repeated_sequences": [],
+                  "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 12846,
+                  "top_level_blocks": 203
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 12,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "warnings": []
+          },
+          "product_normalization": {
+            "outputs": {
+              "student": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 76,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 19,
+                  "spacer_intervals": 13,
+                  "spacer_pt": 19.65,
+                  "target_y": 760.3
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\normalized-student-da8601ac5e09498aa1f671f6bbd4a361.docx",
+                "output_sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 43,
+                    "drawing_image_references": 28,
+                    "errors": 0,
+                    "image_media_targets": 28,
+                    "num_references": 72,
+                    "package_parts": 20,
+                    "picture_ids": 28,
+                    "relationship_references": 31,
+                    "relationships": 17,
+                    "style_references": 312,
+                    "warnings": 0,
+                    "xml_parts": 13
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\student-stage-da8601ac5e09498aa1f671f6bbd4a361.docx",
+                "source_sha256": "bc485c9d894391019dec21969a6422975ffe93903e5874c4d80e93cb9b16ea6e",
+                "source_title_projection": {
+                  "candidate": "清单04 副词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "1v1",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              },
+              "teacher": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 76,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 19,
+                  "spacer_intervals": 13,
+                  "spacer_pt": 19.65,
+                  "target_y": 760.3
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\normalized-teacher-da8601ac5e09498aa1f671f6bbd4a361.docx",
+                "output_sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 43,
+                    "drawing_image_references": 28,
+                    "errors": 0,
+                    "image_media_targets": 28,
+                    "num_references": 72,
+                    "package_parts": 20,
+                    "picture_ids": 28,
+                    "relationship_references": 31,
+                    "relationships": 17,
+                    "style_references": 327,
+                    "warnings": 0,
+                    "xml_parts": 13
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\teacher-output-da8601ac5e09498aa1f671f6bbd4a361.docx",
+                "source_sha256": "11e63fa9edc331f7b5e2923b1cb813937a3b4e833fc8808e9e168df9f3fe1b4c",
+                "source_title_projection": {
+                  "candidate": "清单04 副词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "1v1",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              }
+            },
+            "renderer": "XML",
+            "status": "NORMALIZED",
+            "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+          },
+          "renderer": "XML",
+          "renderer_route": "XML",
+          "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义\\专题04 副词（知识清单）（全国通用）",
+          "selected_engine": "XML",
+          "slot_evidence": {
+            "final_outputs": {
+              "student": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 5,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 11,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 145,
+                    "verified": true
+                  }
+                },
+                "sha256": "c89e031897a6782cce46b28c09f2371e664f352a0cefc8988cdb2f13d837297e",
+                "verified": true
+              },
+              "teacher": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 15,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 31,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 145,
+                    "verified": true
+                  }
+                },
+                "sha256": "f80f58729151c7b01cc95ae4f465d8cec1e3a88041efa6477bf89748def87744",
+                "verified": true
+              }
+            },
+            "renderer": "XML",
+            "student": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "188": "immediate",
+                  "189": "immediate",
+                  "190": "immediate",
+                  "191": "immediate",
+                  "192": "immediate",
+                  "193": "immediate",
+                  "194": "immediate",
+                  "195": "immediate",
+                  "196": "immediate",
+                  "197": "final",
+                  "198": "final",
+                  "199": "final",
+                  "200": "final",
+                  "201": "final"
+                },
+                "groups": [
+                  {
+                    "end": 187,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 188,
+                    "intent": "practice",
+                    "start": 188,
+                    "weight": 1
+                  },
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 189,
+                    "weight": 1
+                  },
+                  {
+                    "end": 190,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 191,
+                    "intent": "practice",
+                    "start": 191,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 192,
+                    "weight": 1
+                  },
+                  {
+                    "end": 193,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 194,
+                    "intent": "practice",
+                    "start": 194,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 195,
+                    "weight": 1
+                  },
+                  {
+                    "end": 196,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 197,
+                    "intent": "practice",
+                    "start": 197,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 198,
+                    "weight": 1
+                  },
+                  {
+                    "end": 199,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 200,
+                    "intent": "practice",
+                    "start": 200,
+                    "weight": 1
+                  },
+                  {
+                    "end": 202,
+                    "intent": "practice",
+                    "start": 201,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+              },
+              "source_block_counts": {
+                "final": 6,
+                "immediate": 11,
+                "knowledge": 186
+              }
+            },
+            "teacher": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "190": "immediate",
+                  "193": "immediate",
+                  "196": "immediate",
+                  "199": "immediate",
+                  "202": "immediate",
+                  "205": "immediate",
+                  "208": "immediate",
+                  "211": "immediate",
+                  "214": "immediate",
+                  "217": "final",
+                  "220": "final",
+                  "223": "final",
+                  "226": "final",
+                  "229": "final"
+                },
+                "groups": [
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 201,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 204,
+                    "intent": "practice",
+                    "start": 202,
+                    "weight": 1
+                  },
+                  {
+                    "end": 207,
+                    "intent": "practice",
+                    "start": 205,
+                    "weight": 1
+                  },
+                  {
+                    "end": 210,
+                    "intent": "practice",
+                    "start": 208,
+                    "weight": 1
+                  },
+                  {
+                    "end": 213,
+                    "intent": "practice",
+                    "start": 211,
+                    "weight": 1
+                  },
+                  {
+                    "end": 216,
+                    "intent": "practice",
+                    "start": 214,
+                    "weight": 1
+                  },
+                  {
+                    "end": 219,
+                    "intent": "practice",
+                    "start": 217,
+                    "weight": 1
+                  },
+                  {
+                    "end": 222,
+                    "intent": "practice",
+                    "start": 220,
+                    "weight": 1
+                  },
+                  {
+                    "end": 225,
+                    "intent": "practice",
+                    "start": 223,
+                    "weight": 1
+                  },
+                  {
+                    "end": 228,
+                    "intent": "practice",
+                    "start": 226,
+                    "weight": 1
+                  },
+                  {
+                    "end": 231,
+                    "intent": "practice",
+                    "start": 229,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+              },
+              "source_block_counts": {
+                "final": 15,
+                "immediate": 31,
+                "knowledge": 186
+              }
+            },
+            "verification": "FINAL_DOCX_SECTIONS"
+          },
+          "slot_status": "SLOTTED",
+          "source_origins": [
+            "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+            "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（背诵版）.docx"
+          ],
+          "started_at": 1791539247.796356,
+          "status": "done",
+          "student": "完成",
+          "student_preparation": {
+            "com_observation": "NOT_ENTERED",
+            "com_used": false,
+            "elapsed_seconds": 0,
+            "engine": "BYPASS",
+            "input_version": "TEACHER_AND_STUDENT",
+            "make_student_called": false,
+            "output_package_valid": true,
+            "package_valid": true,
+            "reason_code": null,
+            "reason_detail": null,
+            "registry_error": null,
+            "reviewed_evidence": null,
+            "status": "STUDENT_SOURCE_BYPASS",
+            "student_preparation": "BYPASS",
+            "student_preparation_route": "BYPASS",
+            "studentizer_fallback": false,
+            "wps_com_started": false
+          },
+          "student_preparation_route": "BYPASS",
+          "student_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\input-1.docx",
+          "teacher": "完成",
+          "teacher_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\da8601ac5e09498aa1f671f6bbd4a361\\work\\input-2.docx",
+          "topic": "专题04 副词（知识清单）（全国通用）",
+          "updated_at": 1791539254.678331,
+          "warnings": [
+            "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+          ],
+          "xml_degradation": {
+            "student": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "188": "immediate",
+                  "189": "immediate",
+                  "190": "immediate",
+                  "191": "immediate",
+                  "192": "immediate",
+                  "193": "immediate",
+                  "194": "immediate",
+                  "195": "immediate",
+                  "196": "immediate",
+                  "197": "final",
+                  "198": "final",
+                  "199": "final",
+                  "200": "final",
+                  "201": "final"
+                },
+                "groups": [
+                  {
+                    "end": 187,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 188,
+                    "intent": "practice",
+                    "start": 188,
+                    "weight": 1
+                  },
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 189,
+                    "weight": 1
+                  },
+                  {
+                    "end": 190,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 191,
+                    "intent": "practice",
+                    "start": 191,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 192,
+                    "weight": 1
+                  },
+                  {
+                    "end": 193,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 194,
+                    "intent": "practice",
+                    "start": 194,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 195,
+                    "weight": 1
+                  },
+                  {
+                    "end": 196,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 197,
+                    "intent": "practice",
+                    "start": 197,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 198,
+                    "weight": 1
+                  },
+                  {
+                    "end": 199,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 200,
+                    "intent": "practice",
+                    "start": 200,
+                    "weight": 1
+                  },
+                  {
+                    "end": 202,
+                    "intent": "practice",
+                    "start": 201,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+            },
+            "teacher": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "global answers must stay in source order",
+                  "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "190": "immediate",
+                  "193": "immediate",
+                  "196": "immediate",
+                  "199": "immediate",
+                  "202": "immediate",
+                  "205": "immediate",
+                  "208": "immediate",
+                  "211": "immediate",
+                  "214": "immediate",
+                  "217": "final",
+                  "220": "final",
+                  "223": "final",
+                  "226": "final",
+                  "229": "final"
+                },
+                "groups": [
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 201,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 204,
+                    "intent": "practice",
+                    "start": 202,
+                    "weight": 1
+                  },
+                  {
+                    "end": 207,
+                    "intent": "practice",
+                    "start": 205,
+                    "weight": 1
+                  },
+                  {
+                    "end": 210,
+                    "intent": "practice",
+                    "start": 208,
+                    "weight": 1
+                  },
+                  {
+                    "end": 213,
+                    "intent": "practice",
+                    "start": 211,
+                    "weight": 1
+                  },
+                  {
+                    "end": 216,
+                    "intent": "practice",
+                    "start": 214,
+                    "weight": 1
+                  },
+                  {
+                    "end": 219,
+                    "intent": "practice",
+                    "start": 217,
+                    "weight": 1
+                  },
+                  {
+                    "end": 222,
+                    "intent": "practice",
+                    "start": 220,
+                    "weight": 1
+                  },
+                  {
+                    "end": 225,
+                    "intent": "practice",
+                    "start": 223,
+                    "weight": 1
+                  },
+                  {
+                    "end": 228,
+                    "intent": "practice",
+                    "start": 226,
+                    "weight": 1
+                  },
+                  {
+                    "end": 231,
+                    "intent": "practice",
+                    "start": 229,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+            }
+          },
+          "xml_source_projection": null
+        }
+      ],
+      "job_id": "cc20416805174dd6809b19b74a8dc6e2",
+      "options": {
+        "academic_year": "2026-2027学年",
+        "docx_mode": "auto",
+        "engine_mode": "auto",
+        "grade": "高三",
+        "handout_type": "复习讲义",
+        "split_mode": "smart",
+        "subject": "英语",
+        "template_type": "1v1"
+      },
+      "output_paths": [
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 教师版.docx",
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 学生版.docx"
+      ],
+      "produced": 2,
+      "progress": 1,
+      "renderer_route": "XML_AUTO",
+      "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义",
+      "selected_engine": "XML",
+      "slot_counts": {
+        "FAILED": 0,
+        "PRESERVED_ONLY": 0,
+        "SLOTTED": 1
+      },
+      "stage": "批量生成完成：1 个成功，0 个失败",
+      "started_at": 1791539247.636271,
+      "started_at_iso": "2026-10-09T09:47:27+00:00",
+      "status": "done",
+      "total": 1,
+      "updated_at": 1791539255.151346,
+      "updated_at_iso": "2026-10-09T09:47:35+00:00",
+      "warnings": [
+        "专题04 副词（知识清单）（全国通用）：封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。",
+        "专题04 副词（知识清单）（全国通用）：教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+      ]
+    }
+  },
+  {
+    "case": "zip-04-class",
+    "template": "class",
+    "http_status": 202,
+    "job": {
+      "batch_outcome": "ALL_SUCCESS",
+      "completed": 1,
+      "created_at": 1791539256.852099,
+      "created_at_iso": "2026-10-09T09:47:36+00:00",
+      "current_topic": null,
+      "elapsed_seconds": 7.175,
+      "failed": 0,
+      "filenames": [
+        "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip"
+      ],
+      "generation_attempts": 1,
+      "has_result": true,
+      "is_batch": true,
+      "items": [
+        {
+          "child_job_id": "b73e9c664da34f9faa73bc1bbcb4a9a9",
+          "elapsed_seconds": 6.92,
+          "error": null,
+          "fallback_detail": null,
+          "fallback_reason": null,
+          "input_version": "TEACHER_AND_STUDENT",
+          "item_id": "1",
+          "lesson_metadata": {
+            "by_role": {
+              "student": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 68,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "副词的分类及句法功能",
+                  "副词的的比较级和最高级",
+                  "副词构成"
+                ],
+                "warning": null
+              },
+              "teacher": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 68,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "副词的分类及句法功能",
+                  "副词的的比较级和最高级",
+                  "副词构成"
+                ],
+                "warning": null
+              }
+            },
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 68,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+            },
+            "difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "difficulties_reason": "",
+            "difficulties_source": "V09_OFFLINE_RULE",
+            "full_difficulties": "重点：专题04 副词（知识清单）（全国通用）核心概念（一  副词的分类及句法功能、副词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "full_objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "objectives": "①掌握专题04 副词（知识清单）（全国通用）核心知识：一  副词的分类及句法功能、副词的分类、副词的句法功能等；\n②掌握本专题典型问题题型的解法，共15道题；\n③培养运算与推理能力，形成知识体系。",
+            "objectives_reason": "",
+            "objectives_source": "V09_OFFLINE_RULE",
+            "source": "V09_OFFLINE_RULE",
+            "status": "RESOLVED",
+            "training_titles": [
+              "副词的分类及句法功能",
+              "副词的的比较级和最高级",
+              "副词构成"
+            ],
+            "warning": null
+          },
+          "original_topic": "专题04 副词（知识清单）（全国通用）",
+          "output_paths": [
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（2）\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 教师版.docx",
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（2）\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 学生版.docx"
+          ],
+          "package_validation": {
+            "student": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 37,
+                "drawing_image_references": 22,
+                "errors": 0,
+                "image_media_targets": 29,
+                "num_references": 71,
+                "package_parts": 24,
+                "picture_ids": 22,
+                "relationship_references": 31,
+                "relationships": 19,
+                "style_references": 307,
+                "vml_image_references": 7,
+                "warnings": 0,
+                "xml_parts": 14
+              },
+              "valid": true,
+              "warnings": []
+            },
+            "teacher": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 37,
+                "drawing_image_references": 22,
+                "errors": 0,
+                "image_media_targets": 29,
+                "num_references": 71,
+                "package_parts": 24,
+                "picture_ids": 22,
+                "relationship_references": 31,
+                "relationships": 19,
+                "style_references": 322,
+                "vml_image_references": 7,
+                "warnings": 0,
+                "xml_parts": 14
+              },
+              "valid": true,
+              "warnings": []
+            }
+          },
+          "pair_alignment_status": "NOT_REQUIRED_NOT_VERIFIED",
+          "plan_summary": {
+            "cover_metadata_blocks": [],
+            "destination_slots": {
+              "final": {
+                "label": "六、出门测试",
+                "student_blocks": 6,
+                "teacher_blocks": 15
+              },
+              "immediate": {
+                "label": "即时训练",
+                "student_blocks": 11,
+                "teacher_blocks": 31
+              },
+              "knowledge": {
+                "label": "知识精讲&例题讲解",
+                "student_blocks": 186,
+                "teacher_blocks": 186
+              }
+            },
+            "explicit_final_heading": false,
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "omitted_slots": [],
+            "routing_applied": true,
+            "student_units": 97,
+            "teacher_units": 127,
+            "template_sha256": "f51046d841699645b1b49f49f481c559e8502b98589d20b0c7e97cf2f7ba8f13",
+            "training_question_routes": [
+              {
+                "question_number": 1,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 2,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 3,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 4,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 5,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 6,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 7,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 8,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 9,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 10,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 11,
+                "slot": "final"
+              },
+              {
+                "question_number": 12,
+                "slot": "final"
+              },
+              {
+                "question_number": 13,
+                "slot": "final"
+              },
+              {
+                "question_number": 14,
+                "slot": "final"
+              },
+              {
+                "question_number": 15,
+                "slot": "final"
+              }
+            ],
+            "training_split_strategy": "WHOLE_COMPONENT_70_30"
+          },
+          "product_integrity": {
+            "accepted": true,
+            "errors": [],
+            "final_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0422,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 624,
+                  "repeated_sequences": [],
+                  "sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 15277,
+                  "top_level_blocks": 3
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 565,
+                  "repeated_sequences": [],
+                  "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 14659,
+                  "top_level_blocks": 232
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0481,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 595,
+                  "repeated_sequences": [],
+                  "sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 13464,
+                  "top_level_blocks": 3
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 536,
+                  "repeated_sequences": [],
+                  "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 12846,
+                  "top_level_blocks": 203
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 12,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "gate": "PRODUCT_INTEGRITY_GATE",
+            "input_sources": {
+              "student": {
+                "bytes": 781737,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 536,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 12846,
+                    "top_level_blocks": 203
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\input-1.docx",
+                  "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+                },
+                "origin": "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+                "original_filename": "专题04 副词（知识清单）（全国通用）（默写版）.docx",
+                "role": "student",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\input-1.docx",
+                "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+              },
+              "teacher": {
+                "bytes": 785495,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 565,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 14659,
+                    "top_level_blocks": 232
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\input-2.docx",
+                  "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+                },
+                "origin": "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+                "original_filename": "专题04 副词（知识清单）（全国通用）（背诵版）.docx",
+                "role": "teacher",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\input-2.docx",
+                "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+              }
+            },
+            "staged_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0422,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 624,
+                  "repeated_sequences": [],
+                  "sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 15277,
+                  "top_level_blocks": 3
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 565,
+                  "repeated_sequences": [],
+                  "sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 14659,
+                  "top_level_blocks": 232
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0481,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 595,
+                  "repeated_sequences": [],
+                  "sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 13464,
+                  "top_level_blocks": 3
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 536,
+                  "repeated_sequences": [],
+                  "sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 12846,
+                  "top_level_blocks": 203
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 12,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "warnings": []
+          },
+          "product_normalization": {
+            "outputs": {
+              "student": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 68,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 16,
+                  "spacer_intervals": 10,
+                  "spacer_pt": 22,
+                  "target_y": 740.1
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\normalized-student-b73e9c664da34f9faa73bc1bbcb4a9a9.docx",
+                "output_sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 37,
+                    "drawing_image_references": 22,
+                    "errors": 0,
+                    "image_media_targets": 29,
+                    "num_references": 71,
+                    "package_parts": 24,
+                    "picture_ids": 22,
+                    "relationship_references": 31,
+                    "relationships": 19,
+                    "style_references": 307,
+                    "vml_image_references": 7,
+                    "warnings": 0,
+                    "xml_parts": 14
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\student-stage-b73e9c664da34f9faa73bc1bbcb4a9a9.docx",
+                "source_sha256": "8308aea166e7db290783c2359b59bc1f6f42ac5bd9f2af2a4836d00224232d1c",
+                "source_title_projection": {
+                  "candidate": "清单04 副词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "class",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              },
+              "teacher": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 68,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题04 副词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 16,
+                  "spacer_intervals": 10,
+                  "spacer_pt": 22,
+                  "target_y": 740.1
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\normalized-teacher-b73e9c664da34f9faa73bc1bbcb4a9a9.docx",
+                "output_sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 37,
+                    "drawing_image_references": 22,
+                    "errors": 0,
+                    "image_media_targets": 29,
+                    "num_references": 71,
+                    "package_parts": 24,
+                    "picture_ids": 22,
+                    "relationship_references": 31,
+                    "relationships": 19,
+                    "style_references": 322,
+                    "vml_image_references": 7,
+                    "warnings": 0,
+                    "xml_parts": 14
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\teacher-output-b73e9c664da34f9faa73bc1bbcb4a9a9.docx",
+                "source_sha256": "127c3daffdbc93d4aa322bef1817fcf74fbcec93ef8d9190fedd840b9e782875",
+                "source_title_projection": {
+                  "candidate": "清单04 副词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "class",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              }
+            },
+            "renderer": "XML",
+            "status": "NORMALIZED",
+            "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+          },
+          "renderer": "XML",
+          "renderer_route": "XML",
+          "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（2）\\专题04 副词（知识清单）（全国通用）",
+          "selected_engine": "XML",
+          "slot_evidence": {
+            "final_outputs": {
+              "student": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 5,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 11,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 145,
+                    "verified": true
+                  }
+                },
+                "sha256": "42e676d445bd2bd30dc104c15d294dd581d9bbbdc286c3f651deac4dd8724b74",
+                "verified": true
+              },
+              "teacher": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 15,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 31,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 145,
+                    "verified": true
+                  }
+                },
+                "sha256": "26c91d9182e6e9763f08ff6724615af47fa37a3e67a38def0bb38f239d6039af",
+                "verified": true
+              }
+            },
+            "renderer": "XML",
+            "student": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "188": "immediate",
+                  "189": "immediate",
+                  "190": "immediate",
+                  "191": "immediate",
+                  "192": "immediate",
+                  "193": "immediate",
+                  "194": "immediate",
+                  "195": "immediate",
+                  "196": "immediate",
+                  "197": "final",
+                  "198": "final",
+                  "199": "final",
+                  "200": "final",
+                  "201": "final"
+                },
+                "groups": [
+                  {
+                    "end": 187,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 188,
+                    "intent": "practice",
+                    "start": 188,
+                    "weight": 1
+                  },
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 189,
+                    "weight": 1
+                  },
+                  {
+                    "end": 190,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 191,
+                    "intent": "practice",
+                    "start": 191,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 192,
+                    "weight": 1
+                  },
+                  {
+                    "end": 193,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 194,
+                    "intent": "practice",
+                    "start": 194,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 195,
+                    "weight": 1
+                  },
+                  {
+                    "end": 196,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 197,
+                    "intent": "practice",
+                    "start": 197,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 198,
+                    "weight": 1
+                  },
+                  {
+                    "end": 199,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 200,
+                    "intent": "practice",
+                    "start": 200,
+                    "weight": 1
+                  },
+                  {
+                    "end": 202,
+                    "intent": "practice",
+                    "start": 201,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+              },
+              "source_block_counts": {
+                "final": 6,
+                "immediate": 11,
+                "knowledge": 186
+              }
+            },
+            "teacher": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "190": "immediate",
+                  "193": "immediate",
+                  "196": "immediate",
+                  "199": "immediate",
+                  "202": "immediate",
+                  "205": "immediate",
+                  "208": "immediate",
+                  "211": "immediate",
+                  "214": "immediate",
+                  "217": "final",
+                  "220": "final",
+                  "223": "final",
+                  "226": "final",
+                  "229": "final"
+                },
+                "groups": [
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 201,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 204,
+                    "intent": "practice",
+                    "start": 202,
+                    "weight": 1
+                  },
+                  {
+                    "end": 207,
+                    "intent": "practice",
+                    "start": 205,
+                    "weight": 1
+                  },
+                  {
+                    "end": 210,
+                    "intent": "practice",
+                    "start": 208,
+                    "weight": 1
+                  },
+                  {
+                    "end": 213,
+                    "intent": "practice",
+                    "start": 211,
+                    "weight": 1
+                  },
+                  {
+                    "end": 216,
+                    "intent": "practice",
+                    "start": 214,
+                    "weight": 1
+                  },
+                  {
+                    "end": 219,
+                    "intent": "practice",
+                    "start": 217,
+                    "weight": 1
+                  },
+                  {
+                    "end": 222,
+                    "intent": "practice",
+                    "start": 220,
+                    "weight": 1
+                  },
+                  {
+                    "end": 225,
+                    "intent": "practice",
+                    "start": 223,
+                    "weight": 1
+                  },
+                  {
+                    "end": 228,
+                    "intent": "practice",
+                    "start": 226,
+                    "weight": 1
+                  },
+                  {
+                    "end": 231,
+                    "intent": "practice",
+                    "start": 229,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+              },
+              "source_block_counts": {
+                "final": 15,
+                "immediate": 31,
+                "knowledge": 186
+              }
+            },
+            "verification": "FINAL_DOCX_SECTIONS"
+          },
+          "slot_status": "SLOTTED",
+          "source_origins": [
+            "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（默写版）.docx",
+            "专题04 副词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题04 副词（知识清单）（全国通用）（背诵版）.docx"
+          ],
+          "started_at": 1791539256.899955,
+          "status": "done",
+          "student": "完成",
+          "student_preparation": {
+            "com_observation": "NOT_ENTERED",
+            "com_used": false,
+            "elapsed_seconds": 0,
+            "engine": "BYPASS",
+            "input_version": "TEACHER_AND_STUDENT",
+            "make_student_called": false,
+            "output_package_valid": true,
+            "package_valid": true,
+            "reason_code": null,
+            "reason_detail": null,
+            "registry_error": null,
+            "reviewed_evidence": null,
+            "status": "STUDENT_SOURCE_BYPASS",
+            "student_preparation": "BYPASS",
+            "student_preparation_route": "BYPASS",
+            "studentizer_fallback": false,
+            "wps_com_started": false
+          },
+          "student_preparation_route": "BYPASS",
+          "student_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\input-1.docx",
+          "teacher": "完成",
+          "teacher_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\b73e9c664da34f9faa73bc1bbcb4a9a9\\work\\input-2.docx",
+          "topic": "专题04 副词（知识清单）（全国通用）",
+          "updated_at": 1791539263.819904,
+          "warnings": [
+            "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+          ],
+          "xml_degradation": {
+            "student": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "188": "immediate",
+                  "189": "immediate",
+                  "190": "immediate",
+                  "191": "immediate",
+                  "192": "immediate",
+                  "193": "immediate",
+                  "194": "immediate",
+                  "195": "immediate",
+                  "196": "immediate",
+                  "197": "final",
+                  "198": "final",
+                  "199": "final",
+                  "200": "final",
+                  "201": "final"
+                },
+                "groups": [
+                  {
+                    "end": 187,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 188,
+                    "intent": "practice",
+                    "start": 188,
+                    "weight": 1
+                  },
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 189,
+                    "weight": 1
+                  },
+                  {
+                    "end": 190,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 191,
+                    "intent": "practice",
+                    "start": 191,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 192,
+                    "weight": 1
+                  },
+                  {
+                    "end": 193,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 194,
+                    "intent": "practice",
+                    "start": 194,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 195,
+                    "weight": 1
+                  },
+                  {
+                    "end": 196,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 197,
+                    "intent": "practice",
+                    "start": 197,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 198,
+                    "weight": 1
+                  },
+                  {
+                    "end": 199,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 200,
+                    "intent": "practice",
+                    "start": 200,
+                    "weight": 1
+                  },
+                  {
+                    "end": 202,
+                    "intent": "practice",
+                    "start": 201,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "8fe5a6cd5ba56faf0ce77d676c741accf4eda2a3a37630a86062f017a51c1d8a"
+            },
+            "teacher": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "global answers must stay in source order",
+                  "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "187": "immediate",
+                  "190": "immediate",
+                  "193": "immediate",
+                  "196": "immediate",
+                  "199": "immediate",
+                  "202": "immediate",
+                  "205": "immediate",
+                  "208": "immediate",
+                  "211": "immediate",
+                  "214": "immediate",
+                  "217": "final",
+                  "220": "final",
+                  "223": "final",
+                  "226": "final",
+                  "229": "final"
+                },
+                "groups": [
+                  {
+                    "end": 189,
+                    "intent": "practice",
+                    "start": 187,
+                    "weight": 1
+                  },
+                  {
+                    "end": 192,
+                    "intent": "practice",
+                    "start": 190,
+                    "weight": 1
+                  },
+                  {
+                    "end": 195,
+                    "intent": "practice",
+                    "start": 193,
+                    "weight": 1
+                  },
+                  {
+                    "end": 198,
+                    "intent": "practice",
+                    "start": 196,
+                    "weight": 1
+                  },
+                  {
+                    "end": 201,
+                    "intent": "practice",
+                    "start": 199,
+                    "weight": 1
+                  },
+                  {
+                    "end": 204,
+                    "intent": "practice",
+                    "start": 202,
+                    "weight": 1
+                  },
+                  {
+                    "end": 207,
+                    "intent": "practice",
+                    "start": 205,
+                    "weight": 1
+                  },
+                  {
+                    "end": 210,
+                    "intent": "practice",
+                    "start": 208,
+                    "weight": 1
+                  },
+                  {
+                    "end": 213,
+                    "intent": "practice",
+                    "start": 211,
+                    "weight": 1
+                  },
+                  {
+                    "end": 216,
+                    "intent": "practice",
+                    "start": 214,
+                    "weight": 1
+                  },
+                  {
+                    "end": 219,
+                    "intent": "practice",
+                    "start": 217,
+                    "weight": 1
+                  },
+                  {
+                    "end": 222,
+                    "intent": "practice",
+                    "start": 220,
+                    "weight": 1
+                  },
+                  {
+                    "end": 225,
+                    "intent": "practice",
+                    "start": 223,
+                    "weight": 1
+                  },
+                  {
+                    "end": 228,
+                    "intent": "practice",
+                    "start": 226,
+                    "weight": 1
+                  },
+                  {
+                    "end": 231,
+                    "intent": "practice",
+                    "start": 229,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "7af222717b88dd606304bb732a68ef539dfdd44a3119a213530fdd9e9d946958"
+            }
+          },
+          "xml_source_projection": null
+        }
+      ],
+      "job_id": "0e254e416d814db6ab16ecacdda06d34",
+      "options": {
+        "academic_year": "2026-2027学年",
+        "docx_mode": "auto",
+        "engine_mode": "auto",
+        "grade": "高三",
+        "handout_type": "复习讲义",
+        "split_mode": "smart",
+        "subject": "英语",
+        "template_type": "class"
+      },
+      "output_paths": [
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（2）\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 教师版.docx",
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（2）\\专题04 副词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题04 副词（知识清单）（全国通用） 复习讲义 学生版.docx"
+      ],
+      "produced": 2,
+      "progress": 1,
+      "renderer_route": "XML_AUTO",
+      "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（2）",
+      "selected_engine": "XML",
+      "slot_counts": {
+        "FAILED": 0,
+        "PRESERVED_ONLY": 0,
+        "SLOTTED": 1
+      },
+      "stage": "批量生成完成：1 个成功，0 个失败",
+      "started_at": 1791539256.870551,
+      "started_at_iso": "2026-10-09T09:47:36+00:00",
+      "status": "done",
+      "total": 1,
+      "updated_at": 1791539264.045306,
+      "updated_at_iso": "2026-10-09T09:47:44+00:00",
+      "warnings": [
+        "专题04 副词（知识清单）（全国通用）：封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。",
+        "专题04 副词（知识清单）（全国通用）：教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+      ]
+    }
+  },
+  {
+    "case": "zip-05-1v1",
+    "template": "1v1",
+    "http_status": 202,
+    "job": {
+      "batch_outcome": "ALL_SUCCESS",
+      "completed": 1,
+      "created_at": 1791539265.979879,
+      "created_at_iso": "2026-10-09T09:47:45+00:00",
+      "current_topic": null,
+      "elapsed_seconds": 10.446,
+      "failed": 0,
+      "filenames": [
+        "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip"
+      ],
+      "generation_attempts": 1,
+      "has_result": true,
+      "is_batch": true,
+      "items": [
+        {
+          "child_job_id": "9fe4118ae51c45748b0232d56731717c",
+          "elapsed_seconds": 10.105,
+          "error": null,
+          "fallback_detail": null,
+          "fallback_reason": null,
+          "input_version": "TEACHER_AND_STUDENT",
+          "item_id": "1",
+          "lesson_metadata": {
+            "by_role": {
+              "student": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 76,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共9道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共9道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "代词的分类及句法功能",
+                  "人称代词、物主代词、反身代词",
+                  "不定代词",
+                  "指示代词、相互代词",
+                  "疑问代词、连接代词、关系代词"
+                ],
+                "warning": null
+              },
+              "teacher": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 76,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "代词的分类及句法功能",
+                  "人称代词、物主代词、反身代词",
+                  "不定代词",
+                  "指示代词、相互代词",
+                  "疑问代词、连接代词、关系代词"
+                ],
+                "warning": null
+              }
+            },
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 76,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+            },
+            "difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "difficulties_reason": "",
+            "difficulties_source": "V09_OFFLINE_RULE",
+            "full_difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "full_objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+            "objectives_reason": "",
+            "objectives_source": "V09_OFFLINE_RULE",
+            "source": "V09_OFFLINE_RULE",
+            "status": "RESOLVED",
+            "training_titles": [
+              "代词的分类及句法功能",
+              "人称代词、物主代词、反身代词",
+              "不定代词",
+              "指示代词、相互代词",
+              "疑问代词、连接代词、关系代词"
+            ],
+            "warning": null
+          },
+          "original_topic": "专题05 代词（知识清单）（全国通用）",
+          "output_paths": [
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（3）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 教师版.docx",
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（3）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 学生版.docx"
+          ],
+          "package_validation": {
+            "student": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 29,
+                "drawing_image_references": 19,
+                "errors": 0,
+                "image_media_targets": 19,
+                "num_references": 39,
+                "package_parts": 21,
+                "picture_ids": 19,
+                "relationship_references": 22,
+                "relationships": 18,
+                "style_references": 320,
+                "warnings": 0,
+                "xml_parts": 13
+              },
+              "valid": true,
+              "warnings": []
+            },
+            "teacher": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 29,
+                "drawing_image_references": 19,
+                "errors": 0,
+                "image_media_targets": 19,
+                "num_references": 39,
+                "package_parts": 21,
+                "picture_ids": 19,
+                "relationship_references": 22,
+                "relationships": 18,
+                "style_references": 319,
+                "warnings": 0,
+                "xml_parts": 13
+              },
+              "valid": true,
+              "warnings": []
+            }
+          },
+          "pair_alignment_status": "NOT_REQUIRED_NOT_VERIFIED",
+          "plan_summary": {
+            "cover_metadata_blocks": [],
+            "destination_slots": {
+              "final": {
+                "label": "六、巩固练习",
+                "student_blocks": 3,
+                "teacher_blocks": 6
+              },
+              "immediate": {
+                "label": "即时训练",
+                "student_blocks": 4,
+                "teacher_blocks": 17
+              },
+              "knowledge": {
+                "label": "知识精讲",
+                "student_blocks": 263,
+                "teacher_blocks": 264
+              }
+            },
+            "explicit_final_heading": false,
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "omitted_slots": [],
+            "routing_applied": true,
+            "student_units": 113,
+            "teacher_units": 131,
+            "template_sha256": "1318fceabaa957b12e371310902fd81a0db08be09cee2121f6cd2606d8fd6a1a",
+            "training_question_routes": [
+              {
+                "question_number": 1,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 2,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 3,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 4,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 5,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 6,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 7,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 8,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 9,
+                "slot": "final"
+              },
+              {
+                "question_number": 10,
+                "slot": "final"
+              },
+              {
+                "question_number": 11,
+                "slot": "final"
+              },
+              {
+                "question_number": 12,
+                "slot": "final"
+              }
+            ],
+            "training_split_strategy": "WHOLE_COMPONENT_70_30"
+          },
+          "product_integrity": {
+            "accepted": true,
+            "errors": [],
+            "final_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0413,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 931,
+                  "repeated_sequences": [],
+                  "sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 18823,
+                  "top_level_blocks": 6
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 880,
+                  "repeated_sequences": [],
+                  "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18076,
+                  "top_level_blocks": 287
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 8,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0429,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 914,
+                  "repeated_sequences": [],
+                  "sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 18174,
+                  "top_level_blocks": 6
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 863,
+                  "repeated_sequences": [],
+                  "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 17427,
+                  "top_level_blocks": 270
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "gate": "PRODUCT_INTEGRITY_GATE",
+            "input_sources": {
+              "student": {
+                "bytes": 1371307,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 863,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 17427,
+                    "top_level_blocks": 270
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\input-1.docx",
+                  "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+                },
+                "origin": "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+                "original_filename": "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+                "role": "student",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\input-1.docx",
+                "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+              },
+              "teacher": {
+                "bytes": 1371558,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 880,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 18076,
+                    "top_level_blocks": 287
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\input-2.docx",
+                  "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+                },
+                "origin": "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+                "original_filename": "专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+                "role": "teacher",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\input-2.docx",
+                "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+              }
+            },
+            "staged_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0413,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 931,
+                  "repeated_sequences": [],
+                  "sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 18823,
+                  "top_level_blocks": 6
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 880,
+                  "repeated_sequences": [],
+                  "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18076,
+                  "top_level_blocks": 287
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 8,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0429,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 914,
+                  "repeated_sequences": [],
+                  "sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+                  "template_cycles": 1,
+                  "template_title_count": 1,
+                  "text_chars": 18174,
+                  "top_level_blocks": 6
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 863,
+                  "repeated_sequences": [],
+                  "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 17427,
+                  "top_level_blocks": 270
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "warnings": []
+          },
+          "product_normalization": {
+            "outputs": {
+              "student": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 76,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 19,
+                  "spacer_intervals": 13,
+                  "spacer_pt": 19.65,
+                  "target_y": 760.3
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\normalized-student-9fe4118ae51c45748b0232d56731717c.docx",
+                "output_sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 29,
+                    "drawing_image_references": 19,
+                    "errors": 0,
+                    "image_media_targets": 19,
+                    "num_references": 39,
+                    "package_parts": 21,
+                    "picture_ids": 19,
+                    "relationship_references": 22,
+                    "relationships": 18,
+                    "style_references": 320,
+                    "warnings": 0,
+                    "xml_parts": 13
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\student-stage-9fe4118ae51c45748b0232d56731717c.docx",
+                "source_sha256": "f71771c15cbb9fbafe407a6dee8280e0dcabecde0e9d2402eebc3b33afc7a39c",
+                "source_title_projection": {
+                  "candidate": "清单05 代词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "1v1",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              },
+              "teacher": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 76,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 19,
+                  "spacer_intervals": 13,
+                  "spacer_pt": 19.65,
+                  "target_y": 760.3
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\normalized-teacher-9fe4118ae51c45748b0232d56731717c.docx",
+                "output_sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 29,
+                    "drawing_image_references": 19,
+                    "errors": 0,
+                    "image_media_targets": 19,
+                    "num_references": 39,
+                    "package_parts": 21,
+                    "picture_ids": 19,
+                    "relationship_references": 22,
+                    "relationships": 18,
+                    "style_references": 319,
+                    "warnings": 0,
+                    "xml_parts": 13
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\teacher-output-9fe4118ae51c45748b0232d56731717c.docx",
+                "source_sha256": "065378f2894644e7425ec70315aa8dd4593f8ac24b9b87003818c07f03133c9e",
+                "source_title_projection": {
+                  "candidate": "清单05 代词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "1v1",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              }
+            },
+            "renderer": "XML",
+            "status": "NORMALIZED",
+            "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+          },
+          "renderer": "XML",
+          "renderer_route": "XML",
+          "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（3）\\专题05 代词（知识清单）（全国通用）",
+          "selected_engine": "XML",
+          "slot_evidence": {
+            "final_outputs": {
+              "student": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 2,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 4,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 208,
+                    "verified": true
+                  }
+                },
+                "sha256": "9d954205e6e490c8a6a063fe08561e26460888675657a0d17fd72c4e665d02eb",
+                "verified": true
+              },
+              "teacher": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 6,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 17,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 208,
+                    "verified": true
+                  }
+                },
+                "sha256": "17994a1021875ae945fb5ca7aea497765c27b2bdd9abde48f331a902a5c87a85",
+                "verified": true
+              }
+            },
+            "renderer": "XML",
+            "student": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "264": "immediate",
+                  "265": "immediate",
+                  "266": "immediate",
+                  "267": "final",
+                  "268": "final"
+                },
+                "groups": [
+                  {
+                    "end": 264,
+                    "intent": "practice",
+                    "start": 264,
+                    "weight": 1
+                  },
+                  {
+                    "end": 265,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 266,
+                    "intent": "practice",
+                    "start": 266,
+                    "weight": 1
+                  },
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 267,
+                    "weight": 1
+                  },
+                  {
+                    "end": 269,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+              },
+              "source_block_counts": {
+                "final": 3,
+                "immediate": 4,
+                "knowledge": 263
+              }
+            },
+            "teacher": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "265": "immediate",
+                  "268": "immediate",
+                  "269": "immediate",
+                  "272": "immediate",
+                  "275": "immediate",
+                  "278": "immediate",
+                  "279": "immediate",
+                  "280": "immediate",
+                  "281": "final",
+                  "282": "final",
+                  "283": "final",
+                  "284": "final"
+                },
+                "groups": [
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 268,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  },
+                  {
+                    "end": 271,
+                    "intent": "practice",
+                    "start": 269,
+                    "weight": 1
+                  },
+                  {
+                    "end": 274,
+                    "intent": "practice",
+                    "start": 272,
+                    "weight": 1
+                  },
+                  {
+                    "end": 277,
+                    "intent": "practice",
+                    "start": 275,
+                    "weight": 1
+                  },
+                  {
+                    "end": 278,
+                    "intent": "practice",
+                    "start": 278,
+                    "weight": 1
+                  },
+                  {
+                    "end": 279,
+                    "intent": "practice",
+                    "start": 279,
+                    "weight": 1
+                  },
+                  {
+                    "end": 280,
+                    "intent": "practice",
+                    "start": 280,
+                    "weight": 1
+                  },
+                  {
+                    "end": 281,
+                    "intent": "practice",
+                    "start": 281,
+                    "weight": 1
+                  },
+                  {
+                    "end": 282,
+                    "intent": "practice",
+                    "start": 282,
+                    "weight": 1
+                  },
+                  {
+                    "end": 283,
+                    "intent": "practice",
+                    "start": 283,
+                    "weight": 1
+                  },
+                  {
+                    "end": 286,
+                    "intent": "practice",
+                    "start": 284,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+              },
+              "source_block_counts": {
+                "final": 6,
+                "immediate": 17,
+                "knowledge": 264
+              }
+            },
+            "verification": "FINAL_DOCX_SECTIONS"
+          },
+          "slot_status": "SLOTTED",
+          "source_origins": [
+            "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+            "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（背诵版）.docx"
+          ],
+          "started_at": 1791539266.028702,
+          "status": "done",
+          "student": "完成",
+          "student_preparation": {
+            "com_observation": "NOT_ENTERED",
+            "com_used": false,
+            "elapsed_seconds": 0,
+            "engine": "BYPASS",
+            "input_version": "TEACHER_AND_STUDENT",
+            "make_student_called": false,
+            "output_package_valid": true,
+            "package_valid": true,
+            "reason_code": null,
+            "reason_detail": null,
+            "registry_error": null,
+            "reviewed_evidence": null,
+            "status": "STUDENT_SOURCE_BYPASS",
+            "student_preparation": "BYPASS",
+            "student_preparation_route": "BYPASS",
+            "studentizer_fallback": false,
+            "wps_com_started": false
+          },
+          "student_preparation_route": "BYPASS",
+          "student_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\input-1.docx",
+          "teacher": "完成",
+          "teacher_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\9fe4118ae51c45748b0232d56731717c\\work\\input-2.docx",
+          "topic": "专题05 代词（知识清单）（全国通用）",
+          "updated_at": 1791539276.133819,
+          "warnings": [
+            "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+          ],
+          "xml_degradation": {
+            "student": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "264": "immediate",
+                  "265": "immediate",
+                  "266": "immediate",
+                  "267": "final",
+                  "268": "final"
+                },
+                "groups": [
+                  {
+                    "end": 264,
+                    "intent": "practice",
+                    "start": 264,
+                    "weight": 1
+                  },
+                  {
+                    "end": 265,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 266,
+                    "intent": "practice",
+                    "start": 266,
+                    "weight": 1
+                  },
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 267,
+                    "weight": 1
+                  },
+                  {
+                    "end": 269,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+            },
+            "teacher": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "global answers must stay in source order",
+                  "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "265": "immediate",
+                  "268": "immediate",
+                  "269": "immediate",
+                  "272": "immediate",
+                  "275": "immediate",
+                  "278": "immediate",
+                  "279": "immediate",
+                  "280": "immediate",
+                  "281": "final",
+                  "282": "final",
+                  "283": "final",
+                  "284": "final"
+                },
+                "groups": [
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 268,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  },
+                  {
+                    "end": 271,
+                    "intent": "practice",
+                    "start": 269,
+                    "weight": 1
+                  },
+                  {
+                    "end": 274,
+                    "intent": "practice",
+                    "start": 272,
+                    "weight": 1
+                  },
+                  {
+                    "end": 277,
+                    "intent": "practice",
+                    "start": 275,
+                    "weight": 1
+                  },
+                  {
+                    "end": 278,
+                    "intent": "practice",
+                    "start": 278,
+                    "weight": 1
+                  },
+                  {
+                    "end": 279,
+                    "intent": "practice",
+                    "start": 279,
+                    "weight": 1
+                  },
+                  {
+                    "end": 280,
+                    "intent": "practice",
+                    "start": 280,
+                    "weight": 1
+                  },
+                  {
+                    "end": 281,
+                    "intent": "practice",
+                    "start": 281,
+                    "weight": 1
+                  },
+                  {
+                    "end": 282,
+                    "intent": "practice",
+                    "start": 282,
+                    "weight": 1
+                  },
+                  {
+                    "end": 283,
+                    "intent": "practice",
+                    "start": 283,
+                    "weight": 1
+                  },
+                  {
+                    "end": 286,
+                    "intent": "practice",
+                    "start": 284,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+            }
+          },
+          "xml_source_projection": null
+        }
+      ],
+      "job_id": "d87dffcbe0894461aca37364e1afc80b",
+      "options": {
+        "academic_year": "2026-2027学年",
+        "docx_mode": "auto",
+        "engine_mode": "auto",
+        "grade": "高三",
+        "handout_type": "复习讲义",
+        "split_mode": "smart",
+        "subject": "英语",
+        "template_type": "1v1"
+      },
+      "output_paths": [
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（3）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 教师版.docx",
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（3）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 学生版.docx"
+      ],
+      "produced": 2,
+      "progress": 1,
+      "renderer_route": "XML_AUTO",
+      "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（3）",
+      "selected_engine": "XML",
+      "slot_counts": {
+        "FAILED": 0,
+        "PRESERVED_ONLY": 0,
+        "SLOTTED": 1
+      },
+      "stage": "批量生成完成：1 个成功，0 个失败",
+      "started_at": 1791539265.999575,
+      "started_at_iso": "2026-10-09T09:47:45+00:00",
+      "status": "done",
+      "total": 1,
+      "updated_at": 1791539276.764317,
+      "updated_at_iso": "2026-10-09T09:47:56+00:00",
+      "warnings": [
+        "专题05 代词（知识清单）（全国通用）：封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。",
+        "专题05 代词（知识清单）（全国通用）：教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+      ]
+    }
+  },
+  {
+    "case": "zip-05-class",
+    "template": "class",
+    "http_status": 202,
+    "job": {
+      "batch_outcome": "ALL_SUCCESS",
+      "completed": 1,
+      "created_at": 1791539278.542473,
+      "created_at_iso": "2026-10-09T09:47:58+00:00",
+      "current_topic": null,
+      "elapsed_seconds": 10.231,
+      "failed": 0,
+      "filenames": [
+        "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip"
+      ],
+      "generation_attempts": 1,
+      "has_result": true,
+      "is_batch": true,
+      "items": [
+        {
+          "child_job_id": "bff9ab40e63248968ceb972a847e0a92",
+          "elapsed_seconds": 9.859,
+          "error": null,
+          "fallback_detail": null,
+          "fallback_reason": null,
+          "input_version": "TEACHER_AND_STUDENT",
+          "item_id": "1",
+          "lesson_metadata": {
+            "by_role": {
+              "student": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 68,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共9道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共9道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "代词的分类及句法功能",
+                  "人称代词、物主代词、反身代词",
+                  "不定代词",
+                  "指示代词、相互代词",
+                  "疑问代词、连接代词、关系代词"
+                ],
+                "warning": null
+              },
+              "teacher": {
+                "cover_display": {
+                  "budget": {
+                    "max_display_width_units": 68,
+                    "max_logical_lines": 1
+                  },
+                  "compaction_methods": {
+                    "difficulties": "SHORT_OFFLINE_RULE",
+                    "objectives": "SHORT_OFFLINE_RULE"
+                  },
+                  "cover_metadata_compacted": true,
+                  "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                  "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                },
+                "difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "difficulties_reason": "",
+                "difficulties_source": "V09_OFFLINE_RULE",
+                "full_difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+                "full_objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+                "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+                "objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+                "objectives_reason": "",
+                "objectives_source": "V09_OFFLINE_RULE",
+                "source": "V09_OFFLINE_RULE",
+                "status": "RESOLVED",
+                "training_titles": [
+                  "代词的分类及句法功能",
+                  "人称代词、物主代词、反身代词",
+                  "不定代词",
+                  "指示代词、相互代词",
+                  "疑问代词、连接代词、关系代词"
+                ],
+                "warning": null
+              }
+            },
+            "cover_display": {
+              "budget": {
+                "max_display_width_units": 68,
+                "max_logical_lines": 1
+              },
+              "compaction_methods": {
+                "difficulties": "SHORT_OFFLINE_RULE",
+                "objectives": "SHORT_OFFLINE_RULE"
+              },
+              "cover_metadata_compacted": true,
+              "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+              "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+            },
+            "difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "difficulties_reason": "",
+            "difficulties_source": "V09_OFFLINE_RULE",
+            "full_difficulties": "重点：专题05 代词（知识清单）（全国通用）核心概念（一  代词的分类及句法功能、代词的分类）的理解与应用；\n难点：知识的综合运用与易错点辨析。",
+            "full_objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "objectives": "①掌握专题05 代词（知识清单）（全国通用）核心知识：一  代词的分类及句法功能、代词的分类、代词的句法功能等；\n②掌握本专题典型问题题型的解法，共12道题；\n③培养运算与推理能力，形成知识体系。",
+            "objectives_reason": "",
+            "objectives_source": "V09_OFFLINE_RULE",
+            "source": "V09_OFFLINE_RULE",
+            "status": "RESOLVED",
+            "training_titles": [
+              "代词的分类及句法功能",
+              "人称代词、物主代词、反身代词",
+              "不定代词",
+              "指示代词、相互代词",
+              "疑问代词、连接代词、关系代词"
+            ],
+            "warning": null
+          },
+          "original_topic": "专题05 代词（知识清单）（全国通用）",
+          "output_paths": [
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（4）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 教师版.docx",
+            "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（4）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 学生版.docx"
+          ],
+          "package_validation": {
+            "student": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 23,
+                "drawing_image_references": 13,
+                "errors": 0,
+                "image_media_targets": 20,
+                "num_references": 38,
+                "package_parts": 25,
+                "picture_ids": 13,
+                "relationship_references": 22,
+                "relationships": 20,
+                "style_references": 315,
+                "vml_image_references": 7,
+                "warnings": 0,
+                "xml_parts": 14
+              },
+              "valid": true,
+              "warnings": []
+            },
+            "teacher": {
+              "errors": [],
+              "stats": {
+                "docPr_ids": 23,
+                "drawing_image_references": 13,
+                "errors": 0,
+                "image_media_targets": 20,
+                "num_references": 38,
+                "package_parts": 25,
+                "picture_ids": 13,
+                "relationship_references": 22,
+                "relationships": 20,
+                "style_references": 314,
+                "vml_image_references": 7,
+                "warnings": 0,
+                "xml_parts": 14
+              },
+              "valid": true,
+              "warnings": []
+            }
+          },
+          "pair_alignment_status": "NOT_REQUIRED_NOT_VERIFIED",
+          "plan_summary": {
+            "cover_metadata_blocks": [],
+            "destination_slots": {
+              "final": {
+                "label": "六、出门测试",
+                "student_blocks": 3,
+                "teacher_blocks": 6
+              },
+              "immediate": {
+                "label": "即时训练",
+                "student_blocks": 4,
+                "teacher_blocks": 17
+              },
+              "knowledge": {
+                "label": "知识精讲&例题讲解",
+                "student_blocks": 263,
+                "teacher_blocks": 264
+              }
+            },
+            "explicit_final_heading": false,
+            "knowledge_point_status": "KNOWLEDGE_POINT_PRESENT",
+            "omitted_slots": [],
+            "routing_applied": true,
+            "student_units": 113,
+            "teacher_units": 131,
+            "template_sha256": "f51046d841699645b1b49f49f481c559e8502b98589d20b0c7e97cf2f7ba8f13",
+            "training_question_routes": [
+              {
+                "question_number": 1,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 2,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 3,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 4,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 5,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 6,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 7,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 8,
+                "slot": "immediate"
+              },
+              {
+                "question_number": 9,
+                "slot": "final"
+              },
+              {
+                "question_number": 10,
+                "slot": "final"
+              },
+              {
+                "question_number": 11,
+                "slot": "final"
+              },
+              {
+                "question_number": 12,
+                "slot": "final"
+              }
+            ],
+            "training_split_strategy": "WHOLE_COMPONENT_70_30"
+          },
+          "product_integrity": {
+            "accepted": true,
+            "errors": [],
+            "final_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0342,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 939,
+                  "repeated_sequences": [],
+                  "sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18694,
+                  "top_level_blocks": 3
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 880,
+                  "repeated_sequences": [],
+                  "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18076,
+                  "top_level_blocks": 287
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 8,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0355,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 922,
+                  "repeated_sequences": [],
+                  "sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18045,
+                  "top_level_blocks": 3
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 863,
+                  "repeated_sequences": [],
+                  "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 17427,
+                  "top_level_blocks": 270
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "gate": "PRODUCT_INTEGRITY_GATE",
+            "input_sources": {
+              "student": {
+                "bytes": 1371307,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 863,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 17427,
+                    "top_level_blocks": 270
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\input-1.docx",
+                  "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+                },
+                "origin": "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+                "original_filename": "专题05 代词（知识清单）（全国通用）（默写版）.docx",
+                "role": "student",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\input-1.docx",
+                "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+              },
+              "teacher": {
+                "bytes": 1371558,
+                "inspection": {
+                  "accepted": true,
+                  "errors": [],
+                  "metrics": {
+                    "main_story_paragraphs": 880,
+                    "repeated_sequences": [],
+                    "template_cycles": 0,
+                    "template_title_count": 0,
+                    "text_chars": 18076,
+                    "top_level_blocks": 287
+                  },
+                  "path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\input-2.docx",
+                  "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+                },
+                "origin": "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+                "original_filename": "专题05 代词（知识清单）（全国通用）（背诵版）.docx",
+                "role": "teacher",
+                "runtime_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\input-2.docx",
+                "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+              }
+            },
+            "staged_outputs": [
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0342,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 939,
+                  "repeated_sequences": [],
+                  "sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18694,
+                  "top_level_blocks": 3
+                },
+                "role": "teacher",
+                "source": {
+                  "main_story_paragraphs": 880,
+                  "repeated_sequences": [],
+                  "sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18076,
+                  "top_level_blocks": 287
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 8,
+                  "unproven": []
+                },
+                "warnings": []
+              },
+              {
+                "accepted": true,
+                "errors": [],
+                "expansion_ratio": 1.0355,
+                "gate": "PRODUCT_INTEGRITY_GATE",
+                "output": {
+                  "main_story_paragraphs": 922,
+                  "repeated_sequences": [],
+                  "sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 18045,
+                  "top_level_blocks": 3
+                },
+                "role": "student",
+                "source": {
+                  "main_story_paragraphs": 863,
+                  "repeated_sequences": [],
+                  "sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f",
+                  "template_cycles": 0,
+                  "template_title_count": 0,
+                  "text_chars": 17427,
+                  "top_level_blocks": 270
+                },
+                "textbox_conservation": {
+                  "checked_unique_paragraphs": 9,
+                  "unproven": []
+                },
+                "warnings": []
+              }
+            ],
+            "warnings": []
+          },
+          "product_normalization": {
+            "outputs": {
+              "student": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 68,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 16,
+                  "spacer_intervals": 10,
+                  "spacer_pt": 22,
+                  "target_y": 740.1
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\normalized-student-bff9ab40e63248968ceb972a847e0a92.docx",
+                "output_sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 23,
+                    "drawing_image_references": 13,
+                    "errors": 0,
+                    "image_media_targets": 20,
+                    "num_references": 38,
+                    "package_parts": 25,
+                    "picture_ids": 13,
+                    "relationship_references": 22,
+                    "relationships": 20,
+                    "style_references": 315,
+                    "vml_image_references": 7,
+                    "warnings": 0,
+                    "xml_parts": 14
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\student-stage-bff9ab40e63248968ceb972a847e0a92.docx",
+                "source_sha256": "adf9585a01b79fb0e4b3f0544bfbada628449318d18f906ee0b5e875339282d0",
+                "source_title_projection": {
+                  "candidate": "清单05 代词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "class",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              },
+              "teacher": {
+                "cover_fields": {
+                  "cover_display": {
+                    "budget": {
+                      "max_display_width_units": 68,
+                      "max_logical_lines": 1
+                    },
+                    "compaction_methods": {
+                      "difficulties": "SHORT_OFFLINE_RULE",
+                      "objectives": "SHORT_OFFLINE_RULE"
+                    },
+                    "cover_metadata_compacted": true,
+                    "difficulties": "重点：本专题基本方法；难点：综合运用与易错辨析。",
+                    "objectives": "掌握专题05 代词（知识清单）（全国通用）概念与方法；规范推理与解答。"
+                  },
+                  "difficulties": "POPULATED",
+                  "objectives": "POPULATED"
+                },
+                "empty_knowledge_module": {
+                  "policy": "SOURCE_KNOWLEDGE_OR_EXAMPLE",
+                  "status": "REQUIRED"
+                },
+                "module2_end_divider_anchor": {
+                  "anchor_node": "MODULE2_END_DIVIDER",
+                  "anchor_paragraph_index": 16,
+                  "spacer_intervals": 10,
+                  "spacer_pt": 22,
+                  "target_y": 740.1
+                },
+                "output_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\normalized-teacher-bff9ab40e63248968ceb972a847e0a92.docx",
+                "output_sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+                "package_validation": {
+                  "errors": [],
+                  "stats": {
+                    "docPr_ids": 23,
+                    "drawing_image_references": 13,
+                    "errors": 0,
+                    "image_media_targets": 20,
+                    "num_references": 38,
+                    "package_parts": 25,
+                    "picture_ids": 13,
+                    "relationship_references": 22,
+                    "relationships": 20,
+                    "style_references": 314,
+                    "vml_image_references": 7,
+                    "warnings": 0,
+                    "xml_parts": 14
+                  },
+                  "valid": true,
+                  "warnings": []
+                },
+                "source_path": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\teacher-output-bff9ab40e63248968ceb972a847e0a92.docx",
+                "source_sha256": "8875cc7435f3bee19e63a73b5715c0ae532cecda769bb49375adfac96ea15498",
+                "source_title_projection": {
+                  "candidate": "清单05 代词",
+                  "reason": "TITLE_NOT_EXACTLY_BOUND",
+                  "status": "UNCHANGED"
+                },
+                "status": "NORMALIZED",
+                "template_type": "class",
+                "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+              }
+            },
+            "renderer": "XML",
+            "status": "NORMALIZED",
+            "version": "V1.2_PRODUCT_NORMALIZATION_V1"
+          },
+          "renderer": "XML",
+          "renderer_route": "XML",
+          "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（4）\\专题05 代词（知识清单）（全国通用）",
+          "selected_engine": "XML",
+          "slot_evidence": {
+            "final_outputs": {
+              "student": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 2,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 4,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 208,
+                    "verified": true
+                  }
+                },
+                "sha256": "2be3a50eb4130f86243eb1d72ac30ce3dae6646575696390aeb29489510e336b",
+                "verified": true
+              },
+              "teacher": {
+                "sections": {
+                  "final": {
+                    "content_blocks": 6,
+                    "verified": true
+                  },
+                  "immediate": {
+                    "content_blocks": 17,
+                    "verified": true
+                  },
+                  "knowledge": {
+                    "content_blocks": 208,
+                    "verified": true
+                  }
+                },
+                "sha256": "5c8fbc1245a08a78654d635ed45b1a8ccce5c06f1647d40d20844dbf86c9c22b",
+                "verified": true
+              }
+            },
+            "renderer": "XML",
+            "student": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "264": "immediate",
+                  "265": "immediate",
+                  "266": "immediate",
+                  "267": "final",
+                  "268": "final"
+                },
+                "groups": [
+                  {
+                    "end": 264,
+                    "intent": "practice",
+                    "start": 264,
+                    "weight": 1
+                  },
+                  {
+                    "end": 265,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 266,
+                    "intent": "practice",
+                    "start": 266,
+                    "weight": 1
+                  },
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 267,
+                    "weight": 1
+                  },
+                  {
+                    "end": 269,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+              },
+              "source_block_counts": {
+                "final": 3,
+                "immediate": 4,
+                "knowledge": 263
+              }
+            },
+            "teacher": {
+              "method": "PARTITION",
+              "partition": {
+                "group_routes": {
+                  "265": "immediate",
+                  "268": "immediate",
+                  "269": "immediate",
+                  "272": "immediate",
+                  "275": "immediate",
+                  "278": "immediate",
+                  "279": "immediate",
+                  "280": "immediate",
+                  "281": "final",
+                  "282": "final",
+                  "283": "final",
+                  "284": "final"
+                },
+                "groups": [
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 268,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  },
+                  {
+                    "end": 271,
+                    "intent": "practice",
+                    "start": 269,
+                    "weight": 1
+                  },
+                  {
+                    "end": 274,
+                    "intent": "practice",
+                    "start": 272,
+                    "weight": 1
+                  },
+                  {
+                    "end": 277,
+                    "intent": "practice",
+                    "start": 275,
+                    "weight": 1
+                  },
+                  {
+                    "end": 278,
+                    "intent": "practice",
+                    "start": 278,
+                    "weight": 1
+                  },
+                  {
+                    "end": 279,
+                    "intent": "practice",
+                    "start": 279,
+                    "weight": 1
+                  },
+                  {
+                    "end": 280,
+                    "intent": "practice",
+                    "start": 280,
+                    "weight": 1
+                  },
+                  {
+                    "end": 281,
+                    "intent": "practice",
+                    "start": 281,
+                    "weight": 1
+                  },
+                  {
+                    "end": 282,
+                    "intent": "practice",
+                    "start": 282,
+                    "weight": 1
+                  },
+                  {
+                    "end": 283,
+                    "intent": "practice",
+                    "start": 283,
+                    "weight": 1
+                  },
+                  {
+                    "end": 286,
+                    "intent": "practice",
+                    "start": 284,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+              },
+              "source_block_counts": {
+                "final": 6,
+                "immediate": 17,
+                "knowledge": 264
+              }
+            },
+            "verification": "FINAL_DOCX_SECTIONS"
+          },
+          "slot_status": "SLOTTED",
+          "source_origins": [
+            "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（默写版）.docx",
+            "专题05 代词（知识清单）（全国通用）2027年高考英语一轮复习高效培优系列.zip:专题05 代词（知识清单）（全国通用）（背诵版）.docx"
+          ],
+          "started_at": 1791539278.593657,
+          "status": "done",
+          "student": "完成",
+          "student_preparation": {
+            "com_observation": "NOT_ENTERED",
+            "com_used": false,
+            "elapsed_seconds": 0,
+            "engine": "BYPASS",
+            "input_version": "TEACHER_AND_STUDENT",
+            "make_student_called": false,
+            "output_package_valid": true,
+            "package_valid": true,
+            "reason_code": null,
+            "reason_detail": null,
+            "registry_error": null,
+            "reviewed_evidence": null,
+            "status": "STUDENT_SOURCE_BYPASS",
+            "student_preparation": "BYPASS",
+            "student_preparation_route": "BYPASS",
+            "studentizer_fallback": false,
+            "wps_com_started": false
+          },
+          "student_preparation_route": "BYPASS",
+          "student_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\input-1.docx",
+          "teacher": "完成",
+          "teacher_source": "H:\\AI-Workspace\\uat\\slim-knowledge-20261009\\profile\\讲义生成器\\jobs\\bff9ab40e63248968ceb972a847e0a92\\work\\input-2.docx",
+          "topic": "专题05 代词（知识清单）（全国通用）",
+          "updated_at": 1791539288.452399,
+          "warnings": [
+            "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+          ],
+          "xml_degradation": {
+            "student": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "264": "immediate",
+                  "265": "immediate",
+                  "266": "immediate",
+                  "267": "final",
+                  "268": "final"
+                },
+                "groups": [
+                  {
+                    "end": 264,
+                    "intent": "practice",
+                    "start": 264,
+                    "weight": 1
+                  },
+                  {
+                    "end": 265,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 266,
+                    "intent": "practice",
+                    "start": 266,
+                    "weight": 1
+                  },
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 267,
+                    "weight": 1
+                  },
+                  {
+                    "end": 269,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "665e101bf62b78a8e47f1c5b05645e92a9c2414e2ccb68374e458f750ad7783f"
+            },
+            "teacher": {
+              "attempts": [
+                {
+                  "detail": "no explicit teaching-slot boundary",
+                  "reason_code": "NO_RELIABLE_TEACHING_HEADINGS",
+                  "status": "DEGRADED",
+                  "tier": "NAVIGATION"
+                },
+                {
+                  "detail": "knowledge and both training slots require source blocks; continue degradation",
+                  "reason_code": "TRAINING_SLOTS_INCOMPLETE",
+                  "status": "DEGRADED",
+                  "tier": "SEMANTIC"
+                },
+                {
+                  "detail": "global answers must stay in source order",
+                  "reason_code": "ANSWER_OWNERSHIP_UNRESOLVED",
+                  "status": "DEGRADED",
+                  "tier": "RULES"
+                },
+                {
+                  "status": "SELECTED",
+                  "tier": "PARTITION"
+                }
+              ],
+              "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+              "partition": {
+                "group_routes": {
+                  "265": "immediate",
+                  "268": "immediate",
+                  "269": "immediate",
+                  "272": "immediate",
+                  "275": "immediate",
+                  "278": "immediate",
+                  "279": "immediate",
+                  "280": "immediate",
+                  "281": "final",
+                  "282": "final",
+                  "283": "final",
+                  "284": "final"
+                },
+                "groups": [
+                  {
+                    "end": 267,
+                    "intent": "practice",
+                    "start": 265,
+                    "weight": 1
+                  },
+                  {
+                    "end": 268,
+                    "intent": "practice",
+                    "start": 268,
+                    "weight": 1
+                  },
+                  {
+                    "end": 271,
+                    "intent": "practice",
+                    "start": 269,
+                    "weight": 1
+                  },
+                  {
+                    "end": 274,
+                    "intent": "practice",
+                    "start": 272,
+                    "weight": 1
+                  },
+                  {
+                    "end": 277,
+                    "intent": "practice",
+                    "start": 275,
+                    "weight": 1
+                  },
+                  {
+                    "end": 278,
+                    "intent": "practice",
+                    "start": 278,
+                    "weight": 1
+                  },
+                  {
+                    "end": 279,
+                    "intent": "practice",
+                    "start": 279,
+                    "weight": 1
+                  },
+                  {
+                    "end": 280,
+                    "intent": "practice",
+                    "start": 280,
+                    "weight": 1
+                  },
+                  {
+                    "end": 281,
+                    "intent": "practice",
+                    "start": 281,
+                    "weight": 1
+                  },
+                  {
+                    "end": 282,
+                    "intent": "practice",
+                    "start": 282,
+                    "weight": 1
+                  },
+                  {
+                    "end": 283,
+                    "intent": "practice",
+                    "start": 283,
+                    "weight": 1
+                  },
+                  {
+                    "end": 286,
+                    "intent": "practice",
+                    "start": 284,
+                    "weight": 1
+                  }
+                ],
+                "knowledge_content_mode": "SOURCE_KNOWLEDGE",
+                "method": "WHOLE_COMPONENT_70_30",
+                "pair_alignment": "NOT_REQUIRED_NOT_VERIFIED",
+                "protected_components": [],
+                "selected_tier": "RULES",
+                "source_example_group": null,
+                "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+              },
+              "selected_tier": "PARTITION",
+              "source_sha256": "0225bc3b8d037cdc06ad0c9aa90eba215012b04e72845883face18166a3e22df"
+            }
+          },
+          "xml_source_projection": null
+        }
+      ],
+      "job_id": "0ddda557acb04664bf588f33c5429a0e",
+      "options": {
+        "academic_year": "2026-2027学年",
+        "docx_mode": "auto",
+        "engine_mode": "auto",
+        "grade": "高三",
+        "handout_type": "复习讲义",
+        "split_mode": "smart",
+        "subject": "英语",
+        "template_type": "class"
+      },
+      "output_paths": [
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（4）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 教师版.docx",
+        "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（4）\\专题05 代词（知识清单）（全国通用）\\2026-2027学年 高三 英语 专题05 代词（知识清单）（全国通用） 复习讲义 学生版.docx"
+      ],
+      "produced": 2,
+      "progress": 1,
+      "renderer_route": "XML_AUTO",
+      "result_dir": "D:\\Documents\\生成讲义结果\\2026-2027学年 高三 英语 批量讲义 复习讲义（4）",
+      "selected_engine": "XML",
+      "slot_counts": {
+        "FAILED": 0,
+        "PRESERVED_ONLY": 0,
+        "SLOTTED": 1
+      },
+      "stage": "批量生成完成：1 个成功，0 个失败",
+      "started_at": 1791539278.561388,
+      "started_at_iso": "2026-10-09T09:47:58+00:00",
+      "status": "done",
+      "total": 1,
+      "updated_at": 1791539289.463278,
+      "updated_at_iso": "2026-10-09T09:48:09+00:00",
+      "warnings": [
+        "专题05 代词（知识清单）（全国通用）：封面字段：原文及现有规则无法可靠确定教学目标、重点难点，已留空，请使用前补充。",
+        "专题05 代词（知识清单）（全国通用）：教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。"
+      ]
+    }
+  }
+]
