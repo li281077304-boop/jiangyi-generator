@@ -1,0 +1,2730 @@
+{
+  "base33_sha256": "c3efed7b9cd135f4b45c7092d9070013878badfcddc08ee872a2b06a9b6273b1",
+  "required_pass": 32,
+  "total_topics": 35,
+  "topics": [
+    {
+      "topic_identity": "1.1 物质的变化和性质 第1课时(讲义)",
+      "sample_ids": [
+        "X017",
+        "X018"
+      ],
+      "members": [
+        {
+          "sample_id": "X017",
+          "filename": "1.1 物质的变化和性质 第1课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第1课时（讲义）（原卷版）.docx",
+          "sha256": "37a122a04516764af8f4d89844d7b4724500104f94b514b186191566223a2ab3",
+          "bytes": 3275250,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X017.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.1 物质的变化和性质 第1课时（讲义）化学新教材人教版九年级上册.zip!1.1 物质的变化和性质 第1课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第1课时（讲义）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X018",
+          "filename": "1.1 物质的变化和性质 第1课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第1课时（讲义）（解析版）.docx",
+          "sha256": "c2ca52c3967b650fd16aad965fa46687cce309a8b03905b57757da4fcb247e8c",
+          "bytes": 3296131,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X018.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.1 物质的变化和性质 第1课时（讲义）化学新教材人教版九年级上册.zip!1.1 物质的变化和性质 第1课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第1课时（讲义）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "1.1 物质的变化和性质 第2课时(讲义)",
+      "sample_ids": [
+        "X019",
+        "X020"
+      ],
+      "members": [
+        {
+          "sample_id": "X019",
+          "filename": "1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（原卷版）.docx",
+          "sha256": "9d99c793b5a7f0fd4b800729b096ebe18645058fd3bbf83eb624d786df329758",
+          "bytes": 1228964,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X019.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册.zip!1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X020",
+          "filename": "1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（解析版）.docx",
+          "sha256": "1ccdcda89f832e7b3e5b82b6b302be4582af08ca031ab381d58fb691bf24f388",
+          "bytes": 3824095,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X020.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册.zip!1.1 物质的变化和性质 第2课时（讲义）化学新教材人教版九年级上册/1.1 物质的变化和性质 第2课时（讲义）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "1.2 化学实验与科学探究(题型专练)",
+      "sample_ids": [
+        "X021",
+        "X022",
+        "X023"
+      ],
+      "members": [
+        {
+          "sample_id": "X021",
+          "filename": "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（原卷版）.docx",
+          "sha256": "e10818f40e99da4234051b1beeac852f4e8090475cdb96283fbf1bcb5b44a6f4",
+          "bytes": 2475617,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X021.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册.zip!1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X022",
+          "filename": "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（答案版）.docx",
+          "sha256": "6d1257211c6ee9b4b40c28cc648ec0b8c7baabcec7863acb385051c1037f442b",
+          "bytes": 56353,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X022.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册.zip!1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（答案版）.docx"
+        },
+        {
+          "sample_id": "X023",
+          "filename": "1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（解析版）.docx",
+          "sha256": "19fe81bd43f19e9acb2170b2d431452690c179cbecb4e4ee773f8e024eef0163",
+          "bytes": 2496871,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X023.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册.zip!1.2 化学实验与科学探究（题型专练）化学新教材人教版九年级上册/1.2 化学实验与科学探究（题型专练）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "2.1 我们周围的空气 第1课时(讲义)",
+      "sample_ids": [
+        "X024",
+        "X025"
+      ],
+      "members": [
+        {
+          "sample_id": "X024",
+          "filename": "2.1  我们周围的空气 第1课时（讲义）（原卷版）.docx",
+          "sha256": "b427e0c2c48e0873d30533cadb3fe31ceadae99a997e8542b7a8f8150912c908",
+          "bytes": 2127792,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X024.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!2.1 我们周围的空气 第1课时（讲义）化学新教材人教版九年级上册.zip!2.1  我们周围的空气 第1课时（讲义）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X025",
+          "filename": "2.1  我们周围的空气 第1课时（讲义）（解析版）.docx",
+          "sha256": "92dbe48d732b9350b4fc1b06f479edd3b696942cd585a68d853b652788c799fd",
+          "bytes": 2261168,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X025.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!2.1 我们周围的空气 第1课时（讲义）化学新教材人教版九年级上册.zip!2.1  我们周围的空气 第1课时（讲义）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "2.2 氧气(讲义)",
+      "sample_ids": [
+        "X026",
+        "X027"
+      ],
+      "members": [
+        {
+          "sample_id": "X026",
+          "filename": "2.2  氧气（讲义）（原卷版）.docx",
+          "sha256": "61e45171e13a2e49c76cac052258b5d7c70cc9047e80abb491db870d9323ea05",
+          "bytes": 2631679,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X026.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!2.2 氧气（讲义）化学新教材人教版九年级上册.zip!2.2  氧气（讲义）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X027",
+          "filename": "2.2  氧气（讲义）（解析版）.docx",
+          "sha256": "fdc96b41a6d2f660f9a3db7c2623db0a055923d9571879b43b73fe518a59c360",
+          "bytes": 2708007,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X027.docx",
+          "origin_chain": "学科网资料2026092901(5)份.zip!2.2 氧气（讲义）化学新教材人教版九年级上册.zip!2.2  氧气（讲义）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "专题02 电压 电阻&欧姆定律(期末复习讲义)",
+      "sample_ids": [
+        "X001",
+        "X002"
+      ],
+      "members": [
+        {
+          "sample_id": "X001",
+          "filename": "专题02 电压 电阻＆欧姆定律（期末复习讲义）解析版.docx",
+          "sha256": "cbd854ce5155e71bac9bf37a8e5f423019eb28a8133830cd6fe3ef0078d22021",
+          "bytes": 4875509,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X001.docx",
+          "origin_chain": "【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-1.zip!复习讲义/专题02 电压 电阻＆欧姆定律（期末复习讲义）九年级物理上学期新教材人教版.zip!专题02 电压 电阻＆欧姆定律（期末复习讲义）解析版.docx"
+        },
+        {
+          "sample_id": "X002",
+          "filename": "专题02 电压 电阻＆欧姆定律（期末复习讲义）（原卷版）.docx",
+          "sha256": "b01bee652e52fb8689ea5db63c2897d3b63cf650777cd43c6354e5ded50e17fe",
+          "bytes": 2957242,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X002.docx",
+          "origin_chain": "【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-1.zip!复习讲义/专题02 电压 电阻＆欧姆定律（期末复习讲义）九年级物理上学期新教材人教版.zip!专题02 电压 电阻＆欧姆定律（期末复习讲义）（原卷版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "专题04 电功率(期末专项训练)",
+      "sample_ids": [
+        "X003",
+        "X004"
+      ],
+      "members": [
+        {
+          "sample_id": "X003",
+          "filename": "专题04 电功率（期末专项训练）（原卷版）.docx",
+          "sha256": "c2ca024c794d60d0b68916592f38f4ed0d3b550c3e91057ac7efe06054d810ec",
+          "bytes": 2964960,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X003.docx",
+          "origin_chain": "【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-2.zip!专项训练/专题04 电功率（期末专项训练）九年级物理上学期新教材人教版.zip!专题04 电功率（期末专项训练）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X004",
+          "filename": "专题04 电功率（期末专项训练）（解析版）.docx",
+          "sha256": "6e8ba62da63916b6e0bfa072c59102ab5074ba089f2b4c83a084264ccfaea755",
+          "bytes": 5733033,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X004.docx",
+          "origin_chain": "【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-2.zip!专项训练/专题04 电功率（期末专项训练）九年级物理上学期新教材人教版.zip!专题04 电功率（期末专项训练）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "专题1.5 有理数的乘除(高效培优讲义)数学新教材沪科版七年级上册",
+      "sample_ids": [
+        "X011",
+        "X012"
+      ],
+      "members": [
+        {
+          "sample_id": "X011",
+          "filename": "专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册（原卷版）.docx",
+          "sha256": "05159219160e645f615cd408c448806aa940c18160557661215752bcd53cffb2",
+          "bytes": 964444,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X011.docx",
+          "origin_chain": "专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册.zip!专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册（原卷版）.docx"
+        },
+        {
+          "sample_id": "X012",
+          "filename": "专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册（解析版）.docx",
+          "sha256": "c9b31fe98b0ede8b0cefc5c3a11d8deab62c85c8a1181a54db25c7ca368b57a1",
+          "bytes": 993220,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X012.docx",
+          "origin_chain": "专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册.zip!专题1.5 有理数的乘除（高效培优讲义）数学新教材沪科版七年级上册（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "专题1.6 有理数的乘方与近似数(高效培优讲义)数学新教材沪科版七年级上册",
+      "sample_ids": [
+        "X013",
+        "X014"
+      ],
+      "members": [
+        {
+          "sample_id": "X013",
+          "filename": "专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册（原卷版）.docx",
+          "sha256": "c9702e8da1997065d903cca16ec2ff9af3df987f921ec620bb0bb5c491a4d1fc",
+          "bytes": 1011961,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X013.docx",
+          "origin_chain": "专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册.zip!专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册（原卷版）.docx"
+        },
+        {
+          "sample_id": "X014",
+          "filename": "专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册（解析版）.docx",
+          "sha256": "1c6aace1947016c0d03a531dac2811ca582be6286824d4eb76ced4b32eecaede",
+          "bytes": 1044744,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X014.docx",
+          "origin_chain": "专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册.zip!专题1.6 有理数的乘方与近似数（高效培优讲义）数学新教材沪科版七年级上册（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "专题12.4 一次函数的实际应用(高效培优讲义)数学新教材沪科版八年级上册",
+      "sample_ids": [
+        "X015",
+        "X016"
+      ],
+      "members": [
+        {
+          "sample_id": "X015",
+          "filename": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（原卷版）.docx",
+          "sha256": "4929eaeb604962e34d866509782b2365693afbb95bd760af6618e9af1786e922",
+          "bytes": 1210602,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X015.docx",
+          "origin_chain": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册.zip!专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（原卷版）.docx"
+        },
+        {
+          "sample_id": "X016",
+          "filename": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（解析版）.docx",
+          "sha256": "6ac70b3647633f8562883e9c32729d10cfcb866794a2d80e4e12f9a979f8262d",
+          "bytes": 1413666,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X016.docx",
+          "origin_chain": "专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册.zip!专题12.4 一次函数的实际应用（高效培优讲义）数学新教材沪科版八年级上册（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "九年级上学期物理期末复习(易错精选60题27大考点)",
+      "sample_ids": [
+        "X005",
+        "X006"
+      ],
+      "members": [
+        {
+          "sample_id": "X005",
+          "filename": "九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx",
+          "sha256": "c66f88d26f1fae9306442ef8e1f55a807d3e705edaa37e57334d4499d3c6a009",
+          "bytes": 2179707,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X005.docx",
+          "origin_chain": "【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-3.zip!期末模拟卷/期末复习（易错精选60题27大考点）九年级物理上学期新教材人教版.zip!九年级上学期物理期末复习（易错精选60题27大考点）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X006",
+          "filename": "九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx",
+          "sha256": "9395c5bddf78dff2edd087a30212ad40b40e17a3e5c14b224b2043ade3a60410",
+          "bytes": 2849764,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X006.docx",
+          "origin_chain": "【上好课】2025-2026学年九年级物理上学期期末考点大串讲（新教材，人教版）-3.zip!期末模拟卷/期末复习（易错精选60题27大考点）九年级物理上学期新教材人教版.zip!九年级上学期物理期末复习（易错精选60题27大考点）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "第2节 分子动理论的初步知识(培优考点练)",
+      "sample_ids": [
+        "X007",
+        "X008"
+      ],
+      "members": [
+        {
+          "sample_id": "X007",
+          "filename": "第2节 分子动理论的初步知识（培优考点练）（原卷版）.docx",
+          "sha256": "fb08ccae04b5140607a67d3e80526efa7d9a96f787c9c558b1c9b6bd3ab26e2a",
+          "bytes": 6762790,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X007.docx",
+          "origin_chain": "【上好课】九年级物理全一册同步培优备课系列（新教材人教版）-1.zip!第十三章 内能/第2节 分子动理论的初步知识/第2节 分子动理论的初步知识（培优考点练）物理人教版2024九年级全一册.zip!第2节 分子动理论的初步知识（培优考点练）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X008",
+          "filename": "第2节 分子动理论的初步知识（培优考点练）（解析版）.docx",
+          "sha256": "56065cbf98af67818ae2c83e3169a3b932a6868be45b282dd51c71f0d5e16fe4",
+          "bytes": 6794169,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X008.docx",
+          "origin_chain": "【上好课】九年级物理全一册同步培优备课系列（新教材人教版）-1.zip!第十三章 内能/第2节 分子动理论的初步知识/第2节 分子动理论的初步知识（培优考点练）物理人教版2024九年级全一册.zip!第2节 分子动理论的初步知识（培优考点练）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_identity": "第3节 串联和并联 (培优考点练)",
+      "sample_ids": [
+        "X009",
+        "X010"
+      ],
+      "members": [
+        {
+          "sample_id": "X009",
+          "filename": "第3节 串联和并联 （培优考点练）（原卷版）.docx",
+          "sha256": "d66018c144badbbfb2c9418221720a47abc57293efc6ee8214599ddb8ed8314b",
+          "bytes": 6118216,
+          "role": "student_or_original_paper",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X009.docx",
+          "origin_chain": "【上好课】九年级物理全一册同步培优备课系列（新教材人教版）-2.zip!第十五章 电流和电路/第3节 串联电路和并联电路/第3节 串联电路和并联 电路（培优考点练）物理人教版2024九年级全一册.zip!第3节 串联和并联 （培优考点练）（原卷版）.docx"
+        },
+        {
+          "sample_id": "X010",
+          "filename": "第3节 串联和并联 （培优考点练）（解析版）.docx",
+          "sha256": "48657169b8567b5c2b94714e70f0818e51a726b3b3bc0b46837a89380fb6b67a",
+          "bytes": 6783238,
+          "role": "teacher_or_answer_rich",
+          "materialized_path": "C:\\xml-uat\\stage3-expansion\\sources\\X010.docx",
+          "origin_chain": "【上好课】九年级物理全一册同步培优备课系列（新教材人教版）-2.zip!第十五章 电流和电路/第3节 串联电路和并联电路/第3节 串联电路和并联 电路（培优考点练）物理人教版2024九年级全一册.zip!第3节 串联和并联 （培优考点练）（解析版）.docx"
+        }
+      ]
+    },
+    {
+      "topic_order": 1,
+      "topic_identity": "专题05 二元一次方程组",
+      "members": [
+        {
+          "corpus_order": 1,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00002_d01\\专题05 二元一次方程组（原卷版）.docx",
+          "filename": "专题05 二元一次方程组（原卷版）.docx",
+          "topic_identity": "专题05 二元一次方程组",
+          "sha256": "db44bc6c0b85988def87a0bd4adc4f31d9fc344dcd5ad6839e52a0726e8f5d90",
+          "bytes": 306003,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题05 二元一次方程组【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题05 二元一次方程组【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题05 二元一次方程组【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题05 二元一次方程组（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00002_d01\\专题05 二元一次方程组（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 343,
+            "text_chars": 5486,
+            "title_evidence": [
+              "知识梳理知识梳理专题05 二元一次方程组",
+              "知识梳理",
+              "知识梳理",
+              "1. 解二元一次方程组的思想：",
+              "2. 解二元一次方程组的基本方法：代入消元法和加减消元法"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 5
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 2,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00002_d01\\专题05 二元一次方程组（解析版）.docx",
+          "filename": "专题05 二元一次方程组（解析版）.docx",
+          "topic_identity": "专题05 二元一次方程组",
+          "sha256": "62139d6487958d0bab577e6e7be35d77dac65eb675fb2081b98838e273d35f6a",
+          "bytes": 555566,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题05 二元一次方程组【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题05 二元一次方程组【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题05 二元一次方程组【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题05 二元一次方程组（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00002_d01\\专题05 二元一次方程组（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 1111,
+            "text_chars": 15477,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题05 二元一次方程组",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：换元法解二元一次方程组1】",
+              "【题型2：二元一次方程组解的应用6】"
+            ],
+            "answer_marker_counts": {
+              "答案": 77,
+              "解析": 1,
+              "【答案】": 40,
+              "【解析】": 0,
+              "解：": 92
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 2,
+      "topic_identity": "专题10 新定义型答案",
+      "members": [
+        {
+          "corpus_order": 3,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00003_d01\\专题10 新定义型答案（原卷版）.docx",
+          "filename": "专题10 新定义型答案（原卷版）.docx",
+          "topic_identity": "专题10 新定义型答案",
+          "sha256": "4191436e30005201fcb581a050fb4a888f882464cb6ceb07741ac2709ba84fe0",
+          "bytes": 769779,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题10 新定义型答案【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题10 新定义型答案【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题10 新定义型答案【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题10 新定义型答案（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00003_d01\\专题10 新定义型答案（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 254,
+            "text_chars": 5517,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题10 新定义型",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：实数中的新定义型问题1】",
+              "【题型2：平面直角坐标系中的新定义型问题3】"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 4,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00003_d01\\专题10 新定义型答案（解析版）.docx",
+          "filename": "专题10 新定义型答案（解析版）.docx",
+          "topic_identity": "专题10 新定义型答案",
+          "sha256": "d1884778c376a651bacf17b5cce348f332e8a18149822446e62059ea3b8b09b0",
+          "bytes": 906857,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题10 新定义型答案【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题10 新定义型答案【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题10 新定义型答案【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题10 新定义型答案（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00003_d01\\专题10 新定义型答案（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 899,
+            "text_chars": 14562,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题10 新定义型",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：实数中的新定义型问题1】",
+              "【题型2：平面直角坐标系中的新定义型问题5】"
+            ],
+            "answer_marker_counts": {
+              "答案": 57,
+              "解析": 3,
+              "【答案】": 30,
+              "【解析】": 0,
+              "解：": 65
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 3,
+      "topic_identity": "专题06 二元一次方程组的应用",
+      "members": [
+        {
+          "corpus_order": 5,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00004_d01\\专题06 二元一次方程组的应用（解析版）.docx",
+          "filename": "专题06 二元一次方程组的应用（解析版）.docx",
+          "topic_identity": "专题06 二元一次方程组的应用",
+          "sha256": "c781502d70a7839d44d5039419bdbf00e994b62eeb55d1fe486de5a91a2e363a",
+          "bytes": 2956700,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题06 二元一次方程组的应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题06 二元一次方程组的应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题06 二元一次方程组的应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题06 二元一次方程组的应用（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00004_d01\\专题06 二元一次方程组的应用（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 1428,
+            "text_chars": 32375,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题06 二元一次方程组的应用",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：工程问题1】",
+              "【题型2：行程问题6】"
+            ],
+            "answer_marker_counts": {
+              "答案": 70,
+              "解析": 5,
+              "【答案】": 40,
+              "【解析】": 0,
+              "解：": 81
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 6,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00004_d01\\专题06 二元一次方程组的应用（原卷版）.docx",
+          "filename": "专题06 二元一次方程组的应用（原卷版）.docx",
+          "topic_identity": "专题06 二元一次方程组的应用",
+          "sha256": "0bd71d0822de32b74249584543c0137af1bf849a9e599194fae629c84d33f62e",
+          "bytes": 740723,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题06 二元一次方程组的应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题06 二元一次方程组的应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题06 二元一次方程组的应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题06 二元一次方程组的应用（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00004_d01\\专题06 二元一次方程组的应用（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 813,
+            "text_chars": 14140,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题06 二元一次方程组的应用",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：工程问题1】",
+              "【题型2：行程问题3】"
+            ],
+            "answer_marker_counts": {
+              "答案": 2,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 4,
+      "topic_identity": "专题08 不等式与不等式组应用",
+      "members": [
+        {
+          "corpus_order": 7,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00005_d01\\专题08 不等式与不等式组应用（原卷版）.docx",
+          "filename": "专题08 不等式与不等式组应用（原卷版）.docx",
+          "topic_identity": "专题08 不等式与不等式组应用",
+          "sha256": "ba2cbeb791422a8accca4e95cf9565e1aad5c19929100129e41a3de0fdf32281",
+          "bytes": 1300641,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题08 不等式与不等式组应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题08 不等式与不等式组应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题08 不等式与不等式组应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题08 不等式与不等式组应用（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00005_d01\\专题08 不等式与不等式组应用（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 426,
+            "text_chars": 9049,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题08 不等式与不等式组应用",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：行程问题1】",
+              "【题型2：工程问题2】"
+            ],
+            "answer_marker_counts": {
+              "答案": 6,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 8,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00005_d01\\专题08 不等式与不等式组应用（解析版）.docx",
+          "filename": "专题08 不等式与不等式组应用（解析版）.docx",
+          "topic_identity": "专题08 不等式与不等式组应用",
+          "sha256": "09e59e0f888ec0395be08ba5ecdbec62d8b1e02ad37640286b10da69ca3ca6fc",
+          "bytes": 1636671,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题08 不等式与不等式组应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题08 不等式与不等式组应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题08 不等式与不等式组应用【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题08 不等式与不等式组应用（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00005_d01\\专题08 不等式与不等式组应用（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 836,
+            "text_chars": 18798,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题08 不等式与不等式组应用",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：行程问题1】",
+              "【题型2：工程问题4】"
+            ],
+            "answer_marker_counts": {
+              "答案": 13,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 49
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 5,
+      "topic_identity": "专题02 平行线模型和辅助线 专题专练【重难点培优:知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+      "members": [
+        {
+          "corpus_order": 9,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00006_d01\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（解析版）.docx",
+          "filename": "专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（解析版）.docx",
+          "topic_identity": "专题02 平行线模型和辅助线 专题专练【重难点培优:知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+          "sha256": "8639fd84bbee291b1bae7cd3c0290df028e4142ab656166eb611237addb5e476",
+          "bytes": 3499825,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "member_name": "专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00006_d01\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 1386,
+            "text_chars": 14756,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题02 平行线模型和辅助线",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：猪蹄模型与锯齿模型1】",
+              "【题型2：铅笔头模型及进阶6】"
+            ],
+            "answer_marker_counts": {
+              "答案": 23,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 50
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 10,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00006_d01\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx",
+          "filename": "专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx",
+          "topic_identity": "专题02 平行线模型和辅助线 专题专练【重难点培优:知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+          "sha256": "18abb7103ff821b7096557c16792758d48c3ccc551a611dc8550806e19b8c4bc",
+          "bytes": 1969990,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "member_name": "专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00006_d01\\专题02 平行线模型和辅助线 专题专练【重难点培优：知识梳理+8大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 730,
+            "text_chars": 7002,
+            "title_evidence": [
+              "知识梳理知识梳理专题02 平行线模型和辅助线",
+              "知识梳理",
+              "知识梳理",
+              "模型名称",
+              "图示"
+            ],
+            "answer_marker_counts": {
+              "答案": 1,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 3
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 6,
+      "topic_identity": "专题07 不等式与不等式组",
+      "members": [
+        {
+          "corpus_order": 11,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00007_d01\\专题07 不等式与不等式组（解析版）.docx",
+          "filename": "专题07 不等式与不等式组（解析版）.docx",
+          "topic_identity": "专题07 不等式与不等式组",
+          "sha256": "c214a90b9ae519b27ad79a675683bddd7b8a803c1b2f69477e58e8b12a7fea1c",
+          "bytes": 1226846,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题07 不等式与不等式组【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题07 不等式与不等式组【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题07 不等式与不等式组【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题07 不等式与不等式组（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00007_d01\\专题07 不等式与不等式组（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 929,
+            "text_chars": 11612,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题07 不等式与不等式组",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：根据不等式（组）的解集求参数1】",
+              "【题型2：不等式组有解问题6】"
+            ],
+            "answer_marker_counts": {
+              "答案": 41,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 66
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 12,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00007_d01\\专题07 不等式与不等式组（原卷版）.docx",
+          "filename": "专题07 不等式与不等式组（原卷版）.docx",
+          "topic_identity": "专题07 不等式与不等式组",
+          "sha256": "03b98e25de5c3c8895f17e536de1b35466eb7bfa3e043d59e3fb9d9823a54ff7",
+          "bytes": 440350,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题07 不等式与不等式组【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题07 不等式与不等式组【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题07 不等式与不等式组【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题07 不等式与不等式组（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00007_d01\\专题07 不等式与不等式组（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 302,
+            "text_chars": 4414,
+            "title_evidence": [
+              "知识梳理知识梳理专题07 不等式与不等式组",
+              "知识梳理",
+              "知识梳理",
+              "1. 常见的不等式基本语言与符号表示：",
+              "不等式基本语言"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 7,
+      "topic_identity": "专题04 平面直角坐标系",
+      "members": [
+        {
+          "corpus_order": 13,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00008_d01\\专题04 平面直角坐标系（原卷版）.docx",
+          "filename": "专题04 平面直角坐标系（原卷版）.docx",
+          "topic_identity": "专题04 平面直角坐标系",
+          "sha256": "a9b98d5d27f1d5484a1adb3db8e086760457b2535c35a6adf5e7d2e98e95f6c8",
+          "bytes": 3496519,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题04 平面直角坐标系【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题04 平面直角坐标系【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题04 平面直角坐标系【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题04 平面直角坐标系（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00008_d01\\专题04 平面直角坐标系（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 590,
+            "text_chars": 9358,
+            "title_evidence": [
+              "知识梳理知识梳理专题04 平面直角坐标系",
+              "知识梳理",
+              "知识梳理",
+              "1. 平面直角坐标系中点的坐标特征：",
+              "象限内的点"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 14,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00008_d01\\专题04 平面直角坐标系（解析版）.docx",
+          "filename": "专题04 平面直角坐标系（解析版）.docx",
+          "topic_identity": "专题04 平面直角坐标系",
+          "sha256": "7a2c1e13289c00cb48576c5a57089a763f465e6cfd6c81bc9c64e1205e8b686e",
+          "bytes": 2928829,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题04 平面直角坐标系【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题04 平面直角坐标系【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题04 平面直角坐标系【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题04 平面直角坐标系（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00008_d01\\专题04 平面直角坐标系（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 1228,
+            "text_chars": 21670,
+            "title_evidence": [
+              "专题04 平面直角坐标系",
+              "重难点题型分类重难点题型分类",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：根据平面直角坐标中点的坐标特征求坐标1】"
+            ],
+            "answer_marker_counts": {
+              "答案": 69,
+              "解析": 20,
+              "【答案】": 42,
+              "【解析】": 0,
+              "解：": 92
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 8,
+      "topic_identity": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优:知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+      "members": [
+        {
+          "corpus_order": 15,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00009_d01\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册(解析版）.docx",
+          "filename": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册(解析版）.docx",
+          "topic_identity": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优:知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+          "sha256": "3b0be92295c3ed587099987a90fd12be0fc3a6712fb46a09d67a3ba17763b379",
+          "bytes": 7797173,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "member_name": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册(解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00009_d01\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册(解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 1839,
+            "text_chars": 16681,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题01 相交线与平行线中的几何综合",
+              "重难点题型分类",
+              "重难点题型分类",
+              "复杂图形中的角度计算与证明",
+              "1．将一副三角板按如图放置，，，，则：①；②；③如果，则有；④如果，则有．上述结论中正确的个数是（    ）"
+            ],
+            "answer_marker_counts": {
+              "答案": 22,
+              "解析": 3,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 86
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 16,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00009_d01\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx",
+          "filename": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx",
+          "topic_identity": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优:知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册",
+          "sha256": "9785aadc3bdb4ebafab8f62f2f8f7d4eea7427afa8d23dffb2e5b4b7ce0ed3c2",
+          "bytes": 3773203,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册.zip",
+              "member_name": "专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00009_d01\\专题01 相交线与平行线中的几何综合 专题专练【重难点培优：知识梳理+7大题型+压轴真题】2025-2026学年人教版数学七年级下册（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 832,
+            "text_chars": 8293,
+            "title_evidence": [
+              "知识梳理知识梳理专题01 相交线与平行线中的几何综合",
+              "知识梳理",
+              "知识梳理",
+              "平行线的判定平行线的判定1. 平行线的判定与性质：",
+              "平行线的判定"
+            ],
+            "answer_marker_counts": {
+              "答案": 4,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 9,
+      "topic_identity": "专题09 规律探索型",
+      "members": [
+        {
+          "corpus_order": 17,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00010_d01\\专题09 规律探索型（解析版）.docx",
+          "filename": "专题09 规律探索型（解析版）.docx",
+          "topic_identity": "专题09 规律探索型",
+          "sha256": "ae0c39b370d7acc51a96463cbfd7f221f04037033e1515a4529a95664ae8b938",
+          "bytes": 2510610,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题09 规律探索型【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题09 规律探索型【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题09 规律探索型【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题09 规律探索型（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00010_d01\\专题09 规律探索型（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 983,
+            "text_chars": 17526,
+            "title_evidence": [
+              "专题09 规律探索型",
+              "重难点题型分类重难点题型分类",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：相交线与平行线中的规律探索1】"
+            ],
+            "answer_marker_counts": {
+              "答案": 72,
+              "解析": 6,
+              "【答案】": 30,
+              "【解析】": 0,
+              "解：": 49
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 18,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00010_d01\\专题09 规律探索型（原卷版）.docx",
+          "filename": "专题09 规律探索型（原卷版）.docx",
+          "topic_identity": "专题09 规律探索型",
+          "sha256": "f4c2eda4c5c9d37a80e0d2c265cc02b290adf147deee0d12faaf9125ab54ac86",
+          "bytes": 2079995,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题09 规律探索型【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题09 规律探索型【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题09 规律探索型【重难点培优：知识梳理+5大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题09 规律探索型（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00010_d01\\专题09 规律探索型（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 368,
+            "text_chars": 6333,
+            "title_evidence": [
+              "专题09 规律探索型",
+              "重难点题型分类重难点题型分类",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：相交线与平行线中的规律探索1】"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 10,
+      "topic_identity": "专题11 存在性问题",
+      "members": [
+        {
+          "corpus_order": 19,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00011_d01\\专题11 存在性问题（原卷版）.docx",
+          "filename": "专题11 存在性问题（原卷版）.docx",
+          "topic_identity": "专题11 存在性问题",
+          "sha256": "b56951ea6cf876d8742a00ac8ab62503c63a60ee0e22db2bafccdd537d333856",
+          "bytes": 1114711,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题11 存在性问题【重难点培优：知识梳理+3大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题11 存在性问题【重难点培优：知识梳理+3大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题11 存在性问题【重难点培优：知识梳理+3大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题11 存在性问题（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00011_d01\\专题11 存在性问题（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 239,
+            "text_chars": 4922,
+            "title_evidence": [
+              "专题11 存在性问题",
+              "重难点题型分类重难点题型分类",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：存在性问题中求点的坐标1】"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 1
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 20,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00011_d01\\专题11 存在性问题（解析版）.docx",
+          "filename": "专题11 存在性问题（解析版）.docx",
+          "topic_identity": "专题11 存在性问题",
+          "sha256": "18c2ead455ca27d92f4f4eb4bad6b6bca91c5f18ccfc55c5dde356a8a8539ee3",
+          "bytes": 2442593,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题11 存在性问题【重难点培优：知识梳理+3大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题11 存在性问题【重难点培优：知识梳理+3大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题11 存在性问题【重难点培优：知识梳理+3大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题11 存在性问题（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00011_d01\\专题11 存在性问题（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 832,
+            "text_chars": 13186,
+            "title_evidence": [
+              "专题11 存在性问题",
+              "重难点题型分类重难点题型分类",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：存在性问题中求点的坐标1】"
+            ],
+            "answer_marker_counts": {
+              "答案": 30,
+              "解析": 3,
+              "【答案】": 13,
+              "【解析】": 0,
+              "解：": 49
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 11,
+      "topic_identity": "专题03 实数相关",
+      "members": [
+        {
+          "corpus_order": 21,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00012_d01\\专题03 实数相关（原卷版）.docx",
+          "filename": "专题03 实数相关（原卷版）.docx",
+          "topic_identity": "专题03 实数相关",
+          "sha256": "156e69b6654630b51596f670da861c12ca8b3cfce2c7222d3f6059cedef841b5",
+          "bytes": 3623651,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题03 实数相关【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题03 实数相关【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题03 实数相关【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题03 实数相关（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00012_d01\\专题03 实数相关（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 549,
+            "text_chars": 7420,
+            "title_evidence": [
+              "知识梳理知识梳理专题03 实数相关",
+              "知识梳理",
+              "知识梳理",
+              "1. 公式：",
+              "2. 算术平方根的整数部分和小数部分：（算术平方根的整数部分可利用估算求出）"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 4
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 22,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00012_d01\\专题03 实数相关（解析版）.docx",
+          "filename": "专题03 实数相关（解析版）.docx",
+          "topic_identity": "专题03 实数相关",
+          "sha256": "b92e1075e33e52b9aa4bf02723a400f6aae35c6de66170514779e6fca2918587",
+          "bytes": 3883465,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2025-2026学年人教版七年级下册数学重难点培优专题专练-1.zip",
+              "member_name": "专题03 实数相关【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题03 实数相关【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00001_d00\\专题03 实数相关【重难点培优：知识梳理+6大题型+压轴真题】2025-2026学年人教版七年级下册数学重难点培优专题专练.zip",
+              "member_name": "专题03 实数相关（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00012_d01\\专题03 实数相关（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 1220,
+            "text_chars": 19432,
+            "title_evidence": [
+              "重难点题型分类重难点题型分类专题03 实数相关",
+              "重难点题型分类",
+              "重难点题型分类",
+              "【题型1：算术平方根的整数部分和小数部分1】",
+              "【题型2：平方根、算术平方根、立方根的综合5】"
+            ],
+            "answer_marker_counts": {
+              "答案": 94,
+              "解析": 10,
+              "【答案】": 58,
+              "【解析】": 0,
+              "解：": 88
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 12,
+      "topic_identity": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 (讲义)",
+      "members": [
+        {
+          "corpus_order": 23,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00014_d01\\2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（解析版）.docx",
+          "filename": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（解析版）.docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 (讲义)",
+          "sha256": "206c9b90b8d06d91905a75a5978c6c2d3825478030301e039f119d2f2ad314f2",
+          "bytes": 1318099,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "13.2  分子动理论的初步知识 （讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.2  分子动理论的初步知识 （讲义）2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.2  分子动理论的初步知识 （讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00014_d01\\2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 229,
+            "text_chars": 6949,
+            "title_evidence": [
+              "第1节  分子动理论",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：常见的物质是由分子、原子构成的。1",
+              "知识点2：一切物质的分子都在不停地做无规则的运动2"
+            ],
+            "answer_marker_counts": {
+              "答案": 22,
+              "解析": 0,
+              "【答案】": 22,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 24,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00014_d01\\2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（原卷版）.docx",
+          "filename": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（原卷版）.docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 (讲义)",
+          "sha256": "95169b0e507b5a959b8e5307daf5c725f25cd74056bbd61f185eb7c2a0f4213e",
+          "bytes": 1303005,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "13.2  分子动理论的初步知识 （讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.2  分子动理论的初步知识 （讲义）2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.2  分子动理论的初步知识 （讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00014_d01\\2026-2027年人教版物理九年级第十三章第二节 分子动理论的初步知识 （讲义）（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 135,
+            "text_chars": 3524,
+            "title_evidence": [
+              "第1节  分子动理论",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：常见的物质是由分子、原子构成的。1",
+              "知识点2：一切物质的分子都在不停地做无规则的运动2"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 13,
+      "topic_identity": "15.2 电流和电路(讲义)2026-2027年人教版物理九年级全一册",
+      "members": [
+        {
+          "corpus_order": 25,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00015_d01\\15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（解析版） .docx",
+          "filename": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（解析版） .docx",
+          "topic_identity": "15.2 电流和电路(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "c4b4f3bb3b9730bca0701531af0ca429bc8977e6a4dd6f8047861e4239ce2746",
+          "bytes": 3770388,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.2 电流和电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.2 电流和电路 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.2 电流和电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（解析版） .docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00015_d01\\15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（解析版） .docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 197,
+            "text_chars": 5116,
+            "title_evidence": [
+              "第2节  电流和电路",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：电流的形成以及方向1",
+              "知识点2：导体与绝缘体2"
+            ],
+            "answer_marker_counts": {
+              "答案": 17,
+              "解析": 0,
+              "【答案】": 17,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 26,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00015_d01\\15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（原卷版） .docx",
+          "filename": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（原卷版） .docx",
+          "topic_identity": "15.2 电流和电路(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "94dce92abd5a11ad0b42034c8e95b2356153fdea8779461c93943ab5f7d055dd",
+          "bytes": 3195877,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.2 电流和电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.2 电流和电路 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.2 电流和电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（原卷版） .docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00015_d01\\15.2 电流和电路（讲义）2026-2027年人教版物理九年级全一册（原卷版） .docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 133,
+            "text_chars": 2814,
+            "title_evidence": [
+              "第2节  电流和电路",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：电流的形成以及方向1",
+              "知识点2：导体与绝缘体2"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 14,
+      "topic_identity": "15.4 电流的测量(讲义)2026-2027年人教版物理九年级全一册",
+      "members": [
+        {
+          "corpus_order": 27,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00016_d01\\15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "filename": "15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "topic_identity": "15.4 电流的测量(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "5ff644bb5e3b1a359204cf01ee8a3a2ca526bbbbf0f82f8a0b64b86f605e453b",
+          "bytes": 4479998,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.4 电流的测量（讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.4 电流的测量（讲义）2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.4 电流的测量（讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00016_d01\\15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 119,
+            "text_chars": 2664,
+            "title_evidence": [
+              "第4节  电流的测量",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：电流的强度1",
+              "知识点2：电流的测量2"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 28,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00016_d01\\15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "filename": "15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "topic_identity": "15.4 电流的测量(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "ed6573a7e00fac3fa7e757a6ff066483f82bdd366d16d35b9d2bb8bc53198062",
+          "bytes": 4509102,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.4 电流的测量（讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.4 电流的测量（讲义）2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.4 电流的测量（讲义）2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00016_d01\\15.4 电流的测量（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 195,
+            "text_chars": 5225,
+            "title_evidence": [
+              "第4节  电流的测量",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：电流的强度1",
+              "知识点2：电流的测量3"
+            ],
+            "answer_marker_counts": {
+              "答案": 18,
+              "解析": 1,
+              "【答案】": 18,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 15,
+      "topic_identity": "2026-2027年人教版物理九年级第十三章第三节 内能 (讲义)",
+      "members": [
+        {
+          "corpus_order": 29,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00017_d01\\2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（解析版） .docx",
+          "filename": "2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（解析版） .docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十三章第三节 内能 (讲义)",
+          "sha256": "2ba5500c188081932f1d676ab35aaf600a2d40cf9bb430ad80fbebe3f5353cec",
+          "bytes": 913637,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "13.3 内能 （讲义） 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.3 内能 （讲义） 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.3 内能 （讲义） 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（解析版） .docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00017_d01\\2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（解析版） .docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 264,
+            "text_chars": 7097,
+            "title_evidence": [
+              "第3节  内能",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：内能的概念1",
+              "知识点2：改变内能的方式4"
+            ],
+            "answer_marker_counts": {
+              "答案": 17,
+              "解析": 0,
+              "【答案】": 17,
+              "【解析】": 0,
+              "解：": 1
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 30,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00017_d01\\2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（原卷版） .docx",
+          "filename": "2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（原卷版） .docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十三章第三节 内能 (讲义)",
+          "sha256": "6d06f858bf7a4933d82cb4e142905f115529cd95eeabab2a9377bfb14d3e70d6",
+          "bytes": 897418,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "13.3 内能 （讲义） 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.3 内能 （讲义） 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.3 内能 （讲义） 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（原卷版） .docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00017_d01\\2026-2027年人教版物理九年级第十三章第三节 内能 （讲义）（原卷版） .docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 179,
+            "text_chars": 3787,
+            "title_evidence": [
+              "第3节  内能",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：内能的概念1",
+              "知识点2：改变内能的方式4"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 1
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 16,
+      "topic_identity": "15.3 串联电路和并联电路(讲义)2026-2027年人教版物理九年级全一册",
+      "members": [
+        {
+          "corpus_order": 31,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00018_d01\\15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "filename": "15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "topic_identity": "15.3 串联电路和并联电路(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "a12c44dd1da47c09a3961e1d7d7e9bf537f5341d076529db8bd80662a4ee5211",
+          "bytes": 5832411,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.3 串联电路和并联电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.3 串联电路和并联电路 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.3 串联电路和并联电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00018_d01\\15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 219,
+            "text_chars": 6353,
+            "title_evidence": [
+              "第3节  串联电路和并联电路",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：串联电路和并联电路1",
+              "知识点2：生活中的电路3"
+            ],
+            "answer_marker_counts": {
+              "答案": 20,
+              "解析": 0,
+              "【答案】": 20,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 32,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00018_d01\\15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "filename": "15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "topic_identity": "15.3 串联电路和并联电路(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "34204059d17a0329806c2abf3941f1cd3d88583c75d89dfb841a89b98d9ab56e",
+          "bytes": 1181121,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.3 串联电路和并联电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.3 串联电路和并联电路 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.3 串联电路和并联电路 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00018_d01\\15.3 串联电路和并联电路（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 138,
+            "text_chars": 3335,
+            "title_evidence": [
+              "第3节  串联电路和并联电路",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：串联电路和并联电路1",
+              "知识点2：生活中的电路3"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 17,
+      "topic_identity": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 (讲义)",
+      "members": [
+        {
+          "corpus_order": 33,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00019_d01\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+          "filename": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 (讲义)",
+          "sha256": "b5e217e9a2311d398af5be97446b86b84992bd541683f83c7773cde22885419e",
+          "bytes": 4296971,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00019_d01\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 399,
+            "text_chars": 11609,
+            "title_evidence": [
+              "第1节  热量 比热容",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：探究不同物质的吸热能力1",
+              "知识点2：比热容的概念3"
+            ],
+            "answer_marker_counts": {
+              "答案": 29,
+              "解析": 0,
+              "【答案】": 29,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 34,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00019_d01\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+          "filename": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 (讲义)",
+          "sha256": "755f20a000e5bfa9638bc279318fc0753d54019096e250b959bd0522b4dc1b71",
+          "bytes": 4111329,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\13.1 热量 比热容 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00019_d01\\2026-2027年人教版物理九年级第十三章第一节 热量 比热容 （讲义）（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 211,
+            "text_chars": 5718,
+            "title_evidence": [
+              "第1节  热量 比热容",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：探究不同物质的吸热能力1",
+              "知识点2：比热容的概念3"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 18,
+      "topic_identity": "13.3 热机效率(讲义)2026-2027年人教版物理九年级全一册",
+      "members": [
+        {
+          "corpus_order": 35,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00020_d01\\13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "filename": "13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "topic_identity": "13.3 热机效率(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "781e2b1a04ac28096d05d9c4cd9cf1bfa2f13f999fae3c2a247f345651bb2e16",
+          "bytes": 2822384,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "14.3 热机效率 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.3 热机效率 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.3 热机效率 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00020_d01\\13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 156,
+            "text_chars": 2996,
+            "title_evidence": [
+              "第3节  热机的效率",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：燃料的热值1",
+              "知识点2：热机效率4"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 36,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00020_d01\\13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "filename": "13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "topic_identity": "13.3 热机效率(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "3674e8a29fa2f4d1cbc6d295aa06ca64bab4e51e53128d703e1b23c58d28f921",
+          "bytes": 2946040,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "14.3 热机效率 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.3 热机效率 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.3 热机效率 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00020_d01\\13.3 热机效率（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 251,
+            "text_chars": 5157,
+            "title_evidence": [
+              "第3节  热机的效率",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：燃料的热值1",
+              "知识点2：热机效率4"
+            ],
+            "answer_marker_counts": {
+              "答案": 15,
+              "解析": 0,
+              "【答案】": 15,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 19,
+      "topic_identity": "15.1 两种电荷(讲义)2026-2027年人教版物理九年级全一册",
+      "members": [
+        {
+          "corpus_order": 37,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00021_d01\\15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "filename": "15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+          "topic_identity": "15.1 两种电荷(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "df2192ef89930f9d23ffa279ca0796bc9b844a3af67a34c7ed7998913fdb822b",
+          "bytes": 6722830,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.1 两种电荷 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.1 两种电荷 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.1 两种电荷 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00021_d01\\15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（解析版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 180,
+            "text_chars": 5416,
+            "title_evidence": [
+              "第1节  两种电荷",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：两种电荷及摩擦起电1",
+              "知识点2：电荷间的相互作用3"
+            ],
+            "answer_marker_counts": {
+              "答案": 18,
+              "解析": 1,
+              "【答案】": 18,
+              "【解析】": 1,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 38,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00021_d01\\15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "filename": "15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+          "topic_identity": "15.1 两种电荷(讲义)2026-2027年人教版物理九年级全一册",
+          "sha256": "b3aeeb883c8b1a7357ea0e66071cec4d311c7b7343933ee4099cc46d6c66ac24",
+          "bytes": 6703518,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "15.1 两种电荷 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.1 两种电荷 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\15.1 两种电荷 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00021_d01\\15.1 两种电荷（讲义）2026-2027年人教版物理九年级全一册（原卷版）.docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 113,
+            "text_chars": 2619,
+            "title_evidence": [
+              "第1节  两种电荷",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：两种电荷及摩擦起电1",
+              "知识点2：电荷间的相互作用2"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_order": 20,
+      "topic_identity": "2026-2027年人教版物理九年级第十四章第二节 热机 (讲义)",
+      "members": [
+        {
+          "corpus_order": 39,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00022_d01\\2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（原卷版）  .docx",
+          "filename": "2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（原卷版）  .docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十四章第二节 热机 (讲义)",
+          "sha256": "940e6b3853893a1dd89615754a8fbdf916021f4ec772cddb217753bbfd2614b3",
+          "bytes": 10837493,
+          "role": "student_or_original_paper",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "14.2 热机 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.2 热机 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.2 热机 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（原卷版）  .docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00022_d01\\2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（原卷版）  .docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 152,
+            "text_chars": 2329,
+            "title_evidence": [
+              "第2节  热机",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：热机的概念1",
+              "知识点2：汽油机与柴油机2"
+            ],
+            "answer_marker_counts": {
+              "答案": 0,
+              "解析": 0,
+              "【答案】": 0,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        },
+        {
+          "corpus_order": 40,
+          "path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00022_d01\\2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（解析版）  .docx",
+          "filename": "2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（解析版）  .docx",
+          "topic_identity": "2026-2027年人教版物理九年级第十四章第二节 热机 (讲义)",
+          "sha256": "1318a6c140e1fb110066596a454885e345caa523194f6372031d719605bae3ad",
+          "bytes": 10866882,
+          "role": "teacher_or_answer_rich",
+          "source_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+          "source_chain": [
+            {
+              "corpus_root": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件",
+              "outer_zip": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip"
+            },
+            {
+              "zip_path": "C:\\Users\\Administrator\\Desktop\\工作\\讲义生成器\\训练文件\\2026-2027学年人教版物理九年级全一册+讲义-1.zip",
+              "member_name": "14.2 热机 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.2 热机 讲义 2026-2027学年人教版物理九年级全一册.zip"
+            },
+            {
+              "zip_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00013_d00\\14.2 热机 讲义 2026-2027学年人教版物理九年级全一册.zip",
+              "member_name": "2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（解析版）  .docx",
+              "materialized_path": "C:\\xml-uat\\incident-source-recovery-20261006\\extracted\\archive_00022_d01\\2026-2027年人教版物理九年级第十四章第二节 热机 （讲义）（解析版）  .docx"
+            }
+          ],
+          "eligibility": {
+            "raw_corpus_provenance": true,
+            "outside_generated_result_runtime_publication_and_test_fixture_roots": true,
+            "duplicate_hash": false,
+            "duplicate_topic": false,
+            "docx_extension": true,
+            "docx_package_valid": true,
+            "topic_not_fixed_or_incident": true
+          },
+          "content_evidence": {
+            "docx_package_valid": true,
+            "main_story_paragraphs": 232,
+            "text_chars": 6022,
+            "title_evidence": [
+              "第2节  热机",
+              "目录",
+              "【知识梳理】1",
+              "知识点1：热机的概念1",
+              "知识点2：汽油机与柴油机2"
+            ],
+            "answer_marker_counts": {
+              "答案": 13,
+              "解析": 0,
+              "【答案】": 13,
+              "【解析】": 0,
+              "解：": 0
+            },
+            "inspect_error": null
+          }
+        }
+      ]
+    },
+    {
+      "topic_identity": "专题10 语法填空",
+      "members": [
+        {
+          "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+          "filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（原卷版）.docx",
+          "sha256": "ca761929050cfffd076cfdd96c46f2705abf90308091c1a2fd1591ca2d3b9c17",
+          "role": "student",
+          "origin": "immutable corpus recovery; matches raw upload provenance"
+        },
+        {
+          "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+          "filename": "专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（解析版）.docx",
+          "sha256": "900fd097606343d16c198f5e9a7d374486bd1b7e9dd7cbbdc59b1cebf9ab495a",
+          "role": "teacher",
+          "origin": "immutable corpus recovery; matches raw upload provenance"
+        }
+      ],
+      "subject": "英语",
+      "grade": "高三"
+    },
+    {
+      "topic_identity": "专题12 完形填空",
+      "members": [
+        {
+          "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+          "filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（原卷版）.docx",
+          "sha256": "78e2893c1701ac099bf812174f762a3e9fd54e4aaec52dba78a2e26741d6eef5",
+          "role": "student",
+          "origin": "immutable corpus recovery; matches raw upload provenance"
+        },
+        {
+          "path": "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+          "filename": "专题12完形填空之记叙文（培优讲义）（全国通用）（解析版）.docx",
+          "sha256": "3356ac22dc1a1c1bf7879e6d2a3c9b9871fa84dd8e49349205eba95b9bfbccc3",
+          "role": "teacher",
+          "origin": "immutable corpus recovery; matches raw upload provenance"
+        }
+      ],
+      "subject": "英语",
+      "grade": "高三"
+    }
+  ]
+}

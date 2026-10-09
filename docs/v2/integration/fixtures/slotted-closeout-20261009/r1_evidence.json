@@ -1,0 +1,174 @@
+[
+  {
+    "job_id": "d186c62456a64567b7ffcee2138a74ac",
+    "status": "done",
+    "renderer": "XML",
+    "plan_summary": {
+      "cover_metadata_blocks": [],
+      "destination_slots": {
+        "final": {
+          "label": "六、巩固练习",
+          "student_blocks": 17,
+          "teacher_blocks": 97
+        },
+        "immediate": {
+          "label": "即时训练",
+          "student_blocks": 15,
+          "teacher_blocks": 55
+        },
+        "knowledge": {
+          "label": "知识精讲",
+          "student_blocks": 203,
+          "teacher_blocks": 340
+        }
+      },
+      "explicit_final_heading": false,
+      "knowledge_point_status": "HAS_KNOWLEDGE_POINT",
+      "omitted_slots": [],
+      "routing_applied": true,
+      "student_units": 62,
+      "teacher_units": 69,
+      "template_sha256": "1318fceabaa957b12e371310902fd81a0db08be09cee2121f6cd2606d8fd6a1a",
+      "training_question_routes": [],
+      "training_split_strategy": "WHOLE_COMPONENT_70_30"
+    },
+    "tiers": {
+      "student": "PARTITION",
+      "teacher": "PARTITION"
+    },
+    "product_integrity_accepted": true,
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 学生版.docx"
+    ]
+  },
+  {
+    "job_id": "c49da0726b5d4d9187ba259c9a6ba399",
+    "status": "done",
+    "renderer": "XML",
+    "plan_summary": {
+      "cover_metadata_blocks": [],
+      "destination_slots": {
+        "final": {
+          "label": "六、出门测试",
+          "student_blocks": 17,
+          "teacher_blocks": 97
+        },
+        "immediate": {
+          "label": "即时训练",
+          "student_blocks": 15,
+          "teacher_blocks": 55
+        },
+        "knowledge": {
+          "label": "知识精讲&例题讲解",
+          "student_blocks": 203,
+          "teacher_blocks": 340
+        }
+      },
+      "explicit_final_heading": false,
+      "knowledge_point_status": "HAS_KNOWLEDGE_POINT",
+      "omitted_slots": [],
+      "routing_applied": true,
+      "student_units": 62,
+      "teacher_units": 69,
+      "template_sha256": "f51046d841699645b1b49f49f481c559e8502b98589d20b0c7e97cf2f7ba8f13",
+      "training_question_routes": [],
+      "training_split_strategy": "WHOLE_COMPONENT_70_30"
+    },
+    "tiers": {
+      "student": "PARTITION",
+      "teacher": "PARTITION"
+    },
+    "product_integrity_accepted": true,
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（2）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用）（2）\\高三 英语 专题10 语法填空（有提示词）语法规律的艺术（培优讲义）（全国通用） 学生版.docx"
+    ]
+  },
+  {
+    "job_id": "c0484bac7c4b404fa90f419b4d878b40",
+    "status": "done",
+    "renderer": "XML",
+    "plan_summary": {
+      "cover_metadata_blocks": [],
+      "destination_slots": {
+        "final": {
+          "label": "六、巩固练习",
+          "student_blocks": 0,
+          "teacher_blocks": 36
+        },
+        "immediate": {
+          "label": "即时训练",
+          "student_blocks": 0,
+          "teacher_blocks": 147
+        },
+        "knowledge": {
+          "label": "知识精讲",
+          "student_blocks": 251,
+          "teacher_blocks": 364
+        }
+      },
+      "explicit_final_heading": false,
+      "knowledge_point_status": "HAS_KNOWLEDGE_POINT",
+      "omitted_slots": [],
+      "routing_applied": true,
+      "student_units": 50,
+      "teacher_units": 123,
+      "template_sha256": "1318fceabaa957b12e371310902fd81a0db08be09cee2121f6cd2606d8fd6a1a",
+      "training_question_routes": [],
+      "training_split_strategy": "WHOLE_COMPONENT_70_30"
+    },
+    "tiers": {
+      "student": "RULES",
+      "teacher": "PARTITION"
+    },
+    "product_integrity_accepted": true,
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 学生版.docx"
+    ]
+  },
+  {
+    "job_id": "9c290a31f87f4a0aab04976c97e7622d",
+    "status": "done",
+    "renderer": "XML",
+    "plan_summary": {
+      "cover_metadata_blocks": [],
+      "destination_slots": {
+        "final": {
+          "label": "六、出门测试",
+          "student_blocks": 0,
+          "teacher_blocks": 36
+        },
+        "immediate": {
+          "label": "即时训练",
+          "student_blocks": 0,
+          "teacher_blocks": 147
+        },
+        "knowledge": {
+          "label": "知识精讲&例题讲解",
+          "student_blocks": 251,
+          "teacher_blocks": 364
+        }
+      },
+      "explicit_final_heading": false,
+      "knowledge_point_status": "HAS_KNOWLEDGE_POINT",
+      "omitted_slots": [],
+      "routing_applied": true,
+      "student_units": 50,
+      "teacher_units": 123,
+      "template_sha256": "f51046d841699645b1b49f49f481c559e8502b98589d20b0c7e97cf2f7ba8f13",
+      "training_question_routes": [],
+      "training_split_strategy": "WHOLE_COMPONENT_70_30"
+    },
+    "tiers": {
+      "student": "RULES",
+      "teacher": "PARTITION"
+    },
+    "product_integrity_accepted": true,
+    "output_paths": [
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）（2）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 教师版.docx",
+      "H:\\AI-Workspace\\uat\\slotted-closeout-20261009\\results-r1\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用）（2）\\高三 英语 专题12完形填空之记叙文（培优讲义）（全国通用） 学生版.docx"
+    ]
+  }
+]

@@ -81,7 +81,7 @@ def build_degraded_plan(source, template_type, *, snapshot=None, image_role_evid
             attempts.append(dict(tier='SEMANTIC_ANALYSIS', status='UNAVAILABLE',
                                  reason_code='SEMANTIC_ANALYSIS_FAILED', detail=str(exc)))
             snapshot = structural_snapshot(source)
-    for tier in ('NAVIGATION', 'SEMANTIC', 'RULES', 'PRESERVATION'):
+    for tier in ('NAVIGATION', 'SEMANTIC', 'RULES', 'PARTITION', 'PRESERVATION'):
         if navigation_only and tier != 'NAVIGATION':
             continue
         if preserve_only and tier != 'PRESERVATION':
@@ -98,6 +98,9 @@ def build_degraded_plan(source, template_type, *, snapshot=None, image_role_evid
                                               image_role_evidence=image_role_evidence)
                 if plan.training_split_strategy.endswith('_DEGRADED'):
                     raise SlotRoutingError('SLOT_ROUTING_AMBIGUOUS', 'degraded question splitting requires preservation')
+            elif tier == 'PARTITION':
+                from exercise_partition import partition_exercises
+                plan, partition = partition_exercises(Path(source), template_type, snapshot)
             else:
                 # Preserve the original complete body order when semantic
                 # ownership is uncertain; do not carry uncertain deletion or
@@ -106,6 +109,7 @@ def build_degraded_plan(source, template_type, *, snapshot=None, image_role_evid
                                               snapshot=structural_snapshot(source))
             attempts.append(dict(tier=tier, status='SELECTED'))
             return plan, dict(selected_tier=tier, attempts=attempts,
+                              partition=partition if tier == 'PARTITION' else None,
                               pair_alignment='NOT_REQUIRED_NOT_VERIFIED',
                               source_sha256=plan.source_sha256)
         except SlotRoutingError as exc:

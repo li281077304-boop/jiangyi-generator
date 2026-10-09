@@ -67,5 +67,10 @@ def test_heading_rules_follow_semantic_refusal_and_preservation_follows_rules_re
     assert [entry['tier'] for entry in evidence['attempts']] == ['NAVIGATION', 'SEMANTIC', 'RULES']
     monkeypatch.setattr(xml_degradation, 'heading_projection', Mock(side_effect=SlotRoutingError('SLOT_ROUTING_AMBIGUOUS', 'unknown boundaries')))
     plan, evidence = build_degraded_plan(source, '1v1', snapshot=structural_snapshot(source))
+    assert evidence['selected_tier'] == 'PARTITION'
+    assert [entry['tier'] for entry in evidence['attempts']] == ['NAVIGATION', 'SEMANTIC', 'RULES', 'PARTITION']
+    import exercise_partition
+    monkeypatch.setattr(exercise_partition, 'partition_exercises', Mock(side_effect=SlotRoutingError('NO_COMPLETE_EXERCISE_BOUNDARY', 'no safe cut')))
+    plan, evidence = build_degraded_plan(source, '1v1', snapshot=structural_snapshot(source))
     assert evidence['selected_tier'] == 'PRESERVATION'
-    assert [entry['tier'] for entry in evidence['attempts']] == ['NAVIGATION', 'SEMANTIC', 'RULES', 'PRESERVATION']
+    assert [entry['tier'] for entry in evidence['attempts']] == ['NAVIGATION', 'SEMANTIC', 'RULES', 'PARTITION', 'PRESERVATION']
