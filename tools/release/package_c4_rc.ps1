@@ -3,7 +3,8 @@ param(
     [Parameter(Mandatory=$true)][string]$SourcePackageRoot,
     [Parameter(Mandatory=$true)][string]$OutputRoot,
     [Parameter(Mandatory=$true)][ValidatePattern('^[0-9a-fA-F]{7,40}$')][string]$BuildCommit,
-    [string]$PackageName = '讲义生成器_V1.2_RC.zip'
+    [string]$PackageName = '讲义生成器_V1.2_RC.zip',
+    [string]$ReadmePath = (Join-Path $PSScriptRoot '..\..\packaging\windows\README_RC.md')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -95,7 +96,7 @@ foreach ($asset in $v09TemplateAssets) {
     }
 }
 
-$readmeSource = Join-Path $PSScriptRoot '..\..\packaging\windows\README_RC.md'
+$readmeSource = $ReadmePath
 if (-not (Test-Path -LiteralPath $readmeSource -PathType Leaf)) {
     throw "Release README is missing: $readmeSource"
 }
