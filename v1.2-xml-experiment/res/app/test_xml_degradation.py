@@ -74,3 +74,18 @@ def test_heading_rules_follow_semantic_refusal_and_preservation_follows_rules_re
     plan, evidence = build_degraded_plan(source, '1v1', snapshot=structural_snapshot(source))
     assert evidence['selected_tier'] == 'PRESERVATION'
     assert [entry['tier'] for entry in evidence['attempts']] == ['NAVIGATION', 'SEMANTIC', 'RULES', 'PARTITION', 'PRESERVATION']
+
+
+def test_knowledge_only_projection_continues_to_whole_question_partition(tmp_path):
+    doc = Document()
+    doc.add_paragraph('知识点')
+    doc.add_paragraph('A reliable explanation.')
+    doc.add_paragraph('拔高·分层集训')
+    for i in range(1, 21):
+        doc.add_paragraph(f'{i}. Independent question?')
+    path = tmp_path / 'knowledge-only-rules.docx'
+    doc.save(path)
+    plan, evidence = build_degraded_plan(path, '1v1', snapshot=structural_snapshot(path))
+    assert evidence['selected_tier'] == 'PARTITION'
+    assert plan.slots['immediate'] and plan.slots['final']
+    assert any(a.get('reason_code') == 'TRAINING_SLOTS_INCOMPLETE' for a in evidence['attempts'])

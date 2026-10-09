@@ -726,6 +726,42 @@ def _find_anchor_paragraphs(document, plan: SlotRoutingPlan) -> dict[str, object
     return {slot: items[0] for slot, items in matches.items()}
 
 
+def omit_empty_knowledge(document, template_type):
+    """Remove only a uniquely identified empty template module, never source content."""
+    labels = ('知识精讲', '知识精讲&例题讲解')
+    paragraphs = list(document.element.body.iter(W_P))
+    matches = [p for p in paragraphs if _paragraph_text(p) in labels]
+    if len(matches) != 1:
+        return {'status': 'NOT_APPLICABLE', 'reason': 'KNOWLEDGE_ANCHOR_NOT_UNIQUE'}
+    anchor = matches[0]
+    immediate = next((p for p in paragraphs[paragraphs.index(anchor)+1:]
+                      if _paragraph_text(p) == '即时训练'), None)
+    if immediate is None or immediate.getparent() is not anchor.getparent():
+        return {'status': 'NOT_APPLICABLE', 'reason': 'MODULE_CONTAINER_UNPROVEN'}
+    between = []
+    node = anchor.getnext()
+    while node is not None and node is not immediate:
+        between.append(node); node = node.getnext()
+    if node is not immediate or any(
+            any((t.text or '').strip().strip('~') for t in n.iter(W_T)) or
+            any(e.tag.rsplit('}', 1)[-1] in ('drawing', 'pict', 'object', 'oMath', 'tbl')
+                for e in n.iter()) for n in between):
+        return {'status': 'RETAINED', 'reason': 'SOURCE_CONTENT_PRESENT'}
+    parent = anchor.getparent()
+    parent.remove(anchor)
+    for n in between:
+        parent.remove(n)
+    # Only template modules after the omitted slot change; source numbers remain.
+    names = {'即时训练': '三、即时训练', '归纳总结':'四、归纳总结',
+             '五、归纳总结':'四、归纳总结', '六、巩固练习':'五、巩固练习',
+             '六、出门测试':'五、出门测试'}
+    for p in paragraphs[paragraphs.index(immediate):]:
+        text = _paragraph_text(p)
+        if text in names:
+            _set_paragraph_text(p, names[text]); _clear_paragraph_numbering(p)
+    return {'status':'OMITTED', 'module':'knowledge'}
+
+
 def render_slots(
     source_doc: str,
     plan: SlotRoutingPlan,
@@ -860,6 +896,8 @@ def render_slots(
             page_layout = {"status": "NATIVE_TEMPLATE_PAGE_TWO",
                            "page_break": "TEMPLATE_FLOW"}
 
+        if not blocks_by_slot['knowledge']:
+            omit_empty_knowledge(document, plan.template_type)
         output.parent.mkdir(parents=True, exist_ok=True)
         fd, temp_name = tempfile.mkstemp(prefix=".slot-composer-", suffix=".docx",
                                          dir=str(output.parent))

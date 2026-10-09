@@ -439,6 +439,7 @@ class JobService:
                     "error", "plan_summary", "student_preparation", "student_preparation_route",
                     "package_validation", "lesson_metadata", "product_normalization", "warnings",
                     "xml_degradation", "xml_source_projection", "pair_alignment_status", "product_integrity",
+                    "slot_status", "slot_evidence",
                     "started_at", "updated_at", "elapsed_seconds")})
                 item["teacher"], item["student"] = roles.get("teacher"), roles.get("student")
             except (JobNotFound, OSError, ValueError, KeyError) as exc:
@@ -449,6 +450,10 @@ class JobService:
                           for warning in item.get("warnings", [])]
         record["warnings"] = list(dict.fromkeys(record.get("warnings", []) + child_warnings))
         record["completed"], record["failed"] = len(successes), len(failures)
+        record["slot_counts"] = {
+            status: sum(item.get("slot_status") == status for item in record["items"])
+            for status in ("SLOTTED", "PRESERVED_ONLY", "FAILED")
+        }
         record["progress"] = len(successes) + len(failures)
         record["output_paths"] = [path for item in successes for path in item["output_paths"]]
         record["produced"] = len(record["output_paths"])
@@ -566,7 +571,7 @@ class JobService:
                         "canonical_alignment", "canonical_occurrence_routes",
                         "canonical_route_source", "canonical_projection",
                         "page_layout", "image_role_evidence", "xml_degradation",
-                        "pair_alignment_status"):
+                        "pair_alignment_status", "slot_status", "slot_evidence"):
                 if key in details:
                     record[key] = details[key]
             if details.get("renderer_route") == "XML_UNSUPPORTED":
@@ -696,6 +701,7 @@ class JobService:
                 error = "GENERATION_FAILED: " + error
             record.update({
                 "status": "error",
+                "slot_status": "FAILED",
                 "error": error,
                 "stage": error,
                 "has_result": False,

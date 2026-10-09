@@ -39,15 +39,6 @@ for source in sorted((WEBAPP / "static").rglob("*")):
     if source.is_file():
         add_file(source, str(app_rel / "webapp" / "static" / source.relative_to(WEBAPP / "static").parent))
 
-ocr_models = APP / "ocr_models"
-for source in sorted(ocr_models.glob("*.onnx")):
-    add_file(source, str(app_rel / "ocr_models"))
-add_file(ocr_models / "NOTICE.md", str(app_rel / "ocr_models"))
-if {source.name for source in ocr_models.glob("*.onnx")} != {
-        "ch_PP-OCRv4_det_infer.onnx", "ch_PP-OCRv4_rec_infer.onnx",
-        "ch_ppocr_mobile_v2.0_cls_infer.onnx"}:
-    raise SystemExit("the reviewed offline OCR model set is incomplete")
-
 ocr_hiddenimports = []
 binaries = []
 
@@ -61,8 +52,7 @@ def is_test_artifact(path: str) -> bool:
     )
 
 
-for ocr_package in ("rapidocr_onnxruntime", "onnxruntime", "cv2", "numpy", "shapely",
-                    "pyclipper", "yaml", "PIL"):
+for ocr_package in ("PIL",):
     package_datas, package_binaries, package_hidden = collect_all(ocr_package)
     # collect_all includes large third-party self-test corpora (notably
     # NumPy/Shapely). They are neither runtime resources nor appropriate for
@@ -116,7 +106,8 @@ analysis = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=["pytest", "unittest", "tests", "test_app_api", "app"],
+    excludes=["pytest", "unittest", "tests", "test_app_api", "app",
+              "rapidocr_onnxruntime", "onnxruntime", "cv2", "numpy", "shapely", "pyclipper"],
     noarchive=False,
     optimize=1,
 )

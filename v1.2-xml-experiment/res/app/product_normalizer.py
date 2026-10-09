@@ -15,6 +15,57 @@ from package_validator import validate_package
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 W_P = W + "p"
 W_TC = W + "tc"
+
+
+def inspect_delivered_slots(path: str | Path, template_type: str, *,
+                            source_path: str | Path | None = None) -> dict:
+    """Inspect final template sections rather than trusting a pre-render plan."""
+    from template_slot_composer import _paragraph_text
+    document = Document(str(path))
+    source_media = set()
+    if source_path is not None:
+        with zipfile.ZipFile(source_path) as source:
+            source_media = {hashlib.sha256(source.read(name)).hexdigest()
+                            for name in source.namelist() if name.startswith('word/media/')}
+
+    def source_image_present(node):
+        # Verify origin without recognizing image text. Template decorations
+        # alone cannot substantiate a populated training section.
+        for element in node.iter():
+            for attribute, value in element.attrib.items():
+                if attribute in ('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed',
+                                  '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id'):
+                    part = document.part.related_parts.get(value)
+                    if part is not None and hashlib.sha256(part.blob).hexdigest() in source_media:
+                        return True
+        return False
+    paragraphs = list(document.element.body.iter(W_P))
+    labels = {
+        "immediate": {"即时训练", "三、即时训练", "四、即时训练"},
+        "final": {"六、巩固练习", "五、巩固练习"} if template_type == "1v1"
+                 else {"六、出门测试", "五、出门测试"},
+    }
+    stops = {"归纳总结", "四、归纳总结", "五、归纳总结"} | labels["final"]
+    sections = {}
+    for slot, names in labels.items():
+        anchors = [p for p in paragraphs if _paragraph_text(p) in names]
+        if len(anchors) != 1:
+            sections[slot] = {"verified": False, "reason": "ANCHOR_NOT_UNIQUE"}
+            continue
+        node = anchors[0].getnext()
+        substantive = []
+        while node is not None:
+            if node.tag == W_P and _paragraph_text(node) in stops:
+                break
+            # A template divider contains an ornamental picture. Media alone
+            # therefore cannot prove that a training section was populated.
+            if (any((t.text or "").strip().strip('~') for t in node.iter(W + "t")) or
+                    source_image_present(node)):
+                substantive.append(node)
+            node = node.getnext()
+        sections[slot] = {"verified": bool(substantive), "content_blocks": len(substantive)}
+    return {"verified": all(section["verified"] for section in sections.values()),
+            "sections": sections, "sha256": _sha256(Path(path))}
 _KNOWLEDGE_ANCHOR = {"1v1": "知识精讲", "class": "知识精讲&例题讲解"}
 _NEXT_SLOT_HEADINGS = {
     "即时训练", "六、巩固练习", "六、出门测试",
@@ -103,13 +154,14 @@ def normalize_product_docx(source_path: str | Path, output_path: str | Path, *,
 
     # Import lazily to share the single tested structural implementation with
     # the XML composer without making Renderer selection part of this module.
-    from template_slot_composer import _anchor_module2_end_divider, _fill_cover_metadata
+    from template_slot_composer import _anchor_module2_end_divider, _fill_cover_metadata, omit_empty_knowledge
 
     document = Document(str(source))
     _fill_cover_metadata(document, template_type, dict(metadata))
     title_projection = _project_short_source_title(
         document, metadata.get("topic", ""), template_type)
     anchor = _anchor_module2_end_divider(document, template_type)
+    omitted = omit_empty_knowledge(document, template_type)
     temporary = output.with_name(".%s.normalize-%s.docx" % (output.stem, uuid.uuid4().hex))
     canonical = output.with_name(".%s.canonical-%s.docx" % (output.stem, uuid.uuid4().hex))
     try:
@@ -122,6 +174,7 @@ def normalize_product_docx(source_path: str | Path, output_path: str | Path, *,
                              "; ".join(package.get("errors", [])[:5]))
         return {
             "status": "NORMALIZED",
+            "empty_knowledge_module": omitted,
             "version": "V1.2_PRODUCT_NORMALIZATION_V1",
             "source_path": str(source),
             "output_path": str(output),

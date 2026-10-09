@@ -107,6 +107,9 @@ def build_degraded_plan(source, template_type, *, snapshot=None, image_role_evid
                 # knowledge/image classification into this last XML attempt.
                 plan = build_slot_routing_plan(source, template_type, split_mode='full',
                                               snapshot=structural_snapshot(source))
+            if tier != 'PRESERVATION' and not all(plan.slots[slot] for slot in ('immediate', 'final')):
+                raise SlotRoutingError('TRAINING_SLOTS_INCOMPLETE',
+                                       'both training slots require source blocks; continue degradation')
             attempts.append(dict(tier=tier, status='SELECTED'))
             return plan, dict(selected_tier=tier, attempts=attempts,
                               partition=partition if tier == 'PARTITION' else None,

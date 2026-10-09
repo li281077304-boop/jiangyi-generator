@@ -1,0 +1,57 @@
+....................................................FF............ [ 77%]
+...................                                                    [100%]
+================================== FAILURES ===================================
+_______ test_training_only_final_sections_and_continuous_headings[1v1] ________
+
+tmp_path = WindowsPath('H:/AI-Workspace/tmp/dev/pytest-of-Administrator/pytest-13/test_training_only_final_secti0')
+template = '1v1'
+
+    @pytest.mark.parametrize('template', ['1v1', 'class'])
+    def test_training_only_final_sections_and_continuous_headings(tmp_path, template):
+        source = tmp_path / 'source.docx'
+        doc = Document()
+        for i in range(1, 21):
+            doc.add_paragraph(f'{i}. Independent exercise number {i}?')
+        doc.save(source)
+        plan, _ = partition_exercises(source, template, analyze_source(source))
+        rendered = tmp_path / 'rendered.docx'
+        render_slots(str(source), plan, str(rendered), cover_metadata={'topic': '训练'})
+        final = tmp_path / 'final.docx'
+        normalize_product_docx(rendered, final, template_type=template, metadata={'topic': '训练'})
+        output = Document(final)
+        texts = [_paragraph_text(p) for p in output.element.body.iter(
+            '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p')]
+>       assert not any(t in ('知识精讲', '知识精讲&例题讲解') for t in texts)
+E       assert not True
+E        +  where True = any(<generator object test_training_only_final_sections_and_continuous_headings.<locals>.<genexpr> at 0x000001CB067282B0>)
+
+tests\test_slotted_closeout_product.py:30: AssertionError
+______ test_training_only_final_sections_and_continuous_headings[class] _______
+
+tmp_path = WindowsPath('H:/AI-Workspace/tmp/dev/pytest-of-Administrator/pytest-13/test_training_only_final_secti1')
+template = 'class'
+
+    @pytest.mark.parametrize('template', ['1v1', 'class'])
+    def test_training_only_final_sections_and_continuous_headings(tmp_path, template):
+        source = tmp_path / 'source.docx'
+        doc = Document()
+        for i in range(1, 21):
+            doc.add_paragraph(f'{i}. Independent exercise number {i}?')
+        doc.save(source)
+        plan, _ = partition_exercises(source, template, analyze_source(source))
+        rendered = tmp_path / 'rendered.docx'
+        render_slots(str(source), plan, str(rendered), cover_metadata={'topic': '训练'})
+        final = tmp_path / 'final.docx'
+        normalize_product_docx(rendered, final, template_type=template, metadata={'topic': '训练'})
+        output = Document(final)
+        texts = [_paragraph_text(p) for p in output.element.body.iter(
+            '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p')]
+>       assert not any(t in ('知识精讲', '知识精讲&例题讲解') for t in texts)
+E       assert not True
+E        +  where True = any(<generator object test_training_only_final_sections_and_continuous_headings.<locals>.<genexpr> at 0x000001CB04191700>)
+
+tests\test_slotted_closeout_product.py:30: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_slotted_closeout_product.py::test_training_only_final_sections_and_continuous_headings[1v1]
+FAILED tests/test_slotted_closeout_product.py::test_training_only_final_sections_and_continuous_headings[class]
+2 failed, 83 passed, 8 subtests passed in 30.50s

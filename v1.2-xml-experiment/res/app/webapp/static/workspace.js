@@ -281,6 +281,8 @@
     if (job.status === "done") percent = 100;
     setText("progressPercent", percent + "%"); $("barfill").style.width = percent + "%"; $("progressTrack").setAttribute("aria-valuenow", percent);
     var title = job.status === "done" ? "讲义已生成" : job.status === "partial" ? "部分讲义已生成" : job.status === "error" ? (job.is_batch ? "全部专题生成失败" : "生成未完成") : job.status === "queued" ? "任务排队中" : "正在生成";
+    if (job.status === "done" && job.slot_status === "PRESERVED_ONLY") title = "原文已保留，分槽未完成";
+    if (job.is_batch && !isActiveStatus(job.status) && job.slot_counts) title += "（已分槽 " + job.slot_counts.SLOTTED + "，未分槽 " + job.slot_counts.PRESERVED_ONLY + "）";
     setText("progressTitle", title); setText("progressStage", job.error || job.stage || job.current || "正在准备 Word 文档");
     setText("footerStatus", title); $("progressTrack").classList.remove("disconnected");
     $("batchSummary").hidden = !job.is_batch;
@@ -295,7 +297,8 @@
       var itemRenderer = item.renderer || (!job.is_batch && job.renderer);
       var itemStatus = item.status || job.status;
       var itemRoute = item.renderer_route || (!job.is_batch && job.renderer_route);
-      renderer.textContent = itemRenderer === "XML" ? "标准生成" : itemRenderer === "XML_UNSUPPORTED" ? "无法生成" : itemRenderer === "V0.9" ? "兼容生成" : itemStatus === "error" ? "未执行" : "待确定";
+      var slotStatus = item.slot_status || (!job.is_batch && job.slot_status);
+      renderer.textContent = slotStatus === "SLOTTED" ? "已分槽" : slotStatus === "PRESERVED_ONLY" ? "原文保留，未分槽" : itemRenderer === "XML_UNSUPPORTED" ? "无法生成" : itemRenderer === "V0.9" ? "兼容生成，待核对分槽" : itemStatus === "error" ? "未执行" : "分槽待核验";
       if (item.renderer_reason_code || (!job.is_batch && job.renderer_reason_code)) renderer.title = "XML 未支持：" + (item.renderer_reason_code || job.renderer_reason_code) + (job.renderer_reason_detail ? "；" + job.renderer_reason_detail : "");
       else if (item.fallback_reason || (!job.is_batch && job.fallback_reason)) renderer.title = "回退原因：" + (item.fallback_detail || item.fallback_reason || job.fallback_reason);
       status.appendChild(statusCell(itemStatus === "done" ? "成功" : itemStatus === "error" ? "失败" : itemStatus === "running" ? "处理中" : "等待中"));

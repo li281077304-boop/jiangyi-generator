@@ -496,7 +496,6 @@ def _execute_job(job_id: str) -> None:
                         snapshot = analyze_source(source_path)
                     except Exception:
                         snapshot = structural_snapshot(source_path)
-                        preserve_only = True
                     source_snapshots[role] = snapshot
                     if not preserve_only:
                         try:
@@ -505,23 +504,11 @@ def _execute_job(job_id: str) -> None:
                             continue
                         except SlotRoutingError:
                             pass
-                    if not preserve_only and any(block.images for block in snapshot.document.blocks):
-                        try:
-                            from image_role_evidence import (get_local_ocr_recognizer,
-                                                             inspect_document_images, requires_local_ocr)
-                            recognizer = (get_local_ocr_recognizer(Path(app.config["LOCAL_OCR_MODEL_DIR"]))
-                                          if requires_local_ocr(snapshot) else None)
-                            source_image_evidence[role] = inspect_document_images(source_path, snapshot, recognizer)
-                        except Exception as exc:
-                            preserve_only = True
-                            degradation[role] = {"image_inspection_unavailable": str(exc)}
-                            service.add_warning(job_id, "图片内文字未能可靠识别，已按原文顺序完整保留，请复核。")
                     plans[role], routing = build_degraded_plan(
                         source_path, template_type, snapshot=snapshot,
                         image_role_evidence=source_image_evidence.get(role), preserve_only=preserve_only)
                     degradation[role] = {**degradation.get(role, {}), **routing}
-                statuses = {classify_knowledge_point_status(snapshot, source_image_evidence.get(role))
-                            for role, snapshot in source_snapshots.items()}
+                statuses = {plans[role].knowledge_point_status for role in plans}
                 persist_lesson_metadata(next(iter(statuses)) if len(statuses) == 1 else "UNKNOWN")
                 display_renumbering.update({"status": "DISPLAY_RENUMBER_SKIPPED_INDEPENDENT_SOURCES",
                                            "slots": {}, "warning": "原文题号保留，未执行双版本对应重编号。"})
@@ -529,6 +516,11 @@ def _execute_job(job_id: str) -> None:
                     "xml_degradation": degradation, "pair_alignment_status": "NOT_REQUIRED_NOT_VERIFIED",
                     "display_renumbering": display_renumbering,
                     "image_role_evidence": source_image_evidence})
+                service.update_route_evidence(job_id, {
+                    "slot_evidence": {role: {"method": degradation[role]['selected_tier'],
+                        "source_block_counts": {slot: len(spans) for slot, spans in plan.slots.items()},
+                        "partition": degradation[role].get('partition')}
+                        for role, plan in plans.items()}})
                 if len(active_sources) == 2:
                     service.add_warning(job_id, "教师版、学生版按各自原稿生成，未验证逐题对应，请使用前核对。")
                 if any(value["selected_tier"] == "PRESERVATION" for value in degradation.values()):
@@ -542,31 +534,8 @@ def _execute_job(job_id: str) -> None:
                 fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
                 return {"supported": False, "reason_code": "XML_RENDER_FAILED",
                         "detail": fallback_detail["value"]}
-            if any(block.images for snapshot in source_snapshots.values()
-                   for block in snapshot.document.blocks):
-                try:
-                    from image_role_evidence import (LocalOCRError, get_local_ocr_recognizer,
-                                                     inspect_document_images, requires_local_ocr)
-                    needs_ocr = any(requires_local_ocr(snapshot)
-                                    for snapshot in source_snapshots.values())
-                    recognizer = (get_local_ocr_recognizer(Path(app.config["LOCAL_OCR_MODEL_DIR"]))
-                                  if needs_ocr else None)
-                    for role, source_path in active_sources.items():
-                        snapshot = source_snapshots[role]
-                        if any(block.images for block in snapshot.document.blocks):
-                            source_image_evidence[role] = inspect_document_images(
-                                source_path, snapshot, recognizer)
-                except LocalOCRError as exc:
-                    fallback_detail["value"] = str(exc)
-                    return {"supported": False, "reason_code": "LOCAL_OCR_UNAVAILABLE",
-                            "detail": fallback_detail["value"]}
-                except Exception as exc:
-                    fallback_detail["value"] = "%s: %s" % (type(exc).__name__, exc)
-                    return {"supported": False, "reason_code": "LOCAL_OCR_FAILED",
-                            "detail": fallback_detail["value"]}
-                service.update_route_evidence(job_id, {
-                    "image_role_evidence": source_image_evidence,
-                })
+            # Images are copied structurally with their owning physical blocks.
+            # The product no longer requires or calls OCR in either mode.
             statuses = {
                 classify_knowledge_point_status(
                     snapshot, source_image_evidence.get(role))
@@ -748,6 +717,7 @@ def _execute_job(job_id: str) -> None:
                             previous[role]["attempts"].extend(routing["attempts"])
                             previous[role]["selected_tier"] = "PRESERVATION"
                             service.update_route_evidence(job_id, {"xml_degradation": previous})
+                            service.update_route_evidence(job_id, {"slot_status": "PRESERVED_ONLY"})
                             service.add_warning(job_id, "分槽渲染未能完成，已尝试按原文顺序完整保留，请复核。")
                             results[role] = render_slots(
                                 str(source_path), plans[role], staging,
@@ -1059,6 +1029,23 @@ def _execute_job(job_id: str) -> None:
 
         if student_output:
             preparation["output_package_valid"] = validate_package(str(student_output)).get("valid") is True
+        from product_normalizer import inspect_delivered_slots
+        delivered_slots = {role: inspect_delivered_slots(target, template_type,
+                                                        source_path=original_sources[role])
+                           for role, _staged, target in generated}
+        route_record = service.get(job_id)
+        preserved = any(item.get("selected_tier") == "PRESERVATION"
+                        for item in route_record.get("xml_degradation", {}).values())
+        slotted = not preserved and all(item["verified"] for item in delivered_slots.values())
+        service.update_route_evidence(job_id, {
+            "slot_status": "SLOTTED" if slotted else "PRESERVED_ONLY",
+            "slot_evidence": {**(route_record.get("slot_evidence") or {}),
+                              "final_outputs": delivered_slots,
+                              "renderer": outcome.renderer,
+                              "verification": "FINAL_DOCX_SECTIONS"},
+        })
+        if not slotted:
+            service.add_warning(job_id, "成品已保留，未能核实两个完整训练槽，请使用前检查。")
         plan_summary = None
         if plans:
             plan = next(iter(plans.values()))
