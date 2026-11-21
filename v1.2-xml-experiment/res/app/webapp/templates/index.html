@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,73 +10,64 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='workspace.css') }}">
   <script defer src="{{ url_for('static', filename='vendor/lucide.min.js') }}"></script>
   <script defer src="{{ url_for('static', filename='workspace.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='studio.js') }}"></script>
 </head>
 <body>
-  <a href="#mainContent" class="skip-link">跳到工作区</a>
+  <a href="#mainContent" class="skip-link">跳到制作台</a>
   <div class="app-shell">
     <aside class="sidebar" aria-label="工作台导航">
-      <a href="#workspace" class="brand">
-        <span class="brand-icon"><i data-lucide="notebook-pen"></i></span>
-        <span>讲义生成器<small>V1.2</small></span>
-      </a>
-      <button class="new-button" id="newTask"><i data-lucide="plus"></i>新建讲义</button>
+      <a href="#workspace" class="brand" aria-label="讲义生成器工作区"><span class="brand-icon"><i data-lucide="notebook-pen"></i></span></a>
+      <button type="button" class="new-button" id="newTask" aria-label="新建讲义" data-tooltip="新建讲义"><i data-lucide="plus"></i><span class="sr-only">新建讲义</span></button>
       <nav class="main-nav">
-        <button class="nav-item active" data-view="workspace" aria-label="工作区" data-tooltip="工作区" aria-current="page"><i data-lucide="panels-top-left"></i><span>工作区</span></button>
-        <button class="nav-item" data-view="history" aria-label="生成记录" data-tooltip="生成记录"><i data-lucide="clock-3"></i><span>生成记录</span><span class="count" id="historyCount">0</span></button>
-        <button class="nav-item" data-view="templates" aria-label="讲义模板" data-tooltip="讲义模板"><i data-lucide="panels-left-bottom"></i><span>讲义模板</span></button>
+        <button type="button" class="nav-item active" data-view="workspace" aria-label="制作台" data-tooltip="制作台" aria-current="page"><i data-lucide="panels-top-left"></i><span>制作</span></button>
+        <button type="button" class="nav-item" data-view="history" aria-label="生成记录" data-tooltip="生成记录"><i data-lucide="history"></i><span>记录</span><span class="count" id="historyCount">0</span></button>
+        <button type="button" class="nav-item" data-view="templates" aria-label="讲义模板" data-tooltip="讲义模板"><i data-lucide="layout-template"></i><span>模板</span></button>
       </nav>
-      <div class="recent-heading">最近任务</div>
-      <div id="recentTasks" class="recent-tasks"><p class="sidebar-empty">暂无任务</p></div>
-      <div class="sidebar-bottom">
-        <div class="local-status"><span class="status-dot"></span><span id="connectionLabel">本地服务</span><span class="version">1.2</span></div>
-        <button class="nav-item" id="settingsButton" aria-label="偏好设置" data-tooltip="偏好设置"><i data-lucide="settings-2"></i><span>偏好设置</span></button>
-      </div>
+      <div class="sidebar-bottom"><button type="button" class="nav-item" id="settingsButton" aria-label="偏好设置" data-tooltip="偏好设置"><i data-lucide="settings-2"></i><span>设置</span></button><span class="rail-version">1.2</span></div>
     </aside>
-
     <div class="main-shell">
       <header class="topbar">
-        <div class="breadcrumb"><span>我的讲义</span><i data-lucide="chevron-right"></i><strong id="viewTitle">工作区</strong></div>
-        <div class="top-actions">
-          <span class="offline-badge"><i data-lucide="shield-check"></i>本地处理</span>
-          <button class="icon-button" id="themeButton" aria-label="切换深色外观" data-tooltip="切换外观"><i data-lucide="moon"></i></button>
-        </div>
+        <div class="breadcrumb"><span class="studio-wordmark">讲义制作台</span><i data-lucide="chevron-right"></i><strong id="viewTitle">工作区</strong></div>
+        <div class="document-title"><span class="document-dot"></span><span id="studioDocumentTitle">未命名讲义</span><span class="saved-state" id="saveState">配置已保存</span></div>
+        <div class="top-actions"><span class="local-status"><span class="status-dot"></span><span id="connectionLabel">本地服务</span></span><button type="button" class="icon-button" id="themeButton" aria-label="切换浅色外观" data-tooltip="切换外观"><i data-lucide="sun"></i></button></div>
       </header>
-
       <main id="mainContent">
-        <section id="workspaceView" class="view">
-          <div class="page-heading">
-            <div><p class="eyebrow" id="todayLabel"></p><h1>准备一份好讲义</h1></div>
-            <span class="saved-state" id="saveState"><i data-lucide="check"></i>配置已保存</span>
-          </div>
-          <div class="workspace-grid">
-            <div class="materials-column">
-              <section class="materials-section" aria-labelledby="materialsTitle">
-                <div class="section-heading">
-                  <h2 id="materialsTitle">讲义素材 <span class="count" id="fileCount">0</span></h2>
-                  <div class="toolbar">
-                    <button class="icon-button" id="undoFiles" aria-label="撤销文件操作" data-tooltip="撤销" disabled><i data-lucide="undo-2"></i></button>
-                    <button class="icon-button danger-hover" id="clearFiles" aria-label="清空素材" data-tooltip="清空素材" disabled><i data-lucide="trash-2"></i></button>
-                  </div>
-                </div>
-                <button class="drop-zone" id="drop" type="button" aria-label="添加讲义素材">
-                  <span class="upload-symbol"><i data-lucide="file-up"></i><span class="upload-plus"><i data-lucide="plus"></i></span></span>
-                  <span class="drop-title">添加讲义素材</span>
-                  <span class="drop-meta">DOCX / ZIP · 总计不超过 500 MB</span>
-                </button>
-                <input type="file" id="fileInput" accept=".zip,.docx" multiple hidden>
-                <div class="file-tools" id="fileTools" hidden>
-                  <label class="search-field"><i data-lucide="search"></i><input type="search" id="fileSearch" placeholder="搜索素材" aria-label="搜索素材"></label>
-                  <span id="totalSize">0 KB</span>
-                </div>
-                <div id="fileList" class="file-list" aria-label="素材列表"></div>
-                <div id="uploadErrors" class="notice error" role="alert" hidden></div>
-                <div class="pairing-row"><label for="docxMode">Word 文件分组</label><select id="docxMode" class="quiet-select"><option value="auto">按专题配对（推荐）</option><option value="separate">各自生成</option></select></div>
-                <div id="pairingNote" class="pairing-note" aria-live="polite">尚未添加素材</div>
-              </section>
-
-              <section class="generation-section" aria-labelledby="generationTitle">
-                <div class="section-heading"><h2 id="generationTitle">生成任务</h2><span class="muted small" id="elapsedLabel"></span></div>
-                <div id="idleState" class="idle-state"><span class="idle-icon"><i data-lucide="layers"></i></span><div><strong>等待开始</strong><p>按所提供的原稿生成讲义</p></div><i data-lucide="arrow-up-right" class="idle-arrow"></i></div>
+        <section id="workspaceView" class="view workspace-grid">
+          <aside class="materials-column" aria-label="原始素材">
+            <section class="materials-section" aria-labelledby="materialsTitle">
+              <div class="section-heading"><h2 id="materialsTitle">原始素材 <span class="count" id="fileCount">0</span></h2><div class="toolbar"><button type="button" class="icon-button" id="undoFiles" aria-label="撤销文件操作" data-tooltip="撤销" disabled><i data-lucide="undo-2"></i></button><button type="button" class="icon-button danger-hover" id="clearFiles" aria-label="清空素材" data-tooltip="清空素材" disabled><i data-lucide="trash-2"></i></button></div></div>
+              <button class="drop-zone" id="drop" type="button" aria-label="添加讲义素材"><span class="upload-symbol"><i data-lucide="file-plus-2"></i></span><span class="drop-title">导入原稿</span><span class="drop-hint">拖入文件，或点击选择</span><span class="drop-meta">DOCX / ZIP · 500 MB以内</span></button>
+              <input type="file" id="fileInput" accept=".zip,.docx" multiple hidden>
+              <div class="file-tools" id="fileTools" hidden><label class="search-field"><i data-lucide="search"></i><input type="search" id="fileSearch" placeholder="搜索素材" aria-label="搜索素材"></label><span id="totalSize">0 KB</span></div>
+              <div id="fileList" class="file-list" aria-label="素材列表"></div>
+              <div id="uploadErrors" class="notice error" role="alert" hidden></div>
+              <div class="pairing-row"><label for="docxMode">原稿分组</label><select id="docxMode" class="quiet-select"><option value="auto">按专题配对（推荐）</option><option value="separate">各自生成</option></select></div><div id="pairingNote" class="pairing-note" aria-live="polite">尚未添加素材</div>
+            </section>
+            <div class="source-guide"><i data-lucide="files"></i><p>从原始教师版或学生版开始。<br>生成过的讲义请勿重复导入。</p></div>
+            <div class="recent-heading">最近任务</div><div id="recentTasks" class="recent-tasks"><p class="sidebar-empty">暂无任务</p></div>
+            <div class="dock-footer"><i data-lucide="folder-lock"></i>文件保留在本机<span id="todayLabel" class="sr-only"></span></div>
+          </aside>
+          <section class="studio-canvas" aria-label="讲义预览与原稿结构">
+            <div class="canvas-topline"><span><span class="canvas-indicator"></span>编排画布</span><span id="studioReadyLabel" role="status">尚未导入原稿</span></div>
+            <div class="canvas-toolbar">
+              <div id="studioModeButtons" class="canvas-modes" role="group" aria-label="画布模式"><button type="button" data-studio-mode="template" aria-label="查看模板" aria-pressed="true"><i data-lucide="file-text"></i>模板</button><button type="button" data-studio-mode="structure" aria-label="查看原稿结构" aria-pressed="false"><i data-lucide="list-tree"></i>原稿结构</button></div>
+              <div class="zoom-controls" role="group" aria-label="纸张缩放"><button type="button" id="studioZoomOut" aria-label="缩小纸张"><i data-lucide="minus"></i></button><button type="button" id="studioZoomReset" aria-label="重置纸张缩放"><span id="studioZoomLabel">100%</span></button><button type="button" id="studioZoomIn" aria-label="放大纸张"><i data-lucide="plus"></i></button></div>
+            </div>
+            <div id="studioTemplateView" class="studio-template-view">
+              <div class="paper-caption"><span>01 <span class="paper-caption-line"></span> TEMPLATE</span><span>模板首页，非成品</span></div>
+              <div id="studioPaperStage" class="studio-paper-stage" style="--paper-scale:1"><div class="paper-shadow"></div><img id="studioTemplateImage" src="{{ url_for('static', filename='previews/1v1.png') }}" alt="1 对 1 讲义模板首页，非生成成品"></div>
+              <p class="canvas-footnote"><i data-lucide="info"></i>版式以实际生成的 DOCX 为准。切换“原稿结构”查看真实内容。</p>
+            </div>
+            <div id="studioStructureView" class="studio-structure-view" hidden>
+              <div class="structure-heading"><div><span class="panel-eyebrow">SOURCE STRUCTURE</span><h2>先看内容，再做讲义</h2></div><span id="studioInspectStatus" role="status">未分析</span></div>
+              <div class="inspect-controls"><select id="studioSourceSelect" aria-label="选择待分析的原稿"><option value="">请先导入 DOCX 原稿</option></select><button type="button" id="studioInspectButton" class="secondary-button" aria-label="分析原稿"><i data-lucide="scan-text"></i>分析原稿</button></div>
+              <div id="studioSlotTabs" class="studio-slot-tabs" role="group" aria-label="内容分区"><button type="button" data-slot="knowledge" aria-label="查看知识精讲" aria-pressed="true">知识精讲</button><button type="button" data-slot="immediate" aria-label="查看即时训练" aria-pressed="false">即时训练</button><button type="button" data-slot="final" aria-label="查看巩固检测" aria-pressed="false">巩固检测</button><button type="button" data-slot="unresolved" aria-label="查看待确认内容" aria-pressed="false">待确认</button></div>
+              <div id="studioBlockList" class="studio-block-list"><div class="studio-empty"><i data-lucide="list-tree"></i><h3>原稿结构尚未展开</h3><p>导入 DOCX 后，点击“分析原稿”。<br>这里将显示原文节点与实际分区结果。</p></div></div>
+              <p id="studioInspectNote" class="studio-inspect-note">分析仅用于检查原稿，不修改文件；分区结果仍需人工核对。</p>
+            </div>
+            <details id="studioResults" class="studio-results"><summary><span><i data-lucide="package-check"></i>生成结果</span><span class="results-summary-hint">查看任务与成品 <i data-lucide="chevron-down"></i></span></summary>              <section class="generation-section" aria-labelledby="generationTitle">
+                <div class="section-heading"><h2 id="generationTitle">任务输出</h2><span class="muted small" id="elapsedLabel"></span></div>
+                <div id="idleState" class="idle-state"><span class="idle-icon"><i data-lucide="layers"></i></span><div><strong>还没有生成任务</strong><p>生成结果会显示在这里。</p></div><i data-lucide="arrow-up-right" class="idle-arrow"></i></div>
                 <div id="progressWrap" hidden>
                   <div class="progress-heading"><strong id="progressTitle" aria-live="polite">准备中</strong><span id="progressPercent">0%</span></div>
                   <p class="progress-stage" id="progressStage"></p>
@@ -90,11 +81,9 @@
                     <button class="secondary-button" id="reconnect" hidden><i data-lucide="refresh-cw"></i>重新连接</button>
                   </div>
                 </div>
-              </section>
-            </div>
-
-            <aside class="inspector" aria-label="讲义配置">
-              <form id="configForm">
+              </section></details>
+          </section>
+          <aside class="inspector" aria-label="讲义配置">              <form id="configForm">
                 <div class="section-heading"><h2>讲义配置</h2><button type="button" class="icon-button" id="resetConfig" aria-label="恢复默认配置" data-tooltip="恢复默认配置"><i data-lucide="rotate-ccw"></i></button></div>
                 <fieldset id="configFields"><legend class="sr-only">生成选项</legend>
                   <label class="field-label" id="subjectLabel">学科</label>
@@ -103,7 +92,7 @@
                   <div class="field-grid"><label class="field">课程类型<select id="handoutType"></select></label><label class="field">学年<select id="academicYear"></select></label></div>
                   <label class="field-label" id="templateLabel">讲义模板</label>
                   <div class="segmented" role="group" aria-labelledby="templateLabel" id="templateControl"><button type="button" data-template="1v1" aria-pressed="true"><i data-lucide="user-round"></i>1 对 1</button><button type="button" data-template="class" aria-pressed="false"><i data-lucide="users-round"></i>班课</button></div>
-                  <button type="button" id="previewButton" class="template-preview"><img id="templateThumb" src="{{ url_for('static', filename='previews/1v1.png') }}" alt="1 对 1 讲义模板首页"><span><strong id="templateName">1 对 1 讲义</strong><small>点击查看真实模板首页</small></span><i data-lucide="scan-eye"></i></button>
+                  <button type="button" id="previewButton" class="template-preview"><img id="templateThumb" src="{{ url_for('static', filename='previews/1v1.png') }}" alt="1 对 1 讲义模板首页"><span><strong id="templateName">1 对 1 讲义</strong><small>查看模板首页 ↗</small></span><i data-lucide="scan-eye"></i></button>
                   <label class="field">分块策略<select id="splitMode"><option value="smart">智能分块（推荐）</option><option value="full">完整保留</option></select></label>
                   <section class="split-explainer" id="splitExplainer" aria-live="polite">
                     <div class="split-heading"><strong id="splitTitle">智能分块</strong><span id="splitBadge">推荐</span></div>
@@ -112,14 +101,12 @@
                     <p class="split-note" id="splitNote"></p>
                   </section>
                 </fieldset>
-                <div class="output-name"><span class="field-label">输出文件名</span><p id="filenamePreview"></p></div>
-                <button class="primary-button generate-button" id="startButton" type="submit" disabled><i data-lucide="sparkles"></i><span>生成讲义</span><i data-lucide="arrow-right"></i></button>
+                <div class="config-bottom"><div class="output-name"><span class="field-label">输出文件名</span><p id="filenamePreview"></p></div>
+                <button class="primary-button generate-button" id="startButton" type="submit" disabled><i data-lucide="sparkles"></i><span>开始生成</span><i data-lucide="arrow-right"></i></button>
                 <div class="output-caption"><i data-lucide="files"></i>本地成品 <span>DOCX</span></div>
-              </form>
-            </aside>
-          </div>
+</div>
+              </form></aside>
         </section>
-
         <section id="historyView" class="view" hidden>
           <div class="page-heading"><div><p class="eyebrow">我的讲义</p><h1>生成记录</h1></div><button class="icon-button" id="refreshHistory" aria-label="刷新生成记录" data-tooltip="刷新记录"><i data-lucide="refresh-cw"></i></button></div>
           <div class="history-toolbar"><label class="search-field"><i data-lucide="search"></i><input id="historySearch" type="search" placeholder="搜索文件名或学科" aria-label="搜索生成记录"></label><select id="historyFilter" aria-label="任务状态"><option value="all">全部状态</option><option value="queued">排队中</option><option value="running">生成中</option><option value="done">已完成</option><option value="partial">部分完成</option><option value="error">未完成</option></select></div>
@@ -134,10 +121,9 @@
           </div>
         </section>
       </main>
-      <footer class="app-footer"><span><i data-lucide="hard-drive"></i>本地工作空间</span><span id="footerStatus">就绪</span></footer>
+      <footer class="app-footer"><span><i data-lucide="hard-drive"></i>HANDOUT STUDIO <span class="footer-divider">/</span> V1.2</span><span id="footerStatus">就绪</span></footer>
     </div>
   </div>
-
   <dialog id="settingsDialog" class="settings-dialog"><form method="dialog"><div class="dialog-heading"><h2>偏好设置</h2><button class="icon-button" aria-label="关闭偏好设置"><i data-lucide="x"></i></button></div><div class="settings-row"><label for="themeSelect">外观</label><select id="themeSelect"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></div><div class="settings-row"><label for="compactFiles">紧凑文件列表</label><input id="compactFiles" type="checkbox" role="switch" class="switch"></div><div class="settings-row"><span>应用版本</span><span class="muted">讲义生成器 V1.2</span></div>{% if launcher_token %}<div class="settings-row"><span>本地服务</span><button type="button" class="secondary-button" id="exitApplication">退出讲义生成器</button></div>{% endif %}</form></dialog>
   <dialog id="previewDialog" class="preview-dialog"><div class="dialog-heading"><h2 id="previewTitle">讲义模板</h2><div class="toolbar"><a id="templatePdf" class="icon-button" aria-label="打开完整模板 PDF" data-tooltip="完整模板" target="_blank" rel="noopener"><i data-lucide="external-link"></i></a><button id="closePreview" class="icon-button" aria-label="关闭模板预览"><i data-lucide="x"></i></button></div></div><div class="preview-paper"><img id="previewImage" alt="模板首页"></div><div class="preview-footer"><span class="muted small">模板首页</span><button id="usePreviewTemplate" class="primary-button">使用此模板<i data-lucide="arrow-right"></i></button></div></dialog>
   <div id="toast" class="toast" role="status" hidden></div>

@@ -207,26 +207,34 @@ def test_second_launcher_reuses_authenticated_current_instance_url(monkeypatch):
             service_thread.join(timeout=3)
 
 
-def test_workbench_opens_installed_chrome_without_default_browser(monkeypatch, tmp_path):
-    chrome = tmp_path / "Google/Chrome/Application/chrome.exe"
-    chrome.parent.mkdir(parents=True)
-    chrome.touch()
-    monkeypatch.setenv("PROGRAMFILES", str(tmp_path))
+def test_workbench_opens_exact_url_in_system_default_browser(monkeypatch):
     calls = []
-    monkeypatch.setattr(subprocess, "Popen", lambda args, **kwargs: calls.append((args, kwargs)))
+    monkeypatch.setattr(launcher.webbrowser, "open",
+                        lambda url, **kwargs: calls.append((url, kwargs)) or True)
     assert launcher._open_workbench("http://127.0.0.1:5128")
-    assert calls[0][0] == [str(chrome), "--new-tab", "http://127.0.0.1:5128"]
+    assert calls == [("http://127.0.0.1:5128", {"new": 2})]
 
 
-def test_missing_chrome_shows_manual_url_without_stopping_service(monkeypatch, tmp_path):
-    for key in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
-        monkeypatch.setenv(key, str(tmp_path))
+def test_default_browser_false_shows_manual_url_without_stopping_service(monkeypatch):
     messages = []
     monkeypatch.setattr(launcher, "_show_launch_error", messages.append)
-    monkeypatch.setattr(subprocess, "Popen", lambda *_a, **_k: (_ for _ in ()).throw(
-        AssertionError("must not launch Edge or default browser")))
+    monkeypatch.setattr(launcher.webbrowser, "open", lambda *_a, **_k: False)
     assert not launcher._open_workbench("http://127.0.0.1:5128")
-    assert "Chrome" in messages[0] and "http://127.0.0.1:5128" in messages[0]
+    assert "系统默认浏览器" in messages[0]
+    assert "http://127.0.0.1:5128" in messages[0]
+
+
+def test_default_browser_exception_shows_manual_url_without_stopping_service(monkeypatch):
+    messages = []
+    monkeypatch.setattr(launcher, "_show_launch_error", messages.append)
+
+    def fail_to_open(*_args, **_kwargs):
+        raise OSError("default browser is not registered")
+
+    monkeypatch.setattr(launcher.webbrowser, "open", fail_to_open)
+    assert not launcher._open_workbench("http://127.0.0.1:49177")
+    assert "系统默认浏览器" in messages[0]
+    assert "http://127.0.0.1:49177" in messages[0]
 
 
 def test_stale_or_unavailable_instance_reports_actionable_feedback():
@@ -282,7 +290,7 @@ def test_explicit_exit_control_route_is_token_gated_and_shuts_down():
     assert b'<meta name="launcher-token" content="secret">' in page.data
     page_text = page.get_data(as_text=True)
     assert '<title>讲义生成器 V1.2</title>' in page_text
-    assert '讲义生成器<small>V1.2</small>' in page_text
+    assert 'aria-label="讲义生成器工作区"' in page_text
     assert '应用版本</span><span class="muted">讲义生成器 V1.2</span>' in page_text
     assert 'Flash 1.2' not in page_text
 

@@ -1163,6 +1163,46 @@ def list_jobs():
     return jsonify({"jobs": records})
 
 
+@app.post("/api/inspect")
+def inspect_source():
+    """Inspect an ephemeral single source without initializing JobService."""
+    from urllib.parse import urlsplit
+    from werkzeug.exceptions import RequestEntityTooLarge
+    from inspection import (InspectionError, MAX_REQUEST_BYTES, MAX_UPLOAD_BYTES, inspect_docx)
+    token = app.config.get("LAUNCHER_TOKEN")
+    origin = request.headers.get("Origin")
+    local = urlsplit(request.host_url)
+    allowed_origin = (not origin or origin.rstrip('/') == request.host_url.rstrip('/'))
+    if (local.hostname not in ('localhost', '127.0.0.1', '::1')
+            or not allowed_origin or request.headers.get('Sec-Fetch-Site') == 'cross-site'
+            or (token and not secrets.compare_digest(request.headers.get('X-Launcher-Token', '').encode(), str(token).encode()))):
+        return jsonify(error='请从本机制作台重新打开内容核对。', code='INSPECT_ACCESS_DENIED'), 403
+    lock = app.extensions.setdefault('source_inspection_lock', threading.Lock())
+    if not lock.acquire(blocking=False):
+        return jsonify(error='正在核对另一份文档，请稍后重试。', code='INSPECT_BUSY'), 422
+    try:
+        request.max_content_length = MAX_REQUEST_BYTES
+        if request.content_length is not None and request.content_length > MAX_REQUEST_BYTES:
+            raise RequestEntityTooLarge()
+        files = request.files.getlist('file')
+        if len(files) != 1 or len(list(request.files.items(multi=True))) != 1:
+            return jsonify(error='请一次选择一个 DOCX 文件进行内容核对。', code='INSPECT_FILE_REQUIRED'), 400
+        template_type = request.form.get('template_type', '')
+        if template_type not in ('1v1', 'class'):
+            return jsonify(error='请选择一对一或班课模板。', code='INSPECT_INVALID_TEMPLATE'), 400
+        file = files[0]
+        result = inspect_docx(file.filename, file.read(MAX_UPLOAD_BYTES + 1), template_type)
+        return jsonify(result)
+    except RequestEntityTooLarge:
+        return jsonify(error='内容核对仅支持不超过 32 MiB 的 DOCX 文件。', code='INSPECT_UPLOAD_LIMIT'), 413
+    except InspectionError as exc:
+        return jsonify(error=str(exc), code=exc.code), exc.status
+    except Exception:
+        return jsonify(error='内容核对暂时无法完成，请重试或重新保存文档。', code='INSPECT_UNAVAILABLE'), 422
+    finally:
+        lock.release()
+
+
 @app.post("/api/jobs")
 def create_job():
     try:

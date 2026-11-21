@@ -12,10 +12,26 @@ from docx import Document
 
 PASSAGE = re.compile(r'^(?:Passage|Text|阅读材料|阅读理解|完形填空)\s*[A-Z\d一二三四五六七八九十]+\s*$', re.I)
 QUESTION = re.compile(r'^\s*(?:第\s*)?(\d{1,3})\s*[.．、)）]\s*\S')
-DECIMAL = re.compile(r'^\s*\d+\.\d+(?:\s*(?:V|A|m|cm|秒|伏|安)|\s*$)', re.I)
+DECIMAL = re.compile(r'^\s*\d+[.．]\d+')
+BARE_ANSWER = re.compile(r'(?:参考)?(?:答案|解析|答案解析|答案与解析)[：:]?')
+BRACKETED_LOCAL_ANSWER = re.compile(r'^(?:【(?:答案|解析)】|\[(?:答案|解析)\])[：:]?$')
 KNOWLEDGE_FAMILY = re.compile(r'^(?:基础|重难|考情|知识|方法|技巧)[·・]')
 PRACTICE_FAMILY = re.compile(r'^(?:拔高|训练|练习|真题|进阶|能力|综合|素养|优题精练)[·・]')
 PRACTICE_TITLE = re.compile(r'^(?:基础演练|能力进阶|分层集训|综合训练|综合练习|专项训练|巩固训练|习题|练习题)\s*$')
+
+
+def _question_start(text):
+    """Use the same boundary evidence for starts, weights and signatures.
+
+    A decimal token stays part of its surrounding question even when followed
+    by units or an equation. A numbered numeric stem needs a separator, e.g.
+    ``1. 2x + 3 = 7`` rather than the ambiguous decimal-looking ``1.2x``.
+    """
+    match = QUESTION.match(text)
+    if (not match or int(match.group(1)) == 0 or DECIMAL.match(text)
+            or re.match(r'^\s*\d+[.．、)）]\s*(?:答案|解析|解答|解：)', text)):
+        return None
+    return match
 
 
 def partition_exercises(source, template_type, snapshot):
@@ -34,10 +50,17 @@ def partition_exercises(source, template_type, snapshot):
             intent = _heading_route(text, template_type)
             # Inline 【答案】/【解析】 belongs to the preceding question, not
             # a global answer section that suppresses every later question.
-            if (len(text) <= 35 and intent == 'answer_area'
-                    and re.fullmatch(r'(?:参考)?(?:答案|解析|答案解析|答案与解析)[：:]?',
-                                     text.strip().strip('【】[]').strip())):
-                in_answers = True
+            if (len(text) <= 35
+                    and BARE_ANSWER.fullmatch(text.strip().strip('【】[]').strip())):
+                if BRACKETED_LOCAL_ANSWER.fullmatch(text):
+                    # OMML/OLE answers do not appear in block.text. Treat the
+                    # marker as inline only when that same paragraph contains
+                    # actual mathematical content and a current question exists.
+                    if not (starts and not in_answers and (block.math_count or block.oles)):
+                        raise SlotRoutingError('AMBIGUOUS_ANSWER_HEADING',
+                                               'bare answer marker has no proven inline mathematical content')
+                else:
+                    in_answers = True
             # Long narrative sentences and incidental words are not boundaries.
             if len(text) <= 90 and KNOWLEDGE_FAMILY.match(text):
                 context = 'knowledge'; in_passage = False; heads[i] = 'knowledge'
@@ -48,12 +71,18 @@ def partition_exercises(source, template_type, snapshot):
             elif len(text) <= 70 and any(cleaned.startswith(t) for t in
                     ('知识精讲', '知识点', '知识讲解', '例题讲解', '题型讲解', '知识回顾')):
                 context = 'knowledge'; in_passage = False; heads[i] = 'knowledge'
+            decimal = DECIMAL.match(text)
+            if (decimal and int(re.match(r'^\s*(\d+)', text).group(1)) > 0
+                    and not starts and context != 'knowledge' and not in_passage and not in_answers):
+                # Without an owning question this may be "1." followed by a
+                # numeric stem, not a decimal continuation. Do not silently
+                # absorb a potentially missing first question into the preamble.
+                raise SlotRoutingError('AMBIGUOUS_QUESTION_NUMBER',
+                                       'decimal-looking numeric stem has no established question context')
             if PASSAGE.fullmatch(text):
                 if context != 'knowledge':
                     starts.append(i); in_passage = True; in_answers = False
-            elif (context != 'knowledge' and not in_passage and not in_answers and QUESTION.match(text)
-                  and not DECIMAL.fullmatch(text)
-                  and not re.match(r'^\s*\d+[.．、)）]\s*(?:答案|解析|解答|解：)', text)):
+            elif (context != 'knowledge' and not in_passage and not in_answers and _question_start(text)):
                 starts.append(i)
         contexts[i] = context
     starts = sorted(set(starts) - cover)
@@ -89,8 +118,7 @@ def partition_exercises(source, template_type, snapshot):
             if preceding:
                 end = max(preceding) - 1
         weight = sum(1 for seq in range(start, end + 1)
-                     if blocks[seq].kind == 'paragraph' and QUESTION.match(blocks[seq].text)
-                     and not re.match(r'^\s*\d+[.．、)）]\s*(?:答案|解析|解答)', blocks[seq].text))
+                     if blocks[seq].kind == 'paragraph' and _question_start(blocks[seq].text))
         groups.append({'start': start, 'end': end, 'weight': max(1, weight),
                        'intent': contexts.get(start, 'unknown')})
     proven_knowledge = any(route == 'knowledge' for route in heads.values())
@@ -138,8 +166,8 @@ def partition_exercises(source, template_type, snapshot):
     tail = next((i for i, node in enumerate(body) if node.tag == W_SECTPR), len(body))
     slot_blocks = {slot: tuple(BlockSpan('b%d' % s, 'b%d' % s) for s in range(len(blocks))
                               if s not in cover and routes[s] == slot) for slot in SLOT_ORDER}
-    signatures = tuple((int(QUESTION.match(blocks[g['start']].text).group(1)), fixed[g['start']])
-                       for g in groups if QUESTION.match(blocks[g['start']].text))
+    signatures = tuple((int(_question_start(blocks[g['start']].text).group(1)), fixed[g['start']])
+                       for g in groups if _question_start(blocks[g['start']].text))
     plan = SlotRoutingPlan(source_path=source, source_sha256=snapshot.source_sha256,
         template_type=template_type, template_path=template, template_sha256=digest,
         target=TemplateTarget(tail), slots=slot_blocks, slot_labels=dict(SLOT_LABELS[template_type]),

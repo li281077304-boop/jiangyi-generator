@@ -22,6 +22,7 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+import webbrowser
 
 
 APP_NAME = "讲义生成器"
@@ -269,23 +270,15 @@ def _show_launch_error(message: str) -> None:
 
 
 def _open_workbench(url: str) -> bool:
-    """Open Chrome explicitly; never invoke the system default browser."""
-    candidates = []
-    for key in ("PROGRAMFILES", "PROGRAMFILES(X86)", "LOCALAPPDATA"):
-        root = os.environ.get(key)
-        if root:
-            candidates.append(Path(root) / "Google" / "Chrome" / "Application" / "chrome.exe")
-    for chrome in candidates:
-        if chrome.is_file():
-            try:
-                subprocess.Popen([str(chrome), "--new-tab", url],
-                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                                 stderr=subprocess.DEVNULL,
-                                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-                return True
-            except OSError:
-                continue
-    _show_launch_error("工作台服务已启动，但无法打开 Chrome。请用 Chrome 手动打开：\n" + url)
+    """Open the workbench with the user's system default browser."""
+    try:
+        if webbrowser.open(url, new=2):
+            return True
+    except Exception:
+        # Browser registration and shell failures vary across Windows versions.
+        # The local service remains usable through the URL shown below.
+        pass
+    _show_launch_error("工作台服务已启动，但无法自动打开系统默认浏览器。请手动打开：\n" + url)
     return False
 
 

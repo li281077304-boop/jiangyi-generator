@@ -39,6 +39,13 @@
     return node;
   }
   function setText(id, value) { $(id).textContent = value == null ? "" : String(value); }
+  function emitStudioState(jobOverride) {
+    if (typeof CustomEvent !== "function" || typeof window.dispatchEvent !== "function") return;
+    var job = jobOverride || state.jobs.find(function (item) { return item.job_id === state.currentJob; }) || null;
+    window.dispatchEvent(new CustomEvent("studio:state", {detail: {
+      files: state.files.slice(), templateType: state.templateType, job: job
+    }}));
+  }
   function formatBytes(bytes) {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1048576) return (bytes / 1024).toFixed(bytes < 10240 ? 1 : 0) + " KB";
@@ -164,6 +171,7 @@
     $("templateThumb").alt = (isClass ? "班课" : "1 对 1") + "讲义模板首页";
     setText("templateName", isClass ? "班课讲义" : "1 对 1 讲义");
     if (!quiet) configChanged();
+    emitStudioState();
   }
   function configChanged() {
     savePrefs();
@@ -240,7 +248,7 @@
     setText("fileCount", state.files.length); setText("totalSize", formatBytes(total));
     $("fileTools").hidden = !state.files.length; $("clearFiles").disabled = !state.files.length; $("startButton").disabled = !state.files.length || !!activeJob();
     var errorBox = $("uploadErrors"); errorBox.hidden = !(errors && errors.length); errorBox.textContent = errors && errors.length ? errors.join("；") : "";
-    updatePairing(); refreshIcons(list);
+    updatePairing(); refreshIcons(list); emitStudioState();
   }
   function updatePairing() {
     var docs = state.files.filter(function (file) { return file.name.toLowerCase().endsWith(".docx"); }).length;
@@ -317,7 +325,7 @@
     $("configFields").disabled = isActiveStatus(job.status); $("startButton").disabled = isActiveStatus(job.status) || !state.files.length;
     if (isActiveStatus(job.status)) beginElapsed(job.created_at);
     else { clearInterval(state.elapsedTimer); setText("elapsedLabel", job.produced ? "共 " + job.produced + " 份" : ""); }
-    refreshIcons(rows); renderHistory();
+    refreshIcons(rows); renderHistory(); emitStudioState(job);
   }
   function pollJob(jobId, immediate) {
     clearTimeout(state.pollTimer);
@@ -431,7 +439,7 @@
     if (activeJob()) { navigate("workspace"); toast("当前讲义生成完成后即可开始新任务"); return; }
     state.files = []; state.undo = []; $("fileSearch").value = ""; $("undoFiles").disabled = true; renderFiles();
     localStorage.removeItem("handout_current_job");
-    $("idleState").hidden = false; $("progressWrap").hidden = true; state.currentJob = null; clearInterval(state.elapsedTimer); setText("elapsedLabel", ""); setText("footerStatus", "就绪"); navigate("workspace");
+    $("idleState").hidden = false; $("progressWrap").hidden = true; state.currentJob = null; clearInterval(state.elapsedTimer); setText("elapsedLabel", ""); setText("footerStatus", "就绪"); navigate("workspace"); emitStudioState();
   }
 
   function openPreview(template) {
@@ -487,9 +495,10 @@
   }
 
   function initialize() {
+    window.addEventListener("studio:request-state", function () { emitStudioState(); });
     initializeOptions(); loadPrefs(); bindEvents();
     setText("todayLabel", new Intl.DateTimeFormat("zh-CN", {month: "long", day: "numeric", weekday: "long"}).format(new Date()));
-    applyTheme(localStorage.getItem("handout_theme") || "system"); updateFilename(); updateSplitExplainer(); updateEngineModeNote(); renderFiles(); refreshIcons(); loadJobs().catch(function () {});
+    applyTheme(localStorage.getItem("handout_theme") || "dark"); updateFilename(); updateSplitExplainer(); updateEngineModeNote(); renderFiles(); refreshIcons(); emitStudioState(); loadJobs().catch(function () {});
   }
   document.addEventListener("DOMContentLoaded", initialize);
 }());
