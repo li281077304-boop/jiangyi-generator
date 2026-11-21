@@ -53,3 +53,10 @@ Codex 按用户要求核对 git status、HEAD 和 git ls-remote。本地 HEAD �
 
 ## 2026-11-21 GitHub 同步
 Codex 按用户要求整理制作台、启动器、Splitter、测试与接续文档，在当前独立分支提交并同步。提交前重跑相关测试，76 项通过。Windows 安装包仍待单独构建与验收。
+
+## 2026-11-21 — Issue #1 离线 Splitter 审计包
+
+- 执行者：Codex Astra 整合，Sol 规划复核，Terra、Luna 分工实现初稿。在固定基线 85814bc 的独立工作区实现。
+- 新入口：`tools/splitter_review.py`、`tools/splitter_review_blocks.py`。按评估器记录的六处哈希和物理块归属核对已有诊断，为两个模板分别生成摘要、风险和逐块清单。规则路径、比例分配、原文保留、人工待审分别计数。
+- 说明及证据：`docs/SPLITTER_REVIEW.md`，`examples/splitter_review/` 下的虚构数据生成器、示例报告与清单，`tests/test_splitter_review.py`。CLI 输入不变、输出可复现、损坏证据、源哈希矛盾、重复/遗漏、封面排除及降级等 21 项合成测试通过。按 README 在新目录运行，核对了 JSON、Markdown 和 CSV。
+- 未完成：本轮未用 29 份原稿回归，未进行教学语义、教师学生逐题对应或用户实际试用验收。后续可在本机对已有真实评估目录生成私有清单，由教师对照原稿填写判定。

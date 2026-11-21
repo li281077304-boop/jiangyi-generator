@@ -8,3 +8,5 @@
 - `v1.2-xml-experiment`：沿用早期目录名的1.2 XML工作台，生成接口已接通；质量限制与最新验证见[2026-10-26记录](docs/SPLITTER_VALIDATION_2026-10-26.md)。
 
 训练材料、生成成品和本机运行时不属于源码仓库内容。
+
+[离线 Splitter 复核工具](docs/SPLITTER_REVIEW.md)可从已有诊断目录生成逐块报告和人工清单，附可运行的合成示例。
