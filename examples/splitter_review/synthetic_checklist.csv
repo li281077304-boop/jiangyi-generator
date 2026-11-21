@@ -1,0 +1,9 @@
+﻿sample_id,template,block_id,selected_tier,original_slots,summary,review_flags,human_decision,notes
+S01,1v1,b0,SEMANTIC,,星岛课堂（虚构封面）,COVER_METADATA_PROJECTED_TO_TEMPLATE_COVER,,
+S01,1v1,b1,SEMANTIC,knowledge,三角形有三条边。,REVIEW_MATH,,
+S01,1v1,b2,SEMANTIC,immediate,画一个三角形。,REVIEW_IMAGE,,
+S01,1v1,b3,SEMANTIC,final,比较两个三角形的周长。,REVIEW_OLE,,
+S01,class,b0,PRESERVATION,,星岛课堂（虚构封面）,"COVER_METADATA_PROJECTED_TO_TEMPLATE_COVER, PRESERVED_REVIEW_TEACHING_SLOT",,
+S01,class,b1,PRESERVATION,knowledge,三角形有三条边。,"REVIEW_MATH, PRESERVED_REVIEW_TEACHING_SLOT",,
+S01,class,b2,PRESERVATION,knowledge,画一个三角形。,"REVIEW_IMAGE, PRESERVED_REVIEW_TEACHING_SLOT",,
+S01,class,b3,PRESERVATION,knowledge,比较两个三角形的周长。,"REVIEW_OLE, PRESERVED_REVIEW_TEACHING_SLOT",,
